@@ -161,8 +161,8 @@ const ActionFlowSection = () => {
               className="flex flex-col justify-center"
             >
               <div className="rounded-2xl border border-border bg-card p-6 shadow-card">
-                <h3 className="mb-6 text-center text-lg font-semibold text-foreground">
-                  orchestrator.orchestrate()
+                <h3 className="mb-6 text-center text-lg font-semibold text-foreground font-mono">
+                  orchestrator.orchestrate(userQuery, Context)
                 </h3>
                 <div className="space-y-3">
                   {flowSteps.map((step, index) => (
