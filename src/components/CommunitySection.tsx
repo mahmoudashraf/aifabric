@@ -39,27 +39,24 @@ const CommunitySection = () => {
             </h2>
           </motion.div>
 
-          {/* GitHub Stats */}
+          {/* GitHub Actions */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="mb-12 flex flex-wrap justify-center gap-8"
+            className="mb-12 flex flex-wrap justify-center gap-4"
           >
             <div className="flex items-center gap-3 rounded-xl border border-border bg-card px-6 py-4 shadow-card">
               <Star className="h-6 w-6 text-yellow-500" fill="currentColor" />
-              <span className="text-2xl font-bold text-foreground">2.5K</span>
-              <span className="text-muted-foreground">Stars</span>
+              <span className="text-muted-foreground">Star us on GitHub</span>
             </div>
             <div className="flex items-center gap-3 rounded-xl border border-border bg-card px-6 py-4 shadow-card">
               <Eye className="h-6 w-6 text-primary" />
-              <span className="text-2xl font-bold text-foreground">180</span>
-              <span className="text-muted-foreground">Watching</span>
+              <span className="text-muted-foreground">Watch for updates</span>
             </div>
             <div className="flex items-center gap-3 rounded-xl border border-border bg-card px-6 py-4 shadow-card">
               <GitFork className="h-6 w-6 text-accent" />
-              <span className="text-2xl font-bold text-foreground">45</span>
-              <span className="text-muted-foreground">Forks</span>
+              <span className="text-muted-foreground">Fork & contribute</span>
             </div>
           </motion.div>
 

@@ -1,12 +1,13 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Loader2, CheckCircle, Mail, ShieldCheck, BellOff, Package } from "lucide-react";
+import { Loader2, CheckCircle, Mail, ShieldCheck, BellOff, Package, Users } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const MODULE_OPTIONS = [
   { id: "ai-core", label: "AI Core", description: "Embeddings, Search, RAG" },
@@ -28,6 +29,17 @@ const RegistrationSection = () => {
   const [selectedModules, setSelectedModules] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [registrationCount, setRegistrationCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchCount = async () => {
+      const { count } = await supabase
+        .from("registrations")
+        .select("*", { count: "exact", head: true });
+      setRegistrationCount(count);
+    };
+    fetchCount();
+  }, [isSubmitted]);
 
   const handleModuleToggle = (moduleId: string) => {
     setSelectedModules((prev) =>
@@ -50,10 +62,21 @@ const RegistrationSection = () => {
 
     setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    const { error } = await supabase
+      .from("registrations")
+      .insert({ email });
     
     setIsSubmitting(false);
+    
+    if (error) {
+      if (error.code === "23505") {
+        toast.error("This email is already registered!");
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
+      return;
+    }
+    
     setIsSubmitted(true);
     toast.success("Thank you! We'll keep you updated.");
   };
@@ -184,14 +207,19 @@ const RegistrationSection = () => {
           </motion.form>
 
           {/* Social Proof */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="mt-6 text-center text-sm text-muted-foreground"
-          >
-            Over <span className="font-semibold text-foreground">500 developers</span> already registered
-          </motion.p>
+          {registrationCount !== null && registrationCount > 0 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={isInView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="mt-6 flex items-center justify-center gap-2 text-sm text-muted-foreground"
+            >
+              <Users className="h-4 w-4 text-primary" />
+              <span>
+                <span className="font-semibold text-foreground">{registrationCount}</span> developer{registrationCount !== 1 ? "s" : ""} already registered
+              </span>
+            </motion.div>
+          )}
         </div>
       </div>
     </section>
