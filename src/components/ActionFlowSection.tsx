@@ -4,18 +4,24 @@ import { useRef } from "react";
 import { Highlight, themes } from "prism-react-renderer";
 import { ArrowDown, CheckCircle, MessageSquare, Shield, Zap } from "lucide-react";
 
-const actionHandlerCode = `@Component
-public class ActionHandlerImpl implements ActionHandler {
-    @Autowired
-    private SubscriptionService subscriptionService;
+const actionHandlerCode = `@Service
+public class CancelSubscriptionHandler 
+    implements ActionHandler {
     
     @Override
-    public ActionResult executeAction(...) {
-        switch(actionName) {
-            case "cancel_subscription":
-                subscriptionService.cancel(...);
-                return ActionResult.success(...);
-        }
+    public AIActionMetaData getActionMetadata() {
+        return AIActionMetaData.builder()
+            .name("cancel_subscription")
+            .description("Cancel user subscription")
+            .build();
+    }
+    
+    @Override
+    public ActionResult executeAction(
+            Map<String, Object> params, 
+            String userId) {
+        // YOUR cancel logic here
+        return ActionResult.success("Cancelled");
     }
 }`;
 
@@ -109,7 +115,9 @@ const ActionFlowSection = () => {
                       {tokens.map((line, i) => {
                         const lineContent = line.map(t => t.content).join('');
                         const isHighlightedLine = lineContent.includes('ActionHandler') || 
+                          lineContent.includes('getActionMetadata') ||
                           lineContent.includes('executeAction') ||
+                          lineContent.includes('AIActionMetaData') ||
                           lineContent.includes('ActionResult');
                         
                         return (
@@ -125,8 +133,9 @@ const ActionFlowSection = () => {
                               {line.map((token, key) => {
                                 const isHighlight = token.content.includes('ActionHandler') || 
                                   token.content.includes('executeAction') ||
-                                  token.content.includes('ActionResult') ||
-                                  token.content.includes('subscriptionService');
+                                  token.content.includes('getActionMetadata') ||
+                                  token.content.includes('AIActionMetaData') ||
+                                  token.content.includes('ActionResult');
                                 
                                 const tokenProps = getTokenProps({ token });
                                 
