@@ -8,7 +8,13 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Loader2, CheckCircle, Mail, ShieldCheck, BellOff, Package, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { z } from "zod";
 
+const emailSchema = z.string()
+  .trim()
+  .min(1, "Email is required")
+  .max(255, "Email must be less than 255 characters")
+  .email("Please enter a valid email address");
 const MODULE_OPTIONS = [
   { id: "ai-core", label: "AI Core", description: "Embeddings, Search, RAG" },
   { id: "behavior-analytics", label: "Behavior Analytics", description: "Churn, Sentiment" },
@@ -50,8 +56,10 @@ const RegistrationSection = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email) {
-      toast.error("Please enter your email address");
+    // Validate email with Zod
+    const emailValidation = emailSchema.safeParse(email);
+    if (!emailValidation.success) {
+      toast.error(emailValidation.error.errors[0].message);
       return;
     }
     
@@ -60,11 +68,13 @@ const RegistrationSection = () => {
       return;
     }
 
+    const validatedEmail = emailValidation.data;
+
     setIsSubmitting(true);
     
     const { error } = await supabase
       .from("registrations")
-      .insert({ email });
+      .insert({ email: validatedEmail });
     
     setIsSubmitting(false);
     
