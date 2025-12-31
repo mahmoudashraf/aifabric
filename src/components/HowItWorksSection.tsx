@@ -27,8 +27,23 @@ public class Product {
 }`,
   },
   {
+    id: "config",
+    label: "3. Configure AI Fabric",
+    language: "yaml",
+    code: `ai-entities:
+  product:
+    features: ["embedding", "search"]
+    enable-search: true
+    auto-process: true
+    auto-embedding: true
+    indexable: true
+    searchable-fields:
+      - name: name
+      - name: description`,
+  },
+  {
     id: "search",
-    label: "3. Search Semantically",
+    label: "4. Search Semantically",
     language: "java",
     code: `@Autowired
 private AISearchService searchService;
@@ -60,7 +75,7 @@ const HowItWorksSection = () => {
             className="mb-12 text-center"
           >
             <h2 className="mb-4 text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl">
-              From Zero to AI in 3 Steps
+              From Zero to AI in 4 Steps
             </h2>
             <p className="text-lg text-muted-foreground">
               It really is this simple. No configuration. No boilerplate.
