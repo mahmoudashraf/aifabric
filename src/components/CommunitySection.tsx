@@ -1,18 +1,21 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
-import { Star, Eye, GitFork, Github, MessageCircle, Quote } from "lucide-react";
+import { Star, Eye, GitFork, Github, MessageCircle, Quote, Code2, Rocket, Lightbulb, LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const testimonials = [
+const testimonials: { quote: string; icon: LucideIcon }[] = [
   {
     quote: "Finally! Someone solving the AI infrastructure problem properly. This is what Spring Boot did for web apps.",
+    icon: Code2,
   },
   {
     quote: "We were about to spend 6 months building this. Now we're just waiting for v1.0.",
+    icon: Rocket,
   },
   {
     quote: "The annotation-driven approach is genius. This is how AI integration should be.",
+    icon: Lightbulb,
   },
 ];
 
@@ -68,6 +71,9 @@ const CommunitySection = () => {
                 className="relative rounded-2xl border border-border bg-card p-6 shadow-card"
               >
                 <Quote className="absolute right-6 top-6 h-8 w-8 text-primary/10" />
+                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                  <testimonial.icon className="h-5 w-5 text-primary" />
+                </div>
                 <p className="text-foreground">{testimonial.quote}</p>
               </motion.div>
             ))}
