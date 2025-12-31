@@ -75,10 +75,10 @@ const HowItWorksSection = () => {
             className="mb-12 text-center"
           >
             <h2 className="mb-4 text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl">
-              From Zero to AI in 4 Steps
+              From Database to AI Context in 4 Steps
             </h2>
             <p className="text-lg text-muted-foreground">
-              It really is this simple. No configuration. No boilerplate.
+              Make your data semantically searchable with automatic embeddings and RAG support
             </p>
           </motion.div>
 
