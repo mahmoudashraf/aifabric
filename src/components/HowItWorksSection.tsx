@@ -59,7 +59,7 @@ AISearchResponse results =
 const HowItWorksSection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const [activeTab, setActiveTab] = useState(tabs[0].id);
+  const [activeTab, setActiveTab] = useState(tabs[1].id);
 
   const activeTabData = tabs.find((tab) => tab.id === activeTab)!;
 
