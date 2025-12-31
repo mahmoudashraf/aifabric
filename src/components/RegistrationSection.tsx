@@ -116,7 +116,7 @@ const RegistrationSection = () => {
               Get Early Access
             </h2>
             <p className="text-lg text-muted-foreground">
-              Register your interest for updates, early access, and priority consideration for the Pro License
+              Register now to receive updates, early access, and an <span className="font-semibold text-accent">exclusive discounted Pro Developer License</span>
             </p>
           </motion.div>
 
