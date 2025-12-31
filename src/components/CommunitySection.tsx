@@ -1,21 +1,18 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
-import { Star, Eye, GitFork, Github, Twitter, MessageCircle, Quote } from "lucide-react";
+import { Star, Eye, GitFork, Github, MessageCircle, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const testimonials = [
   {
     quote: "Finally! Someone solving the AI infrastructure problem properly. This is what Spring Boot did for web apps.",
-    author: "@senior_dev_maria",
   },
   {
     quote: "We were about to spend 6 months building this. Now we're just waiting for v1.0.",
-    author: "@startup_founder_alex",
   },
   {
     quote: "The annotation-driven approach is genius. This is how AI integration should be.",
-    author: "@tech_lead_james",
   },
 ];
 
@@ -64,15 +61,14 @@ const CommunitySection = () => {
           <div className="mb-12 grid gap-6 md:grid-cols-3">
             {testimonials.map((testimonial, index) => (
               <motion.div
-                key={testimonial.author}
+                key={index}
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
                 className="relative rounded-2xl border border-border bg-card p-6 shadow-card"
               >
                 <Quote className="absolute right-6 top-6 h-8 w-8 text-primary/10" />
-                <p className="mb-4 text-foreground">{testimonial.quote}</p>
-                <p className="text-sm font-medium text-primary">{testimonial.author}</p>
+                <p className="text-foreground">{testimonial.quote}</p>
               </motion.div>
             ))}
           </div>
@@ -88,12 +84,6 @@ const CommunitySection = () => {
               <a href="https://github.com/mahmoudashraf/AI-Fabric-Framework" target="_blank" rel="noopener noreferrer">
                 <Github className="h-5 w-5" />
                 Star on GitHub
-              </a>
-            </Button>
-            <Button variant="hero-outline" size="lg" asChild>
-              <a href="#" target="_blank" rel="noopener noreferrer">
-                <Twitter className="h-5 w-5" />
-                Follow on Twitter
               </a>
             </Button>
             <Button variant="hero-outline" size="lg" asChild>
