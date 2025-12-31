@@ -33,10 +33,10 @@ const RegistrationSection = () => {
 
   useEffect(() => {
     const fetchCount = async () => {
-      const { count } = await supabase
-        .from("registrations")
-        .select("*", { count: "exact", head: true });
-      setRegistrationCount(count);
+      const { data, error } = await supabase.rpc("get_registration_count");
+      if (!error && data !== null) {
+        setRegistrationCount(data);
+      }
     };
     fetchCount();
   }, [isSubmitted]);
