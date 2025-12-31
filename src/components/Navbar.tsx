@@ -1,10 +1,22 @@
 import { motion } from "framer-motion";
-import { Github, Star, Menu, X } from "lucide-react";
+import { Github, Menu, X, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [registrationCount, setRegistrationCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchCount = async () => {
+      const { count } = await supabase
+        .from("registrations")
+        .select("*", { count: "exact", head: true });
+      setRegistrationCount(count);
+    };
+    fetchCount();
+  }, []);
 
   return (
     <motion.nav
@@ -44,12 +56,19 @@ const Navbar = () => {
             <Button variant="github" size="sm" asChild>
               <a href="https://github.com/mahmoudashraf/AI-Fabric-Framework" target="_blank" rel="noopener noreferrer">
                 <Github className="h-4 w-4" />
-                <Star className="h-3.5 w-3.5" />
-                <span>2.5K</span>
+                Star on GitHub
               </a>
             </Button>
             <Button variant="hero" size="sm" asChild>
-              <a href="#register">Register Interest</a>
+              <a href="#register" className="flex items-center gap-2">
+                Register Interest
+                {registrationCount !== null && registrationCount > 0 && (
+                  <span className="flex items-center gap-1 rounded-full bg-primary-foreground/20 px-2 py-0.5 text-xs">
+                    <Users className="h-3 w-3" />
+                    {registrationCount}
+                  </span>
+                )}
+              </a>
             </Button>
           </div>
 
@@ -86,12 +105,18 @@ const Navbar = () => {
                 <Button variant="github" size="sm" asChild>
                   <a href="https://github.com/mahmoudashraf/AI-Fabric-Framework" target="_blank" rel="noopener noreferrer">
                     <Github className="h-4 w-4" />
-                    <Star className="h-3.5 w-3.5" />
-                    <span>2.5K</span>
+                    Star on GitHub
                   </a>
                 </Button>
                 <Button variant="hero" size="sm" asChild>
-                  <a href="#register">Register Interest</a>
+                  <a href="#register" className="flex items-center gap-2">
+                    Register
+                    {registrationCount !== null && registrationCount > 0 && (
+                      <span className="flex items-center gap-1 rounded-full bg-primary-foreground/20 px-2 py-0.5 text-xs">
+                        {registrationCount}
+                      </span>
+                    )}
+                  </a>
                 </Button>
               </div>
             </div>

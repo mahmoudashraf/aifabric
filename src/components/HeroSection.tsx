@@ -1,9 +1,22 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Github, Star, Zap, ArrowRight } from "lucide-react";
+import { Github, Zap, ArrowRight, Users } from "lucide-react";
 import TypewriterCode from "./TypewriterCode";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const HeroSection = () => {
+  const [registrationCount, setRegistrationCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchCount = async () => {
+      const { count } = await supabase
+        .from("registrations")
+        .select("*", { count: "exact", head: true });
+      setRegistrationCount(count);
+    };
+    fetchCount();
+  }, []);
   return (
     <section className="relative min-h-screen overflow-hidden bg-gradient-hero pt-16">
       {/* Background Glow */}
@@ -88,11 +101,15 @@ const HeroSection = () => {
             transition={{ duration: 0.5, delay: 0.6 }}
             className="mt-12 flex items-center justify-center gap-6 text-sm text-muted-foreground"
           >
-            <div className="flex items-center gap-2">
-              <Star className="h-4 w-4 text-yellow-500" fill="currentColor" />
-              <span className="font-medium">2.5K stars on GitHub</span>
-            </div>
-            <div className="h-4 w-px bg-border" />
+            {registrationCount !== null && registrationCount > 0 && (
+              <div className="flex items-center gap-2">
+                <Users className="h-4 w-4 text-primary" />
+                <span className="font-medium">{registrationCount} developers registered</span>
+              </div>
+            )}
+            {registrationCount !== null && registrationCount > 0 && (
+              <div className="h-4 w-px bg-border" />
+            )}
             <div className="flex items-center gap-2">
               <div className="h-2 w-2 animate-pulse rounded-full bg-accent" />
               <span className="font-medium">Active Development</span>
