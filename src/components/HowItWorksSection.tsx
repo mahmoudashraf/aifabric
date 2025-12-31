@@ -104,18 +104,43 @@ const HowItWorksSection = () => {
                     className={`${className} overflow-x-auto font-mono text-sm leading-relaxed sm:text-base`}
                     style={{ ...style, background: "transparent" }}
                   >
-                    {tokens.map((line, i) => (
-                      <div key={i} {...getLineProps({ line })} className="flex">
-                        <span className="mr-4 select-none text-muted-foreground/40">
-                          {(i + 1).toString().padStart(2, "0")}
-                        </span>
-                        <span>
-                          {line.map((token, key) => (
-                            <span key={key} {...getTokenProps({ token })} />
-                          ))}
-                        </span>
-                      </div>
-                    ))}
+                    {tokens.map((line, i) => {
+                      const lineContent = line.map(t => t.content).join('');
+                      const isHighlightedLine = lineContent.includes('@AICapable');
+                      
+                      return (
+                        <div 
+                          key={i} 
+                          {...getLineProps({ line })} 
+                          className={`flex ${isHighlightedLine ? 'bg-primary/20 -mx-4 px-4 sm:-mx-6 sm:px-6 rounded' : ''}`}
+                        >
+                          <span className="mr-4 select-none text-muted-foreground/40">
+                            {(i + 1).toString().padStart(2, "0")}
+                          </span>
+                          <span>
+                            {line.map((token, key) => {
+                              const isAICapable = token.content.includes('@AICapable') || 
+                                (lineContent.includes('@AICapable') && (token.content.includes('entityType') || token.content.includes('"product"')));
+                              
+                              const tokenProps = getTokenProps({ token });
+                              
+                              if (isAICapable) {
+                                return (
+                                  <span 
+                                    key={key} 
+                                    {...tokenProps}
+                                    className="text-accent font-semibold"
+                                    style={{ color: 'hsl(152, 69%, 46%)' }}
+                                  />
+                                );
+                              }
+                              
+                              return <span key={key} {...tokenProps} />;
+                            })}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </pre>
                 )}
               </Highlight>
