@@ -121,7 +121,9 @@ const HowItWorksSection = () => {
                   >
                     {tokens.map((line, i) => {
                       const lineContent = line.map(t => t.content).join('');
-                      const isHighlightedLine = lineContent.includes('@AICapable');
+                      const isHighlightedLine = lineContent.includes('@AICapable') || 
+                        lineContent.includes('AISearchService') || 
+                        lineContent.includes('searchService.search');
                       
                       return (
                         <div 
@@ -137,9 +139,13 @@ const HowItWorksSection = () => {
                               const isAICapable = token.content.includes('@AICapable') || 
                                 (lineContent.includes('@AICapable') && (token.content.includes('entityType') || token.content.includes('"product"')));
                               
+                              const isSearchHighlight = token.content.includes('AISearchService') || 
+                                token.content.includes('searchService') ||
+                                token.content.includes('search');
+                              
                               const tokenProps = getTokenProps({ token });
                               
-                              if (isAICapable) {
+                              if (isAICapable || isSearchHighlight) {
                                 return (
                                   <span 
                                     key={key} 
