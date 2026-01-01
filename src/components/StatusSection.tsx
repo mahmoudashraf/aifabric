@@ -51,6 +51,19 @@ const StatusSection = () => {
             <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
               AI Fabric Framework is under active development. Here's what's happening:
             </p>
+            
+            {/* Timeline Badge */}
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-4">
+              <div className="flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm font-medium text-accent">
+                <span className="h-2 w-2 rounded-full bg-accent" />
+                Started Q4 2025
+              </div>
+              <div className="text-muted-foreground">→</div>
+              <div className="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
+                Releasing Q1 2026
+              </div>
+            </div>
           </motion.div>
 
           {/* Status Grid */}
