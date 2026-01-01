@@ -2,12 +2,14 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 import { BookOpen, Clock, ExternalLink } from "lucide-react";
+import storyPreview from "@/assets/story-preview.png";
 
 const stories = [
   {
     title: "AI Fabric: Why Adding AI to Your App Takes 5 Months Today (And 5 Minutes in 2026)",
     description: "The Spring Boot framework being built to solve the AI infrastructure problem every dev team faces. A story that every development team knows too well.",
     url: "https://medium.com/@mahmoudashraf/ai-fabric-why-adding-ai-to-your-app-takes-5-months-today-and-5-minutes-in-2026-5564a2cff9ea",
+    image: storyPreview,
     readTime: "12 min read",
     date: "Dec 2025",
   },
@@ -53,27 +55,36 @@ const MediumStoriesSection = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.1 + index * 0.1 }}
-                className="group block rounded-2xl border border-border bg-card p-6 transition-all hover:border-primary/50 hover:shadow-lg sm:p-8"
+                className="group block overflow-hidden rounded-2xl border border-border bg-card transition-all hover:border-primary/50 hover:shadow-lg"
               >
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div className="flex-1">
-                    <h3 className="mb-3 text-xl font-bold text-foreground transition-colors group-hover:text-primary sm:text-2xl">
-                      {story.title}
-                    </h3>
-                    <p className="mb-4 text-muted-foreground">
-                      {story.description}
-                    </p>
-                    <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-4 w-4" />
-                        {story.readTime}
-                      </span>
-                      <span>{story.date}</span>
-                    </div>
+                <div className="flex flex-col lg:flex-row">
+                  <div className="aspect-video w-full overflow-hidden lg:aspect-auto lg:w-80 lg:flex-shrink-0">
+                    <img
+                      src={story.image}
+                      alt={story.title}
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
                   </div>
-                  <div className="flex-shrink-0">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 transition-colors group-hover:bg-primary/20">
-                      <ExternalLink className="h-5 w-5 text-primary" />
+                  <div className="flex flex-1 flex-col justify-between p-6 sm:p-8">
+                    <div>
+                      <h3 className="mb-3 text-xl font-bold text-foreground transition-colors group-hover:text-primary sm:text-2xl">
+                        {story.title}
+                      </h3>
+                      <p className="mb-4 text-muted-foreground">
+                        {story.description}
+                      </p>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-4 w-4" />
+                          {story.readTime}
+                        </span>
+                        <span>{story.date}</span>
+                      </div>
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 transition-colors group-hover:bg-primary/20">
+                        <ExternalLink className="h-5 w-5 text-primary" />
+                      </div>
                     </div>
                   </div>
                 </div>
