@@ -9,6 +9,7 @@ import FeaturesSection from "@/components/FeaturesSection";
 import RegistrationSection from "@/components/RegistrationSection";
 import OpenSourceSection from "@/components/OpenSourceSection";
 import StatusSection from "@/components/StatusSection";
+import MediumStoriesSection from "@/components/MediumStoriesSection";
 import CommunitySection from "@/components/CommunitySection";
 import Footer from "@/components/Footer";
 
@@ -27,6 +28,7 @@ const Index = () => {
         <RegistrationSection />
         <OpenSourceSection />
         <StatusSection />
+        <MediumStoriesSection />
         <CommunitySection />
       </main>
       <Footer />
