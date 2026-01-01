@@ -116,7 +116,7 @@ const HowItWorksSection = () => {
               >
                 {({ className, style, tokens, getLineProps, getTokenProps }) => (
                   <pre
-                    className={`${className} overflow-x-auto font-mono text-sm leading-relaxed sm:text-base`}
+                    className={`${className} font-mono text-xs sm:text-sm leading-relaxed whitespace-pre-wrap break-all`}
                     style={{ ...style, background: "transparent" }}
                   >
                     {tokens.map((line, i) => {
