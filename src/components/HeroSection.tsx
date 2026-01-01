@@ -38,7 +38,7 @@ const HeroSection = () => {
             className="mb-6 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 text-sm font-medium text-accent"
           >
             <Zap className="h-4 w-4" />
-            <span>Open Source Spring Boot Framework</span>
+            <span>The AI Layer for Spring Boot</span>
           </motion.div>
 
           {/* Main Headline */}
