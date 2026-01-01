@@ -60,7 +60,7 @@ const HeroSection = () => {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground sm:text-xl"
           >
-            Add semantic search, embeddings, RAG, and behavioral analytics to your Spring Boot app with one annotation.
+            AI Fabric adds semantic search, embeddings, RAG, and behavioral analytics to your Spring Boot app with one annotation.
           </motion.p>
 
           {/* Code Example */}
