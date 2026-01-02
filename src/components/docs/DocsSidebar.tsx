@@ -37,7 +37,7 @@ const docSections: DocSection[] = [
     icon: <Sparkles className="h-4 w-4" />,
     items: [
       { title: "Introduction", href: "/docs" },
-      { title: "Quick Start", href: "/docs/quickstart", badge: "Soon" },
+      { title: "Quick Start", href: "/docs/quickstart", badge: "New" },
       { title: "Installation", href: "/docs/installation", badge: "Soon" },
     ],
   },
