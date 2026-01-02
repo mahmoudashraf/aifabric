@@ -47,7 +47,8 @@ const docSections: DocSection[] = [
     items: [
       { title: "The Orchestrator Story", href: "/docs/orchestrator_story" },
       { title: "The Indexing Story", href: "/docs/indexing_story" },
-      { title: "The Migration Story", href: "/docs/migration_story", badge: "New" },
+      { title: "The Migration Story", href: "/docs/migration_story" },
+      { title: "The Storage Story", href: "/docs/storage_story", badge: "New" },
       { title: "The RAG Story", href: "/docs/rag-story", badge: "Soon" },
       { title: "The Security Story", href: "/docs/security-story", badge: "Soon" },
     ],
@@ -58,7 +59,8 @@ const docSections: DocSection[] = [
     items: [
       { title: "Orchestrator - Full Guide", href: "/docs/guides/orchestrator" },
       { title: "Indexing - Full Guide", href: "/docs/guides/indexing" },
-      { title: "Migration - Full Guide", href: "/docs/guides/migration", badge: "New" },
+      { title: "Migration - Full Guide", href: "/docs/guides/migration" },
+      { title: "Storage - Full Guide", href: "/docs/guides/storage", badge: "New" },
     ],
   },
   {

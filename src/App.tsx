@@ -12,6 +12,8 @@ import IndexingStory from "./pages/docs/IndexingStory";
 import IndexingStrategiesFull from "./pages/docs/IndexingStrategiesFull";
 import MigrationStory from "./pages/docs/MigrationStory";
 import MigrationFull from "./pages/docs/MigrationFull";
+import StorageStory from "./pages/docs/StorageStory";
+import StorageFull from "./pages/docs/StorageFull";
 import { usePageTracking } from "./hooks/usePageTracking";
 
 const queryClient = new QueryClient();
@@ -37,6 +39,8 @@ const App = () => (
             <Route path="/docs/guides/indexing" element={<IndexingStrategiesFull />} />
             <Route path="/docs/migration_story" element={<MigrationStory />} />
             <Route path="/docs/guides/migration" element={<MigrationFull />} />
+            <Route path="/docs/storage_story" element={<StorageStory />} />
+            <Route path="/docs/guides/storage" element={<StorageFull />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
