@@ -56,6 +56,24 @@ export type Database = {
         }
         Relationships: []
       }
+      story_reactions: {
+        Row: {
+          created_at: string
+          id: string
+          story_slug: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          story_slug: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          story_slug?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

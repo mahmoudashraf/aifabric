@@ -5,6 +5,7 @@ import remarkGfm from "remark-gfm";
 import { Highlight, themes } from "prism-react-renderer";
 import DocsLayout from "@/components/docs/DocsLayout";
 import PageViewCounter from "@/components/PageViewCounter";
+import StoryLoveButton from "@/components/StoryLoveButton";
 import orchestratorStoryContent from "@/content/orchestrator-story-full.md?raw";
 
 const PAGE_TITLE = "The Orchestrator Story - AI Fabric Framework";
@@ -108,7 +109,10 @@ const OrchestratorStoryFull = () => {
                 The Orchestrator Story - Complete Guide
               </h1>
             </div>
-            <PageViewCounter />
+            <div className="flex items-center gap-3">
+              <StoryLoveButton storySlug="orchestrator_story" />
+              <PageViewCounter />
+            </div>
           </div>
         </section>
 
