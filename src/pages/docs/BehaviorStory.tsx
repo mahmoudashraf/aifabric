@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -518,10 +519,18 @@ const BehaviorStory = () => {
             <div className="absolute inset-0 bg-gradient-glow opacity-50" />
             <div className="py-12 relative">
               <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
-                <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
-                  <span className="text-2xl">🔮</span>
-                  User Story Series
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
+                    <span className="text-2xl">🔮</span>
+                    Behavior Analytics V1
+                  </span>
+                  <Link 
+                    to="/docs/behavior_story_v2"
+                    className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    View V2 (Narrative) →
+                  </Link>
+                </div>
                 <div className="flex items-center gap-3">
                   <StoryLoveButton storySlug="behavior-analytics-story" />
                   <PageViewCounter />

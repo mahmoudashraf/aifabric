@@ -84,38 +84,71 @@ const StoryLoveButton = ({ storySlug }: StoryLoveButtonProps) => {
   };
 
   const handleLove = async () => {
-    if (hasLoved) {
-      toast.info("You've already loved this story!");
-      return;
+    const wasLoved = hasLoved;
+    
+    setIsAnimating(true);
+    
+    // Optimistic update
+    if (wasLoved) {
+      setHasLoved(false);
+      setLoveCount((prev) => Math.max(0, prev - 1));
+      setLoveState(storySlug, false);
+    } else {
+      setHasLoved(true);
+      setLoveCount((prev) => prev + 1);
+      setLoveState(storySlug, true);
     }
 
-    setIsAnimating(true);
-    setHasLoved(true);
-    setLoveCount((prev) => prev + 1);
-    setLoveState(storySlug, true);
-
     try {
-      const { data, error } = await supabase.functions.invoke("story-reactions", {
-        body: { story_slug: storySlug },
-      });
+      if (wasLoved) {
+        // Remove reaction
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/story-reactions?story_slug=${encodeURIComponent(storySlug)}`,
+          {
+            method: "DELETE",
+            headers: {
+              "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-      if (error) {
-        throw error;
+        if (!response.ok) {
+          throw new Error("Failed to remove reaction");
+        }
+
+        const result = await response.json();
+        
+        // Update with actual count from server
+        if (result.count !== undefined) {
+          setLoveCount(result.count);
+        }
+
+        toast.success("Reaction removed");
+      } else {
+        // Add reaction
+        const { data, error } = await supabase.functions.invoke("story-reactions", {
+          body: { story_slug: storySlug },
+        });
+
+        if (error) {
+          throw error;
+        }
+
+        // Update with actual count from server
+        if (data?.count !== undefined) {
+          setLoveCount(data.count);
+        }
+
+        toast.success("Thanks for the love! ❤️");
       }
-
-      // Update with actual count from server
-      if (data?.count !== undefined) {
-        setLoveCount(data.count);
-      }
-
-      toast.success("Thanks for the love! ❤️");
     } catch (error) {
-      console.error("Error adding love:", error);
+      console.error(`Error ${wasLoved ? "removing" : "adding"} love:`, error);
       // Revert on error
-      setHasLoved(false);
-      setLoveCount((prev) => prev - 1);
-      setLoveState(storySlug, false);
-      toast.error("Failed to save your love. Please try again.");
+      setHasLoved(wasLoved);
+      setLoveCount((prev) => wasLoved ? prev + 1 : Math.max(0, prev - 1));
+      setLoveState(storySlug, wasLoved);
+      toast.error(`Failed to ${wasLoved ? "remove" : "save"} your reaction. Please try again.`);
     } finally {
       setTimeout(() => setIsAnimating(false), 600);
     }

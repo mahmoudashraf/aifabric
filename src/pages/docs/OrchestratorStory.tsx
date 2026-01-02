@@ -198,10 +198,18 @@ const OrchestratorStory = () => {
           <div className="absolute inset-0 bg-gradient-glow opacity-50" />
           <div className="px-6 py-16 relative">
             <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
-              <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
-                <span className="text-2xl">🎭</span>
-                User Story Series
-              </span>
+              <div className="flex items-center gap-3">
+                <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
+                  <span className="text-2xl">🎭</span>
+                  Orchestrator V1
+                </span>
+                <Link 
+                  to="/docs/orchestrator_story_v2"
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  View V2 (Narrative) →
+                </Link>
+              </div>
               <div className="flex items-center gap-3">
                 <StoryLoveButton storySlug="orchestrator_story" />
                 <PageViewCounter />

@@ -16,9 +16,21 @@ const docCategories = [
         status: "available",
       },
       {
+        title: "Orchestrator Story V2 (Narrative)",
+        description: "The 3 AM call that changed everything—security and trust",
+        href: "/docs/orchestrator_story_v2",
+        status: "available",
+      },
+      {
         title: "The RAG Story",
         description: "Building intelligent search that actually understands",
         href: "/docs/rag_story",
+        status: "available",
+      },
+      {
+        title: "RAG Story V2 (Narrative)",
+        description: "The $47.23 that almost cost everything",
+        href: "/docs/rag_story_v2",
         status: "available",
       },
       {
@@ -28,9 +40,21 @@ const docCategories = [
         status: "available",
       },
       {
+        title: "Behavior Story V2 (Narrative)",
+        description: "The customer we almost lost—Jessica's journey",
+        href: "/docs/behavior_story_v2",
+        status: "available",
+      },
+      {
         title: "The Indexing Story",
         description: "Index 2000 entities per second efficiently",
         href: "/docs/indexing_story",
+        status: "available",
+      },
+      {
+        title: "Indexing Story V2 (Narrative)",
+        description: "The Black Friday that almost broke us—Sarah's story",
+        href: "/docs/indexing_story_v2",
         status: "available",
       },
       {
@@ -40,9 +64,33 @@ const docCategories = [
         status: "available",
       },
       {
+        title: "Storage Story V2 (Narrative)",
+        description: "The table that grew too big—a growth story",
+        href: "/docs/storage_story_v2",
+        status: "available",
+      },
+      {
+        title: "The Intent Extraction Story",
+        description: "How AI understands what users want—cleanly and elegantly",
+        href: "/docs/intent_story",
+        status: "available",
+      },
+      {
+        title: "Intent Story V2 (Narrative)",
+        description: "A storytelling approach to understanding intent extraction",
+        href: "/docs/intent_story_v2",
+        status: "available",
+      },
+      {
         title: "The Migration Story",
         description: "Zero-downtime migrations for enterprise systems",
         href: "/docs/migration_story",
+        status: "available",
+      },
+      {
+        title: "Migration Story V2 (Narrative)",
+        description: "The weekend that never was—a migration tale",
+        href: "/docs/migration_story_v2",
         status: "available",
       },
     ],
@@ -56,6 +104,12 @@ const docCategories = [
         title: "AI Core",
         description: "From 6 months to 5 minutes—one annotation for everything AI",
         href: "/docs/modules/core",
+        status: "available",
+      },
+      {
+        title: "AI Core V2 (Narrative)",
+        description: "The sprint that changed everything",
+        href: "/docs/core_story_v2",
         status: "available",
       },
       {

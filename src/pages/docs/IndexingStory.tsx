@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -512,9 +513,17 @@ const IndexingStrategiesStory = () => {
         <section className="border-b border-border/50 px-6 py-8 bg-gradient-to-br from-primary/5 via-transparent to-accent/5">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-400 mb-3">
-                ⚡ Performance Guide
-              </span>
+              <div className="flex items-center gap-3 mb-3">
+                <span className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-medium text-amber-400">
+                  ⚡ Performance Guide V1
+                </span>
+                <Link 
+                  to="/docs/indexing_story_v2"
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  View V2 (Narrative) →
+                </Link>
+              </div>
               <h1 className="text-2xl md:text-4xl font-bold text-foreground">
                 The Indexing Dilemma
               </h1>
