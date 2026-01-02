@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -6,6 +6,10 @@ import { Highlight, themes } from "prism-react-renderer";
 import DocsLayout from "@/components/docs/DocsLayout";
 import PageViewCounter from "@/components/PageViewCounter";
 import orchestratorStoryContent from "@/content/orchestrator-story-full.md?raw";
+
+const PAGE_TITLE = "The Orchestrator Story - AI Fabric Framework";
+const PAGE_DESCRIPTION = "Discover how AI Fabric Framework orchestrates AI agents like a conductor leads an orchestra. Learn the complete guide to building AI-powered applications.";
+const OG_IMAGE = "/images/orchestrator-story-og.png";
 
 const codeTheme = {
   ...themes.nightOwl,
@@ -40,6 +44,36 @@ const CodeBlock = ({ children, className }: { children: string; className?: stri
 };
 
 const OrchestratorStoryFull = () => {
+  useEffect(() => {
+    // Update document title
+    document.title = PAGE_TITLE;
+    
+    // Update or create meta tags
+    const updateMeta = (selector: string, attribute: string, value: string) => {
+      let element = document.querySelector(selector) as HTMLMetaElement;
+      if (!element) {
+        element = document.createElement("meta");
+        if (selector.includes("property=")) {
+          element.setAttribute("property", selector.match(/property="([^"]+)"/)?.[1] || "");
+        } else if (selector.includes("name=")) {
+          element.setAttribute("name", selector.match(/name="([^"]+)"/)?.[1] || "");
+        }
+        document.head.appendChild(element);
+      }
+      element.setAttribute(attribute, value);
+    };
+
+    updateMeta('meta[name="description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[property="og:title"]', "content", PAGE_TITLE);
+    updateMeta('meta[property="og:description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[property="og:image"]', "content", OG_IMAGE);
+    updateMeta('meta[property="og:type"]', "content", "article");
+    updateMeta('meta[name="twitter:title"]', "content", PAGE_TITLE);
+    updateMeta('meta[name="twitter:description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[name="twitter:image"]', "content", OG_IMAGE);
+    updateMeta('meta[name="twitter:card"]', "content", "summary_large_image");
+  }, []);
+
   return (
     <DocsLayout>
       <div className="min-h-screen">
