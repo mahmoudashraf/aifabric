@@ -12,7 +12,7 @@ const docCategories = [
       {
         title: "The Orchestrator Story",
         description: "Your AI's Bodyguard, Traffic Cop, and Mind Reader",
-        href: "/docs/orchestrator-story",
+        href: "/docs/orchestrator_story",
         status: "available",
       },
       {
