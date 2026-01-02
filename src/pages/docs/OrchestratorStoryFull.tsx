@@ -110,7 +110,7 @@ const OrchestratorStoryFull = () => {
               </h1>
             </div>
             <div className="flex items-center gap-3">
-              <StoryLoveButton storySlug="orchestrator_story" />
+              <StoryLoveButton storySlug="orchestrator_full_guide" />
               <PageViewCounter />
             </div>
           </div>
