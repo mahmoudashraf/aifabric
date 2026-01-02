@@ -17,6 +17,7 @@ import { Highlight, themes } from "prism-react-renderer";
 import { useEffect, useState } from "react";
 import DocsLayout from "@/components/docs/DocsLayout";
 import PageViewCounter from "@/components/PageViewCounter";
+import StoryLoveButton from "@/components/StoryLoveButton";
 
 const PAGE_TITLE = "The Orchestrator Story - AI Fabric Framework";
 const PAGE_DESCRIPTION =
@@ -201,7 +202,10 @@ const OrchestratorStory = () => {
                 <span className="text-2xl">🎭</span>
                 User Story Series
               </span>
-              <PageViewCounter />
+              <div className="flex items-center gap-3">
+                <StoryLoveButton storySlug="orchestrator_story" />
+                <PageViewCounter />
+              </div>
             </div>
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
