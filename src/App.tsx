@@ -18,6 +18,7 @@ import RagStory from "./pages/docs/RagStory";
 import RagFull from "./pages/docs/RagFull";
 import BehaviorStory from "./pages/docs/BehaviorStory";
 import BehaviorFull from "./pages/docs/BehaviorFull";
+import CoreStory from "./pages/docs/CoreStory";
 import { usePageTracking } from "./hooks/usePageTracking";
 
 const queryClient = new QueryClient();
@@ -49,6 +50,7 @@ const App = () => (
             <Route path="/docs/guides/rag" element={<RagFull />} />
             <Route path="/docs/behavior_story" element={<BehaviorStory />} />
             <Route path="/docs/guides/behavior" element={<BehaviorFull />} />
+            <Route path="/docs/modules/core" element={<CoreStory />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

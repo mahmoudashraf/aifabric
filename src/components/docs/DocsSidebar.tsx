@@ -70,7 +70,7 @@ const docSections: DocSection[] = [
     title: "Core Modules",
     icon: <Database className="h-4 w-4" />,
     items: [
-      { title: "AI Core", href: "/docs/modules/core", badge: "Soon" },
+      { title: "AI Core", href: "/docs/modules/core" },
       { title: "Orchestrator", href: "/docs/modules/orchestrator", badge: "Soon" },
       { title: "Web Module", href: "/docs/modules/web", badge: "Soon" },
     ],
