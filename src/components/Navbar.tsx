@@ -1,9 +1,59 @@
 import { motion } from "framer-motion";
 import { Github, Menu, X, Users, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+
+interface HashLinkProps {
+  to: string;
+  children: React.ReactNode;
+  className?: string;
+  onClick?: () => void;
+}
+
+const HashLink = ({ to, children, className, onClick }: HashLinkProps) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      onClick?.();
+
+      // Check if it's a hash link to the home page
+      if (to.startsWith("/#")) {
+        const hash = to.substring(2); // Remove "/#"
+        
+        // If already on home page, just scroll
+        if (location.pathname === "/") {
+          const element = document.getElementById(hash);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        } else {
+          // Navigate to home then scroll
+          navigate("/");
+          setTimeout(() => {
+            const element = document.getElementById(hash);
+            if (element) {
+              element.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          }, 100);
+        }
+      } else {
+        navigate(to);
+      }
+    },
+    [to, navigate, location.pathname, onClick]
+  );
+
+  return (
+    <a href={to} onClick={handleClick} className={className}>
+      {children}
+    </a>
+  );
+};
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,6 +68,8 @@ const Navbar = () => {
     };
     fetchCount();
   }, []);
+
+  const closeMenu = () => setIsMenuOpen(false);
 
   return (
     <motion.nav
@@ -38,22 +90,22 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden items-center gap-6 md:flex">
-            <Link to="/#features" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+            <HashLink to="/#features" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               Features
-            </Link>
-            <Link to="/#modules" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+            </HashLink>
+            <HashLink to="/#modules" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               Modules
-            </Link>
-            <Link to="/#how-it-works" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+            </HashLink>
+            <HashLink to="/#how-it-works" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               How It Works
-            </Link>
+            </HashLink>
             <Link to="/docs" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               <BookOpen className="h-4 w-4" />
               Docs
             </Link>
-            <Link to="/#register" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+            <HashLink to="/#register" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               Register
-            </Link>
+            </HashLink>
           </div>
 
           {/* CTA Buttons */}
@@ -65,7 +117,7 @@ const Navbar = () => {
               </a>
             </Button>
             <Button variant="hero" size="sm" asChild>
-              <Link to="/#register" className="flex items-center gap-2">
+              <HashLink to="/#register" className="flex items-center gap-2">
                 Register Interest
                 {registrationCount !== null && registrationCount > 0 && (
                   <span className="flex items-center gap-1 rounded-full bg-primary-foreground/20 px-2 py-0.5 text-xs">
@@ -73,7 +125,7 @@ const Navbar = () => {
                     {registrationCount}
                   </span>
                 )}
-              </Link>
+              </HashLink>
             </Button>
           </div>
 
@@ -94,22 +146,22 @@ const Navbar = () => {
             className="border-t border-border py-4 md:hidden"
           >
             <div className="flex flex-col gap-4">
-              <Link to="/#features" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              <HashLink to="/#features" onClick={closeMenu} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 Features
-              </Link>
-              <Link to="/#modules" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              </HashLink>
+              <HashLink to="/#modules" onClick={closeMenu} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 Modules
-              </Link>
-              <Link to="/#how-it-works" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              </HashLink>
+              <HashLink to="/#how-it-works" onClick={closeMenu} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 How It Works
-              </Link>
-              <Link to="/docs" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              </HashLink>
+              <Link to="/docs" onClick={closeMenu} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 <BookOpen className="h-4 w-4" />
                 Docs
               </Link>
-              <Link to="/#register" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              <HashLink to="/#register" onClick={closeMenu} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 Register
-              </Link>
+              </HashLink>
               <div className="flex gap-3 pt-2">
                 <Button variant="github" size="sm" asChild>
                   <a href="https://github.com/mahmoudashraf/AI-Fabric-Framework" target="_blank" rel="noopener noreferrer">
@@ -118,14 +170,14 @@ const Navbar = () => {
                   </a>
                 </Button>
                 <Button variant="hero" size="sm" asChild>
-                  <Link to="/#register" className="flex items-center gap-2">
+                  <HashLink to="/#register" onClick={closeMenu} className="flex items-center gap-2">
                     Register
                     {registrationCount !== null && registrationCount > 0 && (
                       <span className="flex items-center gap-1 rounded-full bg-primary-foreground/20 px-2 py-0.5 text-xs">
                         {registrationCount}
                       </span>
                     )}
-                  </Link>
+                  </HashLink>
                 </Button>
               </div>
             </div>
