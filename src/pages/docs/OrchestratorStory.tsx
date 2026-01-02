@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Highlight, themes } from "prism-react-renderer";
 import { useState } from "react";
 import DocsLayout from "@/components/docs/DocsLayout";
+import PageViewCounter from "@/components/PageViewCounter";
 
 const codeTheme = {
   ...themes.nightOwl,
@@ -129,15 +130,18 @@ const OrchestratorStory = () => {
         <section className="relative overflow-hidden border-b border-border/50">
           <div className="absolute inset-0 bg-gradient-glow opacity-50" />
           <div className="px-6 py-16 relative">
+            <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+              <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
+                <span className="text-2xl">🎭</span>
+                Medium Story Series
+              </span>
+              <PageViewCounter />
+            </div>
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="max-w-4xl"
             >
-              <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-medium text-primary mb-6">
-                <span className="text-2xl">🎭</span>
-                Medium Story Series
-              </span>
               <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
                 The Orchestrator: Your AI's{" "}
                 <span className="text-gradient">Bodyguard, Traffic Cop,</span>{" "}

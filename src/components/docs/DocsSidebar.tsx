@@ -15,7 +15,8 @@ import {
   BarChart3,
   RefreshCw,
   MessageSquare,
-  Cpu
+  Cpu,
+  FileText
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -47,6 +48,13 @@ const docSections: DocSection[] = [
       { title: "The Orchestrator Story", href: "/docs/orchestrator-story" },
       { title: "The RAG Story", href: "/docs/rag-story", badge: "Soon" },
       { title: "The Security Story", href: "/docs/security-story", badge: "Soon" },
+    ],
+  },
+  {
+    title: "Detailed User Guides",
+    icon: <FileText className="h-4 w-4" />,
+    items: [
+      { title: "Orchestrator - Full Guide", href: "/docs/guides/orchestrator", badge: "New" },
     ],
   },
   {
