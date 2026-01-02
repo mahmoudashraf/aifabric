@@ -528,47 +528,50 @@ const StorageStory = () => {
           animate={{ opacity: 1, y: 0 }}
           className="py-8"
         >
-          {/* Hero Section */}
-          <header className="mb-12">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-              <HardDrive className="h-4 w-4" />
-              <span>Storage Strategies</span>
-              <span className="mx-2">•</span>
-              <span>12 min read</span>
-              <span className="mx-2">•</span>
-              <PageViewCounter />
+          {/* Hero */}
+          <section className="relative overflow-hidden border-b border-border/50 mb-12">
+            <div className="absolute inset-0 bg-gradient-glow opacity-50" />
+            <div className="py-12 relative">
+              <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+                <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
+                  <span className="text-2xl">💾</span>
+                  User Story Series
+                </span>
+                <div className="flex items-center gap-3">
+                  <StoryLoveButton storySlug="storage-strategy-story" />
+                  <PageViewCounter />
+                </div>
+              </div>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="max-w-4xl"
+              >
+                <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
+                  The Storage Dilemma:{" "}
+                  <span className="text-gradient">One Table vs Many Tables</span>
+                </h1>
+                <p className="text-lg text-muted-foreground max-w-2xl mb-8">
+                  How we built a flexible metadata storage system that auto-creates tables and adapts to your database. Part of the AI Fabric Framework series.
+                </p>
+                <div className="flex flex-wrap items-center gap-4">
+                  <div className="flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm text-accent">
+                    <Settings2 className="h-4 w-4" />
+                    Auto-Create Tables
+                  </div>
+                  <div className="flex items-center gap-2 rounded-full bg-secondary/10 px-4 py-2 text-sm text-secondary">
+                    <Database className="h-4 w-4" />
+                    Multi-Database
+                  </div>
+                  <div className="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm text-primary">
+                    <Zap className="h-4 w-4" />
+                    Strategy Pattern
+                  </div>
+                </div>
+              </motion.div>
             </div>
-            
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-4xl md:text-5xl font-bold text-foreground mb-6"
-            >
-              💾 The Storage Dilemma
-            </motion.h1>
-            
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-xl text-muted-foreground leading-relaxed"
-            >
-              <span className="text-primary font-semibold">One Table vs Many Tables:</span>{" "}
-              How we built a flexible metadata storage system that auto-creates tables and adapts to your database.
-            </motion.p>
+          </section>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="mt-6 p-4 rounded-xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20"
-            >
-              <p className="text-sm text-muted-foreground">
-                🚧 <strong className="text-foreground">Under active development</strong> | Q1 2026 release | Tested with 10M+ entities
-              </p>
-            </motion.div>
-          </header>
 
           {/* The Question */}
           <section className="mb-12">
