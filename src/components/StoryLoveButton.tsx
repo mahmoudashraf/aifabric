@@ -53,14 +53,6 @@ const StoryLoveButton = ({ storySlug }: StoryLoveButtonProps) => {
 
   const fetchLoveCount = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke("story-reactions", {
-        method: "GET",
-        body: undefined,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
       // For GET requests, we need to use query params
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/story-reactions?story_slug=${encodeURIComponent(storySlug)}`,
@@ -68,6 +60,7 @@ const StoryLoveButton = ({ storySlug }: StoryLoveButtonProps) => {
           method: "GET",
           headers: {
             "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            "Content-Type": "application/json",
           },
         }
       );
@@ -75,6 +68,8 @@ const StoryLoveButton = ({ storySlug }: StoryLoveButtonProps) => {
       if (response.ok) {
         const result = await response.json();
         setLoveCount(result.count || 0);
+      } else {
+        console.error("Failed to fetch love count:", response.status, response.statusText);
       }
     } catch (error) {
       console.error("Error fetching love count:", error);
