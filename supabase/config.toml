@@ -2,3 +2,6 @@ project_id = "loltolgoqsskniuyoohz"
 
 [functions.page-views]
 verify_jwt = false
+
+[functions.story-reactions]
+verify_jwt = false
