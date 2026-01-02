@@ -7,8 +7,14 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Documentation from "./pages/Documentation";
 import OrchestratorStory from "./pages/docs/OrchestratorStory";
+import { usePageTracking } from "./hooks/usePageTracking";
 
 const queryClient = new QueryClient();
+
+const PageTracker = ({ children }: { children: React.ReactNode }) => {
+  usePageTracking();
+  return <>{children}</>;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -16,13 +22,15 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/docs" element={<Documentation />} />
-          <Route path="/docs/orchestrator-story" element={<OrchestratorStory />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <PageTracker>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/docs" element={<Documentation />} />
+            <Route path="/docs/orchestrator-story" element={<OrchestratorStory />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </PageTracker>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
