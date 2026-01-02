@@ -45,7 +45,7 @@ const docSections: DocSection[] = [
     title: "User Stories",
     icon: <BookOpen className="h-4 w-4" />,
     items: [
-      { title: "The Orchestrator Story", href: "/docs/orchestrator-story" },
+      { title: "The Orchestrator Story", href: "/docs/orchestrator_story" },
       { title: "The RAG Story", href: "/docs/rag-story", badge: "Soon" },
       { title: "The Security Story", href: "/docs/security-story", badge: "Soon" },
     ],
