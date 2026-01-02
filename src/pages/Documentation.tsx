@@ -54,9 +54,9 @@ const docCategories = [
     items: [
       {
         title: "AI Core",
-        description: "RAG, semantic search, embedding generation",
+        description: "From 6 months to 5 minutes—one annotation for everything AI",
         href: "/docs/modules/core",
-        status: "coming-soon",
+        status: "available",
       },
       {
         title: "Orchestrator",
