@@ -45,33 +45,53 @@ const CodeBlock = ({ children, className }: { children: string; className?: stri
 
 const OrchestratorStoryFull = () => {
   useEffect(() => {
-    // Update document title
     document.title = PAGE_TITLE;
-    
-    // Update or create meta tags
+
+    const absoluteOgImage = `${window.location.origin}${OG_IMAGE}`;
+
     const updateMeta = (selector: string, attribute: string, value: string) => {
-      let element = document.querySelector(selector) as HTMLMetaElement;
+      let element = document.querySelector(selector) as HTMLMetaElement | null;
       if (!element) {
         element = document.createElement("meta");
         if (selector.includes("property=")) {
-          element.setAttribute("property", selector.match(/property="([^"]+)"/)?.[1] || "");
+          element.setAttribute(
+            "property",
+            selector.match(/property="([^"]+)"/)?.[1] || ""
+          );
         } else if (selector.includes("name=")) {
-          element.setAttribute("name", selector.match(/name="([^"]+)"/)?.[1] || "");
+          element.setAttribute(
+            "name",
+            selector.match(/name="([^"]+)"/)?.[1] || ""
+          );
         }
         document.head.appendChild(element);
       }
       element.setAttribute(attribute, value);
     };
 
+    const updateCanonical = (href: string) => {
+      let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+      if (!link) {
+        link = document.createElement("link");
+        link.setAttribute("rel", "canonical");
+        document.head.appendChild(link);
+      }
+      link.setAttribute("href", href);
+    };
+
     updateMeta('meta[name="description"]', "content", PAGE_DESCRIPTION);
     updateMeta('meta[property="og:title"]', "content", PAGE_TITLE);
     updateMeta('meta[property="og:description"]', "content", PAGE_DESCRIPTION);
-    updateMeta('meta[property="og:image"]', "content", OG_IMAGE);
+    updateMeta('meta[property="og:image"]', "content", absoluteOgImage);
     updateMeta('meta[property="og:type"]', "content", "article");
+    updateMeta('meta[property="og:url"]', "content", window.location.href);
+
     updateMeta('meta[name="twitter:title"]', "content", PAGE_TITLE);
     updateMeta('meta[name="twitter:description"]', "content", PAGE_DESCRIPTION);
-    updateMeta('meta[name="twitter:image"]', "content", OG_IMAGE);
+    updateMeta('meta[name="twitter:image"]', "content", absoluteOgImage);
     updateMeta('meta[name="twitter:card"]', "content", "summary_large_image");
+
+    updateCanonical(window.location.href);
   }, []);
 
   return (
