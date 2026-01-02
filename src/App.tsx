@@ -14,6 +14,8 @@ import MigrationStory from "./pages/docs/MigrationStory";
 import MigrationFull from "./pages/docs/MigrationFull";
 import StorageStory from "./pages/docs/StorageStory";
 import StorageFull from "./pages/docs/StorageFull";
+import RagStory from "./pages/docs/RagStory";
+import RagFull from "./pages/docs/RagFull";
 import { usePageTracking } from "./hooks/usePageTracking";
 
 const queryClient = new QueryClient();
@@ -41,6 +43,8 @@ const App = () => (
             <Route path="/docs/guides/migration" element={<MigrationFull />} />
             <Route path="/docs/storage_story" element={<StorageStory />} />
             <Route path="/docs/guides/storage" element={<StorageFull />} />
+            <Route path="/docs/rag_story" element={<RagStory />} />
+            <Route path="/docs/guides/rag" element={<RagFull />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
