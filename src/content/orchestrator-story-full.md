@@ -1,6 +1,6 @@
 # 🎭 The Orchestrator: Your AI's Bodyguard, Traffic Cop, and Mind Reader
 
-> **A Medium Story About Building Trust in AI Systems**  
+> **A User Story About Building Trust in AI Systems**  
 > *Part of the AI Fabric Framework series — production-ready AI infrastructure for Spring Boot*
 
 ---

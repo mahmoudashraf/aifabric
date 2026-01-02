@@ -199,7 +199,7 @@ const OrchestratorStory = () => {
             <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
               <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
                 <span className="text-2xl">🎭</span>
-                Medium Story Series
+                User Story Series
               </span>
               <PageViewCounter />
             </div>
