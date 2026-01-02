@@ -513,46 +513,49 @@ const BehaviorStory = () => {
           animate={{ opacity: 1, y: 0 }}
           className="py-8"
         >
-          {/* Hero Section */}
-          <header className="mb-12">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-              <Brain className="h-4 w-4" />
-              <span>User Story</span>
-              <span className="mx-2">•</span>
-              <span>Under Development</span>
-              <span className="mx-2">•</span>
-              <PageViewCounter />
+          {/* Hero */}
+          <section className="relative overflow-hidden border-b border-border/50 mb-12">
+            <div className="absolute inset-0 bg-gradient-glow opacity-50" />
+            <div className="py-12 relative">
+              <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+                <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
+                  <span className="text-2xl">🔮</span>
+                  User Story Series
+                </span>
+                <div className="flex items-center gap-3">
+                  <StoryLoveButton storySlug="behavior-analytics-story" />
+                  <PageViewCounter />
+                </div>
+              </div>
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="max-w-4xl"
+              >
+                <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
+                  Behavior Analytics:{" "}
+                  <span className="text-gradient">Saving Customers Before They Leave</span>
+                </h1>
+                <p className="text-lg text-muted-foreground max-w-2xl mb-8">
+                  How we predict churn with 87% accuracy using AI that reads behavior patterns—no surveys, just intelligence. Part of the AI Fabric Framework series.
+                </p>
+                <div className="flex flex-wrap items-center gap-4">
+                  <div className="flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm text-accent">
+                    <Target className="h-4 w-4" />
+                    87% Accuracy
+                  </div>
+                  <div className="flex items-center gap-2 rounded-full bg-secondary/10 px-4 py-2 text-sm text-secondary">
+                    <Users className="h-4 w-4" />
+                    10M+ Users
+                  </div>
+                  <div className="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm text-primary">
+                    <DollarSign className="h-4 w-4" />
+                    $840K Saved
+                  </div>
+                </div>
+              </motion.div>
             </div>
-            
-            <motion.h1 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-4xl md:text-5xl font-bold text-foreground mb-6"
-            >
-              🔮 Behavior Analytics
-            </motion.h1>
-            
-            <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-xl text-muted-foreground leading-relaxed"
-            >
-              Saving Customers Before They Leave—How we predict churn with 87% accuracy using AI that reads behavior patterns, not surveys.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="mt-6 p-4 rounded-xl bg-gradient-to-r from-primary/10 to-accent/10 border border-primary/20"
-            >
-              <p className="text-sm text-muted-foreground">
-                🚧 <strong className="text-foreground">Under active development</strong> | Q1 2026 release | Tested with 10M+ users internally
-              </p>
-            </motion.div>
-          </header>
+          </section>
 
           {/* Impact Metrics */}
           <ImpactMetrics />

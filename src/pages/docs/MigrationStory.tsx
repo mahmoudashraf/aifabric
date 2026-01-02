@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import DocsLayout from '@/components/docs/DocsLayout';
 import StoryLoveButton from '@/components/StoryLoveButton';
+import PageViewCounter from "@/components/PageViewCounter";
 import { Link } from 'react-router-dom';
 
 const fadeIn = {
@@ -419,27 +420,51 @@ export default function MigrationStory() {
         animate="animate"
         variants={staggerContainer}
       >
-        {/* Header */}
-        <motion.header variants={fadeIn} className="mb-12">
-          <div className="flex items-center gap-3 mb-4">
-            <Badge variant="outline" className="text-yellow-400 border-yellow-400/50">
-              🚧 Under Development
-            </Badge>
-            <Badge variant="secondary">Q1 2026</Badge>
-            <Badge variant="secondary">10M+ Tested</Badge>
+        {/* Hero */}
+        <section className="relative overflow-hidden border-b border-border/50 mb-12">
+          <div className="absolute inset-0 bg-gradient-glow opacity-50" />
+          <div className="py-12 relative">
+            <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+              <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
+                <span className="text-2xl">🔄</span>
+                User Story Series
+              </span>
+              <div className="flex items-center gap-3">
+                <StoryLoveButton storySlug="migration-module-story" />
+                <PageViewCounter />
+              </div>
+            </div>
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="max-w-4xl"
+            >
+              <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
+                The Migration Module:{" "}
+                <span className="text-gradient">Moving 10 Million Records</span>{" "}
+                While You Sleep
+              </h1>
+              <p className="text-lg text-muted-foreground max-w-2xl mb-8">
+                How we built a system that migrates massive datasets with pause/resume/cancel, 
+                zero downtime, and real-time ETA. Part of the AI Fabric Framework series.
+              </p>
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm text-accent">
+                  <RefreshCw className="h-4 w-4" />
+                  Checkpoint Recovery
+                </div>
+                <div className="flex items-center gap-2 rounded-full bg-secondary/10 px-4 py-2 text-sm text-secondary">
+                  <Database className="h-4 w-4" />
+                  10M+ Records
+                </div>
+                <div className="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm text-primary">
+                  <Zap className="h-4 w-4" />
+                  Zero Downtime
+                </div>
+              </div>
+            </motion.div>
           </div>
-          
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            🔄 The Migration Module
-          </h1>
-          <p className="text-xl text-muted-foreground mb-6">
-            Moving 10 Million Records While You Sleep
-          </p>
-          <p className="text-lg text-muted-foreground italic">
-            How we built a system that migrates massive datasets with pause/resume/cancel, 
-            zero downtime, and real-time ETA
-          </p>
-        </motion.header>
+        </section>
 
         {/* The Problem */}
         <motion.section variants={fadeIn} className="mb-12">
