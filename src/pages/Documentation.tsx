@@ -22,6 +22,12 @@ const docCategories = [
         status: "available",
       },
       {
+        title: "PII Detection Story",
+        description: "The data leak that never happened",
+        href: "/docs/pii_detection",
+        status: "available",
+      },
+      {
         title: "The RAG Story",
         description: "Building intelligent search that actually understands",
         href: "/docs/rag_story",
@@ -31,6 +37,12 @@ const docCategories = [
         title: "RAG Story V2 (Narrative)",
         description: "The $47.23 that almost cost everything",
         href: "/docs/rag_story_v2",
+        status: "available",
+      },
+      {
+        title: "RAG Story V3 (Realistic)",
+        description: "The support ticket that changed everything",
+        href: "/docs/rag_story_v3",
         status: "available",
       },
       {
@@ -55,6 +67,12 @@ const docCategories = [
         title: "Indexing Story V2 (Narrative)",
         description: "The Black Friday that almost broke us—Sarah's story",
         href: "/docs/indexing_story_v2",
+        status: "available",
+      },
+      {
+        title: "Custom Storage Indexing",
+        description: "When your database isn't SQL",
+        href: "/docs/custom_storage_indexing",
         status: "available",
       },
       {
@@ -91,6 +109,30 @@ const docCategories = [
         title: "Migration Story V2 (Narrative)",
         description: "The weekend that never was—a migration tale",
         href: "/docs/migration_story_v2",
+        status: "available",
+      },
+      {
+        title: "The Access Policy Story",
+        description: "Building fail-closed security into every request",
+        href: "/docs/access_policy_story",
+        status: "available",
+      },
+      {
+        title: "Access Policy Story V2 (Narrative)",
+        description: "The security audit that changed everything",
+        href: "/docs/access_policy_story_v2",
+        status: "available",
+      },
+      {
+        title: "PII Detection Story V1",
+        description: "Building privacy into every request",
+        href: "/docs/pii_detection_story_v1",
+        status: "available",
+      },
+      {
+        title: "PII Detection Story V2 (Narrative)",
+        description: "The GDPR audit that saved everything",
+        href: "/docs/pii_detection_story_v2",
         status: "available",
       },
     ],

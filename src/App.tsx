@@ -8,9 +8,11 @@ import NotFound from "./pages/NotFound";
 import Documentation from "./pages/Documentation";
 import OrchestratorStory from "./pages/docs/OrchestratorStory";
 import OrchestratorStoryV2 from "./pages/docs/OrchestratorStoryV2";
+import PIIDetectionStory from "./pages/docs/PIIDetectionStory";
 import OrchestratorStoryFull from "./pages/docs/OrchestratorStoryFull";
 import IndexingStory from "./pages/docs/IndexingStory";
 import IndexingStoryV2 from "./pages/docs/IndexingStoryV2";
+import CustomStorageIndexingStory from "./pages/docs/CustomStorageIndexingStory";
 import IndexingStrategiesFull from "./pages/docs/IndexingStrategiesFull";
 import MigrationStory from "./pages/docs/MigrationStory";
 import MigrationStoryV2 from "./pages/docs/MigrationStoryV2";
@@ -20,6 +22,7 @@ import StorageStoryV2 from "./pages/docs/StorageStoryV2";
 import StorageFull from "./pages/docs/StorageFull";
 import RagStory from "./pages/docs/RagStory";
 import RagStoryV2 from "./pages/docs/RagStoryV2";
+import RagStoryV3 from "./pages/docs/RagStoryV3";
 import RagFull from "./pages/docs/RagFull";
 import BehaviorStory from "./pages/docs/BehaviorStory";
 import BehaviorStoryV2 from "./pages/docs/BehaviorStoryV2";
@@ -32,6 +35,12 @@ import RelationshipQueryFull from "./pages/docs/RelationshipQueryFull";
 import IntentStory from "./pages/docs/IntentStory";
 import IntentStoryV2 from "./pages/docs/IntentStoryV2";
 import IntentFull from "./pages/docs/IntentFull";
+import AccessPolicyStory from "./pages/docs/AccessPolicyStory";
+import AccessPolicyStoryV2 from "./pages/docs/AccessPolicyStoryV2";
+import AccessPolicyFull from "./pages/docs/AccessPolicyFull";
+import PIIDetectionStoryV1 from "./pages/docs/PIIDetectionStoryV1";
+import PIIDetectionStoryV2 from "./pages/docs/PIIDetectionStoryV2";
+import PIIDetectionFull from "./pages/docs/PIIDetectionFull";
 import QuickStart from "./pages/docs/QuickStart";
 import { usePageTracking } from "./hooks/usePageTracking";
 
@@ -54,9 +63,11 @@ const App = () => (
             <Route path="/docs" element={<Documentation />} />
             <Route path="/docs/orchestrator_story" element={<OrchestratorStory />} />
             <Route path="/docs/orchestrator_story_v2" element={<OrchestratorStoryV2 />} />
+            <Route path="/docs/pii_detection" element={<PIIDetectionStory />} />
             <Route path="/docs/guides/orchestrator" element={<OrchestratorStoryFull />} />
             <Route path="/docs/indexing_story" element={<IndexingStory />} />
             <Route path="/docs/indexing_story_v2" element={<IndexingStoryV2 />} />
+            <Route path="/docs/custom_storage_indexing" element={<CustomStorageIndexingStory />} />
             <Route path="/docs/guides/indexing" element={<IndexingStrategiesFull />} />
             <Route path="/docs/migration_story" element={<MigrationStory />} />
             <Route path="/docs/migration_story_v2" element={<MigrationStoryV2 />} />
@@ -66,6 +77,7 @@ const App = () => (
             <Route path="/docs/guides/storage" element={<StorageFull />} />
             <Route path="/docs/rag_story" element={<RagStory />} />
             <Route path="/docs/rag_story_v2" element={<RagStoryV2 />} />
+            <Route path="/docs/rag_story_v3" element={<RagStoryV3 />} />
             <Route path="/docs/guides/rag" element={<RagFull />} />
             <Route path="/docs/behavior_story" element={<BehaviorStory />} />
             <Route path="/docs/behavior_story_v2" element={<BehaviorStoryV2 />} />
@@ -78,6 +90,14 @@ const App = () => (
             <Route path="/docs/intent_story" element={<IntentStory />} />
             <Route path="/docs/intent_story_v2" element={<IntentStoryV2 />} />
             <Route path="/docs/guides/intent" element={<IntentFull />} />
+            <Route path="/docs/access_policy_story" element={<AccessPolicyStory />} />
+            <Route path="/docs/access_policy_story_v2" element={<AccessPolicyStoryV2 />} />
+            <Route path="/docs/guides/access_policy" element={<AccessPolicyFull />} />
+            <Route path="/docs/access_policy_full" element={<AccessPolicyFull />} />
+            <Route path="/docs/pii_detection_story_v1" element={<PIIDetectionStoryV1 />} />
+            <Route path="/docs/pii_detection_story_v2" element={<PIIDetectionStoryV2 />} />
+            <Route path="/docs/guides/pii_detection" element={<PIIDetectionFull />} />
+            <Route path="/docs/pii_detection_full" element={<PIIDetectionFull />} />
             <Route path="/docs/quickstart" element={<QuickStart />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
