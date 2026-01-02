@@ -29,31 +29,31 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <a href="#" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-primary">
               <span className="text-lg font-bold text-primary-foreground">AI</span>
             </div>
             <span className="text-xl font-bold text-foreground">Fabric</span>
-          </a>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden items-center gap-6 md:flex">
-            <a href="#features" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+            <Link to="/#features" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               Features
-            </a>
-            <a href="#modules" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+            </Link>
+            <Link to="/#modules" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               Modules
-            </a>
-            <a href="#how-it-works" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+            </Link>
+            <Link to="/#how-it-works" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               How It Works
-            </a>
+            </Link>
             <Link to="/docs" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               <BookOpen className="h-4 w-4" />
               Docs
             </Link>
-            <a href="#register" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+            <Link to="/#register" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               Register
-            </a>
+            </Link>
           </div>
 
           {/* CTA Buttons */}
@@ -65,7 +65,7 @@ const Navbar = () => {
               </a>
             </Button>
             <Button variant="hero" size="sm" asChild>
-              <a href="#register" className="flex items-center gap-2">
+              <Link to="/#register" className="flex items-center gap-2">
                 Register Interest
                 {registrationCount !== null && registrationCount > 0 && (
                   <span className="flex items-center gap-1 rounded-full bg-primary-foreground/20 px-2 py-0.5 text-xs">
@@ -73,7 +73,7 @@ const Navbar = () => {
                     {registrationCount}
                   </span>
                 )}
-              </a>
+              </Link>
             </Button>
           </div>
 
@@ -94,22 +94,22 @@ const Navbar = () => {
             className="border-t border-border py-4 md:hidden"
           >
             <div className="flex flex-col gap-4">
-              <a href="#features" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              <Link to="/#features" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 Features
-              </a>
-              <a href="#modules" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              </Link>
+              <Link to="/#modules" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 Modules
-              </a>
-              <a href="#how-it-works" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              </Link>
+              <Link to="/#how-it-works" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 How It Works
-              </a>
+              </Link>
               <Link to="/docs" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 <BookOpen className="h-4 w-4" />
                 Docs
               </Link>
-              <a href="#register" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              <Link to="/#register" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 Register
-              </a>
+              </Link>
               <div className="flex gap-3 pt-2">
                 <Button variant="github" size="sm" asChild>
                   <a href="https://github.com/mahmoudashraf/AI-Fabric-Framework" target="_blank" rel="noopener noreferrer">
@@ -118,14 +118,14 @@ const Navbar = () => {
                   </a>
                 </Button>
                 <Button variant="hero" size="sm" asChild>
-                  <a href="#register" className="flex items-center gap-2">
+                  <Link to="/#register" className="flex items-center gap-2">
                     Register
                     {registrationCount !== null && registrationCount > 0 && (
                       <span className="flex items-center gap-1 rounded-full bg-primary-foreground/20 px-2 py-0.5 text-xs">
                         {registrationCount}
                       </span>
                     )}
-                  </a>
+                  </Link>
                 </Button>
               </div>
             </div>
