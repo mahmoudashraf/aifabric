@@ -1,11 +1,27 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Shield, Users, Zap, Brain, Eye, CheckCircle2, AlertTriangle, Database, Lock, FileText } from "lucide-react";
+import {
+  Shield,
+  Users,
+  Zap,
+  Brain,
+  Eye,
+  CheckCircle2,
+  AlertTriangle,
+  Database,
+  Lock,
+  FileText,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Highlight, themes } from "prism-react-renderer";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DocsLayout from "@/components/docs/DocsLayout";
 import PageViewCounter from "@/components/PageViewCounter";
+
+const PAGE_TITLE = "The Orchestrator Story - AI Fabric Framework";
+const PAGE_DESCRIPTION =
+  "A story about building trust in AI systems. Learn how the Orchestrator improves security, privacy, and reliability for AI-powered apps.";
+const OG_IMAGE = "/images/orchestrator-story-og.png";
 
 const codeTheme = {
   ...themes.nightOwl,
@@ -123,6 +139,56 @@ const ImpactCard = ({ title, before, after, metric }: { title: string; before: s
 );
 
 const OrchestratorStory = () => {
+  useEffect(() => {
+    document.title = PAGE_TITLE;
+
+    const absoluteOgImage = `${window.location.origin}${OG_IMAGE}`;
+
+    const updateMeta = (selector: string, attribute: string, value: string) => {
+      let element = document.querySelector(selector) as HTMLMetaElement | null;
+      if (!element) {
+        element = document.createElement("meta");
+        if (selector.includes("property=")) {
+          element.setAttribute(
+            "property",
+            selector.match(/property="([^"]+)"/)?.[1] || ""
+          );
+        } else if (selector.includes("name=")) {
+          element.setAttribute(
+            "name",
+            selector.match(/name="([^"]+)"/)?.[1] || ""
+          );
+        }
+        document.head.appendChild(element);
+      }
+      element.setAttribute(attribute, value);
+    };
+
+    const updateCanonical = (href: string) => {
+      let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+      if (!link) {
+        link = document.createElement("link");
+        link.setAttribute("rel", "canonical");
+        document.head.appendChild(link);
+      }
+      link.setAttribute("href", href);
+    };
+
+    updateMeta('meta[name="description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[property="og:title"]', "content", PAGE_TITLE);
+    updateMeta('meta[property="og:description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[property="og:image"]', "content", absoluteOgImage);
+    updateMeta('meta[property="og:type"]', "content", "article");
+    updateMeta('meta[property="og:url"]', "content", window.location.href);
+
+    updateMeta('meta[name="twitter:title"]', "content", PAGE_TITLE);
+    updateMeta('meta[name="twitter:description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[name="twitter:image"]', "content", absoluteOgImage);
+    updateMeta('meta[name="twitter:card"]', "content", "summary_large_image");
+
+    updateCanonical(window.location.href);
+  }, []);
+
   return (
     <DocsLayout>
       <div className="min-h-screen">
