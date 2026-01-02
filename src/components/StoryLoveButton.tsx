@@ -95,48 +95,26 @@ const StoryLoveButton = ({ storySlug }: StoryLoveButtonProps) => {
     }
 
     try {
-      if (wasLoved) {
-        // Remove reaction
-        const response = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/story-reactions?story_slug=${encodeURIComponent(storySlug)}`,
-          {
-            method: "DELETE",
-            headers: {
-              "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+      // Use POST with action parameter instead of DELETE to avoid CORS issues
+      const action = wasLoved ? "remove" : "add";
+      
+      const { data, error } = await supabase.functions.invoke("story-reactions", {
+        body: { 
+          story_slug: storySlug,
+          action: action
+        },
+      });
 
-        if (!response.ok) {
-          throw new Error("Failed to remove reaction");
-        }
-
-        const result = await response.json();
-        
-        // Update with actual count from server
-        if (result.count !== undefined) {
-          setLoveCount(result.count);
-        }
-
-        toast.success("Reaction removed");
-      } else {
-        // Add reaction
-        const { data, error } = await supabase.functions.invoke("story-reactions", {
-          body: { story_slug: storySlug },
-        });
-
-        if (error) {
-          throw error;
-        }
-
-        // Update with actual count from server
-        if (data?.count !== undefined) {
-          setLoveCount(data.count);
-        }
-
-        toast.success("Thanks for the love! ❤️");
+      if (error) {
+        throw error;
       }
+
+      // Update with actual count from server
+      if (data?.count !== undefined) {
+        setLoveCount(data.count);
+      }
+
+      toast.success(wasLoved ? "Reaction removed" : "Thanks for the love! ❤️");
     } catch (error) {
       console.error(`Error ${wasLoved ? "removing" : "adding"} love:`, error);
       // Revert on error
