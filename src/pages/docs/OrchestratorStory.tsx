@@ -707,9 +707,12 @@ OrchestrationResult result = orchestrator.orchestrate(
 
         {/* Footer */}
         <footer className="border-t border-border/50 py-8 px-6">
-          <p className="text-sm text-muted-foreground">
-            Written by the AI Fabric Team • Part of the AI Fabric Framework series • MIT License • Free Forever
-          </p>
+          <div className="flex flex-col items-center gap-4">
+            <StoryLoveButton storySlug="orchestrator-story" />
+            <p className="text-sm text-muted-foreground text-center">
+              Written by the AI Fabric Team • Part of the AI Fabric Framework series • MIT License • Free Forever
+            </p>
+          </div>
         </footer>
       </div>
     </DocsLayout>
