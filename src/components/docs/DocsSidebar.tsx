@@ -80,8 +80,8 @@ const docSections: DocSection[] = [
     title: "Advanced Features",
     icon: <Brain className="h-4 w-4" />,
     items: [
+      { title: "Relationship Query", href: "/docs/features/query", badge: "New" },
       { title: "Behavior Analytics", href: "/docs/features/behavior", badge: "Soon" },
-      { title: "Relationship Query", href: "/docs/features/query", badge: "Soon" },
       { title: "ONNX Provider", href: "/docs/features/onnx", badge: "Soon" },
     ],
   },
