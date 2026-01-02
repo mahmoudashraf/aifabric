@@ -710,6 +710,16 @@ const RagStory = () => {
               {ragStoryContent}
             </ReactMarkdown>
           </section>
+
+          {/* Footer */}
+          <footer className="border-t border-border/50 pt-8 mt-12">
+            <div className="flex flex-col items-center gap-4">
+              <StoryLoveButton storySlug="rag-onnx-story" />
+              <p className="text-sm text-muted-foreground text-center">
+                Part of the AI Fabric Framework series — under active development for Q1 2026
+              </p>
+            </div>
+          </footer>
         </motion.article>
       </div>
     </DocsLayout>
