@@ -53,6 +53,14 @@ const StoryLoveButton = ({ storySlug }: StoryLoveButtonProps) => {
 
   const fetchLoveCount = async () => {
     try {
+      const { data, error } = await supabase.functions.invoke("story-reactions", {
+        method: "GET",
+        body: undefined,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
       // For GET requests, we need to use query params
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/story-reactions?story_slug=${encodeURIComponent(storySlug)}`,
@@ -60,7 +68,6 @@ const StoryLoveButton = ({ storySlug }: StoryLoveButtonProps) => {
           method: "GET",
           headers: {
             "apikey": import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-            "Content-Type": "application/json",
           },
         }
       );
@@ -68,8 +75,6 @@ const StoryLoveButton = ({ storySlug }: StoryLoveButtonProps) => {
       if (response.ok) {
         const result = await response.json();
         setLoveCount(result.count || 0);
-      } else {
-        console.error("Failed to fetch love count:", response.status, response.statusText);
       }
     } catch (error) {
       console.error("Error fetching love count:", error);
@@ -79,30 +84,19 @@ const StoryLoveButton = ({ storySlug }: StoryLoveButtonProps) => {
   };
 
   const handleLove = async () => {
-    const wasLoved = hasLoved;
-    
-    setIsAnimating(true);
-    
-    // Optimistic update
-    if (wasLoved) {
-      setHasLoved(false);
-      setLoveCount((prev) => Math.max(0, prev - 1));
-      setLoveState(storySlug, false);
-    } else {
-      setHasLoved(true);
-      setLoveCount((prev) => prev + 1);
-      setLoveState(storySlug, true);
+    if (hasLoved) {
+      toast.info("You've already loved this story!");
+      return;
     }
 
+    setIsAnimating(true);
+    setHasLoved(true);
+    setLoveCount((prev) => prev + 1);
+    setLoveState(storySlug, true);
+
     try {
-      // Use POST with action parameter instead of DELETE to avoid CORS issues
-      const action = wasLoved ? "remove" : "add";
-      
       const { data, error } = await supabase.functions.invoke("story-reactions", {
-        body: { 
-          story_slug: storySlug,
-          action: action
-        },
+        body: { story_slug: storySlug },
       });
 
       if (error) {
@@ -114,14 +108,14 @@ const StoryLoveButton = ({ storySlug }: StoryLoveButtonProps) => {
         setLoveCount(data.count);
       }
 
-      toast.success(wasLoved ? "Reaction removed" : "Thanks for the love! ❤️");
+      toast.success("Thanks for the love! ❤️");
     } catch (error) {
-      console.error(`Error ${wasLoved ? "removing" : "adding"} love:`, error);
+      console.error("Error adding love:", error);
       // Revert on error
-      setHasLoved(wasLoved);
-      setLoveCount((prev) => wasLoved ? prev + 1 : Math.max(0, prev - 1));
-      setLoveState(storySlug, wasLoved);
-      toast.error(`Failed to ${wasLoved ? "remove" : "save"} your reaction. Please try again.`);
+      setHasLoved(false);
+      setLoveCount((prev) => prev - 1);
+      setLoveState(storySlug, false);
+      toast.error("Failed to save your love. Please try again.");
     } finally {
       setTimeout(() => setIsAnimating(false), 600);
     }
