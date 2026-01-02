@@ -37,7 +37,7 @@ const MediumStoriesSection = () => {
               </span>
             </div>
             <h2 className="mb-4 text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl">
-              Medium Stories
+              User Story Series
             </h2>
             <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
               Deep dives into AI Fabric Framework, development insights, and the journey to v1.0
