@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
-import { Github, Menu, X, Users } from "lucide-react";
+import { Github, Menu, X, Users, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
 const Navbar = () => {
@@ -46,6 +47,10 @@ const Navbar = () => {
             <a href="#how-it-works" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               How It Works
             </a>
+            <Link to="/docs" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              <BookOpen className="h-4 w-4" />
+              Docs
+            </Link>
             <a href="#register" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               Register
             </a>
@@ -98,6 +103,10 @@ const Navbar = () => {
               <a href="#how-it-works" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 How It Works
               </a>
+              <Link to="/docs" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+                <BookOpen className="h-4 w-4" />
+                Docs
+              </Link>
               <a href="#register" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 Register
               </a>
