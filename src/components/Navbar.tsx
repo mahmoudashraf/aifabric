@@ -105,7 +105,7 @@ const Navbar = () => {
             </HashLink>
             <Link to="/docs" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               <BookOpen className="h-4 w-4" />
-              Docs
+              Getting Started
             </Link>
             <HashLink to="/#register" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               Register
