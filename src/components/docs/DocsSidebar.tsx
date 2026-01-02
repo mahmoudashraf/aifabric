@@ -46,6 +46,7 @@ const docSections: DocSection[] = [
     icon: <BookOpen className="h-4 w-4" />,
     items: [
       { title: "The Orchestrator Story", href: "/docs/orchestrator_story" },
+      { title: "The Indexing Story", href: "/docs/indexing_story", badge: "New" },
       { title: "The RAG Story", href: "/docs/rag-story", badge: "Soon" },
       { title: "The Security Story", href: "/docs/security-story", badge: "Soon" },
     ],
@@ -55,7 +56,7 @@ const docSections: DocSection[] = [
     icon: <FileText className="h-4 w-4" />,
     items: [
       { title: "Orchestrator - Full Guide", href: "/docs/guides/orchestrator", badge: "New" },
-      { title: "Indexing Strategies", href: "/docs/guides/indexing", badge: "New" },
+      { title: "Indexing - Full Guide", href: "/docs/guides/indexing", badge: "New" },
     ],
   },
   {

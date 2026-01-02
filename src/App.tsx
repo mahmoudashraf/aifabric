@@ -8,7 +8,8 @@ import NotFound from "./pages/NotFound";
 import Documentation from "./pages/Documentation";
 import OrchestratorStory from "./pages/docs/OrchestratorStory";
 import OrchestratorStoryFull from "./pages/docs/OrchestratorStoryFull";
-import IndexingStrategiesStory from "./pages/docs/IndexingStrategiesStory";
+import IndexingStory from "./pages/docs/IndexingStory";
+import IndexingStrategiesFull from "./pages/docs/IndexingStrategiesFull";
 import { usePageTracking } from "./hooks/usePageTracking";
 
 const queryClient = new QueryClient();
@@ -30,7 +31,8 @@ const App = () => (
             <Route path="/docs" element={<Documentation />} />
             <Route path="/docs/orchestrator_story" element={<OrchestratorStory />} />
             <Route path="/docs/guides/orchestrator" element={<OrchestratorStoryFull />} />
-            <Route path="/docs/guides/indexing" element={<IndexingStrategiesStory />} />
+            <Route path="/docs/indexing_story" element={<IndexingStory />} />
+            <Route path="/docs/guides/indexing" element={<IndexingStrategiesFull />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
