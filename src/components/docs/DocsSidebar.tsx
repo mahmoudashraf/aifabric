@@ -55,15 +55,16 @@ const docSections: DocSection[] = [
     ],
   },
   {
-    title: "Detailed User Guides",
+    title: "Detailed Guides",
     icon: <FileText className="h-4 w-4" />,
     items: [
+      { title: "AI Core - Full Guide", href: "/docs/guides/core", badge: "New" },
       { title: "Orchestrator - Full Guide", href: "/docs/guides/orchestrator" },
       { title: "Indexing - Full Guide", href: "/docs/guides/indexing" },
       { title: "Migration - Full Guide", href: "/docs/guides/migration" },
       { title: "Storage - Full Guide", href: "/docs/guides/storage" },
       { title: "RAG + ONNX - Full Guide", href: "/docs/guides/rag" },
-      { title: "Behavior - Full Guide", href: "/docs/guides/behavior", badge: "New" },
+      { title: "Behavior - Full Guide", href: "/docs/guides/behavior" },
     ],
   },
   {
