@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      page_views: {
+        Row: {
+          id: string
+          page_path: string
+          referrer: string | null
+          user_agent: string | null
+          visited_at: string
+        }
+        Insert: {
+          id?: string
+          page_path: string
+          referrer?: string | null
+          user_agent?: string | null
+          visited_at?: string
+        }
+        Update: {
+          id?: string
+          page_path?: string
+          referrer?: string | null
+          user_agent?: string | null
+          visited_at?: string
+        }
+        Relationships: []
+      }
       registrations: {
         Row: {
           created_at: string
