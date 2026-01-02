@@ -129,8 +129,8 @@ const StoryLoveButton = ({ storySlug }: StoryLoveButtonProps) => {
         group flex items-center gap-2 px-4 py-2 rounded-full
         border transition-all duration-300
         ${hasLoved 
-          ? "bg-primary/10 border-primary text-primary" 
-          : "bg-muted/50 border-border hover:border-primary/50 hover:bg-primary/5 text-muted-foreground hover:text-primary"
+          ? "bg-red-500/15 border-red-500 text-red-500" 
+          : "bg-muted/50 border-border hover:border-red-400/50 hover:bg-red-500/10 text-muted-foreground hover:text-red-500"
         }
         disabled:opacity-50 disabled:cursor-not-allowed
       `}
@@ -149,7 +149,7 @@ const StoryLoveButton = ({ storySlug }: StoryLoveButtonProps) => {
           transition={{ duration: 0.3 }}
         >
           <Heart 
-            className={`h-5 w-5 transition-colors ${hasLoved ? "fill-primary text-primary" : ""}`} 
+            className={`h-5 w-5 transition-colors ${hasLoved ? "fill-red-500 text-red-500" : "group-hover:text-red-500"}`} 
           />
         </motion.div>
       </AnimatePresence>
