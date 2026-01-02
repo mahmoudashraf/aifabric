@@ -16,6 +16,8 @@ import StorageStory from "./pages/docs/StorageStory";
 import StorageFull from "./pages/docs/StorageFull";
 import RagStory from "./pages/docs/RagStory";
 import RagFull from "./pages/docs/RagFull";
+import BehaviorStory from "./pages/docs/BehaviorStory";
+import BehaviorFull from "./pages/docs/BehaviorFull";
 import { usePageTracking } from "./hooks/usePageTracking";
 
 const queryClient = new QueryClient();
@@ -45,6 +47,8 @@ const App = () => (
             <Route path="/docs/guides/storage" element={<StorageFull />} />
             <Route path="/docs/rag_story" element={<RagStory />} />
             <Route path="/docs/guides/rag" element={<RagFull />} />
+            <Route path="/docs/behavior_story" element={<BehaviorStory />} />
+            <Route path="/docs/guides/behavior" element={<BehaviorFull />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
