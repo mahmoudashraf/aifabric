@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
 import { Eye } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -11,13 +10,19 @@ export const PageViewCounter = () => {
   useEffect(() => {
     const fetchCount = async () => {
       try {
-        const { count, error } = await supabase
-          .from('page_views')
-          .select('*', { count: 'exact', head: true })
-          .eq('page_path', location.pathname);
-        
-        if (!error && count !== null) {
-          setCount(count);
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/page-views?page_path=${encodeURIComponent(location.pathname)}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+          setCount(result.count ?? 0);
         }
       } catch (error) {
         console.error('Failed to fetch page view count:', error);
