@@ -59,6 +59,7 @@ const docSections: DocSection[] = [
     icon: <FileText className="h-4 w-4" />,
     items: [
       { title: "AI Core - Full Guide", href: "/docs/guides/core", badge: "New" },
+      { title: "Relationship Query - Full Guide", href: "/docs/guides/query", badge: "New" },
       { title: "Orchestrator - Full Guide", href: "/docs/guides/orchestrator" },
       { title: "Indexing - Full Guide", href: "/docs/guides/indexing" },
       { title: "Migration - Full Guide", href: "/docs/guides/migration" },

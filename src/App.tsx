@@ -21,6 +21,7 @@ import BehaviorFull from "./pages/docs/BehaviorFull";
 import CoreStory from "./pages/docs/CoreStory";
 import CoreFull from "./pages/docs/CoreFull";
 import RelationshipQueryStory from "./pages/docs/RelationshipQueryStory";
+import RelationshipQueryFull from "./pages/docs/RelationshipQueryFull";
 import { usePageTracking } from "./hooks/usePageTracking";
 
 const queryClient = new QueryClient();
@@ -55,6 +56,7 @@ const App = () => (
             <Route path="/docs/modules/core" element={<CoreStory />} />
             <Route path="/docs/guides/core" element={<CoreFull />} />
             <Route path="/docs/features/query" element={<RelationshipQueryStory />} />
+            <Route path="/docs/guides/query" element={<RelationshipQueryFull />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
