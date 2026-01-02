@@ -55,6 +55,7 @@ const docSections: DocSection[] = [
     icon: <FileText className="h-4 w-4" />,
     items: [
       { title: "Orchestrator - Full Guide", href: "/docs/guides/orchestrator", badge: "New" },
+      { title: "Indexing Strategies", href: "/docs/guides/indexing", badge: "New" },
     ],
   },
   {
