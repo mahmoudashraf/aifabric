@@ -33,6 +33,9 @@ import CoreFull from "./pages/docs/CoreFull";
 import RelationshipQueryStory from "./pages/docs/RelationshipQueryStory";
 import RelationshipQueryStoryV2 from "./pages/docs/RelationshipQueryStoryV2";
 import RelationshipQueryFull from "./pages/docs/RelationshipQueryFull";
+import RelationshipQueryIntelligenceStory from "./pages/docs/RelationshipQueryIntelligenceStory";
+import RelationshipQueryIntelligenceStoryV2 from "./pages/docs/RelationshipQueryIntelligenceStoryV2";
+import RelationshipQueryIntelligenceFull from "./pages/docs/RelationshipQueryIntelligenceFull";
 import IntentStory from "./pages/docs/IntentStory";
 import IntentStoryV2 from "./pages/docs/IntentStoryV2";
 import IntentFull from "./pages/docs/IntentFull";
@@ -104,6 +107,9 @@ const App = () => (
             <Route path="/docs/features/query" element={<RelationshipQueryStory />} />
             <Route path="/docs/relationship_query_story_v2" element={<RelationshipQueryStoryV2 />} />
             <Route path="/docs/guides/query" element={<RelationshipQueryFull />} />
+            <Route path="/docs/relationship_query_intelligence_story" element={<RelationshipQueryIntelligenceStory />} />
+            <Route path="/docs/relationship_query_intelligence_v2" element={<RelationshipQueryIntelligenceStoryV2 />} />
+            <Route path="/docs/guides/relationship_query_intelligence" element={<RelationshipQueryIntelligenceFull />} />
             <Route path="/docs/intent_story" element={<IntentStory />} />
             <Route path="/docs/intent_story_v2" element={<IntentStoryV2 />} />
             <Route path="/docs/guides/intent" element={<IntentFull />} />
