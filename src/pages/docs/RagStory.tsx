@@ -31,7 +31,7 @@ import ragStoryContent from "@/content/rag-onnx-story.md?raw";
 
 const PAGE_TITLE = "RAG + ONNX: Stop Hallucinating, Start Saving - AI Fabric Framework";
 const PAGE_DESCRIPTION = "How we built retrieval-augmented generation with free local embeddings—zero hallucinations, zero API costs, $18K/year savings.";
-const OG_IMAGE = "/images/orchestrator-story-og.png";
+const OG_IMAGE = "/assets/story-preview.png";
 
 const codeTheme = {
   ...themes.nightOwl,

@@ -49,6 +49,7 @@ import {
 
 const PAGE_TITLE = "Audit Capabilities V2: The Audit That Saved Everything - AI Fabric Framework";
 const PAGE_DESCRIPTION = "A compliance officer's journey from failed audits to compliance gold—how automatic audit logging saved the company from massive fines.";
+const OG_IMAGE = "/assets/story-preview.png";
 
 const codeTheme = {
   ...themes.nightOwl,
@@ -880,6 +881,8 @@ const AuditCapabilitiesStoryV2 = () => {
   useEffect(() => {
     document.title = PAGE_TITLE;
 
+    const absoluteOgImage = `${window.location.origin}${OG_IMAGE}`;
+
     const updateMeta = (selector: string, attribute: string, value: string) => {
       let element = document.querySelector(selector) as HTMLMetaElement | null;
       if (!element) {
@@ -913,11 +916,13 @@ const AuditCapabilitiesStoryV2 = () => {
     updateMeta('meta[name="description"]', "content", PAGE_DESCRIPTION);
     updateMeta('meta[property="og:title"]', "content", PAGE_TITLE);
     updateMeta('meta[property="og:description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[property="og:image"]', "content", absoluteOgImage);
     updateMeta('meta[property="og:type"]', "content", "article");
     updateMeta('meta[property="og:url"]', "content", window.location.href);
 
     updateMeta('meta[name="twitter:title"]', "content", PAGE_TITLE);
     updateMeta('meta[name="twitter:description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[name="twitter:image"]', "content", absoluteOgImage);
     updateMeta('meta[name="twitter:card"]', "content", "summary_large_image");
 
     updateCanonical(window.location.href);

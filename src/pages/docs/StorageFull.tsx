@@ -13,7 +13,7 @@ import storageStoryContent from "@/content/storage-strategy-story.md?raw";
 
 const PAGE_TITLE = "Storage Strategy - Full Guide | AI Fabric Framework";
 const PAGE_DESCRIPTION = "Complete technical guide to storage strategies: SINGLE_TABLE vs PER_TYPE_TABLE, auto-table creation, migration between strategies, and real business cases.";
-const OG_IMAGE = "/images/orchestrator-story-og.png";
+const OG_IMAGE = "/assets/story-preview.png";
 
 const codeTheme = {
   ...themes.nightOwl,

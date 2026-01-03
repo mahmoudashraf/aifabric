@@ -53,6 +53,7 @@ import {
 
 const PAGE_TITLE = "Retention Capabilities: Pluggable Data Retention Policy System - AI Fabric Framework";
 const PAGE_DESCRIPTION = "How we built a pluggable retention policy system that enforces GDPR, HIPAA, and custom retention rules—all while letting you define your own data lifecycle policies using the Service Provider Interface (SPI) pattern.";
+const OG_IMAGE = "/assets/story-preview.png";
 
 const codeTheme = {
   ...themes.nightOwl,
@@ -672,6 +673,8 @@ const RetentionCapabilitiesStory = () => {
   useEffect(() => {
     document.title = PAGE_TITLE;
 
+    const absoluteOgImage = `${window.location.origin}${OG_IMAGE}`;
+
     const updateMeta = (selector: string, attribute: string, value: string) => {
       let element = document.querySelector(selector) as HTMLMetaElement | null;
       if (!element) {
@@ -705,11 +708,13 @@ const RetentionCapabilitiesStory = () => {
     updateMeta('meta[name="description"]', "content", PAGE_DESCRIPTION);
     updateMeta('meta[property="og:title"]', "content", PAGE_TITLE);
     updateMeta('meta[property="og:description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[property="og:image"]', "content", absoluteOgImage);
     updateMeta('meta[property="og:type"]', "content", "article");
     updateMeta('meta[property="og:url"]', "content", window.location.href);
 
     updateMeta('meta[name="twitter:title"]', "content", PAGE_TITLE);
     updateMeta('meta[name="twitter:description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[name="twitter:image"]', "content", absoluteOgImage);
     updateMeta('meta[name="twitter:card"]', "content", "summary_large_image");
 
     updateCanonical(window.location.href);

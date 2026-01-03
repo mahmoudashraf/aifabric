@@ -10,7 +10,7 @@ import orchestratorStoryContent from "@/content/orchestrator-story-full.md?raw";
 
 const PAGE_TITLE = "The Orchestrator Story - AI Fabric Framework";
 const PAGE_DESCRIPTION = "Discover how AI Fabric Framework orchestrates AI agents like a conductor leads an orchestra. Learn the complete guide to building AI-powered applications.";
-const OG_IMAGE = "/images/orchestrator-story-og.png";
+const OG_IMAGE = "/assets/story-preview.png";
 
 const codeTheme = {
   ...themes.nightOwl,

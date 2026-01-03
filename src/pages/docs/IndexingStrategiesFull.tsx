@@ -10,7 +10,7 @@ import indexingStoryContent from "@/content/indexing-strategies-story.md?raw";
 
 const PAGE_TITLE = "Indexing Strategies Guide - AI Fabric Framework";
 const PAGE_DESCRIPTION = "Complete guide to indexing strategies: SYNC, ASYNC, and BATCH. Learn when to use each strategy for optimal performance.";
-const OG_IMAGE = "/images/orchestrator-story-og.png";
+const OG_IMAGE = "/assets/story-preview.png";
 
 const codeTheme = {
   ...themes.nightOwl,

@@ -34,6 +34,7 @@ import {
 
 const PAGE_TITLE = "Custom Access Policy: Building Fail-Closed Security Into Every Request - AI Fabric Framework";
 const PAGE_DESCRIPTION = "How we built a pluggable access control system that lets you define security rules while the framework enforces them—fail closed, always secure.";
+const OG_IMAGE = "/assets/story-preview.png";
 
 const codeTheme = {
   ...themes.nightOwl,
@@ -508,6 +509,8 @@ const AccessPolicyStory = () => {
   useEffect(() => {
     document.title = PAGE_TITLE;
 
+    const absoluteOgImage = `${window.location.origin}${OG_IMAGE}`;
+
     const updateMeta = (selector: string, attribute: string, value: string) => {
       let element = document.querySelector(selector) as HTMLMetaElement | null;
       if (!element) {
@@ -541,11 +544,13 @@ const AccessPolicyStory = () => {
     updateMeta('meta[name="description"]', "content", PAGE_DESCRIPTION);
     updateMeta('meta[property="og:title"]', "content", PAGE_TITLE);
     updateMeta('meta[property="og:description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[property="og:image"]', "content", absoluteOgImage);
     updateMeta('meta[property="og:type"]', "content", "article");
     updateMeta('meta[property="og:url"]', "content", window.location.href);
 
     updateMeta('meta[name="twitter:title"]', "content", PAGE_TITLE);
     updateMeta('meta[name="twitter:description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[name="twitter:image"]', "content", absoluteOgImage);
     updateMeta('meta[name="twitter:card"]', "content", "summary_large_image");
 
     updateCanonical(window.location.href);

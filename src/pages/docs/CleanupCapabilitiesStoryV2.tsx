@@ -53,6 +53,7 @@ import {
 
 const PAGE_TITLE = "Cleanup Capabilities V2: The 1TB Database That Shrunk to 300GB - AI Fabric Framework";
 const PAGE_DESCRIPTION = "A DevOps engineer's journey from data bloat to database health—how automatic cleanup saved thousands and kept compliance.";
+const OG_IMAGE = "/assets/story-preview.png";
 
 const codeTheme = {
   ...themes.nightOwl,
@@ -867,6 +868,8 @@ const CleanupCapabilitiesStoryV2 = () => {
   useEffect(() => {
     document.title = PAGE_TITLE;
 
+    const absoluteOgImage = `${window.location.origin}${OG_IMAGE}`;
+
     const updateMeta = (selector: string, attribute: string, value: string) => {
       let element = document.querySelector(selector) as HTMLMetaElement | null;
       if (!element) {
@@ -900,11 +903,13 @@ const CleanupCapabilitiesStoryV2 = () => {
     updateMeta('meta[name="description"]', "content", PAGE_DESCRIPTION);
     updateMeta('meta[property="og:title"]', "content", PAGE_TITLE);
     updateMeta('meta[property="og:description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[property="og:image"]', "content", absoluteOgImage);
     updateMeta('meta[property="og:type"]', "content", "article");
     updateMeta('meta[property="og:url"]', "content", window.location.href);
 
     updateMeta('meta[name="twitter:title"]', "content", PAGE_TITLE);
     updateMeta('meta[name="twitter:description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[name="twitter:image"]', "content", absoluteOgImage);
     updateMeta('meta[name="twitter:card"]', "content", "summary_large_image");
 
     updateCanonical(window.location.href);

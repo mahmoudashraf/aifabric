@@ -31,7 +31,7 @@ import storageStoryContent from "@/content/storage-strategy-story.md?raw";
 
 const PAGE_TITLE = "The Storage Dilemma - AI Fabric Framework";
 const PAGE_DESCRIPTION = "One Table vs Many Tables: How we built a flexible metadata storage system that auto-creates tables and adapts to your database.";
-const OG_IMAGE = "/images/orchestrator-story-og.png";
+const OG_IMAGE = "/assets/story-preview.png";
 
 const codeTheme = {
   ...themes.nightOwl,

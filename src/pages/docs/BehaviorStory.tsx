@@ -34,7 +34,7 @@ import behaviorStoryContent from "@/content/behavior-analytics-story.md?raw";
 
 const PAGE_TITLE = "Behavior Analytics: Saving Customers Before They Leave - AI Fabric Framework";
 const PAGE_DESCRIPTION = "How we predict churn with 87% accuracy using AI that reads behavior patterns—no surveys, just intelligence.";
-const OG_IMAGE = "/images/orchestrator-story-og.png";
+const OG_IMAGE = "/assets/story-preview.png";
 
 const codeTheme = {
   ...themes.nightOwl,

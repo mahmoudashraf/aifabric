@@ -13,7 +13,7 @@ import ragStoryContent from "@/content/rag-onnx-story.md?raw";
 
 const PAGE_TITLE = "RAG + ONNX + Embeddings - Full Guide | AI Fabric Framework";
 const PAGE_DESCRIPTION = "Complete technical guide to RAG, ONNX embeddings, and vector search: implementation details, code references, cost analysis, and production configuration.";
-const OG_IMAGE = "/images/orchestrator-story-og.png";
+const OG_IMAGE = "/assets/story-preview.png";
 
 const codeTheme = {
   ...themes.nightOwl,

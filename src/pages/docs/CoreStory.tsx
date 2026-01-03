@@ -34,7 +34,7 @@ import {
 
 const PAGE_TITLE = "AI Core: From 6 Months to 5 Minutes - AI Fabric Framework";
 const PAGE_DESCRIPTION = "How one annotation replaces 6 months of AI infrastructure work—semantic search, RAG, embeddings, privacy, and more.";
-const OG_IMAGE = "/images/orchestrator-story-og.png";
+const OG_IMAGE = "/assets/story-preview.png";
 
 const codeTheme = {
   ...themes.nightOwl,

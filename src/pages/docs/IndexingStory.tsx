@@ -27,7 +27,7 @@ import indexingStoryContent from "@/content/indexing-strategies-story.md?raw";
 
 const PAGE_TITLE = "The Indexing Dilemma - AI Fabric Framework";
 const PAGE_DESCRIPTION = "When milliseconds cost millions: How we built a queue system that handles 500,000 entities/day without blocking a single HTTP request.";
-const OG_IMAGE = "/images/orchestrator-story-og.png";
+const OG_IMAGE = "/assets/story-preview.png";
 
 const codeTheme = {
   ...themes.nightOwl,

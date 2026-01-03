@@ -22,7 +22,7 @@ import StoryLoveButton from "@/components/StoryLoveButton";
 const PAGE_TITLE = "The Orchestrator Story - AI Fabric Framework";
 const PAGE_DESCRIPTION =
   "A story about building trust in AI systems. Learn how the Orchestrator improves security, privacy, and reliability for AI-powered apps.";
-const OG_IMAGE = "/images/orchestrator-story-og.png";
+const OG_IMAGE = "/assets/story-preview.png";
 
 const codeTheme = {
   ...themes.nightOwl,

@@ -13,7 +13,7 @@ import behaviorStoryContent from "@/content/behavior-analytics-story.md?raw";
 
 const PAGE_TITLE = "Behavior Analytics - Full Guide | AI Fabric Framework";
 const PAGE_DESCRIPTION = "Complete technical guide to Behavior Analytics: sentiment analysis, churn prediction, trend detection, and implementation details.";
-const OG_IMAGE = "/images/orchestrator-story-og.png";
+const OG_IMAGE = "/assets/story-preview.png";
 
 const codeTheme = {
   ...themes.nightOwl,

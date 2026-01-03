@@ -42,6 +42,7 @@ import {
 
 const PAGE_TITLE = "OpenAI Provider V2: The Integration That Took 5 Minutes - AI Fabric Framework";
 const PAGE_DESCRIPTION = "A developer's journey from 200 lines of boilerplate to one dependency—how OpenAI integration became trivial.";
+const OG_IMAGE = "/assets/story-preview.png";
 
 const codeTheme = {
   ...themes.nightOwl,
@@ -1024,6 +1025,8 @@ const OpenAIProviderStoryV2 = () => {
   useEffect(() => {
     document.title = PAGE_TITLE;
 
+    const absoluteOgImage = `${window.location.origin}${OG_IMAGE}`;
+
     const updateMeta = (selector: string, attribute: string, value: string) => {
       let element = document.querySelector(selector) as HTMLMetaElement | null;
       if (!element) {
@@ -1057,11 +1060,13 @@ const OpenAIProviderStoryV2 = () => {
     updateMeta('meta[name="description"]', "content", PAGE_DESCRIPTION);
     updateMeta('meta[property="og:title"]', "content", PAGE_TITLE);
     updateMeta('meta[property="og:description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[property="og:image"]', "content", absoluteOgImage);
     updateMeta('meta[property="og:type"]', "content", "article");
     updateMeta('meta[property="og:url"]', "content", window.location.href);
 
     updateMeta('meta[name="twitter:title"]', "content", PAGE_TITLE);
     updateMeta('meta[name="twitter:description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[name="twitter:image"]', "content", absoluteOgImage);
     updateMeta('meta[name="twitter:card"]', "content", "summary_large_image");
 
     updateCanonical(window.location.href);
