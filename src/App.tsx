@@ -42,6 +42,9 @@ import IntentFull from "./pages/docs/IntentFull";
 import AccessPolicyStory from "./pages/docs/AccessPolicyStory";
 import AccessPolicyStoryV2 from "./pages/docs/AccessPolicyStoryV2";
 import AccessPolicyFull from "./pages/docs/AccessPolicyFull";
+import AccessControlMechanicsStory from "./pages/docs/AccessControlMechanicsStory";
+import AccessControlMechanicsStoryV2 from "./pages/docs/AccessControlMechanicsStoryV2";
+import AccessControlMechanicsFull from "./pages/docs/AccessControlMechanicsFull";
 import PIIDetectionStoryV1 from "./pages/docs/PIIDetectionStoryV1";
 import PIIDetectionStoryV2 from "./pages/docs/PIIDetectionStoryV2";
 import PIIDetectionFull from "./pages/docs/PIIDetectionFull";
@@ -117,6 +120,9 @@ const App = () => (
             <Route path="/docs/access_policy_story_v2" element={<AccessPolicyStoryV2 />} />
             <Route path="/docs/guides/access_policy" element={<AccessPolicyFull />} />
             <Route path="/docs/access_policy_full" element={<AccessPolicyFull />} />
+            <Route path="/docs/access_control_mechanics_story" element={<AccessControlMechanicsStory />} />
+            <Route path="/docs/access_control_mechanics_v2" element={<AccessControlMechanicsStoryV2 />} />
+            <Route path="/docs/guides/access_control_mechanics" element={<AccessControlMechanicsFull />} />
             <Route path="/docs/pii_detection_story_v1" element={<PIIDetectionStoryV1 />} />
             <Route path="/docs/pii_detection_story_v2" element={<PIIDetectionStoryV2 />} />
             <Route path="/docs/guides/pii_detection" element={<PIIDetectionFull />} />
