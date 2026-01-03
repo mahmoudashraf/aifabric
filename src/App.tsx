@@ -31,6 +31,7 @@ import CoreStory from "./pages/docs/CoreStory";
 import CoreStoryV2 from "./pages/docs/CoreStoryV2";
 import CoreFull from "./pages/docs/CoreFull";
 import RelationshipQueryStory from "./pages/docs/RelationshipQueryStory";
+import RelationshipQueryStoryV2 from "./pages/docs/RelationshipQueryStoryV2";
 import RelationshipQueryFull from "./pages/docs/RelationshipQueryFull";
 import IntentStory from "./pages/docs/IntentStory";
 import IntentStoryV2 from "./pages/docs/IntentStoryV2";
@@ -41,6 +42,21 @@ import AccessPolicyFull from "./pages/docs/AccessPolicyFull";
 import PIIDetectionStoryV1 from "./pages/docs/PIIDetectionStoryV1";
 import PIIDetectionStoryV2 from "./pages/docs/PIIDetectionStoryV2";
 import PIIDetectionFull from "./pages/docs/PIIDetectionFull";
+import OpenAIProviderStory from "./pages/docs/OpenAIProviderStory";
+import OpenAIProviderStoryV2 from "./pages/docs/OpenAIProviderStoryV2";
+import OpenAIProviderFull from "./pages/docs/OpenAIProviderFull";
+import ONNXProviderStory from "./pages/docs/ONNXProviderStory";
+import ONNXProviderStoryV2 from "./pages/docs/ONNXProviderStoryV2";
+import ONNXProviderFull from "./pages/docs/ONNXProviderFull";
+import AuditCapabilitiesStory from "./pages/docs/AuditCapabilitiesStory";
+import AuditCapabilitiesStoryV2 from "./pages/docs/AuditCapabilitiesStoryV2";
+import AuditCapabilitiesFull from "./pages/docs/AuditCapabilitiesFull";
+import CleanupCapabilitiesStory from "./pages/docs/CleanupCapabilitiesStory";
+import CleanupCapabilitiesStoryV2 from "./pages/docs/CleanupCapabilitiesStoryV2";
+import CleanupCapabilitiesFull from "./pages/docs/CleanupCapabilitiesFull";
+import RetentionCapabilitiesStory from "./pages/docs/RetentionCapabilitiesStory";
+import RetentionCapabilitiesStoryV2 from "./pages/docs/RetentionCapabilitiesStoryV2";
+import RetentionCapabilitiesFull from "./pages/docs/RetentionCapabilitiesFull";
 import QuickStart from "./pages/docs/QuickStart";
 import { usePageTracking } from "./hooks/usePageTracking";
 
@@ -86,6 +102,7 @@ const App = () => (
             <Route path="/docs/core_story_v2" element={<CoreStoryV2 />} />
             <Route path="/docs/guides/core" element={<CoreFull />} />
             <Route path="/docs/features/query" element={<RelationshipQueryStory />} />
+            <Route path="/docs/relationship_query_story_v2" element={<RelationshipQueryStoryV2 />} />
             <Route path="/docs/guides/query" element={<RelationshipQueryFull />} />
             <Route path="/docs/intent_story" element={<IntentStory />} />
             <Route path="/docs/intent_story_v2" element={<IntentStoryV2 />} />
@@ -98,6 +115,26 @@ const App = () => (
             <Route path="/docs/pii_detection_story_v2" element={<PIIDetectionStoryV2 />} />
             <Route path="/docs/guides/pii_detection" element={<PIIDetectionFull />} />
             <Route path="/docs/pii_detection_full" element={<PIIDetectionFull />} />
+            <Route path="/docs/openai_provider_story" element={<OpenAIProviderStory />} />
+            <Route path="/docs/openai_provider_story_v2" element={<OpenAIProviderStoryV2 />} />
+            <Route path="/docs/guides/openai_provider" element={<OpenAIProviderFull />} />
+            <Route path="/docs/openai_provider_full" element={<OpenAIProviderFull />} />
+            <Route path="/docs/onnx_provider_story" element={<ONNXProviderStory />} />
+            <Route path="/docs/onnx_provider_story_v2" element={<ONNXProviderStoryV2 />} />
+            <Route path="/docs/guides/onnx_provider" element={<ONNXProviderFull />} />
+            <Route path="/docs/onnx_provider_full" element={<ONNXProviderFull />} />
+            <Route path="/docs/audit_capabilities_story" element={<AuditCapabilitiesStory />} />
+            <Route path="/docs/audit_capabilities_story_v2" element={<AuditCapabilitiesStoryV2 />} />
+            <Route path="/docs/guides/audit_capabilities" element={<AuditCapabilitiesFull />} />
+            <Route path="/docs/audit_capabilities_full" element={<AuditCapabilitiesFull />} />
+            <Route path="/docs/cleanup_capabilities_story" element={<CleanupCapabilitiesStory />} />
+            <Route path="/docs/cleanup_capabilities_story_v2" element={<CleanupCapabilitiesStoryV2 />} />
+            <Route path="/docs/guides/cleanup_capabilities" element={<CleanupCapabilitiesFull />} />
+            <Route path="/docs/cleanup_capabilities_full" element={<CleanupCapabilitiesFull />} />
+            <Route path="/docs/retention_capabilities_story" element={<RetentionCapabilitiesStory />} />
+            <Route path="/docs/retention_capabilities_story_v2" element={<RetentionCapabilitiesStoryV2 />} />
+            <Route path="/docs/guides/retention_capabilities" element={<RetentionCapabilitiesFull />} />
+            <Route path="/docs/retention_capabilities_full" element={<RetentionCapabilitiesFull />} />
             <Route path="/docs/quickstart" element={<QuickStart />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
