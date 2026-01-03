@@ -73,6 +73,180 @@ const CodeBlock = ({ code, language = "java" }: { code: string; language?: strin
   </Highlight>
 );
 
+const CompleteEmbeddingFlow = () => {
+  const [activeStep, setActiveStep] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  
+  const steps = [
+    {
+      number: 1,
+      title: "User Text",
+      icon: MessageSquare,
+      color: "bg-blue-500",
+      description: "Input: \"Machine learning is transforming the world\"\nReady for processing"
+    },
+    {
+      number: 2,
+      title: "Tokenization",
+      icon: Code,
+      color: "bg-purple-500",
+      description: "tokenizeText()\nHuggingFace Tokenizer or WordPiece\nAdd [CLS] and [SEP] tokens\nPad/truncate to 512 tokens\nResult: inputIds, attentionMask"
+    },
+    {
+      number: 3,
+      title: "Create ONNX Tensors",
+      icon: Database,
+      color: "bg-orange-500",
+      description: "OnnxTensor.createTensor()\nShape: [1, 512]\ninputIdsTensor, attentionMaskTensor\ntokenTypeIdsTensor\nReady for inference"
+    },
+    {
+      number: 4,
+      title: "ONNX Inference",
+      icon: Cpu,
+      color: "bg-green-500",
+      description: "ortSession.run()\nModel: all-MiniLM-L6-v2 (86MB)\n6 transformer layers\n384 hidden dimensions\nOutput: [1, 512, 384] token embeddings"
+    },
+    {
+      number: 5,
+      title: "Mean Pooling",
+      icon: Layers,
+      color: "bg-red-500",
+      description: "meanPoolEmbeddings()\nAverage token embeddings\nRespect attention mask\nResult: [384] sentence embedding\nNormalized vector"
+    },
+    {
+      number: 6,
+      title: "Return Embedding",
+      icon: CheckCircle2,
+      color: "bg-teal-500",
+      description: "AIEmbeddingResponse\n384 dimensions\nModel: onnx:all-MiniLM-L6-v2\nProcessing time: 15ms CPU / 3ms GPU\n$0 cost, 100% private"
+    }
+  ];
+
+  useEffect(() => {
+    if (isPlaying && activeStep < steps.length - 1) {
+      const timer = setTimeout(() => {
+        setActiveStep(prev => prev + 1);
+      }, 2000);
+      return () => clearTimeout(timer);
+    } else if (activeStep >= steps.length - 1) {
+      setIsPlaying(false);
+    }
+  }, [isPlaying, activeStep, steps.length]);
+
+  return (
+    <div className="my-16">
+      <h3 className="text-2xl font-bold text-foreground mb-8 text-center">
+        Complete Embedding Generation Flow: From Text to Vector in 15ms
+      </h3>
+      <p className="text-sm text-muted-foreground text-center mb-6">
+        Watch how your text becomes a 384-dimensional embedding—locally, privately, and for free
+      </p>
+      
+      <div className="flex items-center justify-center gap-3 mb-6">
+        <button
+          onClick={() => {
+            setIsPlaying(!isPlaying);
+            if (activeStep >= steps.length - 1) {
+              setActiveStep(0);
+              setIsPlaying(true);
+            }
+          }}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/30 text-primary hover:bg-primary/20 transition-colors"
+        >
+          {isPlaying ? (
+            <>
+              <Pause className="h-4 w-4" />
+              Pause
+            </>
+          ) : (
+            <>
+              <Play className="h-4 w-4" />
+              Play Flow
+            </>
+          )}
+        </button>
+        <button
+          onClick={() => {
+            setActiveStep(0);
+            setIsPlaying(false);
+          }}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted border border-border/50 text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <RotateCcw className="h-4 w-4" />
+          Reset
+        </button>
+      </div>
+      
+      <div className="relative">
+        <div className="flex flex-wrap justify-center items-center gap-3 md:gap-4">
+          {steps.map((step, i) => {
+            const Icon = step.icon;
+            const isActive = activeStep >= i;
+            return (
+              <div key={i} className="flex items-center gap-2 md:gap-3">
+                <motion.div
+                  animate={{
+                    scale: activeStep === i ? 1.1 : 1,
+                    opacity: isActive ? 1 : 0.4,
+                  }}
+                  className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all cursor-pointer ${
+                    activeStep === i
+                      ? `${step.color} border-${step.color.split('-')[1]}-600 shadow-lg`
+                      : 'bg-muted/30 border-border/50'
+                  }`}
+                  onClick={() => {
+                    setActiveStep(i);
+                    setIsPlaying(false);
+                  }}
+                  style={{ minWidth: '120px' }}
+                >
+                  <div className={`p-2 rounded-full ${step.color} ${!isActive ? 'opacity-50' : ''}`}>
+                    <Icon className="h-4 w-4 text-white" />
+                  </div>
+                  <div className="text-center">
+                    <div className={`text-xs font-semibold mb-1 ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {step.number}
+                    </div>
+                    <div className={`text-xs font-bold ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {step.title}
+                    </div>
+                  </div>
+                </motion.div>
+                {i < steps.length - 1 && (
+                  <motion.div
+                    animate={{ opacity: activeStep > i ? 1 : 0.3 }}
+                    className="hidden md:block"
+                  >
+                    <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                  </motion.div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        
+        {steps[activeStep] && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-8 p-6 rounded-xl border border-primary/30 bg-primary/5"
+          >
+            <div className="flex items-center gap-3 mb-3">
+              {React.createElement(steps[activeStep].icon, {
+                className: `h-6 w-6 text-primary`
+              })}
+              <div>
+                <h4 className="font-bold text-foreground">STEP {steps[activeStep].number}: {steps[activeStep].title}</h4>
+                <p className="text-sm text-muted-foreground whitespace-pre-line">{steps[activeStep].description}</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const TheCostJourney = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -803,8 +977,15 @@ const ONNXProviderStoryV2 = () => {
           </div>
         </section>
 
-        {/* Before & After */}
+        {/* Complete Embedding Flow */}
         <section className="px-6 py-12 border-t border-border/50 bg-muted/30">
+          <div className="max-w-4xl mx-auto">
+            <CompleteEmbeddingFlow />
+          </div>
+        </section>
+
+        {/* Before & After */}
+        <section className="px-6 py-12">
           <div className="max-w-4xl mx-auto">
             <BeforeAfterComparison />
           </div>

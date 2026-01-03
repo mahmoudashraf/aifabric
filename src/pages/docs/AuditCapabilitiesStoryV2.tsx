@@ -77,6 +77,201 @@ const CodeBlock = ({ code, language = "java" }: { code: string; language?: strin
   </Highlight>
 );
 
+const CompleteAuditFlow = () => {
+  const [activeStep, setActiveStep] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  
+  const steps = [
+    {
+      number: 1,
+      title: "User Query",
+      icon: MessageSquare,
+      color: "bg-blue-500",
+      description: "User sends query:\n'Show me my billing history'"
+    },
+    {
+      number: 2,
+      title: "Orchestration",
+      icon: Brain,
+      color: "bg-purple-500",
+      description: "RAGOrchestrator.orchestrate()\nSecurity, access, PII, compliance checks"
+    },
+    {
+      number: 3,
+      title: "Query Sanitization",
+      icon: Shield,
+      color: "bg-green-500",
+      description: "sanitizeQuery()\nDetect & redact PII\nResult: 'Show me my [REDACTED]'"
+    },
+    {
+      number: 4,
+      title: "Query Encryption",
+      icon: Lock,
+      color: "bg-orange-500",
+      description: "determineEncryptedPayload()\nAES-256-GCM encryption\nAccess-controlled"
+    },
+    {
+      number: 5,
+      title: "Intent Serialization",
+      icon: Code,
+      color: "bg-red-500",
+      description: "serializeIntents()\nJSON serialization\nResult: '{\"intents\":[...]}'"
+    },
+    {
+      number: 6,
+      title: "Result Serialization",
+      icon: FileText,
+      color: "bg-teal-500",
+      description: "serializeResult()\nJSON serialization\nResult: '{\"response\":\"...\"}'"
+    },
+    {
+      number: 7,
+      title: "PII Detection",
+      icon: Eye,
+      color: "bg-indigo-500",
+      description: "hasSensitiveData()\nresolveSensitiveTypes()\nResult: 'EMAIL,PHONE,SSN'"
+    },
+    {
+      number: 8,
+      title: "Build Audit Log",
+      icon: Database,
+      color: "bg-pink-500",
+      description: "IntentHistory.builder()\nAll data assembled\nReady for persistence"
+    },
+    {
+      number: 9,
+      title: "Database Persistence",
+      icon: CheckCircle2,
+      color: "bg-green-600",
+      description: "IntentHistoryRepository.save()\nIndexed by user_id, created_at\nAutomatic expiry"
+    }
+  ];
+
+  useEffect(() => {
+    if (isPlaying && activeStep < steps.length - 1) {
+      const timer = setTimeout(() => {
+        setActiveStep(prev => prev + 1);
+      }, 2000);
+      return () => clearTimeout(timer);
+    } else if (activeStep >= steps.length - 1) {
+      setIsPlaying(false);
+    }
+  }, [isPlaying, activeStep, steps.length]);
+
+  return (
+    <div className="my-16">
+      <h3 className="text-2xl font-bold text-foreground mb-8 text-center">
+        Complete Audit Flow: From Query to Compliance Gold
+      </h3>
+      <p className="text-sm text-muted-foreground text-center mb-6">
+        Watch how every interaction is automatically logged with privacy protection
+      </p>
+      
+      <div className="flex items-center justify-center gap-3 mb-6">
+        <button
+          onClick={() => {
+            setIsPlaying(!isPlaying);
+            if (activeStep >= steps.length - 1) {
+              setActiveStep(0);
+              setIsPlaying(true);
+            }
+          }}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/30 text-primary hover:bg-primary/20 transition-colors"
+        >
+          {isPlaying ? (
+            <>
+              <Pause className="h-4 w-4" />
+              Pause
+            </>
+          ) : (
+            <>
+              <Play className="h-4 w-4" />
+              Play Flow
+            </>
+          )}
+        </button>
+        <button
+          onClick={() => {
+            setActiveStep(0);
+            setIsPlaying(false);
+          }}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted border border-border/50 text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <RotateCcw className="h-4 w-4" />
+          Reset
+        </button>
+      </div>
+      
+      <div className="relative">
+        <div className="flex flex-wrap justify-center items-center gap-3 md:gap-4">
+          {steps.map((step, i) => {
+            const Icon = step.icon;
+            const isActive = activeStep >= i;
+            return (
+              <div key={i} className="flex items-center gap-2 md:gap-3">
+                <motion.div
+                  animate={{
+                    scale: activeStep === i ? 1.1 : 1,
+                    opacity: isActive ? 1 : 0.4,
+                  }}
+                  className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all cursor-pointer ${
+                    activeStep === i
+                      ? `${step.color} border-${step.color.split('-')[1]}-600 shadow-lg`
+                      : 'bg-muted/30 border-border/50'
+                  }`}
+                  onClick={() => {
+                    setActiveStep(i);
+                    setIsPlaying(false);
+                  }}
+                  style={{ minWidth: '120px' }}
+                >
+                  <div className={`p-2 rounded-full ${step.color} ${!isActive ? 'opacity-50' : ''}`}>
+                    <Icon className="h-4 w-4 text-white" />
+                  </div>
+                  <div className="text-center">
+                    <div className={`text-xs font-semibold mb-1 ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {step.number}
+                    </div>
+                    <div className={`text-xs font-bold ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {step.title}
+                    </div>
+                  </div>
+                </motion.div>
+                {i < steps.length - 1 && (
+                  <motion.div
+                    animate={{ opacity: activeStep > i ? 1 : 0.3 }}
+                    className="hidden md:block"
+                  >
+                    <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                  </motion.div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        
+        {steps[activeStep] && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-8 p-6 rounded-xl border border-primary/30 bg-primary/5"
+          >
+            <div className="flex items-center gap-3 mb-3">
+              {React.createElement(steps[activeStep].icon, {
+                className: `h-6 w-6 text-primary`
+              })}
+              <div>
+                <h4 className="font-bold text-foreground">STEP {steps[activeStep].number}: {steps[activeStep].title}</h4>
+                <p className="text-sm text-muted-foreground whitespace-pre-line">{steps[activeStep].description}</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const TheAuditJourney = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -791,8 +986,15 @@ const AuditCapabilitiesStoryV2 = () => {
           </div>
         </section>
 
-        {/* Before & After */}
+        {/* Complete Audit Flow */}
         <section className="px-6 py-12 border-t border-border/50 bg-muted/30">
+          <div className="max-w-4xl mx-auto">
+            <CompleteAuditFlow />
+          </div>
+        </section>
+
+        {/* Before & After */}
+        <section className="px-6 py-12">
           <div className="max-w-4xl mx-auto">
             <BeforeAfterComparison />
           </div>

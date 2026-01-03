@@ -81,6 +81,187 @@ const CodeBlock = ({ code, language = "java" }: { code: string; language?: strin
   </Highlight>
 );
 
+const CompleteCleanupFlow = () => {
+  const [activeStep, setActiveStep] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  
+  const steps = [
+    {
+      number: 1,
+      title: "Scheduled Trigger",
+      icon: Clock,
+      color: "bg-blue-500",
+      description: "@Scheduled(cron = \"...\")\nCron job triggers cleanup\nAutomatic execution"
+    },
+    {
+      number: 2,
+      title: "Orphaned Entities",
+      icon: Trash2,
+      color: "bg-purple-500",
+      description: "cleanupOrphanedEntities()\nFind entities with vector IDs\nCheck if vector exists\nDelete if orphaned\nSchedule: Sunday 4 AM"
+    },
+    {
+      number: 3,
+      title: "No-Vector Entities",
+      icon: XCircle,
+      color: "bg-orange-500",
+      description: "cleanupEntitiesWithoutVectors()\nFind entities without vectors\nCheck retention (24h default)\nDelete if older\nSchedule: Sunday 5 AM"
+    },
+    {
+      number: 4,
+      title: "Retention Policy",
+      icon: Calendar,
+      color: "bg-green-500",
+      description: "cleanupByRetentionPolicy()\nFor each entity type\nGet retention days\nCalculate cutoff\nApply cleanup strategy\nSchedule: Daily 3:30 AM"
+    },
+    {
+      number: 5,
+      title: "Apply Strategy",
+      icon: Settings,
+      color: "bg-red-500",
+      description: "applyPolicy()\nSOFT_DELETE, ARCHIVE\nHARD_DELETE, or CASCADE\nEvict vector\nUpdate/delete entity"
+    },
+    {
+      number: 6,
+      title: "Vector Eviction",
+      icon: Database,
+      color: "bg-teal-500",
+      description: "evictVector()\nRemove from vector DB\nHandle errors gracefully\nPrevent orphaned vectors"
+    },
+    {
+      number: 7,
+      title: "Complete",
+      icon: CheckCircle2,
+      color: "bg-green-600",
+      description: "Cleanup complete\nDatabase healthy\nCompliance maintained\nCosts reduced"
+    }
+  ];
+
+  useEffect(() => {
+    if (isPlaying && activeStep < steps.length - 1) {
+      const timer = setTimeout(() => {
+        setActiveStep(prev => prev + 1);
+      }, 2000);
+      return () => clearTimeout(timer);
+    } else if (activeStep >= steps.length - 1) {
+      setIsPlaying(false);
+    }
+  }, [isPlaying, activeStep, steps.length]);
+
+  return (
+    <div className="my-16">
+      <h3 className="text-2xl font-bold text-foreground mb-8 text-center">
+        Complete Cleanup Flow: Automatic Data Health Management
+      </h3>
+      <p className="text-sm text-muted-foreground text-center mb-6">
+        Watch how orphaned vectors, stale entities, and retention policies are automatically managed
+      </p>
+      
+      <div className="flex items-center justify-center gap-3 mb-6">
+        <button
+          onClick={() => {
+            setIsPlaying(!isPlaying);
+            if (activeStep >= steps.length - 1) {
+              setActiveStep(0);
+              setIsPlaying(true);
+            }
+          }}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/30 text-primary hover:bg-primary/20 transition-colors"
+        >
+          {isPlaying ? (
+            <>
+              <Pause className="h-4 w-4" />
+              Pause
+            </>
+          ) : (
+            <>
+              <Play className="h-4 w-4" />
+              Play Flow
+            </>
+          )}
+        </button>
+        <button
+          onClick={() => {
+            setActiveStep(0);
+            setIsPlaying(false);
+          }}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted border border-border/50 text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <RotateCcw className="h-4 w-4" />
+          Reset
+        </button>
+      </div>
+      
+      <div className="relative">
+        <div className="flex flex-wrap justify-center items-center gap-3 md:gap-4">
+          {steps.map((step, i) => {
+            const Icon = step.icon;
+            const isActive = activeStep >= i;
+            return (
+              <div key={i} className="flex items-center gap-2 md:gap-3">
+                <motion.div
+                  animate={{
+                    scale: activeStep === i ? 1.1 : 1,
+                    opacity: isActive ? 1 : 0.4,
+                  }}
+                  className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all cursor-pointer ${
+                    activeStep === i
+                      ? `${step.color} border-${step.color.split('-')[1]}-600 shadow-lg`
+                      : 'bg-muted/30 border-border/50'
+                  }`}
+                  onClick={() => {
+                    setActiveStep(i);
+                    setIsPlaying(false);
+                  }}
+                  style={{ minWidth: '120px' }}
+                >
+                  <div className={`p-2 rounded-full ${step.color} ${!isActive ? 'opacity-50' : ''}`}>
+                    <Icon className="h-4 w-4 text-white" />
+                  </div>
+                  <div className="text-center">
+                    <div className={`text-xs font-semibold mb-1 ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {step.number}
+                    </div>
+                    <div className={`text-xs font-bold ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {step.title}
+                    </div>
+                  </div>
+                </motion.div>
+                {i < steps.length - 1 && (
+                  <motion.div
+                    animate={{ opacity: activeStep > i ? 1 : 0.3 }}
+                    className="hidden md:block"
+                  >
+                    <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                  </motion.div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        
+        {steps[activeStep] && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-8 p-6 rounded-xl border border-primary/30 bg-primary/5"
+          >
+            <div className="flex items-center gap-3 mb-3">
+              {React.createElement(steps[activeStep].icon, {
+                className: `h-6 w-6 text-primary`
+              })}
+              <div>
+                <h4 className="font-bold text-foreground">STEP {steps[activeStep].number}: {steps[activeStep].title}</h4>
+                <p className="text-sm text-muted-foreground whitespace-pre-line">{steps[activeStep].description}</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const TheDataBloatJourney = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -793,8 +974,15 @@ const CleanupCapabilitiesStoryV2 = () => {
           </div>
         </section>
 
-        {/* Before & After */}
+        {/* Complete Cleanup Flow */}
         <section className="px-6 py-12 border-t border-border/50 bg-muted/30">
+          <div className="max-w-4xl mx-auto">
+            <CompleteCleanupFlow />
+          </div>
+        </section>
+
+        {/* Before & After */}
+        <section className="px-6 py-12">
           <div className="max-w-4xl mx-auto">
             <BeforeAfterComparison />
           </div>

@@ -45,7 +45,10 @@ import {
   TrendingDown,
   Timer,
   Gavel,
-  Plug
+  Plug,
+  Play,
+  Pause,
+  RotateCcw
 } from "lucide-react";
 
 const PAGE_TITLE = "Retention Capabilities: Pluggable Data Retention Policy System - AI Fabric Framework";
@@ -243,6 +246,308 @@ const FeatureCard = ({ title, icon: Icon, description, color }: {
     <p className="text-sm text-muted-foreground">{description}</p>
   </motion.div>
 );
+
+const CompleteRetentionFlow = () => {
+  const [activeStep, setActiveStep] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  
+  const steps = [
+    {
+      number: 1,
+      title: "Scheduled Cleanup",
+      icon: Clock,
+      color: "bg-blue-500",
+      description: "@Scheduled(cron = \"0 30 3 * * *\")\nDaily 3:30 AM\nAutomatic trigger"
+    },
+    {
+      number: 2,
+      title: "For Each Entity Type",
+      icon: Database,
+      color: "bg-purple-500",
+      description: "Iterate over config\nGet retention days\nCalculate cutoff date\nFind entities older than retention"
+    },
+    {
+      number: 3,
+      title: "Check Provider",
+      icon: Plug,
+      color: "bg-orange-500",
+      description: "if (retentionPolicyProvider != null)\nGet retention days\nCheck shouldDelete()\nExecute executeDelete()"
+    },
+    {
+      number: 4,
+      title: "Get Retention Days",
+      icon: Calendar,
+      color: "bg-green-500",
+      description: "getRetentionDays(classification, entityType)\nGDPR: 365 days\nHIPAA: 2190 days\nDefault: 180 days"
+    },
+    {
+      number: 5,
+      title: "Should Delete?",
+      icon: AlertTriangle,
+      color: "bg-red-500",
+      description: "shouldDelete(entity)\nCheck if never delete (-1)\nCheck if older than retention\nLegal hold? Investigation?"
+    },
+    {
+      number: 6,
+      title: "Execute Delete",
+      icon: Trash2,
+      color: "bg-teal-500",
+      description: "executeDelete(entity)\nArchive to cold storage\nNotify stakeholders\nLog deletion event\nReturn true to proceed"
+    },
+    {
+      number: 7,
+      title: "Apply Strategy",
+      icon: Settings,
+      color: "bg-indigo-500",
+      description: "Apply cleanup strategy\nSOFT_DELETE, ARCHIVE\nHARD_DELETE\nCompliance maintained"
+    }
+  ];
+
+  useEffect(() => {
+    if (isPlaying && activeStep < steps.length - 1) {
+      const timer = setTimeout(() => {
+        setActiveStep(prev => prev + 1);
+      }, 2000);
+      return () => clearTimeout(timer);
+    } else if (activeStep >= steps.length - 1) {
+      setIsPlaying(false);
+    }
+  }, [isPlaying, activeStep, steps.length]);
+
+  return (
+    <div className="my-16">
+      <h3 className="text-2xl font-bold text-foreground mb-8 text-center">
+        Complete Retention Flow: From Schedule to Compliance
+      </h3>
+      <p className="text-sm text-muted-foreground text-center mb-6">
+        Watch how retention policies are automatically enforced with custom logic support
+      </p>
+      
+      <div className="flex items-center justify-center gap-3 mb-6">
+        <button
+          onClick={() => {
+            setIsPlaying(!isPlaying);
+            if (activeStep >= steps.length - 1) {
+              setActiveStep(0);
+              setIsPlaying(true);
+            }
+          }}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/30 text-primary hover:bg-primary/20 transition-colors"
+        >
+          {isPlaying ? (
+            <>
+              <Pause className="h-4 w-4" />
+              Pause
+            </>
+          ) : (
+            <>
+              <Play className="h-4 w-4" />
+              Play Flow
+            </>
+          )}
+        </button>
+        <button
+          onClick={() => {
+            setActiveStep(0);
+            setIsPlaying(false);
+          }}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted border border-border/50 text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <RotateCcw className="h-4 w-4" />
+          Reset
+        </button>
+      </div>
+      
+      <div className="relative">
+        <div className="flex flex-wrap justify-center items-center gap-3 md:gap-4">
+          {steps.map((step, i) => {
+            const Icon = step.icon;
+            const isActive = activeStep >= i;
+            return (
+              <div key={i} className="flex items-center gap-2 md:gap-3">
+                <motion.div
+                  animate={{
+                    scale: activeStep === i ? 1.1 : 1,
+                    opacity: isActive ? 1 : 0.4,
+                  }}
+                  className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all cursor-pointer ${
+                    activeStep === i
+                      ? `${step.color} border-${step.color.split('-')[1]}-600 shadow-lg`
+                      : 'bg-muted/30 border-border/50'
+                  }`}
+                  onClick={() => {
+                    setActiveStep(i);
+                    setIsPlaying(false);
+                  }}
+                  style={{ minWidth: '120px' }}
+                >
+                  <div className={`p-2 rounded-full ${step.color} ${!isActive ? 'opacity-50' : ''}`}>
+                    <Icon className="h-4 w-4 text-white" />
+                  </div>
+                  <div className="text-center">
+                    <div className={`text-xs font-semibold mb-1 ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {step.number}
+                    </div>
+                    <div className={`text-xs font-bold ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {step.title}
+                    </div>
+                  </div>
+                </motion.div>
+                {i < steps.length - 1 && (
+                  <motion.div
+                    animate={{ opacity: activeStep > i ? 1 : 0.3 }}
+                    className="hidden md:block"
+                  >
+                    <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                  </motion.div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        
+        {steps[activeStep] && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-8 p-6 rounded-xl border border-primary/30 bg-primary/5"
+          >
+            <div className="flex items-center gap-3 mb-3">
+              {React.createElement(steps[activeStep].icon, {
+                className: `h-6 w-6 text-primary`
+              })}
+              <div>
+                <h4 className="font-bold text-foreground">STEP {steps[activeStep].number}: {steps[activeStep].title}</h4>
+                <p className="text-sm text-muted-foreground whitespace-pre-line">{steps[activeStep].description}</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const GDPRvsHIPAAComparison = () => {
+  return (
+    <div className="my-16">
+      <h3 className="text-2xl font-bold text-foreground mb-8 text-center">
+        GDPR vs HIPAA Retention Comparison
+      </h3>
+      
+      <div className="grid lg:grid-cols-2 gap-6 mb-6">
+        <div className="p-6 rounded-xl border border-blue-500/30 bg-blue-500/5">
+          <div className="flex items-center gap-3 mb-4">
+            <Shield className="h-6 w-6 text-blue-400" />
+            <h4 className="font-bold text-foreground">GDPR Retention Policy</h4>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border/50">
+                  <th className="text-left p-2 font-semibold text-foreground">Entity Type</th>
+                  <th className="text-left p-2 font-semibold text-foreground">Classification</th>
+                  <th className="text-left p-2 font-semibold text-foreground">Retention</th>
+                  <th className="text-left p-2 font-semibold text-foreground">Strategy</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-border/30">
+                  <td className="p-2 text-muted-foreground">user</td>
+                  <td className="p-2 text-muted-foreground">CONFIDENTIAL</td>
+                  <td className="p-2 text-muted-foreground">365 days</td>
+                  <td className="p-2 text-muted-foreground">ARCHIVE</td>
+                </tr>
+                <tr className="border-b border-border/30">
+                  <td className="p-2 text-muted-foreground">analytics</td>
+                  <td className="p-2 text-muted-foreground">INTERNAL</td>
+                  <td className="p-2 text-muted-foreground">90 days</td>
+                  <td className="p-2 text-muted-foreground">HARD_DELETE</td>
+                </tr>
+                <tr className="border-b border-border/30">
+                  <td className="p-2 text-muted-foreground">temporary</td>
+                  <td className="p-2 text-muted-foreground">PUBLIC</td>
+                  <td className="p-2 text-muted-foreground">30 days</td>
+                  <td className="p-2 text-muted-foreground">HARD_DELETE</td>
+                </tr>
+                <tr>
+                  <td className="p-2 text-muted-foreground">default</td>
+                  <td className="p-2 text-muted-foreground">-</td>
+                  <td className="p-2 text-muted-foreground">180 days</td>
+                  <td className="p-2 text-muted-foreground">SOFT_DELETE</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="mt-4 p-3 rounded-lg bg-green-500/10 border border-green-500/30">
+            <p className="text-xs font-semibold text-foreground mb-2">Key Features:</p>
+            <ul className="text-xs text-muted-foreground space-y-1">
+              <li>✅ Right to deletion supported</li>
+              <li>✅ 1 year retention for user data</li>
+              <li>✅ Archive strategy (recoverable)</li>
+              <li>✅ Automatic cleanup</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div className="p-6 rounded-xl border border-red-500/30 bg-red-500/5">
+          <div className="flex items-center gap-3 mb-4">
+            <FileCheck className="h-6 w-6 text-red-400" />
+            <h4 className="font-bold text-foreground">HIPAA Retention Policy</h4>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border/50">
+                  <th className="text-left p-2 font-semibold text-foreground">Entity Type</th>
+                  <th className="text-left p-2 font-semibold text-foreground">Classification</th>
+                  <th className="text-left p-2 font-semibold text-foreground">Retention</th>
+                  <th className="text-left p-2 font-semibold text-foreground">Strategy</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-border/30">
+                  <td className="p-2 text-muted-foreground">patient-record</td>
+                  <td className="p-2 text-muted-foreground">PHI</td>
+                  <td className="p-2 text-muted-foreground">2555 days</td>
+                  <td className="p-2 text-muted-foreground">ARCHIVE</td>
+                </tr>
+                <tr className="border-b border-border/30">
+                  <td className="p-2 text-muted-foreground">appointment</td>
+                  <td className="p-2 text-muted-foreground">PHI</td>
+                  <td className="p-2 text-muted-foreground">2190 days</td>
+                  <td className="p-2 text-muted-foreground">ARCHIVE</td>
+                </tr>
+                <tr className="border-b border-border/30">
+                  <td className="p-2 text-muted-foreground">prescription</td>
+                  <td className="p-2 text-muted-foreground">PHI</td>
+                  <td className="p-2 text-muted-foreground">2190 days</td>
+                  <td className="p-2 text-muted-foreground">ARCHIVE</td>
+                </tr>
+                <tr>
+                  <td className="p-2 text-muted-foreground">default</td>
+                  <td className="p-2 text-muted-foreground">PHI</td>
+                  <td className="p-2 text-muted-foreground">2190 days</td>
+                  <td className="p-2 text-muted-foreground">ARCHIVE</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="mt-4 p-3 rounded-lg bg-green-500/10 border border-green-500/30">
+            <p className="text-xs font-semibold text-foreground mb-2">Key Features:</p>
+            <ul className="text-xs text-muted-foreground space-y-1">
+              <li>✅ 6 years minimum (HIPAA requirement)</li>
+              <li>✅ 7 years for patient records</li>
+              <li>✅ Archive strategy (compliance)</li>
+              <li>✅ Legal hold support</li>
+              <li>✅ Investigation support</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const SPIPattern = () => {
   return (
@@ -639,8 +944,22 @@ public class MyRetentionPolicyProvider
           </div>
         </section>
 
-        {/* The Complete Flow */}
+        {/* Complete Retention Flow */}
+        <section className="px-6 py-12 border-t border-border/50 bg-muted/30">
+          <div className="max-w-4xl mx-auto">
+            <CompleteRetentionFlow />
+          </div>
+        </section>
+
+        {/* GDPR vs HIPAA Comparison */}
         <section className="px-6 py-12">
+          <div className="max-w-4xl mx-auto">
+            <GDPRvsHIPAAComparison />
+          </div>
+        </section>
+
+        {/* The Complete Flow */}
+        <section className="px-6 py-12 border-t border-border/50 bg-muted/30">
           <div className="max-w-4xl">
             <motion.div 
               initial={{ opacity: 0, y: 20 }}

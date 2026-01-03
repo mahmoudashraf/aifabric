@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Highlight, themes } from "prism-react-renderer";
@@ -26,7 +26,10 @@ import {
   ArrowRight,
   Ban,
   Clock,
-  DollarSign
+  DollarSign,
+  Play,
+  Pause,
+  RotateCcw
 } from "lucide-react";
 
 const PAGE_TITLE = "Custom Access Policy: Building Fail-Closed Security Into Every Request - AI Fabric Framework";
@@ -142,6 +145,194 @@ const FlowStep = ({ step, title, description, code, icon: Icon, color }: {
     {code && <CodeBlock code={code} />}
   </motion.div>
 );
+
+const AccessControlFlow = () => {
+  const [activeStep, setActiveStep] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  
+  const steps = [
+    {
+      number: 1,
+      title: "User Request",
+      icon: MessageSquare,
+      color: "bg-blue-500",
+      description: "POST /api/chat\nBody: 'Cancel my subscription'\nUser: user-123 (Pro tier)"
+    },
+    {
+      number: 2,
+      title: "Orchestrator Entry",
+      icon: Brain,
+      color: "bg-purple-500",
+      description: "RAGOrchestrator.orchestrate()\nReceives request with context"
+    },
+    {
+      number: 3,
+      title: "Access Control Check",
+      icon: Shield,
+      color: "bg-green-500",
+      description: "AIAccessControlService.checkAccess()\nBuilds request with resourceId & operationType"
+    },
+    {
+      number: 4,
+      title: "Build Entity Context",
+      icon: Database,
+      color: "bg-orange-500",
+      description: "buildEntityContext()\nCreates immutable context map"
+    },
+    {
+      number: 5,
+      title: "Call Your Policy",
+      icon: Code,
+      color: "bg-red-500",
+      description: "EntityAccessPolicy.canUserAccessEntity()\nYOUR CODE executes here"
+    },
+    {
+      number: 6,
+      title: "Evaluate Access",
+      icon: CheckCircle2,
+      color: "bg-teal-500",
+      description: "evaluateAccess()\nFAIL CLOSED: Exception = deny"
+    },
+    {
+      number: 7,
+      title: "Return Response",
+      icon: Zap,
+      color: "bg-indigo-500",
+      description: "AIAccessControlResponse\nAccess decision & processing time"
+    },
+    {
+      number: 8,
+      title: "Continue or Block",
+      icon: ArrowRight,
+      color: "bg-pink-500",
+      description: "RAGOrchestrator checks response\nIf denied → error, else continue"
+    }
+  ];
+
+  useEffect(() => {
+    if (isPlaying && activeStep < steps.length - 1) {
+      const timer = setTimeout(() => {
+        setActiveStep(prev => prev + 1);
+      }, 2000);
+      return () => clearTimeout(timer);
+    } else if (activeStep >= steps.length - 1) {
+      setIsPlaying(false);
+    }
+  }, [isPlaying, activeStep, steps.length]);
+
+  return (
+    <div className="my-16">
+      <h3 className="text-2xl font-bold text-foreground mb-8 text-center">
+        Complete Access Control Flow: From Request to Decision
+      </h3>
+      <p className="text-sm text-muted-foreground text-center mb-6">
+        Watch how every request passes through the access control system
+      </p>
+      
+      <div className="flex items-center justify-center gap-3 mb-6">
+        <button
+          onClick={() => {
+            setIsPlaying(!isPlaying);
+            if (activeStep >= steps.length - 1) {
+              setActiveStep(0);
+              setIsPlaying(true);
+            }
+          }}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/10 border border-primary/30 text-primary hover:bg-primary/20 transition-colors"
+        >
+          {isPlaying ? (
+            <>
+              <Pause className="h-4 w-4" />
+              Pause
+            </>
+          ) : (
+            <>
+              <Play className="h-4 w-4" />
+              Play Flow
+            </>
+          )}
+        </button>
+        <button
+          onClick={() => {
+            setActiveStep(0);
+            setIsPlaying(false);
+          }}
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted border border-border/50 text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <RotateCcw className="h-4 w-4" />
+          Reset
+        </button>
+      </div>
+      
+      <div className="relative">
+        <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6">
+          {steps.map((step, i) => {
+            const Icon = step.icon;
+            const isActive = activeStep >= i;
+            return (
+              <div key={i} className="flex items-center gap-2 md:gap-4">
+                <motion.div
+                  animate={{
+                    scale: activeStep === i ? 1.1 : 1,
+                    opacity: isActive ? 1 : 0.4,
+                  }}
+                  className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
+                    activeStep === i
+                      ? `${step.color} border-${step.color.split('-')[1]}-600 shadow-lg`
+                      : 'bg-muted/30 border-border/50'
+                  }`}
+                  onClick={() => {
+                    setActiveStep(i);
+                    setIsPlaying(false);
+                  }}
+                  style={{ cursor: 'pointer', minWidth: '140px' }}
+                >
+                  <div className={`p-3 rounded-full ${step.color} ${!isActive ? 'opacity-50' : ''}`}>
+                    <Icon className="h-5 w-5 text-white" />
+                  </div>
+                  <div className="text-center">
+                    <div className={`text-xs font-semibold mb-1 ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      STEP {step.number}
+                    </div>
+                    <div className={`text-sm font-bold ${isActive ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {step.title}
+                    </div>
+                  </div>
+                </motion.div>
+                {i < steps.length - 1 && (
+                  <motion.div
+                    animate={{ opacity: activeStep > i ? 1 : 0.3 }}
+                    className="hidden md:block"
+                  >
+                    <ArrowRight className="h-5 w-5 text-muted-foreground" />
+                  </motion.div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        
+        {steps[activeStep] && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-8 p-6 rounded-xl border border-primary/30 bg-primary/5"
+          >
+            <div className="flex items-center gap-3 mb-3">
+              {React.createElement(steps[activeStep].icon, {
+                className: `h-6 w-6 text-primary`
+              })}
+              <div>
+                <h4 className="font-bold text-foreground">STEP {steps[activeStep].number}: {steps[activeStep].title}</h4>
+                <p className="text-sm text-muted-foreground whitespace-pre-line">{steps[activeStep].description}</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 const PolicyExample = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -596,6 +787,13 @@ public class MyAccessPolicy implements EntityAccessPolicy {
         .build();
 }`}
             />
+          </div>
+        </section>
+
+        {/* Visual Flow Diagram */}
+        <section className="px-6 py-12 border-t border-border/50 bg-muted/30">
+          <div className="max-w-4xl mx-auto">
+            <AccessControlFlow />
           </div>
         </section>
 
