@@ -109,6 +109,123 @@ const MediumStoriesSection = () => {
               <ExternalLink className="h-4 w-4" />
             </a>
           </motion.div>
+
+          {/* Real API Stories Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="mt-16 rounded-2xl border border-primary/30 bg-primary/5 p-8"
+          >
+            <div className="mb-6 text-center">
+              <h3 className="mb-3 text-2xl font-bold text-foreground">
+                🧪 Real API Integration Stories
+              </h3>
+              <p className="mx-auto max-w-2xl text-muted-foreground">
+                Production integration tests told as interactive stories. See the framework in action 
+                with real-world scenarios.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <a
+                href="/docs/ecommerce-product-discovery-story"
+                className="group rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-lg"
+              >
+                <h4 className="mb-2 font-semibold text-foreground group-hover:text-primary transition-colors">
+                  🛍️ E-Commerce Product Discovery
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  Natural language product search • +40% conversion
+                </p>
+              </a>
+              <a
+                href="/docs/financial-fraud-detection-story"
+                className="group rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-lg"
+              >
+                <h4 className="mb-2 font-semibold text-foreground group-hover:text-primary transition-colors">
+                  🔒 Financial Fraud Detection
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  Track suspicious money flows • 87% detection rate
+                </p>
+              </a>
+              <a
+                href="/docs/law-firm-document-story"
+                className="group rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-lg"
+              >
+                <h4 className="mb-2 font-semibold text-foreground group-hover:text-primary transition-colors">
+                  ⚖️ Law Firm Document Management
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  From 3 hours to 30 seconds • 50K+ documents
+                </p>
+              </a>
+              <a
+                href="/docs/pii-detection-edge-story"
+                className="group rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-lg"
+              >
+                <h4 className="mb-2 font-semibold text-foreground group-hover:text-primary transition-colors">
+                  🛡️ PII Detection Edge Spectrum
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  10-phase testing • $10M+ in fines avoided
+                </p>
+              </a>
+              <a
+                href="/docs/smart-suggestions-story"
+                className="group rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-lg"
+              >
+                <h4 className="mb-2 font-semibold text-foreground group-hover:text-primary transition-colors">
+                  ✨ Smart Suggestions
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  AI predictions • +40% engagement
+                </p>
+              </a>
+              <a
+                href="/docs/onnx-fallback-story"
+                className="group rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-lg"
+              >
+                <h4 className="mb-2 font-semibold text-foreground group-hover:text-primary transition-colors">
+                  💾 ONNX Fallback Readiness
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  $18K → $0 • 100% private • 15ms latency
+                </p>
+              </a>
+              <a
+                href="/docs/real-ai-embedding-story"
+                className="group rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-lg"
+              >
+                <h4 className="mb-2 font-semibold text-foreground group-hover:text-primary transition-colors">
+                  ⚡ Real AI Embedding Generation
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  Product to vector in 15ms • $0 cost • 94% accuracy
+                </p>
+              </a>
+              <a
+                href="/docs/vector-lifecycle-story"
+                className="group rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-lg"
+              >
+                <h4 className="mb-2 font-semibold text-foreground group-hover:text-primary transition-colors">
+                  🔄 Vector Lifecycle Management
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  8-phase lifecycle • Zero downtime • Full audit
+                </p>
+              </a>
+            </div>
+            <div className="mt-6 text-center">
+              <a
+                href="/docs"
+                className="inline-flex items-center gap-2 text-primary hover:underline"
+              >
+                View all Real API Stories
+                <ExternalLink className="h-4 w-4" />
+              </a>
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>

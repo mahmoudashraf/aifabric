@@ -204,6 +204,61 @@ const docCategories = [
     ],
   },
   {
+    title: "Real API Stories",
+    description: "Production integration tests told as stories",
+    icon: "🧪",
+    items: [
+      {
+        title: "E-Commerce Product Discovery",
+        description: "When shoppers speak, AI listens—natural language product search",
+        href: "/docs/ecommerce-product-discovery-story",
+        status: "available",
+      },
+      {
+        title: "Financial Fraud Detection",
+        description: "Track suspicious money flows through relationship queries",
+        href: "/docs/financial-fraud-detection-story",
+        status: "available",
+      },
+      {
+        title: "Law Firm Document Management",
+        description: "Find needles in legal haystacks—30 seconds instead of 3 hours",
+        href: "/docs/law-firm-document-story",
+        status: "available",
+      },
+      {
+        title: "PII Detection Edge Spectrum",
+        description: "Testing every privacy edge case—HIPAA & GDPR compliant",
+        href: "/docs/pii-detection-edge-story",
+        status: "available",
+      },
+      {
+        title: "Smart Suggestions",
+        description: "AI-powered next-step predictions with confidence scores",
+        href: "/docs/smart-suggestions-story",
+        status: "available",
+      },
+      {
+        title: "ONNX Fallback Readiness",
+        description: "$0 embeddings, 100% private, zero downtime",
+        href: "/docs/onnx-fallback-story",
+        status: "available",
+      },
+      {
+        title: "Real AI Embedding Generation",
+        description: "From product data to semantic search in 15ms with $0 cost",
+        href: "/docs/real-ai-embedding-story",
+        status: "available",
+      },
+      {
+        title: "Vector Lifecycle Management",
+        description: "8-phase lifecycle: create, remove, clear, reseed with full audit",
+        href: "/docs/vector-lifecycle-story",
+        status: "available",
+      },
+    ],
+  },
+  {
     title: "Core Modules",
     description: "Deep dive into framework components",
     icon: "🧩",
