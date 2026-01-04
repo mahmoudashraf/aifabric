@@ -132,7 +132,7 @@ const MediumStoriesSection = () => {
                 className="group rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-lg"
               >
                 <h4 className="mb-2 font-semibold text-foreground group-hover:text-primary transition-colors">
-                  E-Commerce Product Discovery
+                  🛍️ E-Commerce Product Discovery
                 </h4>
                 <p className="text-sm text-muted-foreground">
                   Natural language product search • +40% conversion
@@ -143,7 +143,7 @@ const MediumStoriesSection = () => {
                 className="group rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-lg"
               >
                 <h4 className="mb-2 font-semibold text-foreground group-hover:text-primary transition-colors">
-                  Financial Fraud Detection
+                  🔒 Financial Fraud Detection
                 </h4>
                 <p className="text-sm text-muted-foreground">
                   Track suspicious money flows • 87% detection rate
@@ -154,10 +154,43 @@ const MediumStoriesSection = () => {
                 className="group rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-lg"
               >
                 <h4 className="mb-2 font-semibold text-foreground group-hover:text-primary transition-colors">
-                  Law Firm Document Management
+                  ⚖️ Law Firm Document Management
                 </h4>
                 <p className="text-sm text-muted-foreground">
                   From 3 hours to 30 seconds • 50K+ documents
+                </p>
+              </a>
+              <a
+                href="/docs/pii-detection-edge-story"
+                className="group rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-lg"
+              >
+                <h4 className="mb-2 font-semibold text-foreground group-hover:text-primary transition-colors">
+                  🛡️ PII Detection Edge Spectrum
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  10-phase testing • $10M+ in fines avoided
+                </p>
+              </a>
+              <a
+                href="/docs/smart-suggestions-story"
+                className="group rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-lg"
+              >
+                <h4 className="mb-2 font-semibold text-foreground group-hover:text-primary transition-colors">
+                  ✨ Smart Suggestions
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  AI predictions • +40% engagement
+                </p>
+              </a>
+              <a
+                href="/docs/onnx-fallback-story"
+                className="group rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-lg"
+              >
+                <h4 className="mb-2 font-semibold text-foreground group-hover:text-primary transition-colors">
+                  💾 ONNX Fallback Readiness
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  $18K → $0 • 100% private • 15ms latency
                 </p>
               </a>
             </div>
