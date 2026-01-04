@@ -16,7 +16,8 @@ import {
   RefreshCw,
   MessageSquare,
   Cpu,
-  FileText
+  FileText,
+  FlaskConical
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -39,6 +40,20 @@ const docSections: DocSection[] = [
       { title: "Introduction", href: "/docs" },
       { title: "Quick Start", href: "/docs/quickstart", badge: "New" },
       { title: "Installation", href: "/docs/installation", badge: "Soon" },
+    ],
+  },
+  {
+    title: "Real API Stories",
+    icon: <FlaskConical className="h-4 w-4" />,
+    items: [
+      { title: "E-Commerce Product Discovery", href: "/docs/ecommerce-product-discovery-story", badge: "New" },
+      { title: "Financial Fraud Detection", href: "/docs/financial-fraud-detection-story", badge: "New" },
+      { title: "Law Firm Document Management", href: "/docs/law-firm-document-story", badge: "New" },
+      { title: "PII Detection Edge Spectrum", href: "/docs/pii-detection-edge-story", badge: "New" },
+      { title: "Smart Suggestions", href: "/docs/smart-suggestions-story", badge: "New" },
+      { title: "ONNX Fallback Readiness", href: "/docs/onnx-fallback-story", badge: "New" },
+      { title: "Real AI Embedding Generation", href: "/docs/real-ai-embedding-story", badge: "New" },
+      { title: "Vector Lifecycle Management", href: "/docs/vector-lifecycle-story", badge: "New" },
     ],
   },
   {
