@@ -64,6 +64,9 @@ import RetentionCapabilitiesStory from "./pages/docs/RetentionCapabilitiesStory"
 import RetentionCapabilitiesStoryV2 from "./pages/docs/RetentionCapabilitiesStoryV2";
 import RetentionCapabilitiesFull from "./pages/docs/RetentionCapabilitiesFull";
 import QuickStart from "./pages/docs/QuickStart";
+import ECommerceProductDiscoveryStory from "./pages/docs/ECommerceProductDiscoveryStory";
+import FinancialFraudDetectionStory from "./pages/docs/FinancialFraudDetectionStory";
+import LawFirmDocumentStory from "./pages/docs/LawFirmDocumentStory";
 import { usePageTracking } from "./hooks/usePageTracking";
 
 const queryClient = new QueryClient();
@@ -148,6 +151,9 @@ const App = () => (
             <Route path="/docs/guides/retention_capabilities" element={<RetentionCapabilitiesFull />} />
             <Route path="/docs/retention_capabilities_full" element={<RetentionCapabilitiesFull />} />
             <Route path="/docs/quickstart" element={<QuickStart />} />
+            <Route path="/docs/ecommerce-product-discovery-story" element={<ECommerceProductDiscoveryStory />} />
+            <Route path="/docs/financial-fraud-detection-story" element={<FinancialFraudDetectionStory />} />
+            <Route path="/docs/law-firm-document-story" element={<LawFirmDocumentStory />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
