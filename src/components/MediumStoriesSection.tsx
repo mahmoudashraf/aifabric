@@ -193,6 +193,28 @@ const MediumStoriesSection = () => {
                   $18K → $0 • 100% private • 15ms latency
                 </p>
               </a>
+              <a
+                href="/docs/real-ai-embedding-story"
+                className="group rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-lg"
+              >
+                <h4 className="mb-2 font-semibold text-foreground group-hover:text-primary transition-colors">
+                  ⚡ Real AI Embedding Generation
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  Product to vector in 15ms • $0 cost • 94% accuracy
+                </p>
+              </a>
+              <a
+                href="/docs/vector-lifecycle-story"
+                className="group rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-lg"
+              >
+                <h4 className="mb-2 font-semibold text-foreground group-hover:text-primary transition-colors">
+                  🔄 Vector Lifecycle Management
+                </h4>
+                <p className="text-sm text-muted-foreground">
+                  8-phase lifecycle • Zero downtime • Full audit
+                </p>
+              </a>
             </div>
             <div className="mt-6 text-center">
               <a

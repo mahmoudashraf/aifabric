@@ -70,6 +70,8 @@ import LawFirmDocumentStory from "./pages/docs/LawFirmDocumentStory";
 import PIIDetectionEdgeStory from "./pages/docs/PIIDetectionEdgeStory";
 import SmartSuggestionsStory from "./pages/docs/SmartSuggestionsStory";
 import ONNXFallbackStory from "./pages/docs/ONNXFallbackStory";
+import RealAIEmbeddingStory from "./pages/docs/RealAIEmbeddingStory";
+import VectorLifecycleStory from "./pages/docs/VectorLifecycleStory";
 import { usePageTracking } from "./hooks/usePageTracking";
 
 const queryClient = new QueryClient();
@@ -160,6 +162,8 @@ const App = () => (
             <Route path="/docs/pii-detection-edge-story" element={<PIIDetectionEdgeStory />} />
             <Route path="/docs/smart-suggestions-story" element={<SmartSuggestionsStory />} />
             <Route path="/docs/onnx-fallback-story" element={<ONNXFallbackStory />} />
+            <Route path="/docs/real-ai-embedding-story" element={<RealAIEmbeddingStory />} />
+            <Route path="/docs/vector-lifecycle-story" element={<VectorLifecycleStory />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

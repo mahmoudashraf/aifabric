@@ -244,6 +244,18 @@ const docCategories = [
         href: "/docs/onnx-fallback-story",
         status: "available",
       },
+      {
+        title: "Real AI Embedding Generation",
+        description: "From product data to semantic search in 15ms with $0 cost",
+        href: "/docs/real-ai-embedding-story",
+        status: "available",
+      },
+      {
+        title: "Vector Lifecycle Management",
+        description: "8-phase lifecycle: create, remove, clear, reseed with full audit",
+        href: "/docs/vector-lifecycle-story",
+        status: "available",
+      },
     ],
   },
   {
