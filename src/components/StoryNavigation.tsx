@@ -262,9 +262,9 @@ const CompactNavigation = ({ className = "" }: { className?: string }) => {
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className={`${className}`}
+      className={`sticky top-0 z-40 -mx-4 px-4 pt-[72px] pb-2 -mt-[56px] bg-background/95 backdrop-blur-md ${className}`}
     >
-      <div className="flex items-stretch gap-1.5 sm:gap-3 p-1.5 sm:p-3 rounded-xl sm:rounded-2xl border border-border/30 bg-card/30 backdrop-blur-sm">
+      <div className="flex items-stretch gap-1.5 sm:gap-3 p-1.5 sm:p-3 rounded-xl sm:rounded-2xl border border-border/30 bg-card/80 backdrop-blur-md shadow-sm">
         {/* Left: Previous or All Stories */}
         <div className="flex-1 min-w-0">
           {previous ? (
