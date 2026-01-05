@@ -5,6 +5,7 @@ import { Highlight, themes } from "prism-react-renderer";
 import DocsLayout from "@/components/docs/DocsLayout";
 import PageViewCounter from "@/components/PageViewCounter";
 import StoryLoveButton from "@/components/StoryLoveButton";
+import StoryNavigation from "@/components/StoryNavigation";
 import { 
   Zap, 
   Clock, 
@@ -679,6 +680,9 @@ const CoreStory = () => {
   return (
     <DocsLayout>
       <div className="max-w-4xl mx-auto">
+        {/* Top Navigation */}
+        <StoryNavigation variant="compact" className="pt-6" />
+
         <motion.article 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -810,6 +814,9 @@ const CoreStory = () => {
               </p>
             </div>
           </section>
+
+          {/* Story Navigation */}
+          <StoryNavigation className="mt-12" />
 
           {/* Footer */}
           <footer className="border-t border-border/50 pt-8 mt-12">

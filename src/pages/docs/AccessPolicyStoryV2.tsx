@@ -5,6 +5,7 @@ import { Highlight, themes } from "prism-react-renderer";
 import DocsLayout from "@/components/docs/DocsLayout";
 import PageViewCounter from "@/components/PageViewCounter";
 import StoryLoveButton from "@/components/StoryLoveButton";
+import StoryNavigation from "@/components/StoryNavigation";
 import { 
   Shield,
   AlertTriangle,
@@ -842,6 +843,9 @@ const AccessPolicyStoryV2 = () => {
   return (
     <DocsLayout>
       <div className="min-h-screen">
+        {/* Top Navigation */}
+        <StoryNavigation variant="compact" className="px-6 pt-6" />
+
         {/* Hero */}
         <section className="relative overflow-hidden border-b border-border/50">
           <div className="absolute inset-0 bg-gradient-glow opacity-50" />
@@ -929,6 +933,13 @@ const AccessPolicyStoryV2 = () => {
             <WhatYouImplement />
           </div>
         </section>
+
+        {/* Story Navigation */}
+
+
+        <StoryNavigation className="mt-12" />
+
+
 
         {/* Footer */}
         <section className="px-6 py-8 border-t border-border/50">

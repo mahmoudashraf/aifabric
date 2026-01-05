@@ -27,6 +27,7 @@ import {
 import DocsLayout from "@/components/docs/DocsLayout";
 import PageViewCounter from "@/components/PageViewCounter";
 import StoryLoveButton from "@/components/StoryLoveButton";
+import StoryNavigation from "@/components/StoryNavigation";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const codeTheme = {
@@ -90,6 +91,9 @@ const RelationshipQueryStory = () => {
   return (
     <DocsLayout>
       <div className="min-h-screen">
+        {/* Top Navigation */}
+        <StoryNavigation variant="compact" className="px-6 pt-6" />
+
         {/* Header */}
         <section className="border-b border-border/50 px-6 py-8">
           <div className="flex items-center justify-between flex-wrap gap-4">
@@ -836,6 +840,13 @@ public class AnalyticsController {
               Part of the AI Fabric Framework series — under active development for Q1 2026
             </p>
           </motion.div>
+        </section>
+
+        {/* Story Navigation */}
+        <section className="px-6 py-12">
+          <div className="max-w-4xl mx-auto">
+            <StoryNavigation />
+          </div>
         </section>
       </div>
     </DocsLayout>

@@ -5,6 +5,7 @@ import { Highlight, themes } from "prism-react-renderer";
 import DocsLayout from "@/components/docs/DocsLayout";
 import PageViewCounter from "@/components/PageViewCounter";
 import StoryLoveButton from "@/components/StoryLoveButton";
+import StoryNavigation from "@/components/StoryNavigation";
 import { 
   Database,
   AlertTriangle,
@@ -746,10 +747,14 @@ const CustomStorageIndexingStory = () => {
 
   return (
     <DocsLayout>
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Top Navigation */}
+        <StoryNavigation variant="compact" className="pt-6" />
+
         <motion.article 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          className="py-8"
         >
           {/* Hero */}
           <section className="relative overflow-hidden border-b border-border/50 pb-12 mb-12">
@@ -864,6 +869,13 @@ const CustomStorageIndexingStory = () => {
               </p>
             </div>
           </section>
+
+          {/* Story Navigation */}
+
+
+          <StoryNavigation className="mt-12" />
+
+
 
           {/* Footer */}
           <footer className="border-t border-border/50 pt-12 mt-12 flex flex-col items-center gap-6">

@@ -7,6 +7,7 @@ import { Highlight, themes } from "prism-react-renderer";
 import DocsLayout from "@/components/docs/DocsLayout";
 import PageViewCounter from "@/components/PageViewCounter";
 import StoryLoveButton from "@/components/StoryLoveButton";
+import StoryNavigation from "@/components/StoryNavigation";
 import { 
   Clock, 
   Zap, 
@@ -509,6 +510,9 @@ const IndexingStrategiesStory = () => {
   return (
     <DocsLayout>
       <div className="min-h-screen">
+        {/* Top Navigation */}
+        <StoryNavigation variant="compact" className="px-6 pt-6" />
+
         {/* Hero Header */}
         <section className="border-b border-border/50 px-6 py-8 bg-gradient-to-br from-primary/5 via-transparent to-accent/5">
           <div className="flex items-center justify-between flex-wrap gap-4">
@@ -669,6 +673,9 @@ const IndexingStrategiesStory = () => {
           >
             {indexingStoryContent}
           </ReactMarkdown>
+
+          {/* Story Navigation */}
+          <StoryNavigation className="mt-12" />
 
           {/* Footer */}
           <footer className="border-t border-border/50 pt-8 mt-12">

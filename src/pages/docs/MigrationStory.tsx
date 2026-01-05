@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import DocsLayout from '@/components/docs/DocsLayout';
 import StoryLoveButton from '@/components/StoryLoveButton';
 import PageViewCounter from "@/components/PageViewCounter";
+import StoryNavigation from "@/components/StoryNavigation";
 import { Link } from 'react-router-dom';
 
 const fadeIn = {
@@ -420,6 +421,9 @@ export default function MigrationStory() {
         animate="animate"
         variants={staggerContainer}
       >
+        {/* Top Navigation */}
+        <StoryNavigation variant="compact" className="pt-6 mb-4" />
+
         {/* Hero */}
         <section className="relative overflow-hidden border-b border-border/50 mb-12">
           <div className="absolute inset-0 bg-gradient-glow opacity-50" />
@@ -624,6 +628,11 @@ export default function MigrationStory() {
               </Link>
             </CardContent>
           </Card>
+        </motion.section>
+
+        {/* Story Navigation */}
+        <motion.section variants={fadeIn} className="mt-12">
+          <StoryNavigation />
         </motion.section>
 
         {/* Footer */}
