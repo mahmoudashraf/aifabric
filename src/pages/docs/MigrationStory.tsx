@@ -421,6 +421,9 @@ export default function MigrationStory() {
         animate="animate"
         variants={staggerContainer}
       >
+        {/* Top Navigation */}
+        <StoryNavigation variant="compact" className="pt-6 mb-4" />
+
         {/* Hero */}
         <section className="relative overflow-hidden border-b border-border/50 mb-12">
           <div className="absolute inset-0 bg-gradient-glow opacity-50" />

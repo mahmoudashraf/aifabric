@@ -91,6 +91,9 @@ const RelationshipQueryStory = () => {
   return (
     <DocsLayout>
       <div className="min-h-screen">
+        {/* Top Navigation */}
+        <StoryNavigation variant="compact" className="px-6 pt-6" />
+
         {/* Header */}
         <section className="border-b border-border/50 px-6 py-8">
           <div className="flex items-center justify-between flex-wrap gap-4">

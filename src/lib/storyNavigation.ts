@@ -15,6 +15,7 @@ import {
   Sparkles,
   ShoppingCart,
   LucideIcon,
+  HelpCircle,
 } from "lucide-react";
 
 export interface Story {
@@ -28,7 +29,28 @@ export interface Story {
   collection: "user-stories" | "real-api-stories";
 }
 
-// Combined stories from both collections
+/**
+ * ============================================
+ * STORY NAVIGATION DATA
+ * ============================================
+ * 
+ * IMPORTANT: This file must be kept in sync with actual story files!
+ * 
+ * When ADDING a story:
+ *   1. Create the story file in /src/pages/docs/
+ *   2. Add the route in your router configuration
+ *   3. Add an entry here in the appropriate position
+ *   4. Import StoryNavigation in the new story file
+ * 
+ * When DELETING a story:
+ *   1. Delete the story file
+ *   2. Remove the route from router configuration  
+ *   3. Remove the entry from this array
+ * 
+ * The navigation will gracefully handle:
+ *   - Stories not in this list (navigation won't show)
+ *   - Being at the start/end of the list (shows "All Stories" link)
+ */
 export const allStories: Story[] = [
   // User Stories
   {

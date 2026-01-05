@@ -166,6 +166,9 @@ const IntentStory = () => {
   return (
     <DocsLayout>
       <div className="min-h-screen bg-background">
+        {/* Top Navigation */}
+        <StoryNavigation variant="compact" className="pt-6 mb-4" />
+
         {/* Hero Section */}
         <section className="relative overflow-hidden border-b border-border/50 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
           <div className="absolute inset-0 bg-gradient-glow opacity-30" />

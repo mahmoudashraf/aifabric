@@ -510,6 +510,9 @@ const BehaviorStory = () => {
   return (
     <DocsLayout>
       <div className="max-w-4xl mx-auto">
+        {/* Top Navigation */}
+        <StoryNavigation variant="compact" className="pt-6" />
+
         <motion.article 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

@@ -185,6 +185,9 @@ const LawFirmDocumentStory = () => {
   return (
     <DocsLayout>
       <div className="min-h-screen">
+        {/* Top Navigation */}
+        <StoryNavigation variant="compact" className="px-6 pt-6" />
+
         {/* Hero */}
         <section className="relative overflow-hidden border-b border-border/50">
           <div className="absolute inset-0 bg-gradient-glow opacity-50" />

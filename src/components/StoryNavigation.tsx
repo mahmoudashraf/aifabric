@@ -7,13 +7,15 @@ import {
   Sparkles,
   ArrowRight,
   Compass,
-  Rocket
+  Rocket,
+  Home
 } from "lucide-react";
 import { getStoryNavigation, getRandomStories, Story } from "@/lib/storyNavigation";
 import { useState, useEffect } from "react";
 
 interface StoryNavigationProps {
   className?: string;
+  variant?: "full" | "compact";
 }
 
 // Floating particle component for creative effect
@@ -36,7 +38,7 @@ const FloatingParticle = ({ delay }: { delay: number }) => (
   />
 );
 
-// Navigation card component
+// Navigation card component for full variant
 const NavCard = ({ 
   story, 
   direction,
@@ -147,6 +149,39 @@ const NavCard = ({
   );
 };
 
+// Compact navigation button for top of stories
+const CompactNavButton = ({ 
+  story, 
+  direction 
+}: { 
+  story: Story | null; 
+  direction: "prev" | "next";
+}) => {
+  if (!story) return null;
+
+  const isPrev = direction === "prev";
+  const Icon = story.icon;
+
+  return (
+    <Link
+      to={story.href}
+      className="group flex items-center gap-2 px-3 py-2 rounded-xl border border-border/50 bg-card/50 hover:bg-primary/5 hover:border-primary/30 transition-all"
+    >
+      {isPrev && <ChevronLeft className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />}
+      <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${story.color} text-white shrink-0`}>
+        <Icon className="h-4 w-4" />
+      </div>
+      <div className={`flex-1 min-w-0 ${isPrev ? "text-left" : "text-right"}`}>
+        <p className="text-xs text-muted-foreground">{isPrev ? "Previous" : "Next"}</p>
+        <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors truncate">
+          {story.title}
+        </p>
+      </div>
+      {!isPrev && <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />}
+    </Link>
+  );
+};
+
 // Progress indicator
 const ProgressIndicator = ({ current, total }: { current: number; total: number }) => (
   <div className="flex items-center gap-3 justify-center">
@@ -162,6 +197,23 @@ const ProgressIndicator = ({ current, total }: { current: number; total: number 
         initial={{ width: 0 }}
         animate={{ width: `${((current + 1) / total) * 100}%` }}
         transition={{ duration: 0.5, ease: "easeOut" }}
+      />
+    </div>
+  </div>
+);
+
+// Compact progress indicator
+const CompactProgress = ({ current, total }: { current: number; total: number }) => (
+  <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1">
+      <span className="text-xs font-bold text-primary">{current + 1}</span>
+      <span className="text-xs text-muted-foreground">/</span>
+      <span className="text-xs text-muted-foreground">{total}</span>
+    </div>
+    <div className="w-16 h-1 bg-muted rounded-full overflow-hidden">
+      <div
+        className="h-full bg-primary rounded-full transition-all"
+        style={{ width: `${((current + 1) / total) * 100}%` }}
       />
     </div>
   </div>
@@ -195,7 +247,68 @@ const SuggestionCard = ({ story }: { story: Story }) => {
   );
 };
 
-const StoryNavigation = ({ className = "" }: StoryNavigationProps) => {
+// ============================================
+// COMPACT VARIANT - For top of stories
+// ============================================
+const CompactNavigation = ({ className = "" }: { className?: string }) => {
+  const location = useLocation();
+  const { previous, next, currentIndex, totalStories } = getStoryNavigation(location.pathname);
+
+  // Don't render if story not found
+  if (currentIndex === -1) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className={`${className}`}
+    >
+      <div className="flex items-center justify-between gap-4 p-3 rounded-2xl border border-border/30 bg-card/30 backdrop-blur-sm">
+        {/* Left: Previous or All Stories */}
+        <div className="flex-1 min-w-0">
+          {previous ? (
+            <CompactNavButton story={previous} direction="prev" />
+          ) : (
+            <Link
+              to="/docs/user-stories"
+              className="flex items-center gap-2 px-3 py-2 rounded-xl border border-border/50 bg-card/50 hover:bg-primary/5 hover:border-primary/30 transition-all"
+            >
+              <Home className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm font-medium text-foreground">All Stories</span>
+            </Link>
+          )}
+        </div>
+
+        {/* Center: Progress */}
+        <div className="hidden sm:flex items-center gap-3 px-4 py-2 rounded-xl bg-muted/30">
+          <Compass className="h-4 w-4 text-primary" />
+          <CompactProgress current={currentIndex} total={totalStories} />
+        </div>
+
+        {/* Right: Next or All Stories */}
+        <div className="flex-1 min-w-0 flex justify-end">
+          {next ? (
+            <CompactNavButton story={next} direction="next" />
+          ) : (
+            <Link
+              to="/docs/user-stories"
+              className="flex items-center gap-2 px-3 py-2 rounded-xl border border-border/50 bg-card/50 hover:bg-primary/5 hover:border-primary/30 transition-all"
+            >
+              <span className="text-sm font-medium text-foreground">All Stories</span>
+              <Sparkles className="h-4 w-4 text-primary" />
+            </Link>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+// ============================================
+// FULL VARIANT - For bottom of stories
+// ============================================
+const FullNavigation = ({ className = "" }: { className?: string }) => {
   const location = useLocation();
   const [hoveredCard, setHoveredCard] = useState<"prev" | "next" | null>(null);
   const [randomStories, setRandomStories] = useState<Story[]>([]);
@@ -372,4 +485,17 @@ const StoryNavigation = ({ className = "" }: StoryNavigationProps) => {
   );
 };
 
+// ============================================
+// MAIN EXPORT
+// ============================================
+const StoryNavigation = ({ className = "", variant = "full" }: StoryNavigationProps) => {
+  if (variant === "compact") {
+    return <CompactNavigation className={className} />;
+  }
+  return <FullNavigation className={className} />;
+};
+
 export default StoryNavigation;
+
+// Named exports for direct usage
+export { CompactNavigation as StoryNavigationCompact, FullNavigation as StoryNavigationFull };

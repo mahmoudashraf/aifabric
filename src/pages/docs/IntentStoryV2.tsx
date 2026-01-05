@@ -716,6 +716,9 @@ const IntentStoryV2 = () => {
   return (
     <DocsLayout>
       <div className="max-w-4xl mx-auto px-6 py-8">
+        {/* Top Navigation */}
+        <StoryNavigation variant="compact" className="pt-6 mb-4" />
+
         <motion.article 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
