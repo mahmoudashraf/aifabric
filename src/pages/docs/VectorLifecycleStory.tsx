@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import DocsLayout from "@/components/docs/DocsLayout";
 import PageViewCounter from "@/components/PageViewCounter";
 import StoryLoveButton from "@/components/StoryLoveButton";
+import StoryNavigation from "@/components/StoryNavigation";
 
 const PAGE_TITLE = "Vector Lifecycle Management - From Creation to Cleanup";
 const PAGE_DESCRIPTION =
@@ -488,6 +489,13 @@ for (Product product : products) {
                 </p>
               </Link>
             </div>
+          </div>
+        </section>
+
+        {/* Story Navigation */}
+        <section className="px-6 py-12">
+          <div className="max-w-4xl">
+            <StoryNavigation />
           </div>
         </section>
 

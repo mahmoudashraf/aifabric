@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import DocsLayout from '@/components/docs/DocsLayout';
 import StoryLoveButton from '@/components/StoryLoveButton';
 import PageViewCounter from "@/components/PageViewCounter";
+import StoryNavigation from "@/components/StoryNavigation";
 import { Link } from 'react-router-dom';
 
 const fadeIn = {
@@ -624,6 +625,11 @@ export default function MigrationStory() {
               </Link>
             </CardContent>
           </Card>
+        </motion.section>
+
+        {/* Story Navigation */}
+        <motion.section variants={fadeIn} className="mt-12">
+          <StoryNavigation />
         </motion.section>
 
         {/* Footer */}

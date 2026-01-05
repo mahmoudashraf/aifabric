@@ -7,6 +7,7 @@ import { Highlight, themes } from "prism-react-renderer";
 import DocsLayout from "@/components/docs/DocsLayout";
 import PageViewCounter from "@/components/PageViewCounter";
 import StoryLoveButton from "@/components/StoryLoveButton";
+import StoryNavigation from "@/components/StoryNavigation";
 import { 
   MessageSquare, 
   Brain, 
@@ -251,6 +252,13 @@ const IntentStory = () => {
               <StoryLoveButton storySlug="intent_story" />
               <PageViewCounter pagePath="/docs/intent_story" />
             </div>
+          </div>
+        </section>
+
+        {/* Story Navigation */}
+        <section className="px-6 py-12 border-t border-border/50 bg-muted/30">
+          <div className="mx-auto max-w-4xl">
+            <StoryNavigation />
           </div>
         </section>
       </div>

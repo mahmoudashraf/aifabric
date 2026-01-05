@@ -5,6 +5,7 @@ import { Highlight, themes } from "prism-react-renderer";
 import DocsLayout from "@/components/docs/DocsLayout";
 import PageViewCounter from "@/components/PageViewCounter";
 import StoryLoveButton from "@/components/StoryLoveButton";
+import StoryNavigation from "@/components/StoryNavigation";
 import { 
   Shield,
   AlertTriangle,
@@ -849,6 +850,9 @@ const OrchestratorStoryV2 = () => {
               "The Orchestrator isn't about fancy AI. It's about trust, consistency, and sleep."
             </p>
           </section>
+
+          {/* Story Navigation */}
+          <StoryNavigation className="mt-12" />
 
           {/* Footer */}
           <footer className="border-t border-border/50 pt-12 mt-12 flex flex-col items-center gap-6">

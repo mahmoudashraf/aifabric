@@ -5,6 +5,7 @@ import { Highlight, themes } from "prism-react-renderer";
 import DocsLayout from "@/components/docs/DocsLayout";
 import PageViewCounter from "@/components/PageViewCounter";
 import StoryLoveButton from "@/components/StoryLoveButton";
+import StoryNavigation from "@/components/StoryNavigation";
 import { 
   Brain,
   Zap,
@@ -1006,6 +1007,13 @@ const CleanupCapabilitiesStoryV2 = () => {
             <WhatYouImplement />
           </div>
         </section>
+
+        {/* Story Navigation */}
+
+
+        <StoryNavigation className="mt-12" />
+
+
 
         {/* Footer */}
         <section className="px-6 py-8 border-t border-border/50">

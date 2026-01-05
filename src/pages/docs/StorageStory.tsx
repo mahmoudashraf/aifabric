@@ -7,6 +7,7 @@ import { Highlight, themes } from "prism-react-renderer";
 import DocsLayout from "@/components/docs/DocsLayout";
 import PageViewCounter from "@/components/PageViewCounter";
 import StoryLoveButton from "@/components/StoryLoveButton";
+import StoryNavigation from "@/components/StoryNavigation";
 import { 
   Database, 
   Layers, 
@@ -757,6 +758,9 @@ const StorageStory = () => {
               {storageStoryContent}
             </ReactMarkdown>
           </section>
+
+          {/* Story Navigation */}
+          <StoryNavigation className="mt-12" />
 
           {/* Footer */}
           <footer className="border-t border-border/50 pt-8 mt-12">

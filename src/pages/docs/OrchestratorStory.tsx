@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import DocsLayout from "@/components/docs/DocsLayout";
 import PageViewCounter from "@/components/PageViewCounter";
 import StoryLoveButton from "@/components/StoryLoveButton";
+import StoryNavigation from "@/components/StoryNavigation";
 
 const PAGE_TITLE = "The Orchestrator Story - AI Fabric Framework";
 const PAGE_DESCRIPTION =
@@ -711,6 +712,11 @@ OrchestrationResult result = orchestrator.orchestrate(
               </p>
             </motion.div>
           </div>
+        </section>
+
+        {/* Story Navigation */}
+        <section className="px-6 py-12">
+          <StoryNavigation />
         </section>
 
         {/* Footer */}

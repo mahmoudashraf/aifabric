@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import DocsLayout from "@/components/docs/DocsLayout";
 import PageViewCounter from "@/components/PageViewCounter";
 import StoryLoveButton from "@/components/StoryLoveButton";
+import StoryNavigation from "@/components/StoryNavigation";
 
 const PAGE_TITLE = "PII Detection Edge Spectrum - Testing Every Privacy Edge Case";
 const PAGE_DESCRIPTION =
@@ -597,6 +598,13 @@ result.getRedactedValues();     // ["123-45-6789", "john@example.com"]`} />
                 </p>
               </Link>
             </div>
+          </div>
+        </section>
+
+        {/* Story Navigation */}
+        <section className="px-6 py-12">
+          <div className="max-w-4xl">
+            <StoryNavigation />
           </div>
         </section>
 
