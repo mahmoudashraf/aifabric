@@ -30,6 +30,7 @@ import {
 
 const PAGE_TITLE = "Intent Extraction V2: A Conversation Story - AI Fabric Framework";
 const PAGE_DESCRIPTION = "Experience how AI learns to understand users through an interactive storytelling approach.";
+const OG_IMAGE = "/assets/story-preview.png";
 
 const codeTheme = {
   ...themes.nightOwl,
@@ -94,7 +95,7 @@ const ConversationSimulator = () => {
   }, [isPlaying, currentStep, conversation.length]);
 
   return (
-    <div className="my-12 p-8 rounded-2xl bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/20">
+    <div className="my-8 p-6 rounded-2xl bg-gradient-to-br from-primary/5 to-accent/5 border border-primary/20">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
           <MessageSquare className="h-5 w-5 text-primary" />
@@ -116,7 +117,7 @@ const ConversationSimulator = () => {
         </div>
       </div>
       
-      <div className="space-y-3 min-h-[400px]">
+      <div className="space-y-3 min-h-[350px]">
         <AnimatePresence mode="popLayout">
           {conversation.slice(0, currentStep + 1).map((msg, i) => (
             <motion.div
@@ -174,7 +175,7 @@ const BeforeAfterComparison = () => {
   const [activeTab, setActiveTab] = useState<"before" | "after">("before");
   
   return (
-    <div className="my-12">
+    <div className="my-8">
       <div className="flex gap-2 mb-6">
         <button
           onClick={() => setActiveTab("before")}
@@ -233,9 +234,6 @@ const BeforeAfterComparison = () => {
                 <p>
                   <strong className="text-foreground">3:00 PM:</strong> Function now has 47 if/else statements...
                 </p>
-                <p>
-                  <strong className="text-foreground">4:30 PM:</strong> Bug report: "stopped my subscription" triggers "stop" keyword in wrong context
-                </p>
                 <p className="text-red-400 font-semibold pt-2 border-t border-red-500/20">
                   5:00 PM: Sarah questions her career choices 😭
                 </p>
@@ -255,12 +253,6 @@ public String handleChat(String message) {
     // Version 3: False positives
     if ((lower.contains("cancel") || lower.contains("stop")) 
         && !lower.contains("stopped")) return cancel();
-    
-    // Version 4: More edge cases
-    if ((lower.contains("cancel") || lower.contains("stop") 
-         || lower.contains("unsubscribe"))
-        && !lower.contains("stopped") 
-        && !lower.contains("stopping")) return cancel();
     
     // ... 43 more conditions later ...
     
@@ -295,9 +287,6 @@ public String handleChat(String message) {
                 </p>
                 <p>
                   <strong className="text-foreground">10:00 AM:</strong> Tests edge cases: "I stopped my subscription yesterday" → Correctly ignored ✓
-                </p>
-                <p>
-                  <strong className="text-foreground">10:30 AM:</strong> Deploys to production
                 </p>
                 <p className="text-green-400 font-semibold pt-2 border-t border-green-500/20">
                   11:00 AM: Sarah has coffee, feeling like a genius ☕✨
@@ -338,7 +327,7 @@ const MagicMoment = () => {
   ];
 
   return (
-    <div className="my-16 p-8 rounded-2xl bg-gradient-to-br from-primary/10 via-accent/5 to-primary/5 border-2 border-primary/30 relative overflow-hidden">
+    <div className="my-12 p-8 rounded-2xl bg-gradient-to-br from-primary/10 via-accent/5 to-primary/5 border-2 border-primary/30 relative overflow-hidden">
       <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl" />
       
@@ -431,7 +420,7 @@ const FourUniversalLanguages = () => {
   ];
 
   return (
-    <div className="my-16">
+    <div className="my-12">
       <div className="text-center mb-8">
         <h3 className="text-2xl font-bold text-foreground mb-2">The Four Universal Languages of Intent</h3>
         <p className="text-muted-foreground">Every user request falls into one of these categories</p>
@@ -453,7 +442,7 @@ const FourUniversalLanguages = () => {
             
             <div className="relative">
               <div className="flex items-center gap-3 mb-4">
-                <div className={`p-2 rounded-lg bg-muted/50`}>
+                <div className="p-2 rounded-lg bg-muted/50">
                   <intent.icon className={`h-5 w-5 ${intent.color}`} />
                 </div>
                 <div>
@@ -571,25 +560,25 @@ public ActionResult handleError(Exception e, String userId) {
   ];
 
   return (
-    <div className="my-16">
+    <div className="my-12">
       <div className="text-center mb-8">
         <h3 className="text-2xl font-bold text-foreground mb-2">What Sarah Actually Implemented</h3>
         <p className="text-muted-foreground">Five simple methods. No parsing. Just business logic.</p>
       </div>
       
-      <div className="grid lg:grid-cols-5 gap-2 mb-6">
+      <div className="grid grid-cols-5 gap-2 mb-6">
         {methods.map((method, i) => (
           <button
             key={i}
             onClick={() => setActiveMethod(i)}
-            className={`p-4 rounded-lg border-2 transition-all ${
+            className={`p-3 rounded-lg border-2 transition-all ${
               activeMethod === i
                 ? `${method.color.replace('text-', 'border-')} bg-card shadow-lg`
                 : 'border-border/30 bg-muted/30 hover:border-border'
             }`}
           >
-            <method.icon className={`h-6 w-6 mx-auto mb-2 ${activeMethod === i ? method.color : 'text-muted-foreground'}`} />
-            <p className={`text-xs font-semibold ${activeMethod === i ? 'text-foreground' : 'text-muted-foreground'}`}>
+            <method.icon className={`h-5 w-5 mx-auto mb-1 ${activeMethod === i ? method.color : 'text-muted-foreground'}`} />
+            <p className={`text-[10px] font-semibold ${activeMethod === i ? 'text-foreground' : 'text-muted-foreground'}`}>
               {method.name}
             </p>
           </button>
@@ -669,7 +658,7 @@ return orchestrator.orchestrate(userMessage, context);`,
   ];
 
   return (
-    <div className="my-16">
+    <div className="my-12">
       <h3 className="text-2xl font-bold text-foreground mb-8 text-center">Your 8-Minute Journey to Intent Mastery</h3>
       <div className="space-y-8">
         {steps.map((step, i) => (
@@ -711,22 +700,49 @@ return orchestrator.orchestrate(userMessage, context);`,
 const IntentStoryV2 = () => {
   useEffect(() => {
     document.title = PAGE_TITLE;
+
+    const updateMeta = (selector: string, attribute: string, value: string) => {
+      let element = document.querySelector(selector) as HTMLMetaElement | null;
+      if (!element) {
+        element = document.createElement("meta");
+        if (selector.includes("property=")) {
+          element.setAttribute("property", selector.match(/property="([^"]+)"/)?.[1] || "");
+        } else if (selector.includes("name=")) {
+          element.setAttribute("name", selector.match(/name="([^"]+)"/)?.[1] || "");
+        }
+        document.head.appendChild(element);
+      }
+      element.setAttribute(attribute, value);
+    };
+
+    const absoluteOgImage = `${window.location.origin}${OG_IMAGE}`;
+    updateMeta('meta[name="description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[property="og:title"]', "content", PAGE_TITLE);
+    updateMeta('meta[property="og:description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[property="og:image"]', "content", absoluteOgImage);
+    updateMeta('meta[property="og:type"]', "content", "article");
+    updateMeta('meta[property="og:url"]', "content", window.location.href);
+    updateMeta('meta[name="twitter:title"]', "content", PAGE_TITLE);
+    updateMeta('meta[name="twitter:description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[name="twitter:image"]', "content", absoluteOgImage);
+    updateMeta('meta[name="twitter:card"]', "content", "summary_large_image");
   }, []);
 
   return (
     <DocsLayout>
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="max-w-4xl mx-auto">
         {/* Top Navigation */}
-        <StoryNavigation variant="compact" className="pt-6 mb-4" />
+        <StoryNavigation variant="compact" className="pt-6" />
 
         <motion.article 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          className="py-8"
         >
           {/* Hero */}
-          <section className="relative overflow-hidden border-b border-border/50 pb-12 mb-12">
+          <section className="relative overflow-hidden border-b border-border/50 mb-12">
             <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-primary/5" />
-            <div className="relative">
+            <div className="py-12 relative">
               <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
                 <div className="flex items-center gap-3">
                   <span className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-2 text-sm font-medium text-accent">
@@ -759,7 +775,7 @@ const IntentStoryV2 = () => {
           <ConversationSimulator />
 
           {/* Before/After Story */}
-          <section className="mb-16">
+          <section className="mb-12">
             <h2 className="text-2xl font-bold text-foreground mb-6 text-center">
               A Tale of Two Mondays
             </h2>
@@ -779,7 +795,7 @@ const IntentStoryV2 = () => {
           <ThreeStepJourney />
 
           {/* What Actually Happens */}
-          <section className="mb-16 p-8 rounded-2xl bg-muted/30 border border-border/50">
+          <section className="mb-12 p-8 rounded-2xl bg-muted/30 border border-border/50">
             <h3 className="text-xl font-bold text-foreground mb-6 text-center">
               What Actually Happens Behind the Scenes
             </h3>
@@ -814,7 +830,7 @@ const IntentStoryV2 = () => {
           </section>
 
           {/* The Revelation */}
-          <section className="mb-16 p-8 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/5 border border-primary/20 text-center">
+          <section className="mb-12 p-8 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/5 border border-primary/20 text-center">
             <Brain className="h-16 w-16 text-primary mx-auto mb-6" />
             <h3 className="text-2xl font-bold text-foreground mb-4">The Revelation</h3>
             <div className="max-w-2xl mx-auto space-y-4 text-muted-foreground">
@@ -834,36 +850,34 @@ const IntentStoryV2 = () => {
           </section>
 
           {/* Story Navigation */}
-
-
           <StoryNavigation className="mt-12" />
 
-
-
           {/* Footer */}
-          <footer className="border-t border-border/50 pt-12 mt-12 flex flex-col items-center gap-6">
-            <div className="flex items-center gap-4">
-              <StoryLoveButton storySlug="intent-story-v2" />
-              <PageViewCounter />
+          <footer className="border-t border-border/50 pt-8 mt-12">
+            <div className="flex flex-col items-center gap-4">
+              <div className="flex items-center gap-4">
+                <StoryLoveButton storySlug="intent-story-v2" />
+                <PageViewCounter />
+              </div>
+              <div className="flex flex-wrap gap-4 justify-center">
+                <Link 
+                  to="/docs/guides/intent" 
+                  className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
+                >
+                  <FileCode className="h-4 w-4" />
+                  Read Technical Guide
+                </Link>
+                <Link 
+                  to="/docs/intent_story" 
+                  className="inline-flex items-center gap-2 px-6 py-2 rounded-full border border-border bg-card text-foreground font-medium hover:bg-muted transition-colors"
+                >
+                  View V1 (Technical)
+                </Link>
+              </div>
+              <p className="text-xs text-muted-foreground text-center max-w-md">
+                Part of the AI Fabric Framework series — where technology meets storytelling
+              </p>
             </div>
-            <div className="flex flex-wrap gap-4 justify-center">
-              <Link 
-                to="/docs/guides/intent" 
-                className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
-              >
-                <FileCode className="h-4 w-4" />
-                Read Technical Guide
-              </Link>
-              <Link 
-                to="/docs/intent_story" 
-                className="inline-flex items-center gap-2 px-6 py-2 rounded-full border border-border bg-card text-foreground font-medium hover:bg-muted transition-colors"
-              >
-                View V1 (Technical)
-              </Link>
-            </div>
-            <p className="text-xs text-muted-foreground text-center max-w-md">
-              Part of the AI Fabric Framework series — where technology meets storytelling
-            </p>
           </footer>
         </motion.article>
       </div>
@@ -872,4 +886,3 @@ const IntentStoryV2 = () => {
 };
 
 export default IntentStoryV2;
-

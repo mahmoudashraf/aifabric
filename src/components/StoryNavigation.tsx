@@ -63,7 +63,7 @@ const NavCard = ({
       onMouseLeave={() => onHover(false)}
     >
       <motion.div
-        className={`relative overflow-hidden rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-5 transition-all duration-300 ${
+        className={`relative overflow-hidden rounded-xl sm:rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-3 sm:p-5 transition-all duration-300 ${
           isHovered ? "border-primary/50 shadow-xl shadow-primary/10" : ""
         }`}
         whileHover={{ scale: 1.02, y: -2 }}
@@ -77,37 +77,37 @@ const NavCard = ({
           transition={{ duration: 0.3 }}
         />
 
-        {/* Floating particles effect */}
+        {/* Floating particles effect - hidden on mobile for performance */}
         {isHovered && (
-          <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute inset-0 overflow-hidden hidden sm:block">
             {[...Array(5)].map((_, i) => (
               <FloatingParticle key={i} delay={i * 0.2} />
             ))}
           </div>
         )}
 
-        <div className={`relative flex items-center gap-4 ${isPrev ? "" : "flex-row-reverse"}`}>
+        <div className={`relative flex items-center gap-2 sm:gap-4 ${isPrev ? "" : "flex-row-reverse"}`}>
           {/* Direction indicator */}
-          <div className={`flex flex-col items-${isPrev ? "start" : "end"} flex-1 min-w-0`}>
-            <div className={`flex items-center gap-2 text-xs font-medium text-muted-foreground mb-1 ${isPrev ? "" : "flex-row-reverse"}`}>
+          <div className={`flex flex-col ${isPrev ? "items-start" : "items-end"} flex-1 min-w-0`}>
+            <div className={`flex items-center gap-1 sm:gap-2 text-[10px] sm:text-xs font-medium text-muted-foreground mb-0.5 sm:mb-1 ${isPrev ? "" : "flex-row-reverse"}`}>
               {isPrev ? (
                 <>
                   <ChevronLeft className="h-3 w-3" />
-                  <span>Previous Story</span>
+                  <span>Prev</span>
                 </>
               ) : (
                 <>
-                  <span>Next Story</span>
+                  <span>Next</span>
                   <ChevronRight className="h-3 w-3" />
                 </>
               )}
             </div>
             
-            <h4 className={`font-bold text-foreground group-hover:text-primary transition-colors truncate w-full ${isPrev ? "text-left" : "text-right"}`}>
+            <h4 className={`text-xs sm:text-base font-bold text-foreground group-hover:text-primary transition-colors truncate w-full ${isPrev ? "text-left" : "text-right"}`}>
               {story.title}
             </h4>
             
-            <p className={`text-xs text-muted-foreground mt-1 line-clamp-1 ${isPrev ? "text-left" : "text-right"}`}>
+            <p className={`hidden sm:block text-xs text-muted-foreground mt-1 line-clamp-1 ${isPrev ? "text-left" : "text-right"}`}>
               {story.description}
             </p>
           </div>
@@ -115,26 +115,26 @@ const NavCard = ({
           {/* Icon with animated ring */}
           <div className="relative shrink-0">
             <motion.div
-              className={`absolute inset-0 rounded-xl ${story.color} opacity-20`}
+              className={`absolute inset-0 rounded-lg sm:rounded-xl ${story.color} opacity-20`}
               animate={isHovered ? { scale: [1, 1.2, 1] } : { scale: 1 }}
               transition={{ duration: 1, repeat: isHovered ? Infinity : 0 }}
             />
-            <div className={`relative flex h-12 w-12 items-center justify-center rounded-xl ${story.color} text-white`}>
-              <Icon className="h-5 w-5" />
+            <div className={`relative flex h-9 w-9 sm:h-12 sm:w-12 items-center justify-center rounded-lg sm:rounded-xl ${story.color} text-white`}>
+              <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
           </div>
         </div>
 
-        {/* Category badge */}
-        <div className={`absolute top-2 ${isPrev ? "right-2" : "left-2"}`}>
+        {/* Category badge - hidden on mobile */}
+        <div className={`absolute top-2 ${isPrev ? "right-2" : "left-2"} hidden sm:block`}>
           <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full bg-muted/50 text-muted-foreground`}>
             {story.category}
           </span>
         </div>
 
-        {/* Animated arrow indicator */}
+        {/* Animated arrow indicator - hidden on mobile */}
         <motion.div
-          className={`absolute ${isPrev ? "left-3" : "right-3"} bottom-3 text-primary`}
+          className={`absolute ${isPrev ? "left-3" : "right-3"} bottom-3 text-primary hidden sm:block`}
           animate={isHovered ? { x: isPrev ? -5 : 5 } : { x: 0 }}
           transition={{ duration: 0.2 }}
         >
@@ -165,19 +165,19 @@ const CompactNavButton = ({
   return (
     <Link
       to={story.href}
-      className="group flex items-center gap-2 px-3 py-2 rounded-xl border border-border/50 bg-card/50 hover:bg-primary/5 hover:border-primary/30 transition-all"
+      className="group flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl border border-border/50 bg-card/50 hover:bg-primary/5 hover:border-primary/30 transition-all w-full"
     >
-      {isPrev && <ChevronLeft className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />}
-      <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${story.color} text-white shrink-0`}>
-        <Icon className="h-4 w-4" />
+      {isPrev && <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />}
+      <div className={`flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-md sm:rounded-lg ${story.color} text-white shrink-0`}>
+        <Icon className="h-3 w-3 sm:h-4 sm:w-4" />
       </div>
-      <div className={`flex-1 min-w-0 ${isPrev ? "text-left" : "text-right"}`}>
-        <p className="text-xs text-muted-foreground">{isPrev ? "Previous" : "Next"}</p>
-        <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors truncate">
+      <div className={`flex-1 min-w-0 overflow-hidden ${isPrev ? "text-left" : "text-right"}`}>
+        <p className="text-[10px] sm:text-xs text-muted-foreground">{isPrev ? "Prev" : "Next"}</p>
+        <p className="text-[11px] sm:text-sm font-medium text-foreground group-hover:text-primary transition-colors truncate">
           {story.title}
         </p>
       </div>
-      {!isPrev && <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />}
+      {!isPrev && <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />}
     </Link>
   );
 };
@@ -204,13 +204,13 @@ const ProgressIndicator = ({ current, total }: { current: number; total: number 
 
 // Compact progress indicator
 const CompactProgress = ({ current, total }: { current: number; total: number }) => (
-  <div className="flex items-center gap-2">
-    <div className="flex items-center gap-1">
-      <span className="text-xs font-bold text-primary">{current + 1}</span>
-      <span className="text-xs text-muted-foreground">/</span>
-      <span className="text-xs text-muted-foreground">{total}</span>
+  <div className="flex items-center gap-1.5 sm:gap-2">
+    <div className="flex items-center gap-0.5 sm:gap-1">
+      <span className="text-[10px] sm:text-xs font-bold text-primary">{current + 1}</span>
+      <span className="text-[10px] sm:text-xs text-muted-foreground">/</span>
+      <span className="text-[10px] sm:text-xs text-muted-foreground">{total}</span>
     </div>
-    <div className="w-16 h-1 bg-muted rounded-full overflow-hidden">
+    <div className="w-10 sm:w-16 h-1 bg-muted rounded-full overflow-hidden">
       <div
         className="h-full bg-primary rounded-full transition-all"
         style={{ width: `${((current + 1) / total) * 100}%` }}
@@ -264,7 +264,7 @@ const CompactNavigation = ({ className = "" }: { className?: string }) => {
       transition={{ duration: 0.3 }}
       className={`${className}`}
     >
-      <div className="flex items-center justify-between gap-4 p-3 rounded-2xl border border-border/30 bg-card/30 backdrop-blur-sm">
+      <div className="flex items-stretch gap-1.5 sm:gap-3 p-1.5 sm:p-3 rounded-xl sm:rounded-2xl border border-border/30 bg-card/30 backdrop-blur-sm">
         {/* Left: Previous or All Stories */}
         <div className="flex-1 min-w-0">
           {previous ? (
@@ -272,31 +272,31 @@ const CompactNavigation = ({ className = "" }: { className?: string }) => {
           ) : (
             <Link
               to="/docs/user-stories"
-              className="flex items-center gap-2 px-3 py-2 rounded-xl border border-border/50 bg-card/50 hover:bg-primary/5 hover:border-primary/30 transition-all"
+              className="flex items-center justify-center gap-1.5 px-2 py-1.5 sm:py-2 h-full rounded-lg sm:rounded-xl border border-border/50 bg-card/50 hover:bg-primary/5 hover:border-primary/30 transition-all"
             >
-              <Home className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium text-foreground">All Stories</span>
+              <Home className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground" />
+              <span className="text-[11px] sm:text-sm font-medium text-foreground">Stories</span>
             </Link>
           )}
         </div>
 
-        {/* Center: Progress */}
-        <div className="hidden sm:flex items-center gap-3 px-4 py-2 rounded-xl bg-muted/30">
-          <Compass className="h-4 w-4 text-primary" />
+        {/* Center: Progress - visible on all screens but simplified on mobile */}
+        <div className="flex items-center gap-1 sm:gap-3 px-2 sm:px-4 py-1 sm:py-2 rounded-lg sm:rounded-xl bg-muted/30 shrink-0">
+          <Compass className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
           <CompactProgress current={currentIndex} total={totalStories} />
         </div>
 
         {/* Right: Next or All Stories */}
-        <div className="flex-1 min-w-0 flex justify-end">
+        <div className="flex-1 min-w-0">
           {next ? (
             <CompactNavButton story={next} direction="next" />
           ) : (
             <Link
               to="/docs/user-stories"
-              className="flex items-center gap-2 px-3 py-2 rounded-xl border border-border/50 bg-card/50 hover:bg-primary/5 hover:border-primary/30 transition-all"
+              className="flex items-center justify-center gap-1.5 px-2 py-1.5 sm:py-2 h-full rounded-lg sm:rounded-xl border border-border/50 bg-card/50 hover:bg-primary/5 hover:border-primary/30 transition-all"
             >
-              <span className="text-sm font-medium text-foreground">All Stories</span>
-              <Sparkles className="h-4 w-4 text-primary" />
+              <span className="text-[11px] sm:text-sm font-medium text-foreground">Stories</span>
+              <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
             </Link>
           )}
         </div>
@@ -345,26 +345,34 @@ const FullNavigation = ({ className = "" }: { className?: string }) => {
         />
       </div>
 
-      <div className="relative border border-border/30 rounded-3xl bg-card/30 backdrop-blur-sm overflow-hidden">
+      <div className="relative border border-border/30 rounded-2xl sm:rounded-3xl bg-card/30 backdrop-blur-sm overflow-hidden">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-border/30 bg-muted/20">
-          <div className="flex items-center justify-between">
+        <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-border/30 bg-muted/20">
+          <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               >
-                <Compass className="h-5 w-5 text-primary" />
+                <Compass className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
               </motion.div>
-              <span className="text-sm font-semibold text-foreground">Continue Your Journey</span>
+              <span className="text-xs sm:text-sm font-semibold text-foreground">Continue Your Journey</span>
             </div>
-            <ProgressIndicator current={currentIndex} total={totalStories} />
+            <div className="hidden sm:block">
+              <ProgressIndicator current={currentIndex} total={totalStories} />
+            </div>
+            {/* Simplified progress for mobile */}
+            <div className="flex sm:hidden items-center gap-1 text-xs">
+              <span className="font-bold text-primary">{currentIndex + 1}</span>
+              <span className="text-muted-foreground">/</span>
+              <span className="text-muted-foreground">{totalStories}</span>
+            </div>
           </div>
         </div>
 
         {/* Navigation cards */}
-        <div className="p-6">
-          <div className="grid gap-4 md:grid-cols-2">
+        <div className="p-3 sm:p-6">
+          <div className="grid gap-3 sm:gap-4 grid-cols-2">
             <AnimatePresence mode="wait">
               {previous ? (
                 <motion.div
@@ -382,10 +390,10 @@ const FullNavigation = ({ className = "" }: { className?: string }) => {
                   />
                 </motion.div>
               ) : (
-                <div className="flex items-center justify-center p-8 rounded-2xl border border-dashed border-border/50 bg-muted/10">
+                <div className="flex items-center justify-center p-4 sm:p-8 rounded-xl sm:rounded-2xl border border-dashed border-border/50 bg-muted/10">
                   <div className="text-center">
-                    <Rocket className="h-8 w-8 text-primary/50 mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">You're at the beginning!</p>
+                    <Rocket className="h-6 w-6 sm:h-8 sm:w-8 text-primary/50 mx-auto mb-1 sm:mb-2" />
+                    <p className="text-xs sm:text-sm text-muted-foreground">Start!</p>
                   </div>
                 </div>
               )}
@@ -408,18 +416,18 @@ const FullNavigation = ({ className = "" }: { className?: string }) => {
                   />
                 </motion.div>
               ) : (
-                <div className="flex items-center justify-center p-8 rounded-2xl border border-dashed border-border/50 bg-muted/10">
+                <div className="flex items-center justify-center p-4 sm:p-8 rounded-xl sm:rounded-2xl border border-dashed border-border/50 bg-muted/10">
                   <div className="text-center">
-                    <Sparkles className="h-8 w-8 text-primary/50 mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">You've completed all stories!</p>
+                    <Sparkles className="h-6 w-6 sm:h-8 sm:w-8 text-primary/50 mx-auto mb-1 sm:mb-2" />
+                    <p className="text-xs sm:text-sm text-muted-foreground">Complete!</p>
                   </div>
                 </div>
               )}
             </AnimatePresence>
           </div>
 
-          {/* Explore more section */}
-          <motion.div className="mt-6">
+          {/* Explore more section - hidden on mobile for cleaner UI */}
+          <motion.div className="mt-4 sm:mt-6 hidden sm:block">
             <button
               onClick={() => setShowSuggestions(!showSuggestions)}
               className="w-full flex items-center justify-center gap-2 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -461,18 +469,17 @@ const FullNavigation = ({ className = "" }: { className?: string }) => {
           </motion.div>
         </div>
 
-        {/* Quick navigation dots */}
-        <div className="px-6 py-3 border-t border-border/30 bg-muted/10">
-          <div className="flex items-center justify-center gap-1">
+        {/* Quick navigation dots - hidden on mobile for cleaner look */}
+        <div className="hidden sm:block px-6 py-3 border-t border-border/30 bg-muted/10">
+          <div className="flex items-center justify-center gap-1 overflow-hidden">
             {[...Array(Math.min(totalStories, 20))].map((_, i) => (
               <motion.div
                 key={i}
                 className={`h-1.5 rounded-full transition-all ${
                   i === currentIndex 
                     ? "w-4 bg-primary" 
-                    : "w-1.5 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                    : "w-1.5 bg-muted-foreground/30"
                 }`}
-                whileHover={{ scale: 1.2 }}
               />
             ))}
             {totalStories > 20 && (
