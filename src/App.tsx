@@ -64,6 +64,9 @@ import RetentionCapabilitiesStory from "./pages/docs/RetentionCapabilitiesStory"
 import RetentionCapabilitiesStoryV2 from "./pages/docs/RetentionCapabilitiesStoryV2";
 import RetentionCapabilitiesFull from "./pages/docs/RetentionCapabilitiesFull";
 import QuickStart from "./pages/docs/QuickStart";
+import RealAPIStories from "./pages/docs/RealAPIStories";
+import UserStories from "./pages/docs/UserStories";
+import CoreModules from "./pages/docs/CoreModules";
 import ECommerceProductDiscoveryStory from "./pages/docs/ECommerceProductDiscoveryStory";
 import FinancialFraudDetectionStory from "./pages/docs/FinancialFraudDetectionStory";
 import LawFirmDocumentStory from "./pages/docs/LawFirmDocumentStory";
@@ -156,6 +159,9 @@ const App = () => (
             <Route path="/docs/guides/retention_capabilities" element={<RetentionCapabilitiesFull />} />
             <Route path="/docs/retention_capabilities_full" element={<RetentionCapabilitiesFull />} />
             <Route path="/docs/quickstart" element={<QuickStart />} />
+            <Route path="/docs/real-api-stories" element={<RealAPIStories />} />
+            <Route path="/docs/user-stories" element={<UserStories />} />
+            <Route path="/docs/core-modules" element={<CoreModules />} />
             <Route path="/docs/ecommerce-product-discovery-story" element={<ECommerceProductDiscoveryStory />} />
             <Route path="/docs/financial-fraud-detection-story" element={<FinancialFraudDetectionStory />} />
             <Route path="/docs/law-firm-document-story" element={<LawFirmDocumentStory />} />

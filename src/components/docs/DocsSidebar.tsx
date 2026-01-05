@@ -16,7 +16,8 @@ import {
   RefreshCw,
   MessageSquare,
   Cpu,
-  FileText
+  FileText,
+  TestTube
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -82,6 +83,21 @@ const docSections: DocSection[] = [
       { title: "Retention Capabilities Story", href: "/docs/retention_capabilities_story", badge: "New" },
       { title: "Retention Capabilities Story V2 (Narrative)", href: "/docs/retention_capabilities_story_v2", badge: "New" },
       { title: "The Security Story", href: "/docs/security-story", badge: "Soon" },
+    ],
+  },
+  {
+    title: "Real API Stories",
+    icon: <TestTube className="h-4 w-4" />,
+    items: [
+      { title: "All Real API Stories", href: "/docs/real-api-stories", badge: "New" },
+      { title: "E-Commerce Product Discovery", href: "/docs/ecommerce-product-discovery-story" },
+      { title: "Financial Fraud Detection", href: "/docs/financial-fraud-detection-story" },
+      { title: "Law Firm Document Management", href: "/docs/law-firm-document-story" },
+      { title: "PII Detection Edge Spectrum", href: "/docs/pii-detection-edge-story" },
+      { title: "Smart Suggestions", href: "/docs/smart-suggestions-story" },
+      { title: "ONNX Fallback Readiness", href: "/docs/onnx-fallback-story" },
+      { title: "Real AI Embedding Generation", href: "/docs/real-ai-embedding-story" },
+      { title: "Vector Lifecycle Management", href: "/docs/vector-lifecycle-story" },
     ],
   },
   {

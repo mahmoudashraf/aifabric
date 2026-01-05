@@ -1,32 +1,34 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Highlight, themes } from "prism-react-renderer";
 import DocsLayout from "@/components/docs/DocsLayout";
 import PageViewCounter from "@/components/PageViewCounter";
 import StoryLoveButton from "@/components/StoryLoveButton";
 import { 
-  Brain,
+  MessageSquare, 
+  Brain, 
+  ArrowRight, 
+  CheckCircle2, 
+  XCircle, 
   Zap,
-  MessageSquare,
-  ArrowRight,
-  CheckCircle2,
-  XCircle,
-  Settings,
-  Shield,
-  Layers,
-  Code2,
-  ChevronDown,
+  Code,
+  FileCode,
   Sparkles,
+  ChevronDown,
+  AlertTriangle,
+  Shield,
   Search,
   Target,
-  Clock,
-  ChevronRight,
-  BookOpen
+  Cpu
 } from "lucide-react";
+import intentStoryContent from "@/content/Intent-Action-Story-SHORT.md?raw";
 
-const PAGE_TITLE = "Intent Extraction: Teaching AI to Understand Users - AI Fabric Framework";
-const PAGE_DESCRIPTION = "How to replace brittle if/else spaghetti with elegant LLM-powered intent routing and action delegation.";
+const PAGE_TITLE = "Intent Extraction: When 'Cancel my subscription' Becomes Code - AI Fabric Framework";
+const PAGE_DESCRIPTION = "How we taught AI to understand what users want and route to the right action—no if/else spaghetti, just elegant delegation.";
+const OG_IMAGE = "/assets/story-preview.png";
 
 const codeTheme = {
   ...themes.nightOwl,
@@ -36,123 +38,71 @@ const codeTheme = {
   },
 };
 
-const CodeBlock = ({ code, language = "java" }: { code: string; language?: string }) => (
-  <Highlight theme={codeTheme} code={code.trim()} language={language}>
-    {({ style, tokens, getLineProps, getTokenProps }) => (
-      <pre
-        className="overflow-x-auto rounded-lg border border-border/50 p-4 text-sm my-4"
-        style={style}
-      >
-        {tokens.map((line, i) => (
-          <div key={i} {...getLineProps({ line })}>
-            {line.map((token, key) => (
-              <span key={key} {...getTokenProps({ token })} />
-            ))}
-          </div>
-        ))}
-      </pre>
-    )}
-  </Highlight>
-);
-
-const IntentTypesGrid = () => {
-  const types = [
-    { 
-      title: "ACTION", 
-      desc: "Do something (Cancel, Update, Request)", 
-      icon: Zap, 
-      color: "text-amber-400",
-      example: '"Cancel my subscription"'
-    },
-    { 
-      title: "INFORMATION", 
-      desc: "Find something (Search, Policy, Orders)", 
-      icon: Search, 
-      color: "text-blue-400",
-      example: '"What is your return policy?"'
-    },
-    { 
-      title: "OUT_OF_SCOPE", 
-      desc: "Graceful rejection for unsupported topics", 
-      icon: XCircle, 
-      color: "text-red-400",
-      example: '"What is the weather?"'
-    },
-    { 
-      title: "COMPOUND", 
-      desc: "Multiple intents handled in sequence", 
-      icon: Layers, 
-      color: "text-purple-400",
-      example: '"Cancel and refund me"'
-    },
-  ];
+const CodeBlock = ({ children, className }: { children: string; className?: string }) => {
+  const match = /language-(\w+)/.exec(className || "");
+  const language = match ? match[1] : "text";
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-8">
-      {types.map((type, i) => (
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ delay: i * 0.1 }}
-          viewport={{ once: true }}
-          className="p-5 rounded-xl bg-card border border-border/50 hover:border-primary/30 transition-all group"
+    <Highlight theme={codeTheme} code={children.trim()} language={language}>
+      {({ style, tokens, getLineProps, getTokenProps }) => (
+        <pre
+          className="overflow-x-auto rounded-lg border border-border/50 p-4 text-sm my-4"
+          style={style}
         >
-          <div className="flex items-center gap-3 mb-3">
-            <div className={`p-2 rounded-lg bg-muted/50 group-hover:bg-primary/10 transition-colors`}>
-              <type.icon className={`h-5 w-5 ${type.color}`} />
+          {tokens.map((line, i) => (
+            <div key={i} {...getLineProps({ line })}>
+              {line.map((token, key) => (
+                <span key={key} {...getTokenProps({ token })} />
+              ))}
             </div>
-            <h4 className="font-bold text-foreground">{type.title}</h4>
-          </div>
-          <p className="text-sm text-muted-foreground mb-3">{type.desc}</p>
-          <div className="text-xs font-mono bg-muted/30 p-2 rounded italic text-primary">
-            {type.example}
-          </div>
-        </motion.div>
-      ))}
-    </div>
+          ))}
+        </pre>
+      )}
+    </Highlight>
   );
 };
 
-const FlowDiagram = () => {
+// Intent Flow Diagram
+const IntentFlowDiagram = () => {
+  const [activeStep, setActiveStep] = useState(0);
+  
   const steps = [
-    { label: "User Input", sub: '"Cancel my plan"', icon: MessageSquare, color: "bg-blue-500" },
-    { label: "Intent Extraction", sub: "LLM analyzes intent", icon: Brain, color: "bg-purple-500" },
-    { label: "Routing", sub: "Find ActionHandler", icon: Target, color: "bg-amber-500" },
-    { label: "Business Logic", sub: "Your service runs", icon: Settings, color: "bg-green-500" },
-    { label: "Response", sub: "Clean JSON returned", icon: CheckCircle2, color: "bg-primary" },
+    { label: "User Message", icon: MessageSquare, color: "bg-blue-500" },
+    { label: "LLM Analysis", icon: Brain, color: "bg-purple-500" },
+    { label: "Intent Extract", icon: Target, color: "bg-amber-500" },
+    { label: "Route Action", icon: Zap, color: "bg-green-500" },
+    { label: "Execute", icon: Code, color: "bg-primary" },
   ];
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveStep((prev) => (prev + 1) % steps.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div className="my-12 p-8 rounded-2xl bg-muted/30 border border-border/50 relative overflow-hidden">
-      <div className="absolute top-0 right-0 p-4 opacity-5">
-        <Sparkles className="h-24 w-24 text-primary" />
-      </div>
-      <h3 className="text-xl font-bold text-foreground mb-8 text-center">The Intent-to-Action Pipeline</h3>
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+    <div className="my-8 p-6 rounded-xl bg-card border border-border/50">
+      <h3 className="text-lg font-bold text-foreground mb-6 text-center">Intent Extraction Flow</h3>
+      <div className="flex flex-wrap justify-center items-center gap-2 md:gap-4">
         {steps.map((step, i) => (
-          <div key={i} className="flex flex-col md:flex-row items-center gap-4 flex-1">
+          <div key={i} className="flex items-center gap-2 md:gap-4">
             <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.1 }}
-              className="flex flex-col items-center text-center"
+              animate={{
+                scale: activeStep === i ? 1.15 : 1,
+                opacity: activeStep >= i ? 1 : 0.4,
+              }}
+              className={`flex flex-col items-center gap-2 p-3 rounded-lg ${activeStep === i ? 'bg-primary/20 ring-2 ring-primary/50' : 'bg-muted/30'}`}
             >
-              <div className={`w-12 h-12 rounded-xl ${step.color} flex items-center justify-center mb-3 shadow-lg`}>
-                <step.icon className="h-6 w-6 text-white" />
+              <div className={`p-2 rounded-full ${step.color}`}>
+                <step.icon className="h-4 w-4 text-white" />
               </div>
-              <div className="text-sm font-bold text-foreground">{step.label}</div>
-              <div className="text-[10px] text-muted-foreground mt-1">{step.sub}</div>
+              <span className="text-[10px] text-center text-muted-foreground max-w-[70px]">{step.label}</span>
             </motion.div>
             {i < steps.length - 1 && (
-              <div className="hidden md:block">
-                <ChevronRight className="h-5 w-5 text-muted-foreground/30" />
-              </div>
-            )}
-            {i < steps.length - 1 && (
-              <div className="md:hidden">
-                <ChevronDown className="h-5 w-5 text-muted-foreground/30" />
-              </div>
+              <motion.div animate={{ opacity: activeStep > i ? 1 : 0.3 }}>
+                <ArrowRight className="h-3 w-3 text-muted-foreground hidden md:block" />
+              </motion.div>
             )}
           </div>
         ))}
@@ -162,220 +112,150 @@ const FlowDiagram = () => {
 };
 
 const IntentStory = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   useEffect(() => {
     document.title = PAGE_TITLE;
+
+    const updateMeta = (selector: string, attribute: string, value: string) => {
+      let element = document.querySelector(selector) as HTMLMetaElement | null;
+      if (!element) {
+        element = document.createElement("meta");
+        if (selector.includes("property=")) {
+          element.setAttribute(
+            "property",
+            selector.match(/property="([^"]+)"/)?.[1] || ""
+          );
+        } else if (selector.includes("name=")) {
+          element.setAttribute(
+            "name",
+            selector.match(/name="([^"]+)"/)?.[1] || ""
+          );
+        }
+        document.head.appendChild(element);
+      }
+      element.setAttribute(attribute, value);
+    };
+
+    const updateCanonical = (href: string) => {
+      let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+      if (!link) {
+        link = document.createElement("link");
+        link.setAttribute("rel", "canonical");
+        document.head.appendChild(link);
+      }
+      link.setAttribute("href", href);
+    };
+
+    updateMeta('meta[name="description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[property="og:title"]', "content", PAGE_TITLE);
+    updateMeta('meta[property="og:description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[property="og:image"]', "content", `${window.location.origin}${OG_IMAGE}`);
+    updateMeta('meta[property="og:type"]', "content", "website");
+    updateMeta('meta[property="og:url"]', "content", window.location.href);
+
+    updateMeta('meta[name="twitter:title"]', "content", PAGE_TITLE);
+    updateMeta('meta[name="twitter:description"]', "content", PAGE_DESCRIPTION);
+    updateMeta('meta[name="twitter:image"]', "content", `${window.location.origin}${OG_IMAGE}`);
+    updateMeta('meta[name="twitter:card"]', "content", "summary_large_image");
+
+    updateCanonical(window.location.href);
   }, []);
 
   return (
     <DocsLayout>
-      <div className="max-w-4xl mx-auto px-6 py-8">
-        <motion.article 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          {/* Hero */}
-          <section className="relative overflow-hidden border-b border-border/50 pb-12 mb-12">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
-            <div className="relative">
-              <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
-                <div className="flex items-center gap-3">
-                  <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
-                    <Brain className="h-4 w-4" />
-                    Intent Extraction V1
+      <div className="min-h-screen bg-background">
+        {/* Hero Section */}
+        <section className="relative overflow-hidden border-b border-border/50 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+          <div className="absolute inset-0 bg-gradient-glow opacity-30" />
+          <div className="relative px-6 py-16">
+            <div className="mx-auto max-w-4xl">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="text-center"
+              >
+                <div className="mb-4 flex items-center justify-center gap-2">
+                  <Brain className="h-6 w-6 text-primary" />
+                  <span className="text-sm font-medium uppercase tracking-wider text-primary">
+                    Intent Extraction
                   </span>
-                  <Link 
-                    to="/docs/intent_story_v2"
-                    className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    View V2 (Narrative) →
-                  </Link>
                 </div>
-                <div className="flex items-center gap-3">
-                  <StoryLoveButton storySlug="intent-story" />
-                  <PageViewCounter />
-                </div>
-              </div>
-              <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
-                Intent Extraction:{" "}
-                <span className="text-gradient">Teaching AI to Understand Users</span>
-              </h1>
-              <p className="text-lg text-muted-foreground max-w-2xl mb-8">
-                How we replaced 500 lines of brittle if/else spaghetti with elegant LLM-powered intent routing and action delegation.
+                <h1 className="mb-4 text-4xl font-bold text-foreground sm:text-5xl lg:text-6xl">
+                  🧠 Intent Extraction Story
+                </h1>
+                <p className="mx-auto max-w-3xl text-lg text-muted-foreground sm:text-xl">
+                  How we taught AI to understand what users want and route to the right action—no if/else spaghetti, just elegant delegation.
+                </p>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* Content */}
+        <section className="px-6 py-12">
+          <div className="mx-auto max-w-4xl">
+            {/* Intent Flow Diagram */}
+            <IntentFlowDiagram />
+
+            {/* Markdown Content */}
+            <div className="prose prose-slate dark:prose-invert max-w-none">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  code({ node, inline, className, children, ...props }) {
+                    const match = /language-(\w+)/.exec(className || "");
+                    return !inline && match ? (
+                      <CodeBlock className={className || ""}>{String(children).replace(/\n$/, "")}</CodeBlock>
+                    ) : (
+                      <code className={className} {...props}>
+                        {children}
+                      </code>
+                    );
+                  },
+                }}
+              >
+                {intentStoryContent}
+              </ReactMarkdown>
+            </div>
+
+            {/* CTA Section */}
+            <div className="mt-12 rounded-2xl border border-primary/30 bg-primary/5 p-8 text-center">
+              <h2 className="mb-4 text-2xl font-bold text-foreground">
+                Ready to Build Your Own Intent System?
+              </h2>
+              <p className="mb-6 text-muted-foreground">
+                Start using AI Fabric Framework to extract intents and route actions elegantly.
               </p>
-              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 border border-border/50">
-                  <Zap className="h-4 w-4 text-amber-400" />
-                  95% Accuracy
-                </div>
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 border border-border/50">
-                  <Clock className="h-4 w-4 text-blue-400" />
-                  Ship in Minutes
-                </div>
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 border border-border/50">
-                  <Code2 className="h-4 w-4 text-green-400" />
-                  Clean Architecture
-                </div>
+              <div className="flex flex-wrap items-center justify-center gap-4">
+                <Link
+                  to="/docs/guides/intent"
+                  className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-lg"
+                >
+                  Read Full Guide
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link
+                  to="/docs/intent_story_v2"
+                  className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-6 py-3 font-semibold text-foreground transition-all hover:border-primary/50 hover:bg-primary/5"
+                >
+                  Read Narrative Version
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
             </div>
-          </section>
 
-          {/* The Problem */}
-          <section className="mb-16">
-            <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
-              <XCircle className="h-6 w-6 text-red-400" />
-              The If/Else Monster
-            </h2>
-            <p className="text-muted-foreground mb-6 leading-relaxed">
-              Traditional keyword matching is a developer's nightmare. One typo, one variation, or one unexpected phrase, and the system breaks.
-            </p>
-            <div className="grid md:grid-cols-2 gap-8 items-center">
-              <div>
-                <p className="text-sm font-semibold text-red-400 mb-2">The Traditional Mess:</p>
-                <CodeBlock code={`if (message.contains("cancel") && 
-    (message.contains("subscription") || 
-     message.contains("plan"))) {
-    return handleCancel();
-} else if (message.contains("refund")) {
-    return handleRefund();
-} // ... 500 lines more`} />
-              </div>
-              <div className="space-y-4">
-                <div className="p-4 rounded-lg bg-red-500/5 border border-red-500/20">
-                  <p className="text-sm text-foreground font-semibold mb-1">Brittle & Fragile</p>
-                  <p className="text-xs text-muted-foreground">Fails on "Stop my billing" or "Unsubscribe me".</p>
-                </div>
-                <div className="p-4 rounded-lg bg-red-500/5 border border-red-500/20">
-                  <p className="text-sm text-foreground font-semibold mb-1">Context-Blind</p>
-                  <p className="text-xs text-muted-foreground">Can't understand sentiment or user history.</p>
-                </div>
-                <div className="p-4 rounded-lg bg-red-500/5 border border-red-500/20">
-                  <p className="text-sm text-foreground font-semibold mb-1">Maintenance Nightmare</p>
-                  <p className="text-xs text-muted-foreground">Adding one feature requires editing a giant monster function.</p>
-                </div>
-              </div>
+            {/* Love Button & View Counter */}
+            <div className="mt-8 flex items-center justify-center gap-6">
+              <StoryLoveButton storySlug="intent_story" />
+              <PageViewCounter pagePath="/docs/intent_story" />
             </div>
-          </section>
-
-          {/* The Solution */}
-          <section className="mb-16 p-8 rounded-2xl bg-primary/5 border border-primary/20 relative">
-            <div className="absolute top-4 right-4">
-              <Sparkles className="h-6 w-6 text-primary" />
-            </div>
-            <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
-              <CheckCircle2 className="h-6 w-6 text-green-400" />
-              The AI Fabric Way
-            </h2>
-            <p className="text-muted-foreground mb-8 leading-relaxed">
-              Let the LLM do what it does best: understand natural language. The framework then routes that understanding to your clean, isolated business logic.
-            </p>
-            
-            <div className="grid lg:grid-cols-2 gap-8">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-sm">1</div>
-                  <h3 className="font-bold text-foreground">One Orchestrator Call</h3>
-                </div>
-                <CodeBlock code={`@PostMapping("/api/chat")
-public OrchestrationResult chat(@RequestBody String message) {
-    // Framework handles everything: extraction, routing, security
-    return orchestrator.orchestrate(message, context);
-}`} />
-              </div>
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white font-bold text-sm">2</div>
-                  <h3 className="font-bold text-foreground">Clean Action Handlers</h3>
-                </div>
-                <CodeBlock code={`@Component
-public class SubscriptionHandler implements ActionHandler {
-    @Override
-    public ActionResult executeAction(Map params, String userId) {
-        // YOUR business logic here
-        return service.cancel(userId);
-    }
-}`} />
-              </div>
-            </div>
-          </section>
-
-          {/* Intent Types */}
-          <section className="mb-16">
-            <h2 className="text-2xl font-bold text-foreground mb-2 text-center">Understand Every Word</h2>
-            <p className="text-muted-foreground text-center mb-8">Four powerful intent types that cover every user scenario.</p>
-            <IntentTypesGrid />
-          </section>
-
-          {/* Flow Diagram */}
-          <FlowDiagram />
-
-          {/* Technical Implementation */}
-          <section className="mb-16">
-            <h2 className="text-2xl font-bold text-foreground mb-6">What You Implement</h2>
-            <p className="text-muted-foreground mb-8">
-              Forget string parsing. Just implement the <code>ActionHandler</code> interface and focus on your business logic.
-            </p>
-            <div className="space-y-3">
-              {[
-                { title: "Metadata", desc: "Define name, description, and required parameters.", icon: Code2 },
-                { title: "Permissions", desc: "Isolated validation: can this user perform this action?", icon: Shield },
-                { title: "Confirmations", desc: "Natural language confirmation messages before execution.", icon: MessageSquare },
-                { title: "Execution", desc: "The core business logic that actually gets things done.", icon: Zap },
-                { title: "Error Handling", desc: "Graceful fallbacks and meaningful user feedback.", icon: XCircle },
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-4 p-4 rounded-xl border border-border/50 bg-card/50">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                    <item.icon className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-foreground text-sm">{item.title}</h4>
-                    <p className="text-xs text-muted-foreground">{item.desc}</p>
-                  </div>
-                  <CheckCircle2 className="h-4 w-4 text-green-400 ml-auto" />
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Business Impact */}
-          <section className="mb-16 p-8 rounded-2xl bg-gradient-to-br from-primary/10 to-accent/5 border border-primary/20">
-            <h2 className="text-2xl font-bold text-foreground mb-6 text-center">The Bottom Line</h2>
-            <div className="grid md:grid-cols-3 gap-8 text-center">
-              <div>
-                <div className="text-3xl font-bold text-primary mb-2">90%</div>
-                <div className="text-sm text-muted-foreground">Code Reduction</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-primary mb-2">100%</div>
-                <div className="text-sm text-muted-foreground">Natural Language Support</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-primary mb-2">Sub-1s</div>
-                <div className="text-sm text-muted-foreground">Intent Resolution</div>
-              </div>
-            </div>
-            <p className="mt-8 text-center text-foreground font-medium italic">
-              "Stop parsing strings. Start understanding intent. Ship elegant code."
-            </p>
-          </section>
-
-          {/* Footer */}
-          <footer className="border-t border-border/50 pt-12 mt-12 flex flex-col items-center gap-6">
-            <StoryLoveButton storySlug="intent-story" />
-            <div className="flex gap-4">
-               <Link to="/docs/guides/intent" className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors">
-                <BookOpen className="h-4 w-4" />
-                Read Technical Guide
-              </Link>
-            </div>
-            <p className="text-xs text-muted-foreground text-center max-w-md">
-              Part of the AI Fabric Framework series — teaching machines to understand humans, one action at a time.
-            </p>
-          </footer>
-        </motion.article>
+          </div>
+        </section>
       </div>
     </DocsLayout>
   );
 };
 
 export default IntentStory;
-

@@ -1,7 +1,215 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { BookOpen, ChevronRight } from "lucide-react";
+import { BookOpen, ChevronRight, ExternalLink } from "lucide-react";
 import DocsLayout from "@/components/docs/DocsLayout";
+
+// Featured User Stories (first 9) - matching Real API Stories style
+const featuredUserStories = [
+  {
+    title: "The Orchestrator Story",
+    description: "Your AI's Bodyguard, Traffic Cop, and Mind Reader",
+    href: "/docs/orchestrator_story",
+    emoji: "🛡️",
+    metrics: "Security & routing",
+    status: "available" as const,
+  },
+  {
+    title: "The RAG Story",
+    description: "Building intelligent search that actually understands",
+    href: "/docs/rag_story",
+    emoji: "🔍",
+    metrics: "Semantic search",
+    status: "available" as const,
+  },
+  {
+    title: "The Behavior Story",
+    description: "Predict churn with 87% accuracy using AI patterns",
+    href: "/docs/behavior_story",
+    emoji: "📈",
+    metrics: "87% accuracy",
+    status: "available" as const,
+  },
+  {
+    title: "The Indexing Story",
+    description: "Index 2000 entities per second efficiently",
+    href: "/docs/indexing_story",
+    emoji: "💾",
+    metrics: "2000 entities/s",
+    status: "available" as const,
+  },
+  {
+    title: "PII Detection Story",
+    description: "The data leak that never happened",
+    href: "/docs/pii_detection",
+    emoji: "🔒",
+    metrics: "Privacy first",
+    status: "available" as const,
+  },
+  {
+    title: "The Storage Story",
+    description: "Smart storage strategies for AI applications",
+    href: "/docs/storage_story",
+    emoji: "🗄️",
+    metrics: "Optimized storage",
+    status: "available" as const,
+  },
+  {
+    title: "The Intent Extraction Story",
+    description: "How AI understands what users want—cleanly and elegantly",
+    href: "/docs/intent_story",
+    emoji: "💬",
+    metrics: "NLP powered",
+    status: "available" as const,
+  },
+  {
+    title: "The Migration Story",
+    description: "Zero-downtime migrations for enterprise systems",
+    href: "/docs/migration_story",
+    emoji: "🔄",
+    metrics: "Zero downtime",
+    status: "available" as const,
+  },
+  {
+    title: "The Access Policy Story",
+    description: "Building fail-closed security into every request",
+    href: "/docs/access_policy_story",
+    emoji: "🛡️",
+    metrics: "Fail-closed security",
+    status: "available" as const,
+  },
+];
+
+// Featured Real API Stories (all 8)
+const featuredRealAPIStories = [
+  {
+    title: "E-Commerce Product Discovery",
+    description: "When shoppers speak, AI listens—natural language product search",
+    href: "/docs/ecommerce-product-discovery-story",
+    emoji: "🛍️",
+    metrics: "+40% conversion",
+    status: "available" as const,
+  },
+  {
+    title: "Financial Fraud Detection",
+    description: "Track suspicious money flows through relationship queries",
+    href: "/docs/financial-fraud-detection-story",
+    emoji: "🔒",
+    metrics: "87% detection rate",
+    status: "available" as const,
+  },
+  {
+    title: "Law Firm Document Management",
+    description: "Find needles in legal haystacks—30 seconds instead of 3 hours",
+    href: "/docs/law-firm-document-story",
+    emoji: "⚖️",
+    metrics: "50K+ documents",
+    status: "available" as const,
+  },
+  {
+    title: "PII Detection Edge Spectrum",
+    description: "Testing every privacy edge case—HIPAA & GDPR compliant",
+    href: "/docs/pii-detection-edge-story",
+    emoji: "🛡️",
+    metrics: "$10M+ in fines avoided",
+    status: "available" as const,
+  },
+  {
+    title: "Smart Suggestions",
+    description: "AI-powered next-step predictions with confidence scores",
+    href: "/docs/smart-suggestions-story",
+    emoji: "✨",
+    metrics: "+40% engagement",
+    status: "available" as const,
+  },
+  {
+    title: "ONNX Fallback Readiness",
+    description: "$0 embeddings, 100% private, zero downtime",
+    href: "/docs/onnx-fallback-story",
+    emoji: "💾",
+    metrics: "15ms latency",
+    status: "available" as const,
+  },
+  {
+    title: "Real AI Embedding Generation",
+    description: "From product data to semantic search in 15ms with $0 cost",
+    href: "/docs/real-ai-embedding-story",
+    emoji: "⚡",
+    metrics: "94% accuracy",
+    status: "available" as const,
+  },
+  {
+    title: "Vector Lifecycle Management",
+    description: "8-phase lifecycle: create, remove, clear, reseed with full audit",
+    href: "/docs/vector-lifecycle-story",
+    emoji: "🔄",
+    metrics: "Zero downtime",
+    status: "available" as const,
+  },
+];
+
+// Featured Core Modules (all 4)
+const featuredCoreModules = [
+  {
+    title: "AI Core",
+    description: "From 6 months to 5 minutes—one annotation for everything AI",
+    href: "/docs/modules/core",
+    emoji: "🧠",
+    metrics: "One annotation",
+    status: "available" as const,
+  },
+  {
+    title: "AI Core V2 (Narrative)",
+    description: "The sprint that changed everything",
+    href: "/docs/core_story_v2",
+    emoji: "📖",
+    metrics: "Success story",
+    status: "available" as const,
+  },
+  {
+    title: "Orchestrator",
+    description: "Request handling, security, and routing",
+    href: "/docs/modules/orchestrator",
+    emoji: "🛡️",
+    metrics: "Security first",
+    status: "coming-soon" as const,
+  },
+  {
+    title: "Web Module",
+    description: "59 REST endpoints, zero code",
+    href: "/docs/modules/web",
+    emoji: "🌐",
+    metrics: "59 endpoints",
+    status: "coming-soon" as const,
+  },
+];
+
+// Featured Advanced Features (all 3)
+const featuredAdvancedFeatures = [
+  {
+    title: "Behavior Analytics",
+    description: "Churn prediction, sentiment analysis",
+    href: "/docs/features/behavior",
+    emoji: "📊",
+    metrics: "AI insights",
+    status: "coming-soon" as const,
+  },
+  {
+    title: "Relationship Query",
+    description: "Natural language to SQL",
+    href: "/docs/features/query",
+    emoji: "🔍",
+    metrics: "NL to SQL",
+    status: "coming-soon" as const,
+  },
+  {
+    title: "ONNX Provider",
+    description: "Free local embeddings ($0 API costs)",
+    href: "/docs/features/onnx",
+    emoji: "💻",
+    metrics: "$0 cost",
+    status: "coming-soon" as const,
+  },
+];
 
 const docCategories = [
   {
@@ -356,42 +564,203 @@ const Documentation = () => {
               >
                 <div className="flex items-center gap-3 mb-6">
                   <span className="text-2xl">{category.icon}</span>
-                  <div>
-                    <h2 className="text-xl font-bold text-foreground">{category.title}</h2>
+                  <div className="flex-1">
+                    {category.title === "Real API Stories" ? (
+                      <Link
+                        to="/docs/real-api-stories"
+                        className="group flex items-center gap-2 hover:gap-3 transition-all"
+                      >
+                        <h2 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
+                          {category.title}
+                        </h2>
+                        <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                      </Link>
+                    ) : category.title === "User Stories" ? (
+                      <Link
+                        to="/docs/user-stories"
+                        className="group flex items-center gap-2 hover:gap-3 transition-all"
+                      >
+                        <h2 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
+                          {category.title}
+                        </h2>
+                        <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                      </Link>
+                    ) : category.title === "Core Modules" ? (
+                      <Link
+                        to="/docs/core-modules"
+                        className="group flex items-center gap-2 hover:gap-3 transition-all"
+                      >
+                        <h2 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
+                          {category.title}
+                        </h2>
+                        <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                      </Link>
+                    ) : (
+                      <h2 className="text-xl font-bold text-foreground">{category.title}</h2>
+                    )}
                     <p className="text-sm text-muted-foreground">{category.description}</p>
                   </div>
                 </div>
                 
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {category.items.map((item) => (
-                    <Link
-                      key={item.href}
-                      to={item.status === "available" ? item.href : "#"}
-                      onClick={(e) => item.status !== "available" && e.preventDefault()}
-                      className={`group relative rounded-xl border p-5 transition-all ${
-                        item.status === "available"
-                          ? "border-border/50 bg-card hover:border-primary/50 hover:shadow-lg cursor-pointer"
-                          : "border-border/30 bg-muted/30 cursor-not-allowed opacity-60"
-                      }`}
-                    >
-                      <div className="flex items-start justify-between">
-                        <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
-                          {item.title}
-                        </h3>
-                        {item.status === "available" ? (
-                          <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                        ) : (
-                          <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-                            Soon
-                          </span>
-                        )}
-                      </div>
-                      <p className="mt-2 text-sm text-muted-foreground">
-                        {item.description}
-                      </p>
-                    </Link>
-                  ))}
-                </div>
+                {category.title === "User Stories" ? (
+                  <div className="rounded-2xl border border-primary/30 bg-primary/5 p-8">
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      {featuredUserStories.map((story) => (
+                        <Link
+                          key={story.href}
+                          to={story.href}
+                          className="group rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-lg"
+                        >
+                          <h4 className="mb-2 font-semibold text-foreground group-hover:text-primary transition-colors">
+                            {story.emoji} {story.title}
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            {story.description} • {story.metrics}
+                          </p>
+                        </Link>
+                      ))}
+                    </div>
+                    <div className="mt-6 text-center">
+                      <Link
+                        to="/docs/user-stories"
+                        className="inline-flex items-center gap-2 text-primary hover:underline"
+                      >
+                        View all {category.items.length - featuredUserStories.length} more stories
+                        <ExternalLink className="h-4 w-4" />
+                      </Link>
+                    </div>
+                  </div>
+                ) : category.title === "Real API Stories" ? (
+                  <div className="rounded-2xl border border-primary/30 bg-primary/5 p-8">
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      {featuredRealAPIStories.map((story) => (
+                        <Link
+                          key={story.href}
+                          to={story.href}
+                          className="group rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-lg"
+                        >
+                          <h4 className="mb-2 font-semibold text-foreground group-hover:text-primary transition-colors">
+                            {story.emoji} {story.title}
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            {story.description} • {story.metrics}
+                          </p>
+                        </Link>
+                      ))}
+                    </div>
+                    <div className="mt-6 text-center">
+                      <Link
+                        to="/docs/real-api-stories"
+                        className="inline-flex items-center gap-2 text-primary hover:underline"
+                      >
+                        View all Real API Stories
+                        <ExternalLink className="h-4 w-4" />
+                      </Link>
+                    </div>
+                  </div>
+                ) : category.title === "Core Modules" ? (
+                  <div className="rounded-2xl border border-primary/30 bg-primary/5 p-8">
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      {featuredCoreModules.map((module) => (
+                        <Link
+                          key={module.href}
+                          to={module.status === "available" ? module.href : "#"}
+                          onClick={(e) => module.status !== "available" && e.preventDefault()}
+                          className={`group rounded-lg border border-border bg-card p-5 transition-all ${
+                            module.status === "available"
+                              ? "hover:border-primary/50 hover:shadow-lg cursor-pointer"
+                              : "opacity-60 cursor-not-allowed"
+                          }`}
+                        >
+                          <div className="flex items-start justify-between mb-2">
+                            <h4 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                              {module.emoji} {module.title}
+                            </h4>
+                            {module.status === "coming-soon" && (
+                              <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                                Soon
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            {module.description} • {module.metrics}
+                          </p>
+                        </Link>
+                      ))}
+                    </div>
+                    <div className="mt-6 text-center">
+                      <Link
+                        to="/docs/core-modules"
+                        className="inline-flex items-center gap-2 text-primary hover:underline"
+                      >
+                        View all Core Modules
+                        <ExternalLink className="h-4 w-4" />
+                      </Link>
+                    </div>
+                  </div>
+                ) : category.title === "Advanced Features" ? (
+                  <div className="rounded-2xl border border-primary/30 bg-primary/5 p-8">
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      {featuredAdvancedFeatures.map((feature) => (
+                        <Link
+                          key={feature.href}
+                          to={feature.status === "available" ? feature.href : "#"}
+                          onClick={(e) => feature.status !== "available" && e.preventDefault()}
+                          className={`group rounded-lg border border-border bg-card p-5 transition-all ${
+                            feature.status === "available"
+                              ? "hover:border-primary/50 hover:shadow-lg cursor-pointer"
+                              : "opacity-60 cursor-not-allowed"
+                          }`}
+                        >
+                          <div className="flex items-start justify-between mb-2">
+                            <h4 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                              {feature.emoji} {feature.title}
+                            </h4>
+                            {feature.status === "coming-soon" && (
+                              <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                                Soon
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            {feature.description} • {feature.metrics}
+                          </p>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {category.items.map((item) => (
+                      <Link
+                        key={item.href}
+                        to={item.status === "available" ? item.href : "#"}
+                        onClick={(e) => item.status !== "available" && e.preventDefault()}
+                        className={`group relative rounded-xl border p-5 transition-all ${
+                          item.status === "available"
+                            ? "border-border/50 bg-card hover:border-primary/50 hover:shadow-lg cursor-pointer"
+                            : "border-border/30 bg-muted/30 cursor-not-allowed opacity-60"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between">
+                          <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                            {item.title}
+                          </h3>
+                          {item.status === "available" ? (
+                            <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                          ) : (
+                            <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                              Soon
+                            </span>
+                          )}
+                        </div>
+                        <p className="mt-2 text-sm text-muted-foreground">
+                          {item.description}
+                        </p>
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </motion.div>
             ))}
           </div>

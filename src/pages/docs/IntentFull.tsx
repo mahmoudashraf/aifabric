@@ -169,3 +169,7 @@ const IntentFull = () => {
 
 export default IntentFull;
 
+
+
+
+
