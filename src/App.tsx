@@ -81,6 +81,7 @@ import AIAnnotationsDeveloperGuideStory from "./pages/docs/AIAnnotationsDevelope
 import AIAnnotationsArchitectStory from "./pages/docs/AIAnnotationsArchitectStory";
 import AIAnnotationsKillingBoilerplateStory from "./pages/docs/AIAnnotationsKillingBoilerplateStory";
 import AIAnnotationsSemanticSearchStory from "./pages/docs/AIAnnotationsSemanticSearchStory";
+import AIAnnotationsStories from "./pages/docs/AIAnnotationsStories";
 import { usePageTracking } from "./hooks/usePageTracking";
 
 const queryClient = new QueryClient();
@@ -177,6 +178,7 @@ const App = () => (
             <Route path="/docs/real-ai-embedding-story" element={<RealAIEmbeddingStory />} />
             <Route path="/docs/vector-lifecycle-story" element={<VectorLifecycleStory />} />
             {/* AI Annotations Stories */}
+            <Route path="/docs/ai-annotations-stories" element={<AIAnnotationsStories />} />
             <Route path="/docs/ai-annotations-ecommerce" element={<AIAnnotationsEcommerceStory />} />
             <Route path="/docs/ai-annotations-enterprise-knowledge" element={<AIAnnotationsEnterpriseKnowledgeStory />} />
             <Route path="/docs/ai-annotations-developer-guide" element={<AIAnnotationsDeveloperGuideStory />} />
