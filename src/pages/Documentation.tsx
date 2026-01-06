@@ -79,6 +79,58 @@ const featuredUserStories = [
   },
 ];
 
+// Featured AI Annotations Stories (all 6)
+const featuredAIAnnotationsStories = [
+  {
+    title: "E-Commerce Semantic Search",
+    description: 'When "Comfy Chair" finds your ergonomic collection',
+    href: "/docs/ai-annotations-ecommerce",
+    emoji: "🛒",
+    metrics: "+122% conversion",
+    status: "available" as const,
+  },
+  {
+    title: "Enterprise Knowledge",
+    description: 'When "Password Reset" finally finds "Account Recovery"',
+    href: "/docs/ai-annotations-enterprise-knowledge",
+    emoji: "📚",
+    metrics: "-60% tickets",
+    status: "available" as const,
+  },
+  {
+    title: "Developer Deep Dive",
+    description: "Mastering AI Annotations in 15 minutes",
+    href: "/docs/ai-annotations-developer-guide",
+    emoji: "👨‍💻",
+    metrics: "15 min guide",
+    status: "available" as const,
+  },
+  {
+    title: "Architect's Guide",
+    description: "Why Declarative AI wins (every time)",
+    href: "/docs/ai-annotations-architect",
+    emoji: "🏗️",
+    metrics: "-90% code",
+    status: "available" as const,
+  },
+  {
+    title: "Killing Boilerplate",
+    description: "A murder mystery (the victim deserved it)",
+    href: "/docs/ai-annotations-killing-boilerplate",
+    emoji: "🔪",
+    metrics: "-2,400 lines",
+    status: "available" as const,
+  },
+  {
+    title: "Semantic Search That Works",
+    description: 'When "Running Shoes" finds "Athletic Footwear"',
+    href: "/docs/ai-annotations-semantic-search",
+    emoji: "🧠",
+    metrics: "87% relevance",
+    status: "available" as const,
+  },
+];
+
 // Featured Real API Stories (all 8)
 const featuredRealAPIStories = [
   {
@@ -212,6 +264,49 @@ const featuredAdvancedFeatures = [
 ];
 
 const docCategories = [
+  {
+    title: "AI Annotations Stories",
+    description: "Declarative AI with 4 simple annotations",
+    icon: "✨",
+    items: [
+      {
+        title: "E-Commerce Semantic Search",
+        description: 'When "Comfy Chair" finds your ergonomic collection',
+        href: "/docs/ai-annotations-ecommerce",
+        status: "available",
+      },
+      {
+        title: "Enterprise Knowledge",
+        description: 'When "Password Reset" finally finds "Account Recovery"',
+        href: "/docs/ai-annotations-enterprise-knowledge",
+        status: "available",
+      },
+      {
+        title: "Developer Deep Dive",
+        description: "Mastering AI Annotations in 15 minutes",
+        href: "/docs/ai-annotations-developer-guide",
+        status: "available",
+      },
+      {
+        title: "Architect's Guide",
+        description: "Why Declarative AI wins (every time)",
+        href: "/docs/ai-annotations-architect",
+        status: "available",
+      },
+      {
+        title: "Killing Boilerplate",
+        description: "A murder mystery (the victim deserved it)",
+        href: "/docs/ai-annotations-killing-boilerplate",
+        status: "available",
+      },
+      {
+        title: "Semantic Search That Works",
+        description: 'When "Running Shoes" finds "Athletic Footwear"',
+        href: "/docs/ai-annotations-semantic-search",
+        status: "available",
+      },
+    ],
+  },
   {
     title: "User Stories",
     description: "Learn through real-world scenarios and use cases",
@@ -565,7 +660,17 @@ const Documentation = () => {
                 <div className="flex items-center gap-3 mb-6">
                   <span className="text-2xl">{category.icon}</span>
                   <div className="flex-1">
-                    {category.title === "Real API Stories" ? (
+                    {category.title === "AI Annotations Stories" ? (
+                      <Link
+                        to="/docs/ai-annotations-stories"
+                        className="group flex items-center gap-2 hover:gap-3 transition-all"
+                      >
+                        <h2 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
+                          {category.title}
+                        </h2>
+                        <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                      </Link>
+                    ) : category.title === "Real API Stories" ? (
                       <Link
                         to="/docs/real-api-stories"
                         className="group flex items-center gap-2 hover:gap-3 transition-all"
@@ -602,7 +707,35 @@ const Documentation = () => {
                   </div>
                 </div>
                 
-                {category.title === "User Stories" ? (
+                {category.title === "AI Annotations Stories" ? (
+                  <div className="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/5 to-accent/5 p-8">
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      {featuredAIAnnotationsStories.map((story) => (
+                        <Link
+                          key={story.href}
+                          to={story.href}
+                          className="group rounded-lg border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-lg"
+                        >
+                          <h4 className="mb-2 font-semibold text-foreground group-hover:text-primary transition-colors">
+                            {story.emoji} {story.title}
+                          </h4>
+                          <p className="text-sm text-muted-foreground">
+                            {story.description} • {story.metrics}
+                          </p>
+                        </Link>
+                      ))}
+                    </div>
+                    <div className="mt-6 text-center">
+                      <Link
+                        to="/docs/ai-annotations-stories"
+                        className="inline-flex items-center gap-2 text-primary hover:underline"
+                      >
+                        View all AI Annotations Stories
+                        <ExternalLink className="h-4 w-4" />
+                      </Link>
+                    </div>
+                  </div>
+                ) : category.title === "User Stories" ? (
                   <div className="rounded-2xl border border-primary/30 bg-primary/5 p-8">
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                       {featuredUserStories.map((story) => (
