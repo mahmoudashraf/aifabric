@@ -101,6 +101,19 @@ const docSections: DocSection[] = [
     ],
   },
   {
+    title: "AI Annotations Stories",
+    icon: <Sparkles className="h-4 w-4" />,
+    items: [
+      { title: "Overview", href: "/docs/ai-annotations-stories", badge: "Soon" },
+      { title: "E-Commerce Semantic Search", href: "/docs/ai-annotations-ecommerce", badge: "New" },
+      { title: "Enterprise Knowledge", href: "/docs/ai-annotations-enterprise-knowledge", badge: "New" },
+      { title: "Developer's Guide", href: "/docs/ai-annotations-developer-guide", badge: "New" },
+      { title: "Architect's Guide", href: "/docs/ai-annotations-architect", badge: "New" },
+      { title: "Killing Boilerplate", href: "/docs/ai-annotations-killing-boilerplate", badge: "New" },
+      { title: "Semantic Search Deep Dive", href: "/docs/ai-annotations-semantic-search", badge: "New" },
+    ],
+  },
+  {
     title: "Detailed Guides",
     icon: <FileText className="h-4 w-4" />,
     items: [

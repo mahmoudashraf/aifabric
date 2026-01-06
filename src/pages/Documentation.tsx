@@ -183,6 +183,66 @@ const featuredCoreModules = [
   },
 ];
 
+// Featured AI Annotations Stories (all 7)
+const featuredAIAnnotationsStories = [
+  {
+    title: "Overview",
+    description: "The complete guide to declarative AI with annotations",
+    href: "/docs/ai-annotations-stories",
+    emoji: "📚",
+    metrics: "Start here",
+    status: "coming-soon" as const,
+  },
+  {
+    title: "E-Commerce Semantic Search",
+    description: "When 'comfy chair' finds your ergonomic collection—34% conversion boost",
+    href: "/docs/ai-annotations-ecommerce",
+    emoji: "🛒",
+    metrics: "+34% conversion",
+    status: "available" as const,
+  },
+  {
+    title: "Enterprise Knowledge",
+    description: "When 'password reset' finally finds 'account recovery'—60% fewer tickets",
+    href: "/docs/ai-annotations-enterprise-knowledge",
+    emoji: "📖",
+    metrics: "-60% tickets",
+    status: "available" as const,
+  },
+  {
+    title: "Developer's Guide",
+    description: "Master AI annotations in 15 minutes—code examples & patterns",
+    href: "/docs/ai-annotations-developer-guide",
+    emoji: "👨‍💻",
+    metrics: "15 min read",
+    status: "available" as const,
+  },
+  {
+    title: "Architect's Guide",
+    description: "Why declarative AI wins—scalability, debt, and architectural decisions",
+    href: "/docs/ai-annotations-architect",
+    emoji: "🏗️",
+    metrics: "Architecture",
+    status: "available" as const,
+  },
+  {
+    title: "Killing Boilerplate",
+    description: "How 4 annotations eliminated 2,400 lines across 12 services",
+    href: "/docs/ai-annotations-killing-boilerplate",
+    emoji: "🗡️",
+    metrics: "-2,400 lines",
+    status: "available" as const,
+  },
+  {
+    title: "Semantic Search Deep Dive",
+    description: "When 'running shoes' finds 'athletic footwear'—meaning vs strings",
+    href: "/docs/ai-annotations-semantic-search",
+    emoji: "🔍",
+    metrics: "Deep dive",
+    status: "available" as const,
+  },
+];
+
 // Featured Advanced Features (all 3)
 const featuredAdvancedFeatures = [
   {
@@ -467,6 +527,55 @@ const docCategories = [
     ],
   },
   {
+    title: "AI Annotations Stories",
+    description: "Declarative AI patterns and real-world implementations",
+    icon: "✨",
+    items: [
+      {
+        title: "Overview",
+        description: "The complete guide to declarative AI with annotations",
+        href: "/docs/ai-annotations-stories",
+        status: "coming-soon",
+      },
+      {
+        title: "E-Commerce Semantic Search",
+        description: "When 'comfy chair' finds your ergonomic collection—34% conversion boost",
+        href: "/docs/ai-annotations-ecommerce",
+        status: "available",
+      },
+      {
+        title: "Enterprise Knowledge Management",
+        description: "When 'password reset' finally finds 'account recovery'—60% fewer tickets",
+        href: "/docs/ai-annotations-enterprise-knowledge",
+        status: "available",
+      },
+      {
+        title: "Developer's Guide",
+        description: "Master AI annotations in 15 minutes—code examples & patterns",
+        href: "/docs/ai-annotations-developer-guide",
+        status: "available",
+      },
+      {
+        title: "Architect's Guide",
+        description: "Why declarative AI wins—scalability, debt, and architectural decisions",
+        href: "/docs/ai-annotations-architect",
+        status: "available",
+      },
+      {
+        title: "Killing Boilerplate",
+        description: "How 4 annotations eliminated 2,400 lines across 12 services",
+        href: "/docs/ai-annotations-killing-boilerplate",
+        status: "available",
+      },
+      {
+        title: "Semantic Search Deep Dive",
+        description: "When 'running shoes' finds 'athletic footwear'—meaning vs strings",
+        href: "/docs/ai-annotations-semantic-search",
+        status: "available",
+      },
+    ],
+  },
+  {
     title: "Core Modules",
     description: "Deep dive into framework components",
     icon: "🧩",
@@ -656,6 +765,37 @@ const Documentation = () => {
                         View all Real API Stories
                         <ExternalLink className="h-4 w-4" />
                       </Link>
+                    </div>
+                  </div>
+                ) : category.title === "AI Annotations Stories" ? (
+                  <div className="rounded-2xl border border-primary/30 bg-primary/5 p-8">
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      {featuredAIAnnotationsStories.map((story) => (
+                        <Link
+                          key={story.href}
+                          to={story.status === "available" ? story.href : "#"}
+                          onClick={(e) => story.status !== "available" && e.preventDefault()}
+                          className={`group rounded-lg border border-border bg-card p-5 transition-all ${
+                            story.status === "available"
+                              ? "hover:border-primary/50 hover:shadow-lg cursor-pointer"
+                              : "opacity-60 cursor-not-allowed"
+                          }`}
+                        >
+                          <div className="flex items-start justify-between mb-2">
+                            <h4 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                              {story.emoji} {story.title}
+                            </h4>
+                            {story.status === "coming-soon" && (
+                              <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                                Soon
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            {story.description} • {story.metrics}
+                          </p>
+                        </Link>
+                      ))}
                     </div>
                   </div>
                 ) : category.title === "Core Modules" ? (
