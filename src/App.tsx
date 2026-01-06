@@ -75,6 +75,12 @@ import SmartSuggestionsStory from "./pages/docs/SmartSuggestionsStory";
 import ONNXFallbackStory from "./pages/docs/ONNXFallbackStory";
 import RealAIEmbeddingStory from "./pages/docs/RealAIEmbeddingStory";
 import VectorLifecycleStory from "./pages/docs/VectorLifecycleStory";
+import AIAnnotationsEcommerceStory from "./pages/docs/AIAnnotationsEcommerceStory";
+import AIAnnotationsEnterpriseKnowledgeStory from "./pages/docs/AIAnnotationsEnterpriseKnowledgeStory";
+import AIAnnotationsDeveloperGuideStory from "./pages/docs/AIAnnotationsDeveloperGuideStory";
+import AIAnnotationsArchitectStory from "./pages/docs/AIAnnotationsArchitectStory";
+import AIAnnotationsKillingBoilerplateStory from "./pages/docs/AIAnnotationsKillingBoilerplateStory";
+import AIAnnotationsSemanticSearchStory from "./pages/docs/AIAnnotationsSemanticSearchStory";
 import { usePageTracking } from "./hooks/usePageTracking";
 
 const queryClient = new QueryClient();
@@ -170,6 +176,13 @@ const App = () => (
             <Route path="/docs/onnx-fallback-story" element={<ONNXFallbackStory />} />
             <Route path="/docs/real-ai-embedding-story" element={<RealAIEmbeddingStory />} />
             <Route path="/docs/vector-lifecycle-story" element={<VectorLifecycleStory />} />
+            {/* AI Annotations Stories */}
+            <Route path="/docs/ai-annotations-ecommerce" element={<AIAnnotationsEcommerceStory />} />
+            <Route path="/docs/ai-annotations-enterprise-knowledge" element={<AIAnnotationsEnterpriseKnowledgeStory />} />
+            <Route path="/docs/ai-annotations-developer-guide" element={<AIAnnotationsDeveloperGuideStory />} />
+            <Route path="/docs/ai-annotations-architect" element={<AIAnnotationsArchitectStory />} />
+            <Route path="/docs/ai-annotations-killing-boilerplate" element={<AIAnnotationsKillingBoilerplateStory />} />
+            <Route path="/docs/ai-annotations-semantic-search" element={<AIAnnotationsSemanticSearchStory />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
