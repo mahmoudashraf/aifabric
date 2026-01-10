@@ -211,9 +211,9 @@ const TheJourney = () => {
           <div className="text-center">
             <div className="text-xs text-muted-foreground mb-1">Strategy</div>
             <div className={`text-lg font-bold ${
-              phases[activePhase].strategy === 'SINGLE_TABLE' ? 'text-blue-400' : 'text-green-400'
+              phases[activePhase].metrics.strategy === 'SINGLE_TABLE' ? 'text-blue-400' : 'text-green-400'
             }`}>
-              {phases[activePhase].strategy === 'SINGLE_TABLE' ? 'SINGLE' : 'PER_TYPE'}
+              {phases[activePhase].metrics.strategy === 'SINGLE_TABLE' ? 'SINGLE' : 'PER_TYPE'}
             </div>
           </div>
         </div>
@@ -583,22 +583,14 @@ const DecisionTree = () => {
               <div className="flex gap-4">
                 <button
                   onClick={() => setSelectedPath("single-large")}
-                  className={`flex-1 p-3 rounded-lg border-2 transition-all ${
-                    selectedPath === "single-large"
-                      ? "border-blue-500/50 bg-blue-500/10"
-                      : "border-border/30 bg-muted/30 hover:border-border"
-                  }`}
+                  className="flex-1 p-3 rounded-lg border-2 transition-all border-border/30 bg-muted/30 hover:border-blue-500/50 hover:bg-blue-500/10"
                 >
                   <p className="font-bold text-sm mb-1">&lt; 1M</p>
                   <p className="text-xs text-muted-foreground">→ SINGLE_TABLE works</p>
                 </button>
                 <button
                   onClick={() => setSelectedPath("per-type")}
-                  className={`flex-1 p-3 rounded-lg border-2 transition-all ${
-                    selectedPath === "per-type"
-                      ? "border-green-500/50 bg-green-500/10"
-                      : "border-border/30 bg-muted/30 hover:border-border"
-                  }`}
+                  className="flex-1 p-3 rounded-lg border-2 transition-all border-border/30 bg-muted/30 hover:border-green-500/50 hover:bg-green-500/10"
                 >
                   <p className="font-bold text-sm mb-1">&gt; 1M</p>
                   <p className="text-xs text-muted-foreground">→ PER_TYPE_TABLE</p>

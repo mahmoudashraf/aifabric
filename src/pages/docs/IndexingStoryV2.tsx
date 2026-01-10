@@ -528,7 +528,7 @@ public class Product {
 };
 
 const DecisionTree = () => {
-  const [selectedPath, setSelectedPath] = useState<string | null>(null);
+  const [selectedPath, setSelectedPath] = useState<"sync" | "async" | "batch" | "async-final" | "batch-final" | "async-default" | null>(null);
   
   const paths = [
     {
@@ -592,22 +592,14 @@ const DecisionTree = () => {
               <div className="flex gap-4">
                 <button
                   onClick={() => setSelectedPath("async-final")}
-                  className={`flex-1 p-3 rounded-lg border-2 transition-all ${
-                    selectedPath === "async-final"
-                      ? "border-green-500/50 bg-green-500/10"
-                      : "border-border/30 bg-muted/30 hover:border-border"
-                  }`}
+                  className="flex-1 p-3 rounded-lg border-2 transition-all border-border/30 bg-muted/30 hover:border-green-500/50 hover:bg-green-500/10"
                 >
                   <p className="font-bold text-sm mb-1">YES → ASYNC</p>
                   <p className="text-xs text-muted-foreground">Products, users, articles (95% of cases)</p>
                 </button>
                 <button
                   onClick={() => setSelectedPath("batch")}
-                  className={`flex-1 p-3 rounded-lg border-2 transition-all ${
-                    selectedPath === "batch"
-                      ? "border-blue-500/50 bg-blue-500/10"
-                      : "border-border/30 bg-muted/30 hover:border-border"
-                  }`}
+                  className="flex-1 p-3 rounded-lg border-2 transition-all border-border/30 bg-muted/30 hover:border-blue-500/50 hover:bg-blue-500/10"
                 >
                   <p className="font-bold text-sm mb-1">NO → Continue...</p>
                   <p className="text-xs text-muted-foreground">Go to next question</p>
@@ -626,22 +618,14 @@ const DecisionTree = () => {
               <div className="flex gap-4">
                 <button
                   onClick={() => setSelectedPath("batch-final")}
-                  className={`flex-1 p-3 rounded-lg border-2 transition-all ${
-                    selectedPath === "batch-final"
-                      ? "border-blue-500/50 bg-blue-500/10"
-                      : "border-border/30 bg-muted/30 hover:border-border"
-                  }`}
+                  className="flex-1 p-3 rounded-lg border-2 transition-all border-border/30 bg-muted/30 hover:border-blue-500/50 hover:bg-blue-500/10"
                 >
                   <p className="font-bold text-sm mb-1">YES → BATCH</p>
                   <p className="text-xs text-muted-foreground">Analytics events, logs</p>
                 </button>
                 <button
                   onClick={() => setSelectedPath("async-default")}
-                  className={`flex-1 p-3 rounded-lg border-2 transition-all ${
-                    selectedPath === "async-default"
-                      ? "border-green-500/50 bg-green-500/10"
-                      : "border-border/30 bg-muted/30 hover:border-border"
-                  }`}
+                  className="flex-1 p-3 rounded-lg border-2 transition-all border-border/30 bg-muted/30 hover:border-green-500/50 hover:bg-green-500/10"
                 >
                   <p className="font-bold text-sm mb-1">NO → ASYNC</p>
                   <p className="text-xs text-muted-foreground">Default choice</p>

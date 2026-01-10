@@ -844,13 +844,9 @@ const Documentation = () => {
                       {featuredAdvancedFeatures.map((feature) => (
                         <Link
                           key={feature.href}
-                          to={feature.status === "available" ? feature.href : "#"}
-                          onClick={(e) => feature.status !== "available" && e.preventDefault()}
-                          className={`group rounded-lg border border-border bg-card p-5 transition-all ${
-                            feature.status === "available"
-                              ? "hover:border-primary/50 hover:shadow-lg cursor-pointer"
-                              : "opacity-60 cursor-not-allowed"
-                          }`}
+                          to={"#"}
+                          onClick={(e) => e.preventDefault()}
+                          className={`group rounded-lg border border-border bg-card p-5 transition-all opacity-60 cursor-not-allowed`}
                         >
                           <div className="flex items-start justify-between mb-2">
                             <h4 className="font-semibold text-foreground group-hover:text-primary transition-colors">
