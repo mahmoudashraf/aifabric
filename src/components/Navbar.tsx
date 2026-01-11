@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
-import { Github, Menu, X, Users, BookOpen } from "lucide-react";
+import { Github, Menu, X, Users, BookOpen, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-
+import { Badge } from "@/components/ui/badge";
 interface HashLinkProps {
   to: string;
   children: React.ReactNode;
@@ -107,6 +107,13 @@ const Navbar = () => {
               <BookOpen className="h-4 w-4" />
               Getting Started
             </Link>
+            <Link to="/demos" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              <Play className="h-4 w-4" />
+              Demos
+              <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[10px] bg-primary/10 text-primary">
+                New
+              </Badge>
+            </Link>
             <HashLink to="/#register" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               Register
             </HashLink>
@@ -162,6 +169,13 @@ const Navbar = () => {
               <Link to="/docs" onClick={closeMenu} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 <BookOpen className="h-4 w-4" />
                 Docs
+              </Link>
+              <Link to="/demos" onClick={closeMenu} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+                <Play className="h-4 w-4" />
+                Demos
+                <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[10px] bg-primary/10 text-primary">
+                  New
+                </Badge>
               </Link>
               <HashLink to="/#register" onClick={closeMenu} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 Register

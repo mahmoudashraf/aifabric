@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Documentation from "./pages/Documentation";
+import Demos from "./pages/Demos";
+import SubscriptionManagementHub from "./pages/demos/SubscriptionManagementHub";
 import OrchestratorStory from "./pages/docs/OrchestratorStory";
 import OrchestratorStoryV2 from "./pages/docs/OrchestratorStoryV2";
 import PIIDetectionStory from "./pages/docs/PIIDetectionStory";
@@ -99,6 +101,8 @@ const App = () => (
         <PageTracker>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/demos" element={<Demos />} />
+            <Route path="/demos/subscription-management-hub" element={<SubscriptionManagementHub />} />
             <Route path="/docs" element={<Documentation />} />
             <Route path="/docs/orchestrator_story" element={<OrchestratorStory />} />
             <Route path="/docs/orchestrator_story_v2" element={<OrchestratorStoryV2 />} />
