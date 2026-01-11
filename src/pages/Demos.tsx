@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, CreditCard, MessageSquare, TrendingUp, Shield, Zap } from "lucide-react";
+import { ArrowRight, Sparkles, CreditCard, MessageSquare, TrendingUp, Shield, Zap, HelpCircle, Search, Bot, FileText, Upload } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +24,44 @@ const demos = [
       { value: "<30s", label: "Action Time" },
     ],
     link: "/demos/subscription-management-hub",
+  },
+  {
+    id: "smart-faq-assistant",
+    title: "Smart FAQ Assistant",
+    description: "AI-powered FAQ system with semantic search, RAG-based answers, and intelligent query understanding.",
+    icon: HelpCircle,
+    status: "new" as const,
+    features: [
+      { icon: Search, label: "Semantic Search" },
+      { icon: Bot, label: "RAG Generation" },
+      { icon: MessageSquare, label: "Hybrid Search" },
+      { icon: FileText, label: "Query Expansion" },
+    ],
+    stats: [
+      { value: "40-60%", label: "Fewer Tickets" },
+      { value: "2-3 weeks", label: "Implementation" },
+      { value: "8", label: "Endpoints" },
+    ],
+    link: "/demos/smart-faq-assistant",
+  },
+  {
+    id: "document-intelligence-hub",
+    title: "Document Intelligence Hub",
+    description: "AI-powered document processing with PII detection, semantic search, and RAG-based Q&A across all your documents.",
+    icon: FileText,
+    status: "new" as const,
+    features: [
+      { icon: Shield, label: "PII Detection" },
+      { icon: Bot, label: "RAG Q&A" },
+      { icon: Search, label: "Semantic Search" },
+      { icon: Upload, label: "Async Processing" },
+    ],
+    stats: [
+      { value: "50-70%", label: "Time Savings" },
+      { value: "3-4 weeks", label: "Implementation" },
+      { value: "12", label: "Endpoints" },
+    ],
+    link: "/demos/document-intelligence-hub",
   },
 ];
 
@@ -67,12 +105,12 @@ const Demos = () => {
               >
                 <Link to={demo.link}>
                   <div className="group relative overflow-hidden rounded-2xl border border-border bg-card p-8 shadow-card transition-all duration-300 hover:shadow-lg hover:border-primary/30">
-                    {/* Featured Badge */}
-                    {demo.status === "featured" && (
+                    {/* Status Badge */}
+                    {(demo.status === "featured" || demo.status === "new") && (
                       <div className="absolute top-4 right-4">
-                        <Badge className="bg-gradient-primary text-primary-foreground">
+                        <Badge className={demo.status === "featured" ? "bg-gradient-primary text-primary-foreground" : "bg-accent text-accent-foreground"}>
                           <Sparkles className="h-3 w-3 mr-1" />
-                          Featured
+                          {demo.status === "featured" ? "Featured" : "New"}
                         </Badge>
                       </div>
                     )}
