@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, CreditCard, MessageSquare, TrendingUp, Shield, Zap, HelpCircle, Search, Bot, FileText, Upload, ShoppingBag, Users, Heart } from "lucide-react";
+import { ArrowRight, Sparkles, CreditCard, MessageSquare, TrendingUp, Shield, Zap, HelpCircle, Search, Bot, FileText, Upload, ShoppingBag, Users, Heart, Smile, Activity, Code, Calendar, ListTodo } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
@@ -81,6 +81,63 @@ const demos = [
       { value: "10", label: "Endpoints" },
     ],
     link: "/demos/product-discovery-engine",
+  },
+  {
+    id: "team-sentiment-tracker",
+    title: "Team Sentiment Tracker",
+    description: "AI-powered team morale monitoring with 6-level sentiment analysis, trend detection, and churn prediction.",
+    icon: Heart,
+    status: "new" as const,
+    features: [
+      { icon: Activity, label: "Behavior Analytics" },
+      { icon: Smile, label: "6-Level Sentiment" },
+      { icon: TrendingUp, label: "Trend Detection" },
+      { icon: Shield, label: "PII Protection" },
+    ],
+    stats: [
+      { value: "Early", label: "Issue Detection" },
+      { value: "2-3 weeks", label: "Implementation" },
+      { value: "9", label: "Endpoints" },
+    ],
+    link: "/demos/team-sentiment-tracker",
+  },
+  {
+    id: "code-documentation-search",
+    title: "Code Documentation Search",
+    description: "AI-powered semantic search across your codebase with RAG-based answers and code understanding.",
+    icon: Code,
+    status: "new" as const,
+    features: [
+      { icon: Search, label: "Semantic Search" },
+      { icon: Bot, label: "RAG Answers" },
+      { icon: FileText, label: "Code Understanding" },
+      { icon: Zap, label: "Multi-Language" },
+    ],
+    stats: [
+      { value: "10x", label: "Faster Search" },
+      { value: "2 weeks", label: "Implementation" },
+      { value: "7", label: "Endpoints" },
+    ],
+    link: "/demos/code-documentation-search",
+  },
+  {
+    id: "meeting-notes-analyzer",
+    title: "Meeting Notes Analyzer",
+    description: "AI-powered meeting analysis with semantic search, action item extraction, and auto-summarization.",
+    icon: Calendar,
+    status: "new" as const,
+    features: [
+      { icon: Search, label: "Semantic Search" },
+      { icon: Bot, label: "RAG Q&A" },
+      { icon: ListTodo, label: "Action Extraction" },
+      { icon: Sparkles, label: "Auto-Summary" },
+    ],
+    stats: [
+      { value: "80%", label: "Time Saved" },
+      { value: "2-3 weeks", label: "Implementation" },
+      { value: "8", label: "Endpoints" },
+    ],
+    link: "/demos/meeting-notes-analyzer",
   },
 ];
 

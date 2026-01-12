@@ -11,6 +11,9 @@ import SubscriptionManagementHub from "./pages/demos/SubscriptionManagementHub";
 import SmartFAQAssistant from "./pages/demos/SmartFAQAssistant";
 import DocumentIntelligenceHub from "./pages/demos/DocumentIntelligenceHub";
 import ProductDiscoveryEngine from "./pages/demos/ProductDiscoveryEngine";
+import TeamSentimentTracker from "./pages/demos/TeamSentimentTracker";
+import CodeDocumentationSearch from "./pages/demos/CodeDocumentationSearch";
+import MeetingNotesAnalyzer from "./pages/demos/MeetingNotesAnalyzer";
 import OrchestratorStory from "./pages/docs/OrchestratorStory";
 import OrchestratorStoryV2 from "./pages/docs/OrchestratorStoryV2";
 import PIIDetectionStory from "./pages/docs/PIIDetectionStory";
@@ -109,6 +112,9 @@ const App = () => (
             <Route path="/demos/smart-faq-assistant" element={<SmartFAQAssistant />} />
             <Route path="/demos/document-intelligence-hub" element={<DocumentIntelligenceHub />} />
             <Route path="/demos/product-discovery-engine" element={<ProductDiscoveryEngine />} />
+            <Route path="/demos/team-sentiment-tracker" element={<TeamSentimentTracker />} />
+            <Route path="/demos/code-documentation-search" element={<CodeDocumentationSearch />} />
+            <Route path="/demos/meeting-notes-analyzer" element={<MeetingNotesAnalyzer />} />
             <Route path="/docs" element={<Documentation />} />
             <Route path="/docs/orchestrator_story" element={<OrchestratorStory />} />
             <Route path="/docs/orchestrator_story_v2" element={<OrchestratorStoryV2 />} />
