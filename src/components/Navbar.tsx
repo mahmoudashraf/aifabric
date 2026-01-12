@@ -114,6 +114,9 @@ const Navbar = () => {
                 New
               </Badge>
             </Link>
+            <Link to="/landing2" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              Landing 2
+            </Link>
             <HashLink to="/#register" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               Register
             </HashLink>
@@ -176,6 +179,9 @@ const Navbar = () => {
                 <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[10px] bg-primary/10 text-primary">
                   New
                 </Badge>
+              </Link>
+              <Link to="/landing2" onClick={closeMenu} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+                Landing 2
               </Link>
               <HashLink to="/#register" onClick={closeMenu} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 Register

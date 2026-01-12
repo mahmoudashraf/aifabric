@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
+import Landing2 from "./pages/Landing2";
 import NotFound from "./pages/NotFound";
 import Documentation from "./pages/Documentation";
 import Demos from "./pages/Demos";
@@ -107,6 +108,7 @@ const App = () => (
         <PageTracker>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/landing2" element={<Landing2 />} />
             <Route path="/demos" element={<Demos />} />
             <Route path="/demos/subscription-management-hub" element={<SubscriptionManagementHub />} />
             <Route path="/demos/smart-faq-assistant" element={<SmartFAQAssistant />} />
