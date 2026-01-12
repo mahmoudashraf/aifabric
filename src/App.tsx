@@ -10,6 +10,7 @@ import Demos from "./pages/Demos";
 import SubscriptionManagementHub from "./pages/demos/SubscriptionManagementHub";
 import SmartFAQAssistant from "./pages/demos/SmartFAQAssistant";
 import DocumentIntelligenceHub from "./pages/demos/DocumentIntelligenceHub";
+import ProductDiscoveryEngine from "./pages/demos/ProductDiscoveryEngine";
 import OrchestratorStory from "./pages/docs/OrchestratorStory";
 import OrchestratorStoryV2 from "./pages/docs/OrchestratorStoryV2";
 import PIIDetectionStory from "./pages/docs/PIIDetectionStory";
@@ -107,6 +108,7 @@ const App = () => (
             <Route path="/demos/subscription-management-hub" element={<SubscriptionManagementHub />} />
             <Route path="/demos/smart-faq-assistant" element={<SmartFAQAssistant />} />
             <Route path="/demos/document-intelligence-hub" element={<DocumentIntelligenceHub />} />
+            <Route path="/demos/product-discovery-engine" element={<ProductDiscoveryEngine />} />
             <Route path="/docs" element={<Documentation />} />
             <Route path="/docs/orchestrator_story" element={<OrchestratorStory />} />
             <Route path="/docs/orchestrator_story_v2" element={<OrchestratorStoryV2 />} />

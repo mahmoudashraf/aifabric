@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, CreditCard, MessageSquare, TrendingUp, Shield, Zap, HelpCircle, Search, Bot, FileText, Upload } from "lucide-react";
+import { ArrowRight, Sparkles, CreditCard, MessageSquare, TrendingUp, Shield, Zap, HelpCircle, Search, Bot, FileText, Upload, ShoppingBag, Users, Heart } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
@@ -62,6 +62,25 @@ const demos = [
       { value: "12", label: "Endpoints" },
     ],
     link: "/demos/document-intelligence-hub",
+  },
+  {
+    id: "product-discovery-engine",
+    title: "Product Discovery Engine",
+    description: "AI-powered e-commerce search with natural language queries, personalized recommendations, and behavior-based trending detection.",
+    icon: ShoppingBag,
+    status: "new" as const,
+    features: [
+      { icon: Search, label: "Semantic Search" },
+      { icon: Users, label: "Behavior Tracking" },
+      { icon: TrendingUp, label: "Recommendations" },
+      { icon: Heart, label: "Query Understanding" },
+    ],
+    stats: [
+      { value: "30-50%", label: "Conversion Lift" },
+      { value: "2-3 weeks", label: "Implementation" },
+      { value: "10", label: "Endpoints" },
+    ],
+    link: "/demos/product-discovery-engine",
   },
 ];
 
