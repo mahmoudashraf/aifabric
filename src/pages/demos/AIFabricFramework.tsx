@@ -43,28 +43,28 @@ const API_BASE_URL = "https://ai-fabric-framework-production.up.railway.app/api"
 // Sample products for stock filling
 const SAMPLE_PRODUCTS = [
   // Electronics
-  { sku: "ELEC-LAPTOP-001", name: "UltraBook Pro 15", description: "High-performance laptop with Intel i7, 16GB RAM, 512GB SSD", price: 1299.99, category: "Electronics" },
-  { sku: "ELEC-LAPTOP-002", name: "Gaming Beast X1", description: "Gaming laptop with RTX 4070, 32GB RAM, 1TB SSD", price: 2499.99, category: "Electronics" },
-  { sku: "ELEC-PHONE-001", name: "SmartPhone Pro Max", description: "Latest flagship smartphone with 5G, 256GB storage", price: 999.99, category: "Electronics" },
-  { sku: "ELEC-PHONE-002", name: "Budget Phone Plus", description: "Affordable smartphone with great battery life", price: 299.99, category: "Electronics" },
-  { sku: "ELEC-TABLET-001", name: "ProTab Ultra", description: "Professional tablet with stylus, 12.9 inch display", price: 899.99, category: "Electronics" },
-  { sku: "ELEC-WATCH-001", name: "SmartWatch Fitness Pro", description: "Fitness tracker with heart rate monitor, GPS", price: 249.99, category: "Electronics" },
-  { sku: "ELEC-HEADPHONE-001", name: "Wireless Noise-Cancelling Headphones", description: "Premium over-ear headphones with ANC", price: 349.99, category: "Electronics" },
-  { sku: "ELEC-EARBUDS-001", name: "True Wireless Earbuds", description: "Compact earbuds with charging case", price: 129.99, category: "Electronics" },
-  { sku: "ELEC-SPEAKER-001", name: "Portable Bluetooth Speaker", description: "Waterproof speaker with 360° sound", price: 79.99, category: "Electronics" },
-  { sku: "ELEC-CAMERA-001", name: "Mirrorless Camera Kit", description: "Professional camera with 24MP sensor and lens", price: 1499.99, category: "Electronics" },
+  { sku: "ELEC-LAPTOP-001", name: "UltraBook Pro 15", description: "High-performance laptop with Intel i7, 16GB RAM, 512GB SSD", price: 1299.99, category: "Electronics", inStockQty: 15 },
+  { sku: "ELEC-LAPTOP-002", name: "Gaming Beast X1", description: "Gaming laptop with RTX 4070, 32GB RAM, 1TB SSD", price: 2499.99, category: "Electronics", inStockQty: 8 },
+  { sku: "ELEC-PHONE-001", name: "SmartPhone Pro Max", description: "Latest flagship smartphone with 5G, 256GB storage", price: 999.99, category: "Electronics", inStockQty: 50 },
+  { sku: "ELEC-PHONE-002", name: "Budget Phone Plus", description: "Affordable smartphone with great battery life", price: 299.99, category: "Electronics", inStockQty: 100 },
+  { sku: "ELEC-TABLET-001", name: "ProTab Ultra", description: "Professional tablet with stylus, 12.9 inch display", price: 899.99, category: "Electronics", inStockQty: 25 },
+  { sku: "ELEC-WATCH-001", name: "SmartWatch Fitness Pro", description: "Fitness tracker with heart rate monitor, GPS", price: 249.99, category: "Electronics", inStockQty: 75 },
+  { sku: "ELEC-HEADPHONE-001", name: "Wireless Noise-Cancelling Headphones", description: "Premium over-ear headphones with ANC", price: 349.99, category: "Electronics", inStockQty: 40 },
+  { sku: "ELEC-EARBUDS-001", name: "True Wireless Earbuds", description: "Compact earbuds with charging case", price: 129.99, category: "Electronics", inStockQty: 120 },
+  { sku: "ELEC-SPEAKER-001", name: "Portable Bluetooth Speaker", description: "Waterproof speaker with 360° sound", price: 79.99, category: "Electronics", inStockQty: 60 },
+  { sku: "ELEC-CAMERA-001", name: "Mirrorless Camera Kit", description: "Professional camera with 24MP sensor and lens", price: 1499.99, category: "Electronics", inStockQty: 12 },
 
   // Women's Footwear
-  { sku: "FOOT-HEEL-001", name: "Classic Stiletto Heels", description: "Elegant high heels perfect for formal occasions", price: 89.99, category: "Women's Footwear" },
-  { sku: "FOOT-HEEL-002", name: "Block Heel Pumps", description: "Comfortable block heels for all-day wear", price: 69.99, category: "Women's Footwear" },
-  { sku: "FOOT-BOOT-001", name: "Ankle Boots Leather", description: "Premium leather ankle boots with zipper", price: 129.99, category: "Women's Footwear" },
-  { sku: "FOOT-BOOT-002", name: "Knee-High Boots", description: "Stylish knee-high boots for winter", price: 159.99, category: "Women's Footwear" },
-  { sku: "FOOT-SNEAKER-001", name: "Running Sneakers", description: "Lightweight running shoes with cushioning", price: 79.99, category: "Women's Footwear" },
-  { sku: "FOOT-SNEAKER-002", name: "Fashion Sneakers", description: "Trendy casual sneakers for everyday wear", price: 59.99, category: "Women's Footwear" },
-  { sku: "FOOT-SANDAL-001", name: "Summer Flat Sandals", description: "Comfortable flat sandals for warm weather", price: 39.99, category: "Women's Footwear" },
-  { sku: "FOOT-SANDAL-002", name: "Wedge Sandals", description: "Elegant wedge sandals with ankle strap", price: 69.99, category: "Women's Footwear" },
-  { sku: "FOOT-FLAT-001", name: "Ballet Flats", description: "Classic ballet flats in multiple colors", price: 49.99, category: "Women's Footwear" },
-  { sku: "FOOT-LOAFER-001", name: "Leather Loafers", description: "Professional leather loafers for office", price: 89.99, category: "Women's Footwear" },
+  { sku: "FOOT-HEEL-001", name: "Classic Stiletto Heels", description: "Elegant high heels perfect for formal occasions", price: 89.99, category: "Women's Footwear", inStockQty: 45 },
+  { sku: "FOOT-HEEL-002", name: "Block Heel Pumps", description: "Comfortable block heels for all-day wear", price: 69.99, category: "Women's Footwear", inStockQty: 55 },
+  { sku: "FOOT-BOOT-001", name: "Ankle Boots Leather", description: "Premium leather ankle boots with zipper", price: 129.99, category: "Women's Footwear", inStockQty: 30 },
+  { sku: "FOOT-BOOT-002", name: "Knee-High Boots", description: "Stylish knee-high boots for winter", price: 159.99, category: "Women's Footwear", inStockQty: 20 },
+  { sku: "FOOT-SNEAKER-001", name: "Running Sneakers", description: "Lightweight running shoes with cushioning", price: 79.99, category: "Women's Footwear", inStockQty: 85 },
+  { sku: "FOOT-SNEAKER-002", name: "Fashion Sneakers", description: "Trendy casual sneakers for everyday wear", price: 59.99, category: "Women's Footwear", inStockQty: 90 },
+  { sku: "FOOT-SANDAL-001", name: "Summer Flat Sandals", description: "Comfortable flat sandals for warm weather", price: 39.99, category: "Women's Footwear", inStockQty: 70 },
+  { sku: "FOOT-SANDAL-002", name: "Wedge Sandals", description: "Elegant wedge sandals with ankle strap", price: 69.99, category: "Women's Footwear", inStockQty: 35 },
+  { sku: "FOOT-FLAT-001", name: "Ballet Flats", description: "Classic ballet flats in multiple colors", price: 49.99, category: "Women's Footwear", inStockQty: 65 },
+  { sku: "FOOT-LOAFER-001", name: "Leather Loafers", description: "Professional leather loafers for office", price: 89.99, category: "Women's Footwear", inStockQty: 40 },
 ];
 
 interface Product {
@@ -74,6 +74,7 @@ interface Product {
   description: string;
   price: number;
   category?: string;
+  inStockQty?: number;
   relevanceScore?: number;
 }
 
@@ -136,6 +137,7 @@ const AIFabricFramework = () => {
     description: "",
     price: "",
     category: "",
+    inStockQty: "",
   });
 
   // Load products on mount
@@ -269,6 +271,7 @@ const AIFabricFramework = () => {
           description: formData.description,
           price: parseFloat(formData.price),
           category: formData.category || undefined,
+          inStockQty: formData.inStockQty ? parseInt(formData.inStockQty) : undefined,
         }),
       });
 
@@ -281,7 +284,7 @@ const AIFabricFramework = () => {
       setProducts([newProduct, ...products]);
       setProductCount(productCount + 1);
       setIsAddDialogOpen(false);
-      setFormData({ sku: "", name: "", description: "", price: "", category: "" });
+      setFormData({ sku: "", name: "", description: "", price: "", category: "", inStockQty: "" });
 
       toast({
         title: "Success",
@@ -313,6 +316,7 @@ const AIFabricFramework = () => {
           description: formData.description || undefined,
           price: formData.price ? parseFloat(formData.price) : undefined,
           category: formData.category || undefined,
+          inStockQty: formData.inStockQty ? parseInt(formData.inStockQty) : undefined,
         }),
       });
 
@@ -325,7 +329,7 @@ const AIFabricFramework = () => {
       setProducts(products.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)));
       setIsEditDialogOpen(false);
       setSelectedProduct(null);
-      setFormData({ sku: "", name: "", description: "", price: "", category: "" });
+      setFormData({ sku: "", name: "", description: "", price: "", category: "", inStockQty: "" });
 
       toast({
         title: "Success",
@@ -452,12 +456,13 @@ const AIFabricFramework = () => {
       description: product.description,
       price: product.price.toString(),
       category: product.category || "",
+      inStockQty: product.inStockQty ? product.inStockQty.toString() : "",
     });
     setIsEditDialogOpen(true);
   };
 
   const openAddDialog = () => {
-    setFormData({ sku: "", name: "", description: "", price: "", category: "" });
+    setFormData({ sku: "", name: "", description: "", price: "", category: "", inStockQty: "" });
     setIsAddDialogOpen(true);
   };
 
@@ -748,11 +753,21 @@ const AIFabricFramework = () => {
                                 <p className="text-sm text-muted-foreground mb-4">
                                   {product.description}
                                 </p>
-                                {product.category && (
-                                  <Badge variant="outline" className="mb-4">
-                                    {product.category}
-                                  </Badge>
-                                )}
+                                <div className="flex gap-2 mb-4 flex-wrap">
+                                  {product.category && (
+                                    <Badge variant="outline">
+                                      {product.category}
+                                    </Badge>
+                                  )}
+                                  {product.inStockQty !== undefined && (
+                                    <Badge
+                                      variant="secondary"
+                                      className={product.inStockQty === 0 ? "bg-red-500/10 text-red-600 border-red-500/20" : "bg-green-500/10 text-green-600 border-green-500/20"}
+                                    >
+                                      Stock: {product.inStockQty}
+                                    </Badge>
+                                  )}
+                                </div>
                                 <div className="flex items-center justify-between">
                                   <span className="text-2xl font-bold text-primary">
                                     ${product.price.toFixed(2)}
@@ -855,6 +870,17 @@ const AIFabricFramework = () => {
                             placeholder="e.g., Electronics"
                           />
                         </div>
+                        <div>
+                          <Label htmlFor="inStockQty">In Stock Quantity</Label>
+                          <Input
+                            id="inStockQty"
+                            type="number"
+                            min="0"
+                            value={formData.inStockQty}
+                            onChange={(e) => setFormData({ ...formData, inStockQty: e.target.value })}
+                            placeholder="e.g., 100"
+                          />
+                        </div>
                       </div>
                       <DialogFooter>
                         <Button
@@ -926,6 +952,16 @@ const AIFabricFramework = () => {
                             id="edit-category"
                             value={formData.category}
                             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="edit-inStockQty">In Stock Quantity</Label>
+                          <Input
+                            id="edit-inStockQty"
+                            type="number"
+                            min="0"
+                            value={formData.inStockQty}
+                            onChange={(e) => setFormData({ ...formData, inStockQty: e.target.value })}
                           />
                         </div>
                       </div>
