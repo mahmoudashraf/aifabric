@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
@@ -23,6 +23,8 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
+  Loader2,
+  RefreshCw,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -30,7 +32,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+
+const API_BASE_URL = "https://ai-fabric-framework-production.up.railway.app/api";
 
 interface Product {
   id: string;
@@ -46,7 +52,7 @@ interface Order {
   id: string;
   userId: string;
   productId: string;
-  productName: string;
+  productName?: string;
   quantity: number;
   totalPrice: number;
   status: string;
@@ -65,87 +71,272 @@ interface ChatMessage {
   };
 }
 
+interface Conversation {
+  id: string;
+  ownerId: string;
+  title?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 const AIFabricFramework = () => {
   const [activeTab, setActiveTab] = useState("products");
   const [searchQuery, setSearchQuery] = useState("");
   const [chatQuery, setChatQuery] = useState("");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-  const [products, setProducts] = useState<Product[]>([
-    {
-      id: "1",
-      sku: "LAPTOP-001",
-      name: "Ultra Performance Laptop",
-      description: "High-end laptop with 32GB RAM and RTX 4080",
-      price: 2499.99,
-      category: "Electronics",
-    },
-    {
-      id: "2",
-      sku: "MOUSE-001",
-      name: "Wireless Gaming Mouse",
-      description: "Ergonomic wireless mouse with RGB lighting",
-      price: 79.99,
-      category: "Accessories",
-    },
-    {
-      id: "3",
-      sku: "DESK-001",
-      name: "Adjustable Standing Desk",
-      description: "Electric height-adjustable desk with memory settings",
-      price: 599.99,
-      category: "Furniture",
-    },
-  ]);
-  const [orders, setOrders] = useState<Order[]>([
-    {
-      id: "ORD-001",
-      userId: "user-123",
-      productId: "1",
-      productName: "Ultra Performance Laptop",
-      quantity: 1,
-      totalPrice: 2499.99,
-      status: "Delivered",
-      orderDate: "2026-01-15",
-    },
-    {
-      id: "ORD-002",
-      userId: "user-123",
-      productId: "2",
-      productName: "Wireless Gaming Mouse",
-      quantity: 2,
-      totalPrice: 159.98,
-      status: "Shipped",
-      orderDate: "2026-01-20",
-    },
-  ]);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(false);
+  const [isLoadingOrders, setIsLoadingOrders] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [productCount, setProductCount] = useState(0);
   const { toast } = useToast();
 
+  // Form state for add/edit
+  const [formData, setFormData] = useState({
+    sku: "",
+    name: "",
+    description: "",
+    price: "",
+    category: "",
+  });
+
+  // Load products on mount
+  useEffect(() => {
+    loadProducts();
+    loadProductCount();
+  }, []);
+
+  // Load orders when orders tab is active
+  useEffect(() => {
+    if (activeTab === "orders") {
+      loadOrders();
+    }
+  }, [activeTab]);
+
+  // Load conversations when chat tab is active
+  useEffect(() => {
+    if (activeTab === "chat") {
+      loadConversations();
+    }
+  }, [activeTab]);
+
+  const loadProducts = async (limit = 50) => {
+    setIsLoadingProducts(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/products?limit=${limit}`);
+      if (!response.ok) throw new Error("Failed to load products");
+      const data = await response.json();
+      setProducts(data);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load products. " + (error as Error).message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingProducts(false);
+    }
+  };
+
+  const loadProductCount = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/products/count`);
+      if (!response.ok) throw new Error("Failed to load product count");
+      const data = await response.json();
+      setProductCount(data.count || 0);
+    } catch (error) {
+      console.error("Failed to load product count:", error);
+    }
+  };
+
+  const loadOrders = async (userId = "demo-user") => {
+    setIsLoadingOrders(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/orders?userId=${userId}&limit=50`);
+      if (!response.ok) throw new Error("Failed to load orders");
+      const data = await response.json();
+      setOrders(data);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load orders. " + (error as Error).message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingOrders(false);
+    }
+  };
+
+  const loadConversations = async (ownerId = "demo-user") => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/chat/conversations?ownerId=${ownerId}`);
+      if (!response.ok) throw new Error("Failed to load conversations");
+      const data = await response.json();
+      setConversations(data);
+    } catch (error) {
+      console.error("Failed to load conversations:", error);
+    }
+  };
+
   const handleProductSearch = async () => {
-    if (!searchQuery.trim()) return;
+    if (!searchQuery.trim()) {
+      loadProducts();
+      return;
+    }
 
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      const filtered = products.filter(
-        (p) =>
-          p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          p.sku.toLowerCase().includes(searchQuery.toLowerCase())
-      ).map(p => ({
-        ...p,
-        relevanceScore: Math.random() * 0.3 + 0.7, // Mock relevance score
-      }));
-
-      setProducts(filtered.length > 0 ? filtered : products);
-      setIsLoading(false);
+    setIsLoadingProducts(true);
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/products/search?q=${encodeURIComponent(searchQuery)}&limit=20&threshold=0.3`
+      );
+      if (!response.ok) throw new Error("Failed to search products");
+      const data = await response.json();
+      setProducts(data);
 
       toast({
         title: "Search Complete",
-        description: `Found ${filtered.length} products matching "${searchQuery}"`,
+        description: `Found ${data.length} products matching "${searchQuery}"`,
       });
-    }, 800);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to search products. " + (error as Error).message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingProducts(false);
+    }
+  };
+
+  const handleAddProduct = async () => {
+    if (!formData.sku || !formData.name || !formData.description || !formData.price) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/products`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sku: formData.sku,
+          name: formData.name,
+          description: formData.description,
+          price: parseFloat(formData.price),
+          category: formData.category || undefined,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || "Failed to create product");
+      }
+
+      const newProduct = await response.json();
+      setProducts([newProduct, ...products]);
+      setProductCount(productCount + 1);
+      setIsAddDialogOpen(false);
+      setFormData({ sku: "", name: "", description: "", price: "", category: "" });
+
+      toast({
+        title: "Success",
+        description: "Product created successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create product. " + (error as Error).message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEditProduct = async () => {
+    if (!selectedProduct) return;
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/products/${selectedProduct.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name || undefined,
+          description: formData.description || undefined,
+          price: formData.price ? parseFloat(formData.price) : undefined,
+          category: formData.category || undefined,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || "Failed to update product");
+      }
+
+      const updatedProduct = await response.json();
+      setProducts(products.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)));
+      setIsEditDialogOpen(false);
+      setSelectedProduct(null);
+      setFormData({ sku: "", name: "", description: "", price: "", category: "" });
+
+      toast({
+        title: "Success",
+        description: "Product updated successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update product. " + (error as Error).message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteProduct = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this product?")) return;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/products/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || "Failed to delete product");
+      }
+
+      setProducts(products.filter((p) => p.id !== id));
+      setProductCount(Math.max(0, productCount - 1));
+
+      toast({
+        title: "Success",
+        description: "Product deleted successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete product. " + (error as Error).message,
+        variant: "destructive",
+      });
+    }
   };
 
   const handleChatQuery = async () => {
@@ -159,56 +350,83 @@ const AIFabricFramework = () => {
     };
 
     setChatMessages((prev) => [...prev, userMessage]);
+    const currentQuery = chatQuery;
     setChatQuery("");
     setIsLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/chat/query`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: currentQuery,
+          userId: "demo-user",
+          sessionId: "demo-session",
+          conversationId: currentConversationId || undefined,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || "Failed to process chat query");
+      }
+
+      const data = await response.json();
+
+      // Store conversation ID for future messages
+      if (data.conversationId && !currentConversationId) {
+        setCurrentConversationId(data.conversationId);
+      }
+
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: "ai",
-        content: generateAIResponse(chatQuery),
+        content: data.response || data.message || "I processed your query successfully.",
         timestamp: new Date().toISOString(),
-        orchestration: {
-          intent: detectIntent(chatQuery),
-          confidence: 0.92,
-          actions: ["search_products", "retrieve_context", "generate_response"],
-        },
+        orchestration: data.orchestration ? {
+          intent: data.orchestration.intent || "general_query",
+          confidence: data.orchestration.confidence || 0.9,
+          actions: data.orchestration.actions || ["process_query"],
+        } : undefined,
       };
 
       setChatMessages((prev) => [...prev, aiMessage]);
+    } catch (error) {
+      const errorMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        type: "ai",
+        content: "Sorry, I encountered an error processing your request: " + (error as Error).message,
+        timestamp: new Date().toISOString(),
+      };
+      setChatMessages((prev) => [...prev, errorMessage]);
+
+      toast({
+        title: "Error",
+        description: "Failed to process chat query. " + (error as Error).message,
+        variant: "destructive",
+      });
+    } finally {
       setIsLoading(false);
-    }, 1500);
-  };
-
-  const detectIntent = (query: string): string => {
-    if (query.toLowerCase().includes("order") || query.toLowerCase().includes("purchase")) {
-      return "order_inquiry";
-    } else if (query.toLowerCase().includes("product") || query.toLowerCase().includes("find")) {
-      return "product_search";
-    } else if (query.toLowerCase().includes("price")) {
-      return "price_inquiry";
     }
-    return "general_query";
   };
 
-  const generateAIResponse = (query: string): string => {
-    if (query.toLowerCase().includes("laptop")) {
-      return "I found the Ultra Performance Laptop for $2,499.99. It features 32GB RAM and an RTX 4080 GPU, perfect for high-performance tasks. Would you like to know more details or check similar products?";
-    } else if (query.toLowerCase().includes("order")) {
-      return `You have 2 recent orders. Your latest order (ORD-002) for 2 Wireless Gaming Mice is currently being shipped. Would you like to track this order or view order details?`;
-    } else if (query.toLowerCase().includes("cheap") || query.toLowerCase().includes("affordable")) {
-      return "I recommend the Wireless Gaming Mouse at $79.99 - it's our most affordable accessory with excellent reviews. It features ergonomic design and RGB lighting.";
-    }
-    return "I can help you find products, check orders, or answer questions about our inventory. What would you like to know?";
-  };
-
-  const handleDeleteProduct = (id: string) => {
-    setProducts(products.filter((p) => p.id !== id));
-    toast({
-      title: "Product Deleted",
-      description: "Product has been removed from the inventory.",
+  const openEditDialog = (product: Product) => {
+    setSelectedProduct(product);
+    setFormData({
+      sku: product.sku,
+      name: product.name,
+      description: product.description,
+      price: product.price.toString(),
+      category: product.category || "",
     });
+    setIsEditDialogOpen(true);
+  };
+
+  const openAddDialog = () => {
+    setFormData({ sku: "", name: "", description: "", price: "", category: "" });
+    setIsAddDialogOpen(true);
   };
 
   return (
@@ -243,8 +461,7 @@ const AIFabricFramework = () => {
               </div>
               <p className="text-lg text-muted-foreground max-w-3xl">
                 Complete AI-powered framework for intelligent product management, conversational commerce,
-                and orchestrated chat experiences. Explore real-time endpoints with semantic search,
-                natural language processing, and context-aware responses.
+                and orchestrated chat experiences. All features connected to live Railway API endpoints.
               </p>
             </div>
           </div>
@@ -304,14 +521,22 @@ const AIFabricFramework = () => {
             >
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Search className="h-5 w-5" />
-                    Product Search & Management
-                  </CardTitle>
-                  <CardDescription>
-                    Search products using semantic understanding with ONNX embeddings.
-                    Try: "find affordable accessories" or "laptop for gaming"
-                  </CardDescription>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="flex items-center gap-2">
+                        <Search className="h-5 w-5" />
+                        Product Search & Management
+                      </CardTitle>
+                      <CardDescription>
+                        Search products using semantic understanding with ONNX embeddings.
+                        Try: "find affordable accessories" or "laptop for gaming"
+                      </CardDescription>
+                    </div>
+                    <Button onClick={loadProducts} variant="outline" size="sm">
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Refresh
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {/* Search Bar */}
@@ -323,8 +548,12 @@ const AIFabricFramework = () => {
                       onKeyPress={(e) => e.key === "Enter" && handleProductSearch()}
                       className="flex-1"
                     />
-                    <Button onClick={handleProductSearch} disabled={isLoading}>
-                      <Search className="h-4 w-4 mr-2" />
+                    <Button onClick={handleProductSearch} disabled={isLoadingProducts}>
+                      {isLoadingProducts ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <Search className="h-4 w-4 mr-2" />
+                      )}
                       Search
                     </Button>
                   </div>
@@ -341,75 +570,254 @@ const AIFabricFramework = () => {
                           setSearchQuery(example);
                           setTimeout(handleProductSearch, 100);
                         }}
+                        disabled={isLoadingProducts}
                       >
                         {example}
                       </Button>
                     ))}
                   </div>
 
+                  {/* Loading State */}
+                  {isLoadingProducts && (
+                    <div className="flex justify-center items-center py-12">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                  )}
+
                   {/* Products Grid */}
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-                    <AnimatePresence mode="popLayout">
-                      {products.map((product, index) => (
-                        <motion.div
-                          key={product.id}
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.9 }}
-                          transition={{ duration: 0.3, delay: index * 0.1 }}
-                        >
-                          <Card className="hover:shadow-lg transition-all group">
-                            <CardHeader>
-                              <div className="flex items-start justify-between">
-                                <div className="flex-1">
-                                  <CardTitle className="text-lg">{product.name}</CardTitle>
-                                  <CardDescription className="text-xs mt-1">
-                                    SKU: {product.sku}
-                                  </CardDescription>
+                  {!isLoadingProducts && (
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+                      <AnimatePresence mode="popLayout">
+                        {products.map((product, index) => (
+                          <motion.div
+                            key={product.id}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            transition={{ duration: 0.3, delay: index * 0.05 }}
+                          >
+                            <Card className="hover:shadow-lg transition-all group">
+                              <CardHeader>
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1">
+                                    <CardTitle className="text-lg">{product.name}</CardTitle>
+                                    <CardDescription className="text-xs mt-1">
+                                      SKU: {product.sku}
+                                    </CardDescription>
+                                  </div>
+                                  {product.relevanceScore && (
+                                    <Badge variant="secondary" className="text-xs">
+                                      {(product.relevanceScore * 100).toFixed(0)}% match
+                                    </Badge>
+                                  )}
                                 </div>
-                                {product.relevanceScore && (
-                                  <Badge variant="secondary" className="text-xs">
-                                    {(product.relevanceScore * 100).toFixed(0)}% match
+                              </CardHeader>
+                              <CardContent>
+                                <p className="text-sm text-muted-foreground mb-4">
+                                  {product.description}
+                                </p>
+                                {product.category && (
+                                  <Badge variant="outline" className="mb-4">
+                                    {product.category}
                                   </Badge>
                                 )}
-                              </div>
-                            </CardHeader>
-                            <CardContent>
-                              <p className="text-sm text-muted-foreground mb-4">
-                                {product.description}
-                              </p>
-                              <div className="flex items-center justify-between">
-                                <span className="text-2xl font-bold text-primary">
-                                  ${product.price.toFixed(2)}
-                                </span>
-                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                  <Button size="icon" variant="ghost" onClick={() => setSelectedProduct(product)}>
-                                    <Eye className="h-4 w-4" />
-                                  </Button>
-                                  <Button size="icon" variant="ghost">
-                                    <Edit className="h-4 w-4" />
-                                  </Button>
-                                  <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    onClick={() => handleDeleteProduct(product.id)}
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
+                                <div className="flex items-center justify-between">
+                                  <span className="text-2xl font-bold text-primary">
+                                    ${product.price.toFixed(2)}
+                                  </span>
+                                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Button
+                                      size="icon"
+                                      variant="ghost"
+                                      onClick={() => openEditDialog(product)}
+                                    >
+                                      <Edit className="h-4 w-4" />
+                                    </Button>
+                                    <Button
+                                      size="icon"
+                                      variant="ghost"
+                                      onClick={() => handleDeleteProduct(product.id)}
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </div>
                                 </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
-                  </div>
+                              </CardContent>
+                            </Card>
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
+                    </div>
+                  )}
+
+                  {/* No Products Message */}
+                  {!isLoadingProducts && products.length === 0 && (
+                    <div className="text-center py-12">
+                      <Package className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
+                      <p className="text-muted-foreground">No products found</p>
+                    </div>
+                  )}
 
                   {/* Add Product Button */}
-                  <Button variant="outline" className="w-full mt-4">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add New Product
-                  </Button>
+                  <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button onClick={openAddDialog} className="w-full mt-4">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add New Product
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Add New Product</DialogTitle>
+                        <DialogDescription>
+                          Create a new product in the inventory
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="sku">SKU *</Label>
+                          <Input
+                            id="sku"
+                            value={formData.sku}
+                            onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
+                            placeholder="e.g., LAPTOP-001"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="name">Name *</Label>
+                          <Input
+                            id="name"
+                            value={formData.name}
+                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            placeholder="e.g., Ultra Performance Laptop"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="description">Description *</Label>
+                          <Textarea
+                            id="description"
+                            value={formData.description}
+                            onChange={(e) =>
+                              setFormData({ ...formData, description: e.target.value })
+                            }
+                            placeholder="e.g., High-end laptop with 32GB RAM..."
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="price">Price *</Label>
+                          <Input
+                            id="price"
+                            type="number"
+                            step="0.01"
+                            value={formData.price}
+                            onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                            placeholder="e.g., 2499.99"
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="category">Category</Label>
+                          <Input
+                            id="category"
+                            value={formData.category}
+                            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                            placeholder="e.g., Electronics"
+                          />
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button
+                          variant="outline"
+                          onClick={() => setIsAddDialogOpen(false)}
+                          disabled={isLoading}
+                        >
+                          Cancel
+                        </Button>
+                        <Button onClick={handleAddProduct} disabled={isLoading}>
+                          {isLoading ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Creating...
+                            </>
+                          ) : (
+                            "Create Product"
+                          )}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+
+                  {/* Edit Product Dialog */}
+                  <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Edit Product</DialogTitle>
+                        <DialogDescription>
+                          Update product details (SKU cannot be changed)
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div>
+                          <Label>SKU</Label>
+                          <Input value={formData.sku} disabled />
+                        </div>
+                        <div>
+                          <Label htmlFor="edit-name">Name</Label>
+                          <Input
+                            id="edit-name"
+                            value={formData.name}
+                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="edit-description">Description</Label>
+                          <Textarea
+                            id="edit-description"
+                            value={formData.description}
+                            onChange={(e) =>
+                              setFormData({ ...formData, description: e.target.value })
+                            }
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="edit-price">Price</Label>
+                          <Input
+                            id="edit-price"
+                            type="number"
+                            step="0.01"
+                            value={formData.price}
+                            onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="edit-category">Category</Label>
+                          <Input
+                            id="edit-category"
+                            value={formData.category}
+                            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                          />
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button
+                          variant="outline"
+                          onClick={() => setIsEditDialogOpen(false)}
+                          disabled={isLoading}
+                        >
+                          Cancel
+                        </Button>
+                        <Button onClick={handleEditProduct} disabled={isLoading}>
+                          {isLoading ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Updating...
+                            </>
+                          ) : (
+                            "Update Product"
+                          )}
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </CardContent>
               </Card>
 
@@ -422,7 +830,7 @@ const AIFabricFramework = () => {
                         <Package className="h-6 w-6 text-blue-600" />
                       </div>
                       <div>
-                        <p className="text-2xl font-bold">{products.length}</p>
+                        <p className="text-2xl font-bold">{productCount || products.length}</p>
                         <p className="text-sm text-muted-foreground">Total Products</p>
                       </div>
                     </div>
@@ -467,75 +875,96 @@ const AIFabricFramework = () => {
             >
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Receipt className="h-5 w-5" />
-                    Purchase Orders
-                  </CardTitle>
-                  <CardDescription>
-                    View and manage customer orders with real-time status tracking
-                  </CardDescription>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="flex items-center gap-2">
+                        <Receipt className="h-5 w-5" />
+                        Purchase Orders
+                      </CardTitle>
+                      <CardDescription>
+                        View and manage customer orders with real-time status tracking
+                      </CardDescription>
+                    </div>
+                    <Button onClick={() => loadOrders()} variant="outline" size="sm">
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Refresh
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    {orders.map((order, index) => (
-                      <motion.div
-                        key={order.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3, delay: index * 0.1 }}
-                      >
-                        <Card className="hover:shadow-md transition-all">
-                          <CardContent className="pt-6">
-                            <div className="flex items-center justify-between mb-4">
-                              <div className="flex items-center gap-3">
-                                <div className="p-2 bg-primary/10 rounded-lg">
-                                  <ShoppingCart className="h-5 w-5 text-primary" />
+                  {isLoadingOrders ? (
+                    <div className="flex justify-center items-center py-12">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                  ) : orders.length === 0 ? (
+                    <div className="text-center py-12">
+                      <Receipt className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
+                      <p className="text-muted-foreground">No orders found</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {orders.map((order, index) => (
+                        <motion.div
+                          key={order.id}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.3, delay: index * 0.05 }}
+                        >
+                          <Card className="hover:shadow-md transition-all">
+                            <CardContent className="pt-6">
+                              <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="p-2 bg-primary/10 rounded-lg">
+                                    <ShoppingCart className="h-5 w-5 text-primary" />
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold">
+                                      {order.productName || `Product ${order.productId}`}
+                                    </p>
+                                    <p className="text-sm text-muted-foreground">
+                                      Order ID: {order.id}
+                                    </p>
+                                  </div>
+                                </div>
+                                <Badge
+                                  className={
+                                    order.status === "Delivered" || order.status === "DELIVERED"
+                                      ? "bg-green-500/10 text-green-600 border-green-500/20"
+                                      : "bg-blue-500/10 text-blue-600 border-blue-500/20"
+                                  }
+                                >
+                                  {order.status === "Delivered" || order.status === "DELIVERED" ? (
+                                    <CheckCircle2 className="h-3 w-3 mr-1" />
+                                  ) : (
+                                    <Clock className="h-3 w-3 mr-1" />
+                                  )}
+                                  {order.status}
+                                </Badge>
+                              </div>
+                              <div className="grid grid-cols-4 gap-4 text-sm">
+                                <div>
+                                  <p className="text-muted-foreground">Quantity</p>
+                                  <p className="font-semibold">{order.quantity}</p>
                                 </div>
                                 <div>
-                                  <p className="font-semibold">{order.productName}</p>
-                                  <p className="text-sm text-muted-foreground">
-                                    Order ID: {order.id}
-                                  </p>
+                                  <p className="text-muted-foreground">Total</p>
+                                  <p className="font-semibold">${order.totalPrice.toFixed(2)}</p>
+                                </div>
+                                <div>
+                                  <p className="text-muted-foreground">Order Date</p>
+                                  <p className="font-semibold">{order.orderDate}</p>
+                                </div>
+                                <div>
+                                  <p className="text-muted-foreground">User ID</p>
+                                  <p className="font-semibold text-xs">{order.userId}</p>
                                 </div>
                               </div>
-                              <Badge
-                                className={
-                                  order.status === "Delivered"
-                                    ? "bg-green-500/10 text-green-600 border-green-500/20"
-                                    : "bg-blue-500/10 text-blue-600 border-blue-500/20"
-                                }
-                              >
-                                {order.status === "Delivered" ? (
-                                  <CheckCircle2 className="h-3 w-3 mr-1" />
-                                ) : (
-                                  <Clock className="h-3 w-3 mr-1" />
-                                )}
-                                {order.status}
-                              </Badge>
-                            </div>
-                            <div className="grid grid-cols-4 gap-4 text-sm">
-                              <div>
-                                <p className="text-muted-foreground">Quantity</p>
-                                <p className="font-semibold">{order.quantity}</p>
-                              </div>
-                              <div>
-                                <p className="text-muted-foreground">Total</p>
-                                <p className="font-semibold">${order.totalPrice.toFixed(2)}</p>
-                              </div>
-                              <div>
-                                <p className="text-muted-foreground">Order Date</p>
-                                <p className="font-semibold">{order.orderDate}</p>
-                              </div>
-                              <div>
-                                <p className="text-muted-foreground">User ID</p>
-                                <p className="font-semibold text-xs">{order.userId}</p>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </motion.div>
-                    ))}
-                  </div>
+                            </CardContent>
+                          </Card>
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
@@ -555,7 +984,12 @@ const AIFabricFramework = () => {
                     Conversational AI Assistant
                   </CardTitle>
                   <CardDescription>
-                    Intelligent chat with orchestration, intent detection, and context-aware responses
+                    Intelligent chat with orchestration, intent detection, and context-aware responses.
+                    {currentConversationId && (
+                      <span className="block mt-1 text-xs">
+                        Conversation ID: {currentConversationId}
+                      </span>
+                    )}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -571,7 +1005,7 @@ const AIFabricFramework = () => {
                           <div className="flex flex-wrap gap-2 mt-4">
                             {[
                               "Show me laptops",
-                              "What are my recent orders?",
+                              "What products do you have?",
                               "Find affordable accessories",
                             ].map((suggestion) => (
                               <Button
@@ -580,7 +1014,6 @@ const AIFabricFramework = () => {
                                 size="sm"
                                 onClick={() => {
                                   setChatQuery(suggestion);
-                                  setTimeout(handleChatQuery, 100);
                                 }}
                               >
                                 {suggestion}
@@ -604,10 +1037,10 @@ const AIFabricFramework = () => {
                                   : "bg-muted"
                               }`}
                             >
-                              <p className="text-sm">{message.content}</p>
+                              <p className="text-sm whitespace-pre-wrap">{message.content}</p>
                               {message.orchestration && (
                                 <div className="mt-3 pt-3 border-t border-border/50">
-                                  <div className="flex items-center gap-2 text-xs">
+                                  <div className="flex items-center gap-2 text-xs flex-wrap">
                                     <Badge variant="secondary" className="text-xs">
                                       Intent: {message.orchestration.intent}
                                     </Badge>
@@ -634,8 +1067,14 @@ const AIFabricFramework = () => {
                         <div className="bg-muted p-4 rounded-lg">
                           <div className="flex gap-2">
                             <div className="w-2 h-2 bg-primary rounded-full animate-bounce" />
-                            <div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-100" />
-                            <div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-200" />
+                            <div
+                              className="w-2 h-2 bg-primary rounded-full animate-bounce"
+                              style={{ animationDelay: "0.1s" }}
+                            />
+                            <div
+                              className="w-2 h-2 bg-primary rounded-full animate-bounce"
+                              style={{ animationDelay: "0.2s" }}
+                            />
                           </div>
                         </div>
                       </motion.div>
@@ -655,11 +1094,31 @@ const AIFabricFramework = () => {
                         }
                       }}
                       className="min-h-[60px]"
+                      disabled={isLoading}
                     />
                     <Button onClick={handleChatQuery} disabled={isLoading || !chatQuery.trim()}>
-                      <Send className="h-4 w-4" />
+                      {isLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Send className="h-4 w-4" />
+                      )}
                     </Button>
                   </div>
+
+                  {/* Clear Chat Button */}
+                  {chatMessages.length > 0 && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mt-4"
+                      onClick={() => {
+                        setChatMessages([]);
+                        setCurrentConversationId(null);
+                      }}
+                    >
+                      Clear Chat
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
