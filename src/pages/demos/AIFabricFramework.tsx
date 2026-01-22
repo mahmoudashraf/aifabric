@@ -25,6 +25,7 @@ import {
   XCircle,
   Loader2,
   RefreshCw,
+  PackagePlus,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -34,9 +35,37 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 
 const API_BASE_URL = "https://ai-fabric-framework-production.up.railway.app/api";
+
+// Sample products for stock filling
+const SAMPLE_PRODUCTS = [
+  // Electronics
+  { sku: "ELEC-LAPTOP-001", name: "UltraBook Pro 15", description: "High-performance laptop with Intel i7, 16GB RAM, 512GB SSD", price: 1299.99, category: "Electronics", inStockQty: 15 },
+  { sku: "ELEC-LAPTOP-002", name: "Gaming Beast X1", description: "Gaming laptop with RTX 4070, 32GB RAM, 1TB SSD", price: 2499.99, category: "Electronics", inStockQty: 8 },
+  { sku: "ELEC-PHONE-001", name: "SmartPhone Pro Max", description: "Latest flagship smartphone with 5G, 256GB storage", price: 999.99, category: "Electronics", inStockQty: 50 },
+  { sku: "ELEC-PHONE-002", name: "Budget Phone Plus", description: "Affordable smartphone with great battery life", price: 299.99, category: "Electronics", inStockQty: 100 },
+  { sku: "ELEC-TABLET-001", name: "ProTab Ultra", description: "Professional tablet with stylus, 12.9 inch display", price: 899.99, category: "Electronics", inStockQty: 25 },
+  { sku: "ELEC-WATCH-001", name: "SmartWatch Fitness Pro", description: "Fitness tracker with heart rate monitor, GPS", price: 249.99, category: "Electronics", inStockQty: 75 },
+  { sku: "ELEC-HEADPHONE-001", name: "Wireless Noise-Cancelling Headphones", description: "Premium over-ear headphones with ANC", price: 349.99, category: "Electronics", inStockQty: 40 },
+  { sku: "ELEC-EARBUDS-001", name: "True Wireless Earbuds", description: "Compact earbuds with charging case", price: 129.99, category: "Electronics", inStockQty: 120 },
+  { sku: "ELEC-SPEAKER-001", name: "Portable Bluetooth Speaker", description: "Waterproof speaker with 360° sound", price: 79.99, category: "Electronics", inStockQty: 60 },
+  { sku: "ELEC-CAMERA-001", name: "Mirrorless Camera Kit", description: "Professional camera with 24MP sensor and lens", price: 1499.99, category: "Electronics", inStockQty: 12 },
+
+  // Women's Footwear
+  { sku: "FOOT-HEEL-001", name: "Classic Stiletto Heels", description: "Elegant high heels perfect for formal occasions", price: 89.99, category: "Women's Footwear", inStockQty: 45 },
+  { sku: "FOOT-HEEL-002", name: "Block Heel Pumps", description: "Comfortable block heels for all-day wear", price: 69.99, category: "Women's Footwear", inStockQty: 55 },
+  { sku: "FOOT-BOOT-001", name: "Ankle Boots Leather", description: "Premium leather ankle boots with zipper", price: 129.99, category: "Women's Footwear", inStockQty: 30 },
+  { sku: "FOOT-BOOT-002", name: "Knee-High Boots", description: "Stylish knee-high boots for winter", price: 159.99, category: "Women's Footwear", inStockQty: 20 },
+  { sku: "FOOT-SNEAKER-001", name: "Running Sneakers", description: "Lightweight running shoes with cushioning", price: 79.99, category: "Women's Footwear", inStockQty: 85 },
+  { sku: "FOOT-SNEAKER-002", name: "Fashion Sneakers", description: "Trendy casual sneakers for everyday wear", price: 59.99, category: "Women's Footwear", inStockQty: 90 },
+  { sku: "FOOT-SANDAL-001", name: "Summer Flat Sandals", description: "Comfortable flat sandals for warm weather", price: 39.99, category: "Women's Footwear", inStockQty: 70 },
+  { sku: "FOOT-SANDAL-002", name: "Wedge Sandals", description: "Elegant wedge sandals with ankle strap", price: 69.99, category: "Women's Footwear", inStockQty: 35 },
+  { sku: "FOOT-FLAT-001", name: "Ballet Flats", description: "Classic ballet flats in multiple colors", price: 49.99, category: "Women's Footwear", inStockQty: 65 },
+  { sku: "FOOT-LOAFER-001", name: "Leather Loafers", description: "Professional leather loafers for office", price: 89.99, category: "Women's Footwear", inStockQty: 40 },
+];
 
 interface Product {
   id: string;
@@ -45,6 +74,7 @@ interface Product {
   description: string;
   price: number;
   category?: string;
+  inStockQty?: number;
   relevanceScore?: number;
 }
 
@@ -95,6 +125,9 @@ const AIFabricFramework = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [productCount, setProductCount] = useState(0);
+  const [isFilling, setIsFilling] = useState(false);
+  const [fillProgress, setFillProgress] = useState(0);
+  const [currentFillingProduct, setCurrentFillingProduct] = useState("");
   const { toast } = useToast();
 
   // Form state for add/edit
@@ -104,6 +137,7 @@ const AIFabricFramework = () => {
     description: "",
     price: "",
     category: "",
+    inStockQty: "",
   });
 
   // Load products on mount
@@ -237,6 +271,7 @@ const AIFabricFramework = () => {
           description: formData.description,
           price: parseFloat(formData.price),
           category: formData.category || undefined,
+          inStockQty: formData.inStockQty ? parseInt(formData.inStockQty) : undefined,
         }),
       });
 
@@ -249,7 +284,7 @@ const AIFabricFramework = () => {
       setProducts([newProduct, ...products]);
       setProductCount(productCount + 1);
       setIsAddDialogOpen(false);
-      setFormData({ sku: "", name: "", description: "", price: "", category: "" });
+      setFormData({ sku: "", name: "", description: "", price: "", category: "", inStockQty: "" });
 
       toast({
         title: "Success",
@@ -281,6 +316,7 @@ const AIFabricFramework = () => {
           description: formData.description || undefined,
           price: formData.price ? parseFloat(formData.price) : undefined,
           category: formData.category || undefined,
+          inStockQty: formData.inStockQty ? parseInt(formData.inStockQty) : undefined,
         }),
       });
 
@@ -293,7 +329,7 @@ const AIFabricFramework = () => {
       setProducts(products.map((p) => (p.id === updatedProduct.id ? updatedProduct : p)));
       setIsEditDialogOpen(false);
       setSelectedProduct(null);
-      setFormData({ sku: "", name: "", description: "", price: "", category: "" });
+      setFormData({ sku: "", name: "", description: "", price: "", category: "", inStockQty: "" });
 
       toast({
         title: "Success",
@@ -420,13 +456,64 @@ const AIFabricFramework = () => {
       description: product.description,
       price: product.price.toString(),
       category: product.category || "",
+      inStockQty: product.inStockQty ? product.inStockQty.toString() : "",
     });
     setIsEditDialogOpen(true);
   };
 
   const openAddDialog = () => {
-    setFormData({ sku: "", name: "", description: "", price: "", category: "" });
+    setFormData({ sku: "", name: "", description: "", price: "", category: "", inStockQty: "" });
     setIsAddDialogOpen(true);
+  };
+
+  const handleFillStock = async () => {
+    if (isFilling) return;
+
+    setIsFilling(true);
+    setFillProgress(0);
+    let successCount = 0;
+    let failCount = 0;
+
+    for (let i = 0; i < SAMPLE_PRODUCTS.length; i++) {
+      const product = SAMPLE_PRODUCTS[i];
+      setCurrentFillingProduct(product.name);
+      setFillProgress(((i + 1) / SAMPLE_PRODUCTS.length) * 100);
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/products`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(product),
+        });
+
+        if (response.ok) {
+          successCount++;
+        } else {
+          failCount++;
+        }
+      } catch (error) {
+        failCount++;
+      }
+
+      // Wait 2 seconds before next product
+      if (i < SAMPLE_PRODUCTS.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    }
+
+    setIsFilling(false);
+    setCurrentFillingProduct("");
+
+    // Reload products
+    await loadProducts();
+    await loadProductCount();
+
+    toast({
+      title: "Stock Fill Complete",
+      description: `Successfully added ${successCount} products. ${failCount > 0 ? `Failed: ${failCount}` : ''}`,
+    });
   };
 
   return (
@@ -438,13 +525,63 @@ const AIFabricFramework = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <Link
-            to="/demos"
-            className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors mb-8"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Demos
-          </Link>
+          {/* Top Navigation Bar */}
+          <div className="flex items-center justify-between mb-8 p-4 bg-card border border-border rounded-lg shadow-sm">
+            <Link to="/demos">
+              <Button variant="outline" size="lg" className="gap-2">
+                <ArrowLeft className="h-5 w-5" />
+                Back to Demos
+              </Button>
+            </Link>
+
+            <Button
+              onClick={handleFillStock}
+              disabled={isFilling}
+              size="lg"
+              className="gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            >
+              {isFilling ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Filling Stock...
+                </>
+              ) : (
+                <>
+                  <PackagePlus className="h-5 w-5" />
+                  Fill Stock with Sample Products
+                </>
+              )}
+            </Button>
+          </div>
+
+          {/* Progress Bar for Stock Filling */}
+          {isFilling && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6"
+            >
+              <Card className="border-primary/50 bg-primary/5">
+                <CardContent className="pt-6">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="font-medium">Creating products...</span>
+                      <span className="text-muted-foreground">
+                        {Math.round(fillProgress)}%
+                      </span>
+                    </div>
+                    <Progress value={fillProgress} className="h-2" />
+                    {currentFillingProduct && (
+                      <p className="text-sm text-muted-foreground flex items-center gap-2">
+                        <Package className="h-4 w-4 animate-pulse" />
+                        Currently adding: <span className="font-semibold text-foreground">{currentFillingProduct}</span>
+                      </p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
 
           <div className="flex items-start gap-4 mb-6">
             <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl">
@@ -616,11 +753,21 @@ const AIFabricFramework = () => {
                                 <p className="text-sm text-muted-foreground mb-4">
                                   {product.description}
                                 </p>
-                                {product.category && (
-                                  <Badge variant="outline" className="mb-4">
-                                    {product.category}
-                                  </Badge>
-                                )}
+                                <div className="flex gap-2 mb-4 flex-wrap">
+                                  {product.category && (
+                                    <Badge variant="outline">
+                                      {product.category}
+                                    </Badge>
+                                  )}
+                                  {product.inStockQty !== undefined && (
+                                    <Badge
+                                      variant="secondary"
+                                      className={product.inStockQty === 0 ? "bg-red-500/10 text-red-600 border-red-500/20" : "bg-green-500/10 text-green-600 border-green-500/20"}
+                                    >
+                                      Stock: {product.inStockQty}
+                                    </Badge>
+                                  )}
+                                </div>
                                 <div className="flex items-center justify-between">
                                   <span className="text-2xl font-bold text-primary">
                                     ${product.price.toFixed(2)}
@@ -723,6 +870,17 @@ const AIFabricFramework = () => {
                             placeholder="e.g., Electronics"
                           />
                         </div>
+                        <div>
+                          <Label htmlFor="inStockQty">In Stock Quantity</Label>
+                          <Input
+                            id="inStockQty"
+                            type="number"
+                            min="0"
+                            value={formData.inStockQty}
+                            onChange={(e) => setFormData({ ...formData, inStockQty: e.target.value })}
+                            placeholder="e.g., 100"
+                          />
+                        </div>
                       </div>
                       <DialogFooter>
                         <Button
@@ -794,6 +952,16 @@ const AIFabricFramework = () => {
                             id="edit-category"
                             value={formData.category}
                             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="edit-inStockQty">In Stock Quantity</Label>
+                          <Input
+                            id="edit-inStockQty"
+                            type="number"
+                            min="0"
+                            value={formData.inStockQty}
+                            onChange={(e) => setFormData({ ...formData, inStockQty: e.target.value })}
                           />
                         </div>
                       </div>
