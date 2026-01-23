@@ -10,6 +10,9 @@ import {
   Receipt,
   Bot,
   Sparkles,
+  Maximize2,
+  Minimize2,
+  X,
   TrendingUp,
   Database,
   Zap,
@@ -199,6 +202,8 @@ const AIFabricFramework = () => {
   const [policyMigrationProgress, setPolicyMigrationProgress] = useState(0);
   const [currentMigratingPolicy, setCurrentMigratingPolicy] = useState("");
   const [policyCount, setPolicyCount] = useState(0);
+  const [isChatExpanded, setIsChatExpanded] = useState(false);
+  const [attachedProduct, setAttachedProduct] = useState<Product | null>(null);
   const { toast } = useToast();
 
   // Form state for add/edit
@@ -454,8 +459,27 @@ const AIFabricFramework = () => {
     }
   };
 
+  const handleAttachProduct = (product: Product) => {
+    setAttachedProduct(product);
+    setIsChatExpanded(true);
+    toast({
+      title: "Product Attached",
+      description: `${product.name} attached to chat`,
+    });
+  };
+
+  const handleRemoveAttachment = () => {
+    setAttachedProduct(null);
+  };
+
   const handleChatQuery = async () => {
     if (!chatQuery.trim()) return;
+
+    // Build query with product context if attached
+    let enhancedQuery = chatQuery;
+    if (attachedProduct) {
+      enhancedQuery = `${chatQuery}\n\n[Product Context: ${attachedProduct.name} - ${attachedProduct.description}, Price: $${attachedProduct.price}, SKU: ${attachedProduct.sku}]`;
+    }
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -465,9 +489,13 @@ const AIFabricFramework = () => {
     };
 
     setChatMessages((prev) => [...prev, userMessage]);
-    const currentQuery = chatQuery;
+    const currentQuery = enhancedQuery;
     setChatQuery("");
     setIsLoading(true);
+    setIsChatExpanded(true);
+
+    // Remove attachment after sending
+    setAttachedProduct(null);
 
     try {
       const response = await fetch(`${API_BASE_URL}/chat/query`, {
@@ -866,8 +894,8 @@ const AIFabricFramework = () => {
         </motion.div>
 
         {/* Main Content */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 lg:w-auto">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6 pb-32">
+          <TabsList className="grid w-full grid-cols-4 lg:w-auto">
             <TabsTrigger value="products" className="gap-2">
               <Package className="h-4 w-4" />
               Products
@@ -879,10 +907,6 @@ const AIFabricFramework = () => {
             <TabsTrigger value="policies" className="gap-2">
               <FileText className="h-4 w-4" />
               Policies
-            </TabsTrigger>
-            <TabsTrigger value="chat" className="gap-2">
-              <MessageSquare className="h-4 w-4" />
-              AI Chat
             </TabsTrigger>
             <TabsTrigger value="api" className="gap-2">
               <Code className="h-4 w-4" />
@@ -1014,6 +1038,15 @@ const AIFabricFramework = () => {
                                     ${product.price.toFixed(2)}
                                   </span>
                                   <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Button
+                                      size="icon"
+                                      variant="ghost"
+                                      onClick={() => handleAttachProduct(product)}
+                                      className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                                      title="Ask AI about this product"
+                                    >
+                                      <Bot className="h-4 w-4" />
+                                    </Button>
                                     <Button
                                       size="icon"
                                       variant="ghost"
@@ -1373,160 +1406,6 @@ const AIFabricFramework = () => {
                         </motion.div>
                       ))}
                     </div>
-                  )}
-                </CardContent>
-              </Card>
-            </motion.div>
-          </TabsContent>
-
-          {/* Chat Tab */}
-          <TabsContent value="chat" className="space-y-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Bot className="h-5 w-5" />
-                    Conversational AI Assistant
-                  </CardTitle>
-                  <CardDescription>
-                    Intelligent chat with orchestration, intent detection, and context-aware responses.
-                    {currentConversationId && (
-                      <span className="block mt-1 text-xs">
-                        Conversation ID: {currentConversationId}
-                      </span>
-                    )}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {/* Chat Messages */}
-                  <div className="space-y-4 mb-6 h-[400px] overflow-y-auto p-4 bg-muted/30 rounded-lg">
-                    <AnimatePresence>
-                      {chatMessages.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center h-full text-center">
-                          <Bot className="h-16 w-16 text-muted-foreground/50 mb-4" />
-                          <p className="text-muted-foreground">
-                            Start a conversation! Ask about products, orders, or anything else.
-                          </p>
-                          <div className="flex flex-wrap gap-2 mt-4">
-                            {[
-                              "Show me laptops",
-                              "What products do you have?",
-                              "Find affordable accessories",
-                            ].map((suggestion) => (
-                              <Button
-                                key={suggestion}
-                                variant="outline"
-                                size="sm"
-                                onClick={() => {
-                                  setChatQuery(suggestion);
-                                }}
-                              >
-                                {suggestion}
-                              </Button>
-                            ))}
-                          </div>
-                        </div>
-                      ) : (
-                        chatMessages.map((message) => (
-                          <motion.div
-                            key={message.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
-                          >
-                            <div
-                              className={`max-w-[80%] p-4 rounded-lg ${
-                                message.type === "user"
-                                  ? "bg-primary text-primary-foreground"
-                                  : "bg-muted"
-                              }`}
-                            >
-                              <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                              {message.orchestration && (
-                                <div className="mt-3 pt-3 border-t border-border/50">
-                                  <div className="flex items-center gap-2 text-xs flex-wrap">
-                                    <Badge variant="secondary" className="text-xs">
-                                      Intent: {message.orchestration.intent}
-                                    </Badge>
-                                    <Badge variant="secondary" className="text-xs">
-                                      Confidence: {(message.orchestration.confidence * 100).toFixed(0)}%
-                                    </Badge>
-                                  </div>
-                                  <p className="text-xs text-muted-foreground mt-2">
-                                    Actions: {message.orchestration.actions.join(" → ")}
-                                  </p>
-                                </div>
-                              )}
-                            </div>
-                          </motion.div>
-                        ))
-                      )}
-                    </AnimatePresence>
-                    {isLoading && activeTab === "chat" && (
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="flex justify-start"
-                      >
-                        <div className="bg-muted p-4 rounded-lg">
-                          <div className="flex gap-2">
-                            <div className="w-2 h-2 bg-primary rounded-full animate-bounce" />
-                            <div
-                              className="w-2 h-2 bg-primary rounded-full animate-bounce"
-                              style={{ animationDelay: "0.1s" }}
-                            />
-                            <div
-                              className="w-2 h-2 bg-primary rounded-full animate-bounce"
-                              style={{ animationDelay: "0.2s" }}
-                            />
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </div>
-
-                  {/* Chat Input */}
-                  <div className="flex gap-2">
-                    <Textarea
-                      placeholder="Ask about products, orders, or anything..."
-                      value={chatQuery}
-                      onChange={(e) => setChatQuery(e.target.value)}
-                      onKeyPress={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                          e.preventDefault();
-                          handleChatQuery();
-                        }
-                      }}
-                      className="min-h-[60px]"
-                      disabled={isLoading}
-                    />
-                    <Button onClick={handleChatQuery} disabled={isLoading || !chatQuery.trim()}>
-                      {isLoading ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <Send className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </div>
-
-                  {/* Clear Chat Button */}
-                  {chatMessages.length > 0 && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="mt-4"
-                      onClick={() => {
-                        setChatMessages([]);
-                        setCurrentConversationId(null);
-                      }}
-                    >
-                      Clear Chat
-                    </Button>
                   )}
                 </CardContent>
               </Card>
@@ -1942,6 +1821,185 @@ const AIFabricFramework = () => {
             </motion.div>
           </TabsContent>
         </Tabs>
+      </div>
+
+      {/* Floating AI Chat */}
+      <AnimatePresence>
+        {isChatExpanded && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, height: 0 }}
+            animate={{ opacity: 1, y: 0, height: "auto" }}
+            exit={{ opacity: 0, y: 20, height: 0 }}
+            className="fixed bottom-24 right-4 left-4 md:left-auto md:w-[480px] z-50"
+          >
+            <Card className="border-2 border-purple-500/50 shadow-2xl shadow-purple-500/20">
+              <CardHeader className="pb-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Bot className="h-5 w-5" />
+                    AI Assistant
+                  </CardTitle>
+                  <div className="flex gap-1">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-8 w-8 text-white hover:bg-white/20"
+                      onClick={() => {
+                        setChatMessages([]);
+                        setCurrentConversationId(null);
+                      }}
+                      title="Clear chat"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-8 w-8 text-white hover:bg-white/20"
+                      onClick={() => setIsChatExpanded(false)}
+                    >
+                      <Minimize2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-4">
+                <div className="space-y-3 max-h-[400px] overflow-y-auto mb-3">
+                  <AnimatePresence>
+                    {chatMessages.length === 0 ? (
+                      <div className="text-center py-8 text-muted-foreground">
+                        <Bot className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                        <p className="text-sm">Ask me anything about products!</p>
+                      </div>
+                    ) : (
+                      chatMessages.map((message) => (
+                        <motion.div
+                          key={message.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
+                        >
+                          <div
+                            className={`max-w-[85%] p-3 rounded-2xl ${
+                              message.type === "user"
+                                ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                                : "bg-muted"
+                            }`}
+                          >
+                            <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                            {message.orchestration && (
+                              <div className="mt-2 pt-2 border-t border-white/20">
+                                <div className="flex gap-1 flex-wrap">
+                                  <Badge variant="secondary" className="text-xs">
+                                    {message.orchestration.intent}
+                                  </Badge>
+                                  <Badge variant="secondary" className="text-xs">
+                                    {(message.orchestration.confidence * 100).toFixed(0)}%
+                                  </Badge>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
+                      ))
+                    )}
+                  </AnimatePresence>
+                  {isLoading && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="flex justify-start"
+                    >
+                      <div className="bg-muted p-3 rounded-2xl">
+                        <div className="flex gap-1">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" />
+                          <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }} />
+                          <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }} />
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Floating Chat Input */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-t from-background via-background to-transparent p-4 backdrop-blur-sm border-t">
+        <div className="container mx-auto max-w-4xl">
+          {attachedProduct && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-2"
+            >
+              <Card className="border-purple-500/50 bg-purple-500/5">
+                <CardContent className="p-3 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-purple-500/10 rounded-lg">
+                      <Package className="h-4 w-4 text-purple-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold">{attachedProduct.name}</p>
+                      <p className="text-xs text-muted-foreground">${attachedProduct.price}</p>
+                    </div>
+                  </div>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-8 w-8"
+                    onClick={handleRemoveAttachment}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+          <div className="flex gap-2 items-end">
+            <div className="flex-1 relative">
+              <Textarea
+                placeholder={attachedProduct ? `Ask about ${attachedProduct.name}...` : "Ask AI about products, orders, or anything..."}
+                value={chatQuery}
+                onChange={(e) => setChatQuery(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleChatQuery();
+                  }
+                }}
+                className="min-h-[60px] pr-12 resize-none shadow-lg border-2 focus:border-purple-500"
+                disabled={isLoading}
+              />
+              <Button
+                size="icon"
+                onClick={handleChatQuery}
+                disabled={isLoading || !chatQuery.trim()}
+                className="absolute right-2 bottom-2 h-9 w-9 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg"
+              >
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+            {chatMessages.length > 0 && !isChatExpanded && (
+              <Button
+                size="icon"
+                variant="outline"
+                onClick={() => setIsChatExpanded(true)}
+                className="h-[60px] w-[60px] border-2 border-purple-500/50 hover:bg-purple-50"
+                title="Show chat history"
+              >
+                <Maximize2 className="h-5 w-5" />
+              </Button>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
