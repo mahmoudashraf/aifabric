@@ -36,6 +36,8 @@ import {
   AlertTriangle,
   Info,
   Ban,
+  Star,
+  Tag,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -131,6 +133,130 @@ const SAMPLE_POLICIES = [
   },
 ];
 
+// Sample reviews for migration
+const SAMPLE_REVIEWS = [
+  {
+    productId: null, // Will be set dynamically
+    userId: "demo-user",
+    rating: 5,
+    title: "Excellent product!",
+    comment: "This laptop exceeded my expectations. Fast performance, great build quality, and the battery life is amazing. Highly recommend!",
+  },
+  {
+    productId: null,
+    userId: "demo-user",
+    rating: 4,
+    title: "Very good, minor issues",
+    comment: "Great product overall. The only downside is the fan can get a bit loud under heavy load. Otherwise, perfect for my needs.",
+  },
+  {
+    productId: null,
+    userId: "demo-user",
+    rating: 5,
+    title: "Best purchase I've made",
+    comment: "Absolutely love this phone! The camera quality is outstanding and the battery lasts all day. Worth every penny.",
+  },
+  {
+    productId: null,
+    userId: "demo-user",
+    rating: 3,
+    title: "Decent but not perfect",
+    comment: "It's okay for the price. The screen is good but the speakers could be better. Overall, it's a solid mid-range option.",
+  },
+  {
+    productId: null,
+    userId: "demo-user",
+    rating: 5,
+    title: "Amazing headphones!",
+    comment: "The noise cancellation is incredible. Perfect for travel and work. Comfortable to wear for hours. Best headphones I've owned.",
+  },
+  {
+    productId: null,
+    userId: "demo-user",
+    rating: 4,
+    title: "Great value",
+    comment: "These earbuds are fantastic for the price. Good sound quality and battery life. The case is compact and easy to carry.",
+  },
+  {
+    productId: null,
+    userId: "demo-user",
+    rating: 5,
+    title: "Perfect for photography",
+    comment: "This camera is a game-changer. The image quality is professional-grade and it's surprisingly easy to use. Highly recommend for enthusiasts.",
+  },
+  {
+    productId: null,
+    userId: "demo-user",
+    rating: 4,
+    title: "Comfortable and stylish",
+    comment: "Love these heels! They're comfortable enough to wear all day and look elegant. Great for both work and special occasions.",
+  },
+];
+
+// Sample coupons for migration
+const SAMPLE_COUPONS = [
+  {
+    code: "WELCOME10",
+    description: "Welcome discount for new customers",
+    discountType: "PERCENTAGE",
+    discountValue: 10,
+    minPurchaseAmount: 50,
+    maxDiscountAmount: 100,
+    validFrom: new Date().toISOString(),
+    validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
+    usageLimit: 1000,
+    isActive: true,
+  },
+  {
+    code: "SUMMER25",
+    description: "Summer sale discount",
+    discountType: "PERCENTAGE",
+    discountValue: 25,
+    minPurchaseAmount: 100,
+    maxDiscountAmount: 250,
+    validFrom: new Date().toISOString(),
+    validUntil: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000).toISOString(), // 60 days
+    usageLimit: 500,
+    isActive: true,
+  },
+  {
+    code: "FREESHIP",
+    description: "Free shipping on orders over $75",
+    discountType: "FIXED",
+    discountValue: 0,
+    minPurchaseAmount: 75,
+    maxDiscountAmount: null,
+    validFrom: new Date().toISOString(),
+    validUntil: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(), // 90 days
+    usageLimit: null,
+    isActive: true,
+  },
+  {
+    code: "FLASH50",
+    description: "Flash sale - 50% off",
+    discountType: "PERCENTAGE",
+    discountValue: 50,
+    minPurchaseAmount: 200,
+    maxDiscountAmount: 500,
+    validFrom: new Date().toISOString(),
+    validUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days
+    usageLimit: 100,
+    isActive: true,
+  },
+  {
+    code: "STUDENT15",
+    description: "Student discount",
+    discountType: "PERCENTAGE",
+    discountValue: 15,
+    minPurchaseAmount: 25,
+    maxDiscountAmount: 50,
+    validFrom: new Date().toISOString(),
+    validUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(), // 1 year
+    usageLimit: null,
+    isActive: true,
+  },
+];
+
 interface Product {
   id: string;
   sku: string;
@@ -210,6 +336,33 @@ interface Policy {
   title: string;
   text: string;
   classification: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+interface Review {
+  id?: string;
+  productId: string | null;
+  userId: string;
+  rating: number;
+  title: string;
+  comment: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+interface Coupon {
+  id?: string;
+  code: string;
+  description: string;
+  discountType: "PERCENTAGE" | "FIXED";
+  discountValue: number;
+  minPurchaseAmount?: number;
+  maxDiscountAmount?: number | null;
+  validFrom: string;
+  validUntil: string;
+  usageLimit?: number | null;
+  isActive: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -565,6 +718,18 @@ const AIFabricFramework = () => {
   const [policyMigrationProgress, setPolicyMigrationProgress] = useState(0);
   const [currentMigratingPolicy, setCurrentMigratingPolicy] = useState("");
   const [policyCount, setPolicyCount] = useState(0);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [isLoadingReviews, setIsLoadingReviews] = useState(false);
+  const [isMigratingReviews, setIsMigratingReviews] = useState(false);
+  const [reviewMigrationProgress, setReviewMigrationProgress] = useState(0);
+  const [currentMigratingReview, setCurrentMigratingReview] = useState("");
+  const [reviewCount, setReviewCount] = useState(0);
+  const [coupons, setCoupons] = useState<Coupon[]>([]);
+  const [isLoadingCoupons, setIsLoadingCoupons] = useState(false);
+  const [isMigratingCoupons, setIsMigratingCoupons] = useState(false);
+  const [couponMigrationProgress, setCouponMigrationProgress] = useState(0);
+  const [currentMigratingCoupon, setCurrentMigratingCoupon] = useState("");
+  const [couponCount, setCouponCount] = useState(0);
   const [isChatExpanded, setIsChatExpanded] = useState(false);
   const [attachedProduct, setAttachedProduct] = useState<Product | null>(null);
   const [expandedOrders, setExpandedOrders] = useState<{ [key: string]: number }>({});
@@ -606,6 +771,22 @@ const AIFabricFramework = () => {
     if (activeTab === "policies") {
       loadPolicies();
       loadPolicyCount();
+    }
+  }, [activeTab]);
+
+  // Load reviews when reviews tab is active
+  useEffect(() => {
+    if (activeTab === "reviews") {
+      loadReviews();
+      loadReviewCount();
+    }
+  }, [activeTab]);
+
+  // Load coupons when coupons tab is active
+  useEffect(() => {
+    if (activeTab === "coupons") {
+      loadCoupons();
+      loadCouponCount();
     }
   }, [activeTab]);
 
@@ -1206,6 +1387,166 @@ const AIFabricFramework = () => {
     }
   };
 
+  // Reviews functions
+  const loadReviews = async (limit = 50) => {
+    setIsLoadingReviews(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/reviews?limit=${limit}`);
+      if (!response.ok) throw new Error("Failed to load reviews");
+      const data = await response.json();
+      setReviews(data);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load reviews. " + (error as Error).message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingReviews(false);
+    }
+  };
+
+  const loadReviewCount = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/reviews/count`);
+      if (!response.ok) throw new Error("Failed to load review count");
+      const data = await response.json();
+      setReviewCount(data.count || 0);
+    } catch (error) {
+      console.error("Failed to load review count:", error);
+    }
+  };
+
+  const handleMigrateReviews = async () => {
+    if (isMigratingReviews) return;
+
+    setIsMigratingReviews(true);
+    setReviewMigrationProgress(0);
+    let successCount = 0;
+    let failCount = 0;
+
+    // Get products first to assign reviews
+    const productsResponse = await fetch(`${API_BASE_URL}/products?limit=50`);
+    const products = productsResponse.ok ? await productsResponse.json() : [];
+
+    for (let i = 0; i < SAMPLE_REVIEWS.length; i++) {
+      const review = { ...SAMPLE_REVIEWS[i] };
+      // Assign to a random product if available
+      if (products.length > 0) {
+        review.productId = products[Math.floor(Math.random() * products.length)].id;
+      }
+      setCurrentMigratingReview(review.title);
+      setReviewMigrationProgress(((i + 1) / SAMPLE_REVIEWS.length) * 100);
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/reviews`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(review),
+        });
+
+        if (response.ok) {
+          successCount++;
+        } else {
+          failCount++;
+        }
+      } catch (error) {
+        failCount++;
+      }
+    }
+
+    setIsMigratingReviews(false);
+    setReviewMigrationProgress(0);
+    setCurrentMigratingReview("");
+
+    // Reload reviews
+    await loadReviews();
+    await loadReviewCount();
+
+    toast({
+      title: "Review Migration Complete",
+      description: `Successfully added ${successCount} reviews. ${failCount > 0 ? `Failed: ${failCount}` : ''}`,
+    });
+  };
+
+  // Coupons functions
+  const loadCoupons = async (limit = 50) => {
+    setIsLoadingCoupons(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/coupons?limit=${limit}`);
+      if (!response.ok) throw new Error("Failed to load coupons");
+      const data = await response.json();
+      setCoupons(data);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load coupons. " + (error as Error).message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingCoupons(false);
+    }
+  };
+
+  const loadCouponCount = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/coupons/count`);
+      if (!response.ok) throw new Error("Failed to load coupon count");
+      const data = await response.json();
+      setCouponCount(data.count || 0);
+    } catch (error) {
+      console.error("Failed to load coupon count:", error);
+    }
+  };
+
+  const handleMigrateCoupons = async () => {
+    if (isMigratingCoupons) return;
+
+    setIsMigratingCoupons(true);
+    setCouponMigrationProgress(0);
+    let successCount = 0;
+    let failCount = 0;
+
+    for (let i = 0; i < SAMPLE_COUPONS.length; i++) {
+      const coupon = SAMPLE_COUPONS[i];
+      setCurrentMigratingCoupon(coupon.code);
+      setCouponMigrationProgress(((i + 1) / SAMPLE_COUPONS.length) * 100);
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/coupons`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(coupon),
+        });
+
+        if (response.ok) {
+          successCount++;
+        } else {
+          failCount++;
+        }
+      } catch (error) {
+        failCount++;
+      }
+    }
+
+    setIsMigratingCoupons(false);
+    setCouponMigrationProgress(0);
+    setCurrentMigratingCoupon("");
+
+    // Reload coupons
+    await loadCoupons();
+    await loadCouponCount();
+
+    toast({
+      title: "Coupon Migration Complete",
+      description: `Successfully added ${successCount} coupons. ${failCount > 0 ? `Failed: ${failCount}` : ''}`,
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <div className="container mx-auto px-4 pt-24 pb-16">
@@ -1370,7 +1711,7 @@ const AIFabricFramework = () => {
 
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6 pb-32">
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto">
+          <TabsList className="grid w-full grid-cols-6 lg:w-auto">
             <TabsTrigger value="products" className="gap-2">
               <Package className="h-4 w-4" />
               Products
@@ -1382,6 +1723,14 @@ const AIFabricFramework = () => {
             <TabsTrigger value="policies" className="gap-2">
               <FileText className="h-4 w-4" />
               Policies
+            </TabsTrigger>
+            <TabsTrigger value="reviews" className="gap-2">
+              <Star className="h-4 w-4" />
+              Reviews
+            </TabsTrigger>
+            <TabsTrigger value="coupons" className="gap-2">
+              <Tag className="h-4 w-4" />
+              Coupons
             </TabsTrigger>
             <TabsTrigger value="api" className="gap-2">
               <Code className="h-4 w-4" />
@@ -2014,6 +2363,385 @@ const AIFabricFramework = () => {
                         <p className="text-2xl font-bold">&lt;50ms</p>
                         <p className="text-sm text-muted-foreground">Avg Response</p>
                       </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </motion.div>
+          </TabsContent>
+
+          {/* Reviews Tab */}
+          <TabsContent value="reviews" className="space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="flex items-center gap-2">
+                        <Star className="h-5 w-5" />
+                        Product Reviews
+                      </CardTitle>
+                      <CardDescription>
+                        View and manage product reviews. All operations are handled via AI chat.
+                      </CardDescription>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button onClick={loadReviews} variant="outline" size="sm">
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Refresh
+                      </Button>
+                      <Button
+                        onClick={handleMigrateReviews}
+                        disabled={isMigratingReviews || isMigratingCoupons}
+                        size="lg"
+                        className="gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700"
+                      >
+                        {isMigratingReviews ? (
+                          <>
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                            Migrating Reviews...
+                          </>
+                        ) : (
+                          <>
+                            <Star className="h-5 w-5" />
+                            Migrate Reviews
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {isLoadingReviews ? (
+                    <div className="flex justify-center items-center py-12">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                  ) : reviews.length === 0 ? (
+                    <div className="text-center py-12">
+                      <Star className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
+                      <p className="text-muted-foreground">No reviews found</p>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Click "Migrate Reviews" to add sample reviews
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                      <AnimatePresence>
+                        {reviews.map((review, index) => (
+                          <motion.div
+                            key={review.id || index}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            transition={{ duration: 0.3, delay: index * 0.05 }}
+                          >
+                            <Card className="hover:shadow-lg transition-all">
+                              <CardHeader>
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1">
+                                    <CardTitle className="text-lg">{review.title}</CardTitle>
+                                    <div className="flex items-center gap-1 mt-2">
+                                      {[...Array(5)].map((_, i) => (
+                                        <Star
+                                          key={i}
+                                          className={`h-4 w-4 ${
+                                            i < review.rating
+                                              ? "fill-yellow-400 text-yellow-400"
+                                              : "text-muted-foreground"
+                                          }`}
+                                        />
+                                      ))}
+                                      <span className="text-sm text-muted-foreground ml-2">
+                                        {review.rating}/5
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </CardHeader>
+                              <CardContent>
+                                <p className="text-sm text-muted-foreground mb-4">
+                                  {review.comment}
+                                </p>
+                                <div className="flex gap-2 flex-wrap">
+                                  <Badge variant="secondary" className="text-xs">
+                                    User: {review.userId}
+                                  </Badge>
+                                  {review.productId && (
+                                    <Badge variant="outline" className="text-xs">
+                                      Product ID: {review.productId.slice(0, 8)}...
+                                    </Badge>
+                                  )}
+                                </div>
+                              </CardContent>
+                            </Card>
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Progress Bar for Review Migration */}
+              {isMigratingReviews && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-6"
+                >
+                  <Card className="border-amber-500/50 bg-amber-500/5">
+                    <CardContent className="pt-6">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="font-medium">Migrating reviews...</span>
+                          <span className="text-muted-foreground">
+                            {Math.round(reviewMigrationProgress)}%
+                          </span>
+                        </div>
+                        <Progress value={reviewMigrationProgress} className="h-2" />
+                        {currentMigratingReview && (
+                          <p className="text-sm text-muted-foreground flex items-center gap-2">
+                            <Star className="h-4 w-4 animate-pulse" />
+                            Currently adding: <span className="font-semibold text-foreground">{currentMigratingReview}</span>
+                          </p>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
+
+              {/* Review Stats */}
+              <div className="grid md:grid-cols-3 gap-4">
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="text-center">
+                      <p className="text-4xl font-bold text-primary">{reviewCount}</p>
+                      <p className="text-sm text-muted-foreground mt-1">Total Reviews</p>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="text-center">
+                      <p className="text-4xl font-bold text-primary">
+                        {reviews.length > 0
+                          ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+                          : "0"}
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-1">Average Rating</p>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="text-center">
+                      <p className="text-4xl font-bold text-primary">
+                        {reviews.filter((r) => r.rating === 5).length}
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-1">5-Star Reviews</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </motion.div>
+          </TabsContent>
+
+          {/* Coupons Tab */}
+          <TabsContent value="coupons" className="space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="flex items-center gap-2">
+                        <Tag className="h-5 w-5" />
+                        Coupons & Discounts
+                      </CardTitle>
+                      <CardDescription>
+                        View and manage discount coupons. All operations are handled via AI chat.
+                      </CardDescription>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button onClick={loadCoupons} variant="outline" size="sm">
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Refresh
+                      </Button>
+                      <Button
+                        onClick={handleMigrateCoupons}
+                        disabled={isMigratingCoupons || isMigratingReviews}
+                        size="lg"
+                        className="gap-2 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700"
+                      >
+                        {isMigratingCoupons ? (
+                          <>
+                            <Loader2 className="h-5 w-5 animate-spin" />
+                            Migrating Coupons...
+                          </>
+                        ) : (
+                          <>
+                            <Tag className="h-5 w-5" />
+                            Migrate Coupons
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {isLoadingCoupons ? (
+                    <div className="flex justify-center items-center py-12">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                  ) : coupons.length === 0 ? (
+                    <div className="text-center py-12">
+                      <Tag className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
+                      <p className="text-muted-foreground">No coupons found</p>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Click "Migrate Coupons" to add sample coupons
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                      <AnimatePresence>
+                        {coupons.map((coupon, index) => (
+                          <motion.div
+                            key={coupon.id || index}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            transition={{ duration: 0.3, delay: index * 0.05 }}
+                          >
+                            <Card className="hover:shadow-lg transition-all">
+                              <CardHeader>
+                                <div className="flex items-start justify-between">
+                                  <div className="flex-1">
+                                    <CardTitle className="text-lg font-mono">{coupon.code}</CardTitle>
+                                    <CardDescription className="mt-1">
+                                      {coupon.description}
+                                    </CardDescription>
+                                  </div>
+                                  <Badge
+                                    variant={coupon.isActive ? "default" : "secondary"}
+                                    className="text-xs"
+                                  >
+                                    {coupon.isActive ? "Active" : "Inactive"}
+                                  </Badge>
+                                </div>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-sm text-muted-foreground">Discount:</span>
+                                    <span className="text-lg font-bold text-primary">
+                                      {coupon.discountType === "PERCENTAGE"
+                                        ? `${coupon.discountValue}%`
+                                        : `$${coupon.discountValue}`}
+                                    </span>
+                                  </div>
+                                  {coupon.minPurchaseAmount && (
+                                    <div className="flex items-center justify-between">
+                                      <span className="text-sm text-muted-foreground">Min Purchase:</span>
+                                      <span className="text-sm font-medium">
+                                        ${coupon.minPurchaseAmount}
+                                      </span>
+                                    </div>
+                                  )}
+                                  {coupon.maxDiscountAmount && (
+                                    <div className="flex items-center justify-between">
+                                      <span className="text-sm text-muted-foreground">Max Discount:</span>
+                                      <span className="text-sm font-medium">
+                                        ${coupon.maxDiscountAmount}
+                                      </span>
+                                    </div>
+                                  )}
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-sm text-muted-foreground">Valid Until:</span>
+                                    <span className="text-xs text-muted-foreground">
+                                      {new Date(coupon.validUntil).toLocaleDateString()}
+                                    </span>
+                                  </div>
+                                  {coupon.usageLimit && (
+                                    <div className="flex items-center justify-between">
+                                      <span className="text-sm text-muted-foreground">Usage Limit:</span>
+                                      <span className="text-sm font-medium">{coupon.usageLimit}</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </CardContent>
+                            </Card>
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Progress Bar for Coupon Migration */}
+              {isMigratingCoupons && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-6"
+                >
+                  <Card className="border-pink-500/50 bg-pink-500/5">
+                    <CardContent className="pt-6">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="font-medium">Migrating coupons...</span>
+                          <span className="text-muted-foreground">
+                            {Math.round(couponMigrationProgress)}%
+                          </span>
+                        </div>
+                        <Progress value={couponMigrationProgress} className="h-2" />
+                        {currentMigratingCoupon && (
+                          <p className="text-sm text-muted-foreground flex items-center gap-2">
+                            <Tag className="h-4 w-4 animate-pulse" />
+                            Currently adding: <span className="font-semibold text-foreground">{currentMigratingCoupon}</span>
+                          </p>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
+
+              {/* Coupon Stats */}
+              <div className="grid md:grid-cols-3 gap-4">
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="text-center">
+                      <p className="text-4xl font-bold text-primary">{couponCount}</p>
+                      <p className="text-sm text-muted-foreground mt-1">Total Coupons</p>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="text-center">
+                      <p className="text-4xl font-bold text-primary">
+                        {coupons.filter((c) => c.isActive).length}
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-1">Active Coupons</p>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="text-center">
+                      <p className="text-4xl font-bold text-primary">
+                        {coupons.filter((c) => !c.isActive).length}
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-1">Inactive Coupons</p>
                     </div>
                   </CardContent>
                 </Card>
