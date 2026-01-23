@@ -3099,7 +3099,7 @@ const AIFabricFramework = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40"
+              className="fixed inset-0 z-40 bg-black/20"
               onClick={() => setIsChatExpanded(false)}
             />
             <motion.div
@@ -3107,9 +3107,13 @@ const AIFabricFramework = () => {
               animate={{ opacity: 1, y: 0, height: "auto" }}
               exit={{ opacity: 0, y: 20, height: 0 }}
               className="fixed bottom-[100px] left-0 right-0 z-50 px-4"
+              onClick={(e) => e.stopPropagation()}
             >
               <div className="container mx-auto max-w-[1080px]">
-                <Card className="border-2 border-purple-500/50 shadow-2xl shadow-purple-500/20">
+                <Card 
+                  className="border-2 border-purple-500/50 shadow-2xl shadow-purple-500/20"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <CardHeader className="pb-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white">
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-lg flex items-center gap-2">
