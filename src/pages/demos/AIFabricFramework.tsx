@@ -822,9 +822,8 @@ const AIFabricFramework = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            query: attachmentContent,
-            userId: "demo-user",
-            sessionId: "demo-session",
+            content: attachmentContent,
+            maxSuggestions: 5,
           }),
         });
 
