@@ -194,6 +194,7 @@ interface ChatMessage {
   };
   result?: ChatResult;
   resultType?: ResultType;
+  attachedProduct?: Product;
 }
 
 interface Conversation {
@@ -631,6 +632,90 @@ const AIFabricFramework = () => {
     setAttachedProduct(null);
   };
 
+  const handleConfirmationAction = async (action: string, messageData?: any) => {
+    const query = action === "confirm" ? "Yes, confirm" : "No, cancel";
+
+    const userMessage: ChatMessage = {
+      id: Date.now().toString(),
+      type: "user",
+      content: query,
+      timestamp: new Date().toISOString(),
+    };
+
+    setChatMessages((prev) => [...prev, userMessage]);
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/chat/query`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: query,
+          userId: "demo-user",
+          sessionId: "demo-session",
+          conversationId: currentConversationId || undefined,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || "Failed to process chat query");
+      }
+
+      const data = await response.json();
+
+      if (data.conversationId && !currentConversationId) {
+        setCurrentConversationId(data.conversationId);
+      }
+
+      let messageContent = "";
+      let result: ChatResult | undefined;
+      let resultType: ResultType | undefined;
+
+      if (data.result && data.result.sanitizedPayload) {
+        messageContent = data.result.sanitizedPayload.message || "I processed your query successfully.";
+        result = data.result;
+        resultType = data.result.type;
+      } else {
+        messageContent = data.response || data.message || "I processed your query successfully.";
+      }
+
+      const aiMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        type: "ai",
+        content: messageContent,
+        timestamp: new Date().toISOString(),
+        orchestration: data.orchestration ? {
+          intent: data.orchestration.intent || "general_query",
+          confidence: data.orchestration.confidence || 0.9,
+          actions: data.orchestration.actions || ["process_query"],
+        } : undefined,
+        result: result,
+        resultType: resultType,
+      };
+
+      setChatMessages((prev) => [...prev, aiMessage]);
+    } catch (error) {
+      const errorMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        type: "ai",
+        content: "Sorry, I encountered an error processing your request: " + (error as Error).message,
+        timestamp: new Date().toISOString(),
+      };
+      setChatMessages((prev) => [...prev, errorMessage]);
+
+      toast({
+        title: "Error",
+        description: "Failed to process confirmation. " + (error as Error).message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleChatQuery = async () => {
     if (!chatQuery.trim()) return;
 
@@ -645,10 +730,12 @@ const AIFabricFramework = () => {
       type: "user",
       content: chatQuery,
       timestamp: new Date().toISOString(),
+      attachedProduct: attachedProduct || undefined,
     };
 
     setChatMessages((prev) => [...prev, userMessage]);
     const currentQuery = enhancedQuery;
+    const currentAttachment = attachedProduct;
     setChatQuery("");
     setIsLoading(true);
     setIsChatExpanded(true);
@@ -2062,6 +2149,17 @@ const AIFabricFramework = () => {
                                 </div>
                               )}
                               <div className="p-3">
+                                {message.type === "user" && message.attachedProduct && (
+                                  <div className="mb-2 p-2 bg-white/20 rounded-lg border border-white/30">
+                                    <div className="flex items-center gap-2">
+                                      <Package className="h-3 w-3" />
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-xs font-semibold truncate">{message.attachedProduct.name}</p>
+                                        <p className="text-[10px] opacity-90">${message.attachedProduct.price}</p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
                                 <p className={`text-sm whitespace-pre-wrap ${message.type === "ai" && styles ? styles.textColor : ""}`}>
                                   {message.content}
                                 </p>
@@ -2079,10 +2177,22 @@ const AIFabricFramework = () => {
                                 )}
                                 {message.result?.sanitizedPayload?.data?.confirmationRequired && (
                                   <div className="mt-3 flex gap-2">
-                                    <Button size="sm" variant="default" className="text-xs">
+                                    <Button
+                                      size="sm"
+                                      variant="default"
+                                      className="text-xs"
+                                      onClick={() => handleConfirmationAction("confirm", message.result?.sanitizedPayload?.data)}
+                                      disabled={isLoading}
+                                    >
                                       Confirm
                                     </Button>
-                                    <Button size="sm" variant="outline" className="text-xs">
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="text-xs"
+                                      onClick={() => handleConfirmationAction("cancel", message.result?.sanitizedPayload?.data)}
+                                      disabled={isLoading}
+                                    >
                                       Cancel
                                     </Button>
                                   </div>
@@ -2096,7 +2206,7 @@ const AIFabricFramework = () => {
                                           <CardContent className="p-3">
                                             <div className="flex items-start justify-between mb-2">
                                               <div>
-                                                <p className="font-semibold text-foreground">Order #{order.orderNumber?.slice(-8)}</p>
+                                                <p className="font-semibold text-foreground">Order #{order.orderId}</p>
                                                 <p className="text-muted-foreground text-[10px]">{order.sku}</p>
                                               </div>
                                               <Badge variant={order.status === "CREATED" ? "default" : "secondary"} className="text-[10px]">
