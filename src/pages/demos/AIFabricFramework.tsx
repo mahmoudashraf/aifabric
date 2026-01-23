@@ -26,6 +26,8 @@ import {
   Loader2,
   RefreshCw,
   PackagePlus,
+  FileText,
+  Scale,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -65,6 +67,60 @@ const SAMPLE_PRODUCTS = [
   { sku: "FOOT-SANDAL-002", name: "Wedge Sandals", description: "Elegant wedge sandals with ankle strap", price: 69.99, category: "Women's Footwear", inStockQty: 35 },
   { sku: "FOOT-FLAT-001", name: "Ballet Flats", description: "Classic ballet flats in multiple colors", price: 49.99, category: "Women's Footwear", inStockQty: 65 },
   { sku: "FOOT-LOAFER-001", name: "Leather Loafers", description: "Professional leather loafers for office", price: 89.99, category: "Women's Footwear", inStockQty: 40 },
+];
+
+// Sample policies for migration
+const SAMPLE_POLICIES = [
+  {
+    title: "Refund Policy",
+    text: "Customers can request a full refund within 30 days of purchase. Items must be unused and in original packaging. Refunds are processed within 5-7 business days to the original payment method. Shipping costs are non-refundable unless the item is defective.",
+    classification: "refund"
+  },
+  {
+    title: "Return Policy",
+    text: "Returns are accepted within 30 days of delivery. Items must be in original condition with all tags attached. Return shipping is free for defective items, otherwise customer pays return shipping. Exchange or store credit available.",
+    classification: "return"
+  },
+  {
+    title: "Delivery Policy",
+    text: "Standard delivery takes 5-7 business days. Express shipping available for 2-3 day delivery. Free shipping on orders over $100. Tracking information provided via email. Signature required for orders over $500.",
+    classification: "delivery"
+  },
+  {
+    title: "Shipping Policy",
+    text: "We ship to all 50 US states and internationally to select countries. Orders are processed within 24 hours on business days. International shipping may take 10-21 business days. Customs fees may apply for international orders.",
+    classification: "shipping"
+  },
+  {
+    title: "Warranty Policy",
+    text: "All electronics come with a 1-year manufacturer warranty. Warranty covers defects in materials and workmanship. Does not cover damage from misuse, accidents, or normal wear. Extended warranty available at checkout.",
+    classification: "warranty"
+  },
+  {
+    title: "Privacy Policy",
+    text: "We collect personal information including name, email, and payment details. Information is used to process orders and improve services. We do not sell personal data to third parties. Data is encrypted and stored securely.",
+    classification: "privacy"
+  },
+  {
+    title: "Exchange Policy",
+    text: "Exchanges are available within 30 days of purchase. Items must be unworn and in original packaging. We offer size exchanges and product exchanges. Exchange shipping is free. Process takes 7-10 business days.",
+    classification: "exchange"
+  },
+  {
+    title: "Cancellation Policy",
+    text: "Orders can be cancelled within 24 hours of placement for a full refund. After 24 hours, standard return policy applies. Expedited orders cannot be cancelled once shipped. Cancellations are processed immediately.",
+    classification: "cancellation"
+  },
+  {
+    title: "Payment Policy",
+    text: "We accept Visa, Mastercard, American Express, and PayPal. Payment is processed securely through encrypted channels. Split payments not available. Payment must clear before order ships. Save payment methods for faster checkout.",
+    classification: "payment"
+  },
+  {
+    title: "Terms of Service",
+    text: "By using our service, you agree to these terms. Users must be 18 or older. Accounts may be suspended for violations. We reserve the right to modify services. Disputes resolved through arbitration.",
+    classification: "terms"
+  },
 ];
 
 interface Product {
@@ -109,6 +165,15 @@ interface Conversation {
   updatedAt: string;
 }
 
+interface Policy {
+  id: string;
+  title: string;
+  text: string;
+  classification: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 const AIFabricFramework = () => {
   const [activeTab, setActiveTab] = useState("products");
   const [searchQuery, setSearchQuery] = useState("");
@@ -128,6 +193,12 @@ const AIFabricFramework = () => {
   const [isFilling, setIsFilling] = useState(false);
   const [fillProgress, setFillProgress] = useState(0);
   const [currentFillingProduct, setCurrentFillingProduct] = useState("");
+  const [policies, setPolicies] = useState<Policy[]>([]);
+  const [isLoadingPolicies, setIsLoadingPolicies] = useState(false);
+  const [isMigratingPolicies, setIsMigratingPolicies] = useState(false);
+  const [policyMigrationProgress, setPolicyMigrationProgress] = useState(0);
+  const [currentMigratingPolicy, setCurrentMigratingPolicy] = useState("");
+  const [policyCount, setPolicyCount] = useState(0);
   const { toast } = useToast();
 
   // Form state for add/edit
@@ -157,6 +228,14 @@ const AIFabricFramework = () => {
   useEffect(() => {
     if (activeTab === "chat") {
       loadConversations();
+    }
+  }, [activeTab]);
+
+  // Load policies when policies tab is active
+  useEffect(() => {
+    if (activeTab === "policies") {
+      loadPolicies();
+      loadPolicyCount();
     }
   }, [activeTab]);
 
@@ -516,6 +595,114 @@ const AIFabricFramework = () => {
     });
   };
 
+  const loadPolicies = async (limit = 50) => {
+    setIsLoadingPolicies(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/policies?limit=${limit}`);
+      if (!response.ok) throw new Error("Failed to load policies");
+      const data = await response.json();
+      setPolicies(data);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to load policies. " + (error as Error).message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingPolicies(false);
+    }
+  };
+
+  const loadPolicyCount = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/policies/count`);
+      if (!response.ok) throw new Error("Failed to load policy count");
+      const data = await response.json();
+      setPolicyCount(data.count || 0);
+    } catch (error) {
+      console.error("Failed to load policy count:", error);
+    }
+  };
+
+  const handleMigratePolicies = async () => {
+    if (isMigratingPolicies) return;
+
+    setIsMigratingPolicies(true);
+    setPolicyMigrationProgress(0);
+    let successCount = 0;
+    let failCount = 0;
+
+    for (let i = 0; i < SAMPLE_POLICIES.length; i++) {
+      const policy = SAMPLE_POLICIES[i];
+      setCurrentMigratingPolicy(policy.title);
+      setPolicyMigrationProgress(((i + 1) / SAMPLE_POLICIES.length) * 100);
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/policies`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(policy),
+        });
+
+        if (response.ok) {
+          successCount++;
+        } else {
+          failCount++;
+        }
+      } catch (error) {
+        failCount++;
+      }
+
+      // Wait 2 seconds before next policy
+      if (i < SAMPLE_POLICIES.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    }
+
+    setIsMigratingPolicies(false);
+    setCurrentMigratingPolicy("");
+
+    // Reload policies
+    await loadPolicies();
+    await loadPolicyCount();
+
+    toast({
+      title: "Policy Migration Complete",
+      description: `Successfully added ${successCount} policies. ${failCount > 0 ? `Failed: ${failCount}` : ''}`,
+    });
+  };
+
+  const handleDeletePolicy = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this policy?")) return;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/policies/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || "Failed to delete policy");
+      }
+
+      setPolicies(policies.filter((p) => p.id !== id));
+      setPolicyCount(Math.max(0, policyCount - 1));
+
+      toast({
+        title: "Success",
+        description: "Policy deleted successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete policy. " + (error as Error).message,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <div className="container mx-auto px-4 pt-24 pb-16">
@@ -534,24 +721,45 @@ const AIFabricFramework = () => {
               </Button>
             </Link>
 
-            <Button
-              onClick={handleFillStock}
-              disabled={isFilling}
-              size="lg"
-              className="gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-            >
-              {isFilling ? (
-                <>
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                  Filling Stock...
-                </>
-              ) : (
-                <>
-                  <PackagePlus className="h-5 w-5" />
-                  Fill Stock with Sample Products
-                </>
-              )}
-            </Button>
+            <div className="flex gap-3">
+              <Button
+                onClick={handleFillStock}
+                disabled={isFilling || isMigratingPolicies}
+                size="lg"
+                className="gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              >
+                {isFilling ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Filling Stock...
+                  </>
+                ) : (
+                  <>
+                    <PackagePlus className="h-5 w-5" />
+                    Fill Stock
+                  </>
+                )}
+              </Button>
+
+              <Button
+                onClick={handleMigratePolicies}
+                disabled={isMigratingPolicies || isFilling}
+                size="lg"
+                className="gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
+              >
+                {isMigratingPolicies ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Migrating Policies...
+                  </>
+                ) : (
+                  <>
+                    <Scale className="h-5 w-5" />
+                    Migrate Policies
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
 
           {/* Progress Bar for Stock Filling */}
@@ -575,6 +783,35 @@ const AIFabricFramework = () => {
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
                         <Package className="h-4 w-4 animate-pulse" />
                         Currently adding: <span className="font-semibold text-foreground">{currentFillingProduct}</span>
+                      </p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+
+          {/* Progress Bar for Policy Migration */}
+          {isMigratingPolicies && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6"
+            >
+              <Card className="border-emerald-500/50 bg-emerald-500/5">
+                <CardContent className="pt-6">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="font-medium">Migrating policies...</span>
+                      <span className="text-muted-foreground">
+                        {Math.round(policyMigrationProgress)}%
+                      </span>
+                    </div>
+                    <Progress value={policyMigrationProgress} className="h-2" />
+                    {currentMigratingPolicy && (
+                      <p className="text-sm text-muted-foreground flex items-center gap-2">
+                        <Scale className="h-4 w-4 animate-pulse" />
+                        Currently adding: <span className="font-semibold text-foreground">{currentMigratingPolicy}</span>
                       </p>
                     )}
                   </div>
@@ -630,7 +867,7 @@ const AIFabricFramework = () => {
 
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto">
+          <TabsList className="grid w-full grid-cols-5 lg:w-auto">
             <TabsTrigger value="products" className="gap-2">
               <Package className="h-4 w-4" />
               Products
@@ -638,6 +875,10 @@ const AIFabricFramework = () => {
             <TabsTrigger value="orders" className="gap-2">
               <Receipt className="h-4 w-4" />
               Orders
+            </TabsTrigger>
+            <TabsTrigger value="policies" className="gap-2">
+              <FileText className="h-4 w-4" />
+              Policies
             </TabsTrigger>
             <TabsTrigger value="chat" className="gap-2">
               <MessageSquare className="h-4 w-4" />
@@ -1289,6 +1530,137 @@ const AIFabricFramework = () => {
                   )}
                 </CardContent>
               </Card>
+            </motion.div>
+          </TabsContent>
+
+          {/* Policies Tab */}
+          <TabsContent value="policies" className="space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="flex items-center gap-2">
+                        <FileText className="h-5 w-5" />
+                        Policy Management
+                      </CardTitle>
+                      <CardDescription>
+                        Manage organizational policies with different classifications (refund, delivery, return, etc.)
+                      </CardDescription>
+                    </div>
+                    <Button onClick={() => loadPolicies()} variant="outline" size="sm">
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Refresh
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {isLoadingPolicies ? (
+                    <div className="flex justify-center items-center py-12">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                  ) : policies.length === 0 ? (
+                    <div className="text-center py-12">
+                      <FileText className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
+                      <p className="text-muted-foreground">No policies found</p>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Use the "Migrate Policies" button above to add sample policies
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {policies.map((policy, index) => (
+                        <motion.div
+                          key={policy.id}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.3, delay: index * 0.05 }}
+                        >
+                          <Card className="hover:shadow-md transition-all group">
+                            <CardHeader>
+                              <div className="flex items-start justify-between">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <CardTitle className="text-lg">{policy.title}</CardTitle>
+                                    <Badge
+                                      variant="secondary"
+                                      className="capitalize"
+                                    >
+                                      {policy.classification}
+                                    </Badge>
+                                  </div>
+                                  <CardDescription className="text-sm">
+                                    {policy.text}
+                                  </CardDescription>
+                                </div>
+                                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    onClick={() => handleDeletePolicy(policy.id)}
+                                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            </CardHeader>
+                          </Card>
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Policy Stats */}
+              <div className="grid md:grid-cols-3 gap-4">
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-emerald-500/10 rounded-lg">
+                        <FileText className="h-6 w-6 text-emerald-600" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold">{policyCount || policies.length}</p>
+                        <p className="text-sm text-muted-foreground">Total Policies</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-blue-500/10 rounded-lg">
+                        <Scale className="h-6 w-6 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold">
+                          {new Set(policies.map(p => p.classification)).size}
+                        </p>
+                        <p className="text-sm text-muted-foreground">Classifications</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="pt-6">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-purple-500/10 rounded-lg">
+                        <Zap className="h-6 w-6 text-purple-600" />
+                      </div>
+                      <div>
+                        <p className="text-2xl font-bold">&lt;50ms</p>
+                        <p className="text-sm text-muted-foreground">Avg Response</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </motion.div>
           </TabsContent>
 
