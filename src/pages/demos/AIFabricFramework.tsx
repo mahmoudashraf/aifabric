@@ -730,6 +730,7 @@ const AIFabricFramework = () => {
   const [couponMigrationProgress, setCouponMigrationProgress] = useState(0);
   const [currentMigratingCoupon, setCurrentMigratingCoupon] = useState("");
   const [couponCount, setCouponCount] = useState(0);
+  const [migratedProductIds, setMigratedProductIds] = useState<string[]>([]);
   const [isChatExpanded, setIsChatExpanded] = useState(false);
   const [attachedProduct, setAttachedProduct] = useState<Product | null>(null);
   const [expandedOrders, setExpandedOrders] = useState<{ [key: string]: number }>({});
@@ -1236,6 +1237,7 @@ const AIFabricFramework = () => {
     setFillProgress(0);
     let successCount = 0;
     let failCount = 0;
+    const createdProductIds: string[] = [];
 
     for (let i = 0; i < SAMPLE_PRODUCTS.length; i++) {
       const product = SAMPLE_PRODUCTS[i];
@@ -1252,6 +1254,10 @@ const AIFabricFramework = () => {
         });
 
         if (response.ok) {
+          const createdProduct = await response.json();
+          if (createdProduct.id) {
+            createdProductIds.push(createdProduct.id);
+          }
           successCount++;
         } else {
           failCount++;
@@ -1265,6 +1271,9 @@ const AIFabricFramework = () => {
         await new Promise(resolve => setTimeout(resolve, 2000));
       }
     }
+
+    // Store the created product IDs for review migration
+    setMigratedProductIds(createdProductIds);
 
     setIsFilling(false);
     setCurrentFillingProduct("");
@@ -1420,21 +1429,38 @@ const AIFabricFramework = () => {
   const handleMigrateReviews = async () => {
     if (isMigratingReviews) return;
 
+    // Check if we have migrated product IDs, if not, fetch products from backend
+    let productIdsToUse = migratedProductIds;
+    
+    if (productIdsToUse.length === 0) {
+      // Fallback: get products from backend if no migrated IDs available
+      const productsResponse = await fetch(`${API_BASE_URL}/products?limit=50`);
+      if (productsResponse.ok) {
+        const products = await productsResponse.json();
+        productIdsToUse = products.map((p: Product) => p.id);
+      }
+    }
+
+    if (productIdsToUse.length === 0) {
+      toast({
+        title: "Error",
+        description: "No products found. Please run 'Fill Stock' first to create products.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsMigratingReviews(true);
     setReviewMigrationProgress(0);
     let successCount = 0;
     let failCount = 0;
 
-    // Get products first to assign reviews
-    const productsResponse = await fetch(`${API_BASE_URL}/products?limit=50`);
-    const products = productsResponse.ok ? await productsResponse.json() : [];
-
     for (let i = 0; i < SAMPLE_REVIEWS.length; i++) {
       const review = { ...SAMPLE_REVIEWS[i] };
-      // Assign to a random product if available
-      if (products.length > 0) {
-        review.productId = products[Math.floor(Math.random() * products.length)].id;
-      }
+      // Assign review to product from migrated products (cycle through if needed)
+      const productIndex = i % productIdsToUse.length;
+      review.productId = productIdsToUse[productIndex];
+      
       setCurrentMigratingReview(review.title);
       setReviewMigrationProgress(((i + 1) / SAMPLE_REVIEWS.length) * 100);
 
@@ -1451,9 +1477,17 @@ const AIFabricFramework = () => {
           successCount++;
         } else {
           failCount++;
+          const errorText = await response.text();
+          console.error(`Failed to create review ${i + 1}:`, errorText);
         }
       } catch (error) {
         failCount++;
+        console.error(`Error creating review ${i + 1}:`, error);
+      }
+
+      // Small delay between requests
+      if (i < SAMPLE_REVIEWS.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
     }
 
@@ -1527,9 +1561,17 @@ const AIFabricFramework = () => {
           successCount++;
         } else {
           failCount++;
+          const errorText = await response.text();
+          console.error(`Failed to create coupon ${coupon.code}:`, errorText);
         }
       } catch (error) {
         failCount++;
+        console.error(`Error creating coupon ${coupon.code}:`, error);
+      }
+
+      // Small delay between requests
+      if (i < SAMPLE_COUPONS.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
     }
 
