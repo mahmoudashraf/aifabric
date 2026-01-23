@@ -3321,48 +3321,6 @@ const AIFabricFramework = () => {
                     <div ref={messagesEndRef} />
                   </AnimatePresence>
                   
-                  {/* Suggestions */}
-                  {suggestions.length > 0 && !isLoading && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="mt-4 pt-4 border-t border-border/20"
-                    >
-                      <p className="text-xs text-muted-foreground mb-2 flex items-center gap-2">
-                        <Sparkles className="h-3 w-3" />
-                        Suggested questions:
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {suggestions.map((suggestion, idx) => (
-                          <Button
-                            key={idx}
-                            size="sm"
-                            variant="outline"
-                            className="text-xs h-auto py-1.5 px-3 whitespace-normal text-left"
-                            onClick={() => {
-                              handleChatQuery(suggestion);
-                            }}
-                          >
-                            {suggestion}
-                          </Button>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                  
-                  {isLoadingSuggestions && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="mt-4 pt-4 border-t border-border/20"
-                    >
-                      <p className="text-xs text-muted-foreground flex items-center gap-2">
-                        <Loader2 className="h-3 w-3 animate-spin" />
-                        Generating suggestions...
-                      </p>
-                    </motion.div>
-                  )}
-                  
                   {isLoading && (
                     <motion.div
                       initial={{ opacity: 0 }}
@@ -3425,6 +3383,52 @@ const AIFabricFramework = () => {
                 ))}
               </AnimatePresence>
             </div>
+          )}
+
+          {/* Suggestions - Display below attachments */}
+          {suggestions.length > 0 && !isLoading && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-2"
+            >
+              <div className="p-3 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-lg border border-purple-500/20">
+                <p className="text-xs text-muted-foreground mb-2 flex items-center gap-2">
+                  <Sparkles className="h-3 w-3 text-purple-600" />
+                  Suggested questions:
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {suggestions.map((suggestion, idx) => (
+                    <Button
+                      key={idx}
+                      size="sm"
+                      variant="outline"
+                      className="text-xs h-auto py-1.5 px-3 whitespace-normal text-left bg-background hover:bg-purple-50 border-purple-200"
+                      onClick={() => {
+                        handleChatQuery(suggestion);
+                      }}
+                    >
+                      {suggestion}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {isLoadingSuggestions && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="mb-2"
+            >
+              <div className="p-3 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-lg border border-purple-500/20">
+                <p className="text-xs text-muted-foreground flex items-center gap-2">
+                  <Loader2 className="h-3 w-3 animate-spin text-purple-600" />
+                  Generating suggestions...
+                </p>
+              </div>
+            </motion.div>
           )}
           <div className="flex gap-2 items-end">
             <div className="flex-1 relative">
