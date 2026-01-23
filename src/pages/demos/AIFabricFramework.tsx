@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import {
@@ -226,6 +226,7 @@ const getResultTypeStyles = (resultType?: ResultType) => {
         badgeBg: "bg-green-500/20",
         badgeText: "text-green-700",
         label: "Action Executed",
+        hideBadge: false,
       };
     case "ACTION_DENIED":
       return {
@@ -237,17 +238,19 @@ const getResultTypeStyles = (resultType?: ResultType) => {
         badgeBg: "bg-red-500/20",
         badgeText: "text-red-700",
         label: "Action Denied",
+        hideBadge: false,
       };
     case "INFORMATION_PROVIDED":
       return {
         icon: Info,
-        bgColor: "bg-blue-500/10",
-        borderColor: "border-blue-500/30",
-        textColor: "text-blue-700",
-        iconColor: "text-blue-600",
-        badgeBg: "bg-blue-500/20",
-        badgeText: "text-blue-700",
+        bgColor: "bg-muted",
+        borderColor: "border-transparent",
+        textColor: "text-foreground",
+        iconColor: "text-muted-foreground",
+        badgeBg: "bg-transparent",
+        badgeText: "text-muted-foreground",
         label: "Information",
+        hideBadge: true,
       };
     case "CONFIRMATION_REQUIRED":
       return {
@@ -259,6 +262,7 @@ const getResultTypeStyles = (resultType?: ResultType) => {
         badgeBg: "bg-yellow-500/20",
         badgeText: "text-yellow-700",
         label: "Confirmation Required",
+        hideBadge: false,
       };
     case "CLARIFICATION_REQUIRED":
       return {
@@ -270,6 +274,7 @@ const getResultTypeStyles = (resultType?: ResultType) => {
         badgeBg: "bg-orange-500/20",
         badgeText: "text-orange-700",
         label: "Clarification Needed",
+        hideBadge: false,
       };
     case "OUT_OF_SCOPE":
       return {
@@ -281,6 +286,7 @@ const getResultTypeStyles = (resultType?: ResultType) => {
         badgeBg: "bg-gray-500/20",
         badgeText: "text-gray-700",
         label: "Out of Scope",
+        hideBadge: false,
       };
     case "COMPOUND_HANDLED":
       return {
@@ -292,6 +298,7 @@ const getResultTypeStyles = (resultType?: ResultType) => {
         badgeBg: "bg-purple-500/20",
         badgeText: "text-purple-700",
         label: "Multiple Actions",
+        hideBadge: false,
       };
     case "ERROR":
       return {
@@ -303,6 +310,7 @@ const getResultTypeStyles = (resultType?: ResultType) => {
         badgeBg: "bg-red-500/20",
         badgeText: "text-red-700",
         label: "Error",
+        hideBadge: false,
       };
     default:
       return {
@@ -314,6 +322,7 @@ const getResultTypeStyles = (resultType?: ResultType) => {
         badgeBg: "bg-muted",
         badgeText: "text-muted-foreground",
         label: "Response",
+        hideBadge: false,
       };
   }
 };
@@ -345,6 +354,8 @@ const AIFabricFramework = () => {
   const [policyCount, setPolicyCount] = useState(0);
   const [isChatExpanded, setIsChatExpanded] = useState(false);
   const [attachedProduct, setAttachedProduct] = useState<Product | null>(null);
+  const [expandedOrders, setExpandedOrders] = useState<{ [key: string]: number }>({});
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   // Form state for add/edit
@@ -384,6 +395,13 @@ const AIFabricFramework = () => {
       loadPolicyCount();
     }
   }, [activeTab]);
+
+  // Auto-scroll to latest message
+  useEffect(() => {
+    if (messagesEndRef.current && isChatExpanded) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatMessages, isChatExpanded]);
 
   const loadProducts = async (limit = 50) => {
     setIsLoadingProducts(true);
@@ -1997,7 +2015,7 @@ const AIFabricFramework = () => {
               initial={{ opacity: 0, y: 20, height: 0 }}
               animate={{ opacity: 1, y: 0, height: "auto" }}
               exit={{ opacity: 0, y: 20, height: 0 }}
-              className="fixed bottom-32 left-0 right-0 z-50 px-4"
+              className="fixed bottom-[100px] left-0 right-0 z-50 px-4"
             >
               <div className="container mx-auto max-w-4xl">
                 <Card className="border-2 border-purple-500/50 shadow-2xl shadow-purple-500/20">
@@ -2035,7 +2053,7 @@ const AIFabricFramework = () => {
                                   : `${styles?.bgColor} border ${styles?.borderColor}`
                               }`}
                             >
-                              {message.type === "ai" && message.resultType && Icon && (
+                              {message.type === "ai" && message.resultType && Icon && !styles?.hideBadge && (
                                 <div className={`px-3 py-2 ${styles?.badgeBg} border-b ${styles?.borderColor} flex items-center gap-2`}>
                                   <Icon className={`h-4 w-4 ${styles?.iconColor}`} />
                                   <span className={`text-xs font-semibold ${styles?.badgeText}`}>
@@ -2069,12 +2087,57 @@ const AIFabricFramework = () => {
                                     </Button>
                                   </div>
                                 )}
+                                {message.result?.sanitizedPayload?.data?.actionResult?.data?.orders && (
+                                  <div className="mt-3 space-y-2">
+                                    {message.result.sanitizedPayload.data.actionResult.data.orders
+                                      .slice(0, expandedOrders[message.id] || 3)
+                                      .map((order: any, idx: number) => (
+                                        <Card key={idx} className="text-xs">
+                                          <CardContent className="p-3">
+                                            <div className="flex items-start justify-between mb-2">
+                                              <div>
+                                                <p className="font-semibold text-foreground">Order #{order.orderNumber?.slice(-8)}</p>
+                                                <p className="text-muted-foreground text-[10px]">{order.sku}</p>
+                                              </div>
+                                              <Badge variant={order.status === "CREATED" ? "default" : "secondary"} className="text-[10px]">
+                                                {order.status}
+                                              </Badge>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-2 text-[10px]">
+                                              <div>
+                                                <span className="text-muted-foreground">Quantity:</span> {order.quantity}
+                                              </div>
+                                              <div>
+                                                <span className="text-muted-foreground">Total:</span> ${order.totalPrice}
+                                              </div>
+                                            </div>
+                                          </CardContent>
+                                        </Card>
+                                      ))}
+                                    {message.result.sanitizedPayload.data.actionResult.data.orders.length > (expandedOrders[message.id] || 3) && (
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className="w-full text-xs"
+                                        onClick={() => {
+                                          setExpandedOrders(prev => ({
+                                            ...prev,
+                                            [message.id]: (prev[message.id] || 3) + 3
+                                          }));
+                                        }}
+                                      >
+                                        Show {Math.min(3, message.result.sanitizedPayload.data.actionResult.data.orders.length - (expandedOrders[message.id] || 3))} more
+                                      </Button>
+                                    )}
+                                  </div>
+                                )}
                               </div>
                             </div>
                           </motion.div>
                         );
                       })
                     )}
+                    <div ref={messagesEndRef} />
                   </AnimatePresence>
                   {isLoading && (
                     <motion.div
