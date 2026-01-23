@@ -140,56 +140,56 @@ const SAMPLE_REVIEWS = [
     userId: "demo-user",
     rating: 5,
     title: "Excellent product!",
-    comment: "This laptop exceeded my expectations. Fast performance, great build quality, and the battery life is amazing. Highly recommend!",
+    text: "This laptop exceeded my expectations. Fast performance, great build quality, and the battery life is amazing. Highly recommend!",
   },
   {
     productId: null,
     userId: "demo-user",
     rating: 4,
     title: "Very good, minor issues",
-    comment: "Great product overall. The only downside is the fan can get a bit loud under heavy load. Otherwise, perfect for my needs.",
+    text: "Great product overall. The only downside is the fan can get a bit loud under heavy load. Otherwise, perfect for my needs.",
   },
   {
     productId: null,
     userId: "demo-user",
     rating: 5,
     title: "Best purchase I've made",
-    comment: "Absolutely love this phone! The camera quality is outstanding and the battery lasts all day. Worth every penny.",
+    text: "Absolutely love this phone! The camera quality is outstanding and the battery lasts all day. Worth every penny.",
   },
   {
     productId: null,
     userId: "demo-user",
     rating: 3,
     title: "Decent but not perfect",
-    comment: "It's okay for the price. The screen is good but the speakers could be better. Overall, it's a solid mid-range option.",
+    text: "It's okay for the price. The screen is good but the speakers could be better. Overall, it's a solid mid-range option.",
   },
   {
     productId: null,
     userId: "demo-user",
     rating: 5,
     title: "Amazing headphones!",
-    comment: "The noise cancellation is incredible. Perfect for travel and work. Comfortable to wear for hours. Best headphones I've owned.",
+    text: "The noise cancellation is incredible. Perfect for travel and work. Comfortable to wear for hours. Best headphones I've owned.",
   },
   {
     productId: null,
     userId: "demo-user",
     rating: 4,
     title: "Great value",
-    comment: "These earbuds are fantastic for the price. Good sound quality and battery life. The case is compact and easy to carry.",
+    text: "These earbuds are fantastic for the price. Good sound quality and battery life. The case is compact and easy to carry.",
   },
   {
     productId: null,
     userId: "demo-user",
     rating: 5,
     title: "Perfect for photography",
-    comment: "This camera is a game-changer. The image quality is professional-grade and it's surprisingly easy to use. Highly recommend for enthusiasts.",
+    text: "This camera is a game-changer. The image quality is professional-grade and it's surprisingly easy to use. Highly recommend for enthusiasts.",
   },
   {
     productId: null,
     userId: "demo-user",
     rating: 4,
     title: "Comfortable and stylish",
-    comment: "Love these heels! They're comfortable enough to wear all day and look elegant. Great for both work and special occasions.",
+    text: "Love these heels! They're comfortable enough to wear all day and look elegant. Great for both work and special occasions.",
   },
 ];
 
@@ -346,7 +346,7 @@ interface Review {
   userId: string;
   rating: number;
   title: string;
-  comment: string;
+  text: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -1418,11 +1418,32 @@ const AIFabricFramework = () => {
   const loadReviewCount = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/reviews/count`);
-      if (!response.ok) throw new Error("Failed to load review count");
+      if (!response.ok) {
+        // If count endpoint doesn't exist, try to get count from reviews list
+        const reviewsResponse = await fetch(`${API_BASE_URL}/reviews?limit=1000`);
+        if (reviewsResponse.ok) {
+          const reviews = await reviewsResponse.json();
+          setReviewCount(Array.isArray(reviews) ? reviews.length : 0);
+        } else {
+          setReviewCount(0);
+        }
+        return;
+      }
       const data = await response.json();
       setReviewCount(data.count || 0);
     } catch (error) {
       console.error("Failed to load review count:", error);
+      // Fallback: try to get count from reviews list
+      try {
+        const reviewsResponse = await fetch(`${API_BASE_URL}/reviews?limit=1000`);
+        if (reviewsResponse.ok) {
+          const reviews = await reviewsResponse.json();
+          setReviewCount(Array.isArray(reviews) ? reviews.length : 0);
+        }
+      } catch (fallbackError) {
+        console.error("Failed to load review count fallback:", fallbackError);
+        setReviewCount(0);
+      }
     }
   };
 
@@ -2524,7 +2545,7 @@ const AIFabricFramework = () => {
                               </CardHeader>
                               <CardContent>
                                 <p className="text-sm text-muted-foreground mb-4">
-                                  {review.comment}
+                                  {review.text}
                                 </p>
                                 <div className="flex gap-2 flex-wrap">
                                   <Badge variant="secondary" className="text-xs">
