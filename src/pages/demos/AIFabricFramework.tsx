@@ -31,6 +31,13 @@ import {
   PackagePlus,
   FileText,
   Scale,
+  AlertCircle,
+  Info,
+  HelpCircle,
+  ShieldAlert,
+  Layers,
+  AlertTriangle,
+  Check,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -153,11 +160,13 @@ interface ChatMessage {
   type: "user" | "ai";
   content: string;
   timestamp: string;
+  resultType?: "ACTION_EXECUTED" | "ACTION_DENIED" | "INFORMATION_PROVIDED" | "CONFIRMATION_REQUIRED" | "CLARIFICATION_REQUIRED" | "OUT_OF_SCOPE" | "COMPOUND_HANDLED" | "ERROR";
   orchestration?: {
     intent: string;
     confidence: number;
     actions: string[];
   };
+  data?: any;
 }
 
 interface Conversation {
@@ -523,11 +532,14 @@ const AIFabricFramework = () => {
         setCurrentConversationId(data.conversationId);
       }
 
+      // Parse new API response format with sanitizedPayload
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: "ai",
-        content: data.response || data.message || "I processed your query successfully.",
+        content: data.result?.sanitizedPayload?.message || data.response || data.message || "I processed your query successfully.",
         timestamp: new Date().toISOString(),
+        resultType: data.result?.type,
+        data: data.result?.sanitizedPayload?.data,
         orchestration: data.orchestration ? {
           intent: data.orchestration.intent || "general_query",
           confidence: data.orchestration.confidence || 0.9,
@@ -728,6 +740,75 @@ const AIFabricFramework = () => {
         description: "Failed to delete policy. " + (error as Error).message,
         variant: "destructive",
       });
+    }
+  };
+
+  // Helper function to get result type styling
+  const getResultTypeStyle = (resultType?: string) => {
+    switch (resultType) {
+      case "ACTION_EXECUTED":
+        return {
+          bg: "bg-green-500/10 border-green-500/30",
+          icon: <CheckCircle2 className="h-4 w-4 text-green-600" />,
+          badge: "bg-green-500/20 text-green-700",
+          label: "Action Executed",
+        };
+      case "ACTION_DENIED":
+        return {
+          bg: "bg-red-500/10 border-red-500/30",
+          icon: <XCircle className="h-4 w-4 text-red-600" />,
+          badge: "bg-red-500/20 text-red-700",
+          label: "Action Denied",
+        };
+      case "INFORMATION_PROVIDED":
+        return {
+          bg: "bg-blue-500/10 border-blue-500/30",
+          icon: <Info className="h-4 w-4 text-blue-600" />,
+          badge: "bg-blue-500/20 text-blue-700",
+          label: "Information",
+        };
+      case "CONFIRMATION_REQUIRED":
+        return {
+          bg: "bg-amber-500/10 border-amber-500/30",
+          icon: <HelpCircle className="h-4 w-4 text-amber-600" />,
+          badge: "bg-amber-500/20 text-amber-700",
+          label: "Confirmation Required",
+        };
+      case "CLARIFICATION_REQUIRED":
+        return {
+          bg: "bg-purple-500/10 border-purple-500/30",
+          icon: <AlertCircle className="h-4 w-4 text-purple-600" />,
+          badge: "bg-purple-500/20 text-purple-700",
+          label: "Clarification Needed",
+        };
+      case "OUT_OF_SCOPE":
+        return {
+          bg: "bg-gray-500/10 border-gray-500/30",
+          icon: <ShieldAlert className="h-4 w-4 text-gray-600" />,
+          badge: "bg-gray-500/20 text-gray-700",
+          label: "Out of Scope",
+        };
+      case "COMPOUND_HANDLED":
+        return {
+          bg: "bg-teal-500/10 border-teal-500/30",
+          icon: <Layers className="h-4 w-4 text-teal-600" />,
+          badge: "bg-teal-500/20 text-teal-700",
+          label: "Multi-Action",
+        };
+      case "ERROR":
+        return {
+          bg: "bg-red-500/10 border-red-500/30",
+          icon: <AlertTriangle className="h-4 w-4 text-red-600" />,
+          badge: "bg-red-500/20 text-red-700",
+          label: "Error",
+        };
+      default:
+        return {
+          bg: "bg-muted",
+          icon: null,
+          badge: "bg-muted text-muted-foreground",
+          label: null,
+        };
     }
   };
 
@@ -1872,37 +1953,107 @@ const AIFabricFramework = () => {
                         <p className="text-sm">Ask me anything about products!</p>
                       </div>
                     ) : (
-                      chatMessages.map((message) => (
-                        <motion.div
-                          key={message.id}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
-                        >
-                          <div
-                            className={`max-w-[85%] p-3 rounded-2xl ${
-                              message.type === "user"
-                                ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-                                : "bg-muted"
-                            }`}
+                      chatMessages.map((message) => {
+                        const resultStyle = message.type === "ai" && message.resultType
+                          ? getResultTypeStyle(message.resultType)
+                          : null;
+
+                        return (
+                          <motion.div
+                            key={message.id}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
                           >
-                            <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                            {message.orchestration && (
-                              <div className="mt-2 pt-2 border-t border-white/20">
-                                <div className="flex gap-1 flex-wrap">
-                                  <Badge variant="secondary" className="text-xs">
-                                    {message.orchestration.intent}
-                                  </Badge>
-                                  <Badge variant="secondary" className="text-xs">
-                                    {(message.orchestration.confidence * 100).toFixed(0)}%
+                            <div
+                              className={`max-w-[85%] p-3 rounded-2xl border-2 ${
+                                message.type === "user"
+                                  ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white border-transparent"
+                                  : resultStyle
+                                  ? `${resultStyle.bg} border`
+                                  : "bg-muted border-transparent"
+                              }`}
+                            >
+                              {/* Result Type Badge */}
+                              {message.type === "ai" && resultStyle && resultStyle.label && (
+                                <div className="flex items-center gap-2 mb-2">
+                                  {resultStyle.icon}
+                                  <Badge className={`text-xs ${resultStyle.badge}`}>
+                                    {resultStyle.label}
                                   </Badge>
                                 </div>
-                              </div>
-                            )}
-                          </div>
-                        </motion.div>
-                      ))
+                              )}
+
+                              {/* Message Content */}
+                              <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+
+                              {/* Data Section (if present) */}
+                              {message.data && (
+                                <div className="mt-2 pt-2 border-t border-border/50">
+                                  <p className="text-xs text-muted-foreground mb-1">Additional Data:</p>
+                                  <pre className="text-xs bg-background/50 p-2 rounded overflow-auto max-h-32">
+                                    {JSON.stringify(message.data, null, 2)}
+                                  </pre>
+                                </div>
+                              )}
+
+                              {/* Confirmation Buttons (if CONFIRMATION_REQUIRED) */}
+                              {message.type === "ai" && message.resultType === "CONFIRMATION_REQUIRED" && (
+                                <div className="flex gap-2 mt-3">
+                                  <Button
+                                    size="sm"
+                                    className="flex-1 bg-green-500 hover:bg-green-600"
+                                    onClick={() => {
+                                      setChatQuery("Yes, please proceed");
+                                      setTimeout(handleChatQuery, 100);
+                                    }}
+                                  >
+                                    <Check className="h-3 w-3 mr-1" />
+                                    Confirm
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="flex-1"
+                                    onClick={() => {
+                                      setChatQuery("No, cancel that");
+                                      setTimeout(handleChatQuery, 100);
+                                    }}
+                                  >
+                                    <X className="h-3 w-3 mr-1" />
+                                    Cancel
+                                  </Button>
+                                </div>
+                              )}
+
+                              {/* Clarification Prompt (if CLARIFICATION_REQUIRED) */}
+                              {message.type === "ai" && message.resultType === "CLARIFICATION_REQUIRED" && (
+                                <div className="mt-3 p-2 bg-purple-500/10 rounded-lg border border-purple-500/30">
+                                  <p className="text-xs text-purple-700 flex items-center gap-1">
+                                    <AlertCircle className="h-3 w-3" />
+                                    Please provide more information in your next message
+                                  </p>
+                                </div>
+                              )}
+
+                              {/* Orchestration Info */}
+                              {message.orchestration && (
+                                <div className={`mt-2 pt-2 border-t ${message.type === "user" ? "border-white/20" : "border-border/50"}`}>
+                                  <div className="flex gap-1 flex-wrap">
+                                    <Badge variant="secondary" className="text-xs">
+                                      {message.orchestration.intent}
+                                    </Badge>
+                                    <Badge variant="secondary" className="text-xs">
+                                      {(message.orchestration.confidence * 100).toFixed(0)}%
+                                    </Badge>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </motion.div>
+                        );
+                      })
                     )}
                   </AnimatePresence>
                   {isLoading && (
