@@ -735,6 +735,8 @@ const AIFabricFramework = () => {
   const [isChatExpanded, setIsChatExpanded] = useState(false);
   const [attachedProducts, setAttachedProducts] = useState<Product[]>([]);
   const [expandedOrders, setExpandedOrders] = useState<{ [key: string]: number }>({});
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -798,6 +800,59 @@ const AIFabricFramework = () => {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [chatMessages, isChatExpanded]);
+
+  // Fetch suggestions when products are attached
+  useEffect(() => {
+    if (attachedProducts.length === 0) {
+      setSuggestions([]);
+      return;
+    }
+
+    const timeoutId = setTimeout(async () => {
+      setIsLoadingSuggestions(true);
+      try {
+        // Build attachment content for suggestions API
+        const attachmentContent = attachedProducts.map(p => 
+          `${p.name} - ${p.description}, Price: $${p.price}, SKU: ${p.sku}`
+        ).join('\n');
+
+        const response = await fetch(`${API_BASE_URL}/chat/suggestions`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            context: attachmentContent,
+            userId: "demo-user",
+            sessionId: "demo-session",
+          }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          // Handle different response formats
+          if (Array.isArray(data)) {
+            setSuggestions(data);
+          } else if (data.suggestions && Array.isArray(data.suggestions)) {
+            setSuggestions(data.suggestions);
+          } else if (data.suggestion && Array.isArray(data.suggestion)) {
+            setSuggestions(data.suggestion);
+          } else {
+            setSuggestions([]);
+          }
+        } else {
+          setSuggestions([]);
+        }
+      } catch (error) {
+        console.error("Failed to load suggestions:", error);
+        setSuggestions([]);
+      } finally {
+        setIsLoadingSuggestions(false);
+      }
+    }, 3000); // 3 second delay
+
+    return () => clearTimeout(timeoutId);
+  }, [attachedProducts]);
 
   const loadProducts = async (limit = 50) => {
     setIsLoadingProducts(true);
@@ -1125,22 +1180,23 @@ const AIFabricFramework = () => {
     }
   };
 
-  const handleChatQuery = async () => {
-    if (!chatQuery.trim()) return;
+  const handleChatQuery = async (queryOverride?: string) => {
+    const queryToUse = queryOverride || chatQuery;
+    if (!queryToUse.trim()) return;
 
     // Build query with product context if attached
-    let enhancedQuery = chatQuery;
+    let enhancedQuery = queryToUse;
     if (attachedProducts.length > 0) {
       const productContexts = attachedProducts.map(p => 
         `${p.name} - ${p.description}, Price: $${p.price}, SKU: ${p.sku}`
       ).join('\n');
-      enhancedQuery = `${chatQuery}\n\n[Product Context:\n${productContexts}]`;
+      enhancedQuery = `${queryToUse}\n\n[Product Context:\n${productContexts}]`;
     }
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       type: "user",
-      content: chatQuery,
+      content: queryToUse,
       timestamp: new Date().toISOString(),
       attachedProduct: attachedProducts.length > 0 ? attachedProducts[0] : undefined, // Keep for backward compatibility
       attachedProducts: attachedProducts.length > 0 ? [...attachedProducts] : undefined, // Include all attachments
@@ -1153,8 +1209,9 @@ const AIFabricFramework = () => {
     setIsLoading(true);
     setIsChatExpanded(true);
 
-    // Remove attachments after sending
+    // Remove attachments and suggestions after sending
     setAttachedProducts([]);
+    setSuggestions([]);
 
     try {
       const response = await fetch(`${API_BASE_URL}/chat/query`, {
@@ -3260,6 +3317,49 @@ const AIFabricFramework = () => {
                     )}
                     <div ref={messagesEndRef} />
                   </AnimatePresence>
+                  
+                  {/* Suggestions */}
+                  {suggestions.length > 0 && !isLoading && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mt-4 pt-4 border-t border-border/20"
+                    >
+                      <p className="text-xs text-muted-foreground mb-2 flex items-center gap-2">
+                        <Sparkles className="h-3 w-3" />
+                        Suggested questions:
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {suggestions.map((suggestion, idx) => (
+                          <Button
+                            key={idx}
+                            size="sm"
+                            variant="outline"
+                            className="text-xs h-auto py-1.5 px-3 whitespace-normal text-left"
+                            onClick={() => {
+                              handleChatQuery(suggestion);
+                            }}
+                          >
+                            {suggestion}
+                          </Button>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                  
+                  {isLoadingSuggestions && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="mt-4 pt-4 border-t border-border/20"
+                    >
+                      <p className="text-xs text-muted-foreground flex items-center gap-2">
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                        Generating suggestions...
+                      </p>
+                    </motion.div>
+                  )}
+                  
                   {isLoading && (
                     <motion.div
                       initial={{ opacity: 0 }}
