@@ -1473,7 +1473,7 @@ const AIFabricFramework = () => {
                             exit={{ opacity: 0, scale: 0.9 }}
                             transition={{ duration: 0.3, delay: index * 0.05 }}
                           >
-                            <Card className="hover:shadow-lg transition-all group">
+                            <Card className="hover:shadow-lg transition-all group relative">
                               <CardHeader>
                                 <div className="flex items-start justify-between">
                                   <div className="flex-1">
@@ -1482,11 +1482,23 @@ const AIFabricFramework = () => {
                                       SKU: {product.sku}
                                     </CardDescription>
                                   </div>
-                                  {product.relevanceScore && (
-                                    <Badge variant="secondary" className="text-xs">
-                                      {(product.relevanceScore * 100).toFixed(0)}% match
-                                    </Badge>
-                                  )}
+                                  <div className="flex items-center gap-2">
+                                    {product.relevanceScore && (
+                                      <Badge variant="secondary" className="text-xs">
+                                        {(product.relevanceScore * 100).toFixed(0)}% match
+                                      </Badge>
+                                    )}
+                                    <Button
+                                      size="sm"
+                                      variant="default"
+                                      onClick={() => handleAttachProduct(product)}
+                                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg"
+                                      title="Attach to chat"
+                                    >
+                                      <Bot className="h-5 w-5 mr-2" />
+                                      Attach to chat
+                                    </Button>
+                                  </div>
                                 </div>
                               </CardHeader>
                               <CardContent>
@@ -1513,15 +1525,6 @@ const AIFabricFramework = () => {
                                     ${product.price.toFixed(2)}
                                   </span>
                                   <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Button
-                                      size="icon"
-                                      variant="ghost"
-                                      onClick={() => handleAttachProduct(product)}
-                                      className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
-                                      title="Ask AI about this product"
-                                    >
-                                      <Bot className="h-4 w-4" />
-                                    </Button>
                                     <Button
                                       size="icon"
                                       variant="ghost"
@@ -2316,16 +2319,26 @@ const AIFabricFramework = () => {
               exit={{ opacity: 0, y: 20, height: 0 }}
               className="fixed bottom-[100px] left-0 right-0 z-50 px-4"
             >
-              <div className="container mx-auto max-w-4xl">
+              <div className="container mx-auto max-w-[1080px]">
                 <Card className="border-2 border-purple-500/50 shadow-2xl shadow-purple-500/20">
                   <CardHeader className="pb-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <Bot className="h-5 w-5" />
-                      AI Assistant
-                    </CardTitle>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <Bot className="h-5 w-5" />
+                        AI Assistant
+                      </CardTitle>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => setIsChatExpanded(false)}
+                        className="text-white hover:bg-white/20 h-8 w-8"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </CardHeader>
               <CardContent className="p-4">
-                <div className="space-y-3 max-h-[400px] overflow-y-auto mb-3">
+                <div className="space-y-3 max-h-[720px] overflow-y-auto mb-3">
                   <AnimatePresence>
                     {chatMessages.length === 0 ? (
                       <div className="text-center py-8 text-muted-foreground">
@@ -2457,7 +2470,7 @@ const AIFabricFramework = () => {
 
       {/* Floating Chat Input */}
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-t from-background via-background to-transparent p-4 backdrop-blur-sm border-t">
-        <div className="container mx-auto max-w-4xl">
+        <div className="container mx-auto max-w-[1080px]">
           {attachedProduct && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -2504,7 +2517,7 @@ const AIFabricFramework = () => {
                     setIsChatExpanded(true);
                   }
                 }}
-                className="min-h-[60px] pr-12 resize-none shadow-lg border-2 focus:border-purple-500"
+                className="min-h-[108px] pr-12 resize-none shadow-lg border-2 focus:border-purple-500"
                 disabled={isLoading}
               />
               <Button
