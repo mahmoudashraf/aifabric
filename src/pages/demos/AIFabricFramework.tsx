@@ -31,6 +31,11 @@ import {
   PackagePlus,
   FileText,
   Scale,
+  AlertCircle,
+  HelpCircle,
+  AlertTriangle,
+  Info,
+  Ban,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -148,6 +153,35 @@ interface Order {
   orderDate: string;
 }
 
+type ResultType =
+  | "ACTION_EXECUTED"
+  | "ACTION_DENIED"
+  | "INFORMATION_PROVIDED"
+  | "CONFIRMATION_REQUIRED"
+  | "CLARIFICATION_REQUIRED"
+  | "OUT_OF_SCOPE"
+  | "COMPOUND_HANDLED"
+  | "ERROR";
+
+interface SanitizedPayload {
+  type: ResultType;
+  success: boolean;
+  message: string;
+  data?: any;
+  safeSummary?: string;
+  sanitization?: {
+    risk: string;
+    detectedTypes: string[];
+  };
+}
+
+interface ChatResult {
+  type: ResultType;
+  success: boolean;
+  smartSuggestion?: any;
+  sanitizedPayload: SanitizedPayload;
+}
+
 interface ChatMessage {
   id: string;
   type: "user" | "ai";
@@ -158,6 +192,8 @@ interface ChatMessage {
     confidence: number;
     actions: string[];
   };
+  result?: ChatResult;
+  resultType?: ResultType;
 }
 
 interface Conversation {
@@ -176,6 +212,111 @@ interface Policy {
   createdAt?: string;
   updatedAt?: string;
 }
+
+// Helper function to get styling and icons for different result types
+const getResultTypeStyles = (resultType?: ResultType) => {
+  switch (resultType) {
+    case "ACTION_EXECUTED":
+      return {
+        icon: CheckCircle2,
+        bgColor: "bg-green-500/10",
+        borderColor: "border-green-500/30",
+        textColor: "text-green-700",
+        iconColor: "text-green-600",
+        badgeBg: "bg-green-500/20",
+        badgeText: "text-green-700",
+        label: "Action Executed",
+      };
+    case "ACTION_DENIED":
+      return {
+        icon: Ban,
+        bgColor: "bg-red-500/10",
+        borderColor: "border-red-500/30",
+        textColor: "text-red-700",
+        iconColor: "text-red-600",
+        badgeBg: "bg-red-500/20",
+        badgeText: "text-red-700",
+        label: "Action Denied",
+      };
+    case "INFORMATION_PROVIDED":
+      return {
+        icon: Info,
+        bgColor: "bg-blue-500/10",
+        borderColor: "border-blue-500/30",
+        textColor: "text-blue-700",
+        iconColor: "text-blue-600",
+        badgeBg: "bg-blue-500/20",
+        badgeText: "text-blue-700",
+        label: "Information",
+      };
+    case "CONFIRMATION_REQUIRED":
+      return {
+        icon: HelpCircle,
+        bgColor: "bg-yellow-500/10",
+        borderColor: "border-yellow-500/30",
+        textColor: "text-yellow-700",
+        iconColor: "text-yellow-600",
+        badgeBg: "bg-yellow-500/20",
+        badgeText: "text-yellow-700",
+        label: "Confirmation Required",
+      };
+    case "CLARIFICATION_REQUIRED":
+      return {
+        icon: AlertCircle,
+        bgColor: "bg-orange-500/10",
+        borderColor: "border-orange-500/30",
+        textColor: "text-orange-700",
+        iconColor: "text-orange-600",
+        badgeBg: "bg-orange-500/20",
+        badgeText: "text-orange-700",
+        label: "Clarification Needed",
+      };
+    case "OUT_OF_SCOPE":
+      return {
+        icon: AlertTriangle,
+        bgColor: "bg-gray-500/10",
+        borderColor: "border-gray-500/30",
+        textColor: "text-gray-700",
+        iconColor: "text-gray-600",
+        badgeBg: "bg-gray-500/20",
+        badgeText: "text-gray-700",
+        label: "Out of Scope",
+      };
+    case "COMPOUND_HANDLED":
+      return {
+        icon: Zap,
+        bgColor: "bg-purple-500/10",
+        borderColor: "border-purple-500/30",
+        textColor: "text-purple-700",
+        iconColor: "text-purple-600",
+        badgeBg: "bg-purple-500/20",
+        badgeText: "text-purple-700",
+        label: "Multiple Actions",
+      };
+    case "ERROR":
+      return {
+        icon: XCircle,
+        bgColor: "bg-red-500/10",
+        borderColor: "border-red-500/30",
+        textColor: "text-red-700",
+        iconColor: "text-red-600",
+        badgeBg: "bg-red-500/20",
+        badgeText: "text-red-700",
+        label: "Error",
+      };
+    default:
+      return {
+        icon: Bot,
+        bgColor: "bg-muted",
+        borderColor: "border-muted",
+        textColor: "text-foreground",
+        iconColor: "text-muted-foreground",
+        badgeBg: "bg-muted",
+        badgeText: "text-muted-foreground",
+        label: "Response",
+      };
+  }
+};
 
 const AIFabricFramework = () => {
   const [activeTab, setActiveTab] = useState("products");
@@ -523,16 +664,33 @@ const AIFabricFramework = () => {
         setCurrentConversationId(data.conversationId);
       }
 
+      // Extract message from sanitizedPayload if available
+      let messageContent = "";
+      let result: ChatResult | undefined;
+      let resultType: ResultType | undefined;
+
+      if (data.result && data.result.sanitizedPayload) {
+        // New format with sanitizedPayload
+        messageContent = data.result.sanitizedPayload.message || "I processed your query successfully.";
+        result = data.result;
+        resultType = data.result.type;
+      } else {
+        // Fallback to old format
+        messageContent = data.response || data.message || "I processed your query successfully.";
+      }
+
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: "ai",
-        content: data.response || data.message || "I processed your query successfully.",
+        content: messageContent,
         timestamp: new Date().toISOString(),
         orchestration: data.orchestration ? {
           intent: data.orchestration.intent || "general_query",
           confidence: data.orchestration.confidence || 0.9,
           actions: data.orchestration.actions || ["process_query"],
         } : undefined,
+        result: result,
+        resultType: resultType,
       };
 
       setChatMessages((prev) => [...prev, aiMessage]);
@@ -1872,37 +2030,64 @@ const AIFabricFramework = () => {
                         <p className="text-sm">Ask me anything about products!</p>
                       </div>
                     ) : (
-                      chatMessages.map((message) => (
-                        <motion.div
-                          key={message.id}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -10 }}
-                          className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
-                        >
-                          <div
-                            className={`max-w-[85%] p-3 rounded-2xl ${
-                              message.type === "user"
-                                ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
-                                : "bg-muted"
-                            }`}
+                      chatMessages.map((message) => {
+                        const styles = message.type === "ai" ? getResultTypeStyles(message.resultType) : null;
+                        const Icon = styles?.icon;
+
+                        return (
+                          <motion.div
+                            key={message.id}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
                           >
-                            <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                            {message.orchestration && (
-                              <div className="mt-2 pt-2 border-t border-white/20">
-                                <div className="flex gap-1 flex-wrap">
-                                  <Badge variant="secondary" className="text-xs">
-                                    {message.orchestration.intent}
-                                  </Badge>
-                                  <Badge variant="secondary" className="text-xs">
-                                    {(message.orchestration.confidence * 100).toFixed(0)}%
-                                  </Badge>
+                            <div
+                              className={`max-w-[85%] rounded-2xl overflow-hidden ${
+                                message.type === "user"
+                                  ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white"
+                                  : `${styles?.bgColor} border ${styles?.borderColor}`
+                              }`}
+                            >
+                              {message.type === "ai" && message.resultType && Icon && (
+                                <div className={`px-3 py-2 ${styles?.badgeBg} border-b ${styles?.borderColor} flex items-center gap-2`}>
+                                  <Icon className={`h-4 w-4 ${styles?.iconColor}`} />
+                                  <span className={`text-xs font-semibold ${styles?.badgeText}`}>
+                                    {styles?.label}
+                                  </span>
                                 </div>
+                              )}
+                              <div className="p-3">
+                                <p className={`text-sm whitespace-pre-wrap ${message.type === "ai" && styles ? styles.textColor : ""}`}>
+                                  {message.content}
+                                </p>
+                                {message.orchestration && (
+                                  <div className="mt-2 pt-2 border-t border-border/20">
+                                    <div className="flex gap-1 flex-wrap">
+                                      <Badge variant="secondary" className="text-xs">
+                                        {message.orchestration.intent}
+                                      </Badge>
+                                      <Badge variant="secondary" className="text-xs">
+                                        {(message.orchestration.confidence * 100).toFixed(0)}%
+                                      </Badge>
+                                    </div>
+                                  </div>
+                                )}
+                                {message.result?.sanitizedPayload?.data?.confirmationRequired && (
+                                  <div className="mt-3 flex gap-2">
+                                    <Button size="sm" variant="default" className="text-xs">
+                                      Confirm
+                                    </Button>
+                                    <Button size="sm" variant="outline" className="text-xs">
+                                      Cancel
+                                    </Button>
+                                  </div>
+                                )}
                               </div>
-                            )}
-                          </div>
-                        </motion.div>
-                      ))
+                            </div>
+                          </motion.div>
+                        );
+                      })
                     )}
                   </AnimatePresence>
                   {isLoading && (
