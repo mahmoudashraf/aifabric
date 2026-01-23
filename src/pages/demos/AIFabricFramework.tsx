@@ -822,7 +822,7 @@ const AIFabricFramework = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            context: attachmentContent,
+            query: attachmentContent,
             userId: "demo-user",
             sessionId: "demo-session",
           }),
@@ -841,6 +841,8 @@ const AIFabricFramework = () => {
             setSuggestions([]);
           }
         } else {
+          const errorText = await response.text();
+          console.error("Failed to load suggestions:", response.status, errorText);
           setSuggestions([]);
         }
       } catch (error) {
