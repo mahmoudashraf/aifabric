@@ -320,7 +320,8 @@ interface ChatMessage {
   };
   result?: ChatResult;
   resultType?: ResultType;
-  attachedProduct?: Product;
+  attachedProduct?: Product; // For backward compatibility
+  attachedProducts?: Product[]; // For multiple attachments
 }
 
 interface Conversation {
@@ -1142,6 +1143,7 @@ const AIFabricFramework = () => {
       content: chatQuery,
       timestamp: new Date().toISOString(),
       attachedProduct: attachedProducts.length > 0 ? attachedProducts[0] : undefined, // Keep for backward compatibility
+      attachedProducts: attachedProducts.length > 0 ? [...attachedProducts] : undefined, // Include all attachments
     };
 
     setChatMessages((prev) => [...prev, userMessage]);
@@ -3184,15 +3186,19 @@ const AIFabricFramework = () => {
                                 </div>
                               )}
                               <div className="p-3">
-                                {message.type === "user" && message.attachedProduct && (
-                                  <div className="mb-2 p-2 bg-white/20 rounded-lg border border-white/30">
-                                    <div className="flex items-center gap-2">
-                                      <Package className="h-3 w-3" />
-                                      <div className="flex-1 min-w-0">
-                                        <p className="text-xs font-semibold truncate">{message.attachedProduct.name}</p>
-                                        <p className="text-[10px] opacity-90">${message.attachedProduct.price}</p>
+                                {message.type === "user" && (message.attachedProducts || message.attachedProduct) && (
+                                  <div className="mb-2 space-y-1">
+                                    {(message.attachedProducts || (message.attachedProduct ? [message.attachedProduct] : [])).map((product, idx) => (
+                                      <div key={product.id || idx} className="p-2 bg-white/20 rounded-lg border border-white/30">
+                                        <div className="flex items-center gap-2">
+                                          <Package className="h-3 w-3" />
+                                          <div className="flex-1 min-w-0">
+                                            <p className="text-xs font-semibold truncate">{product.name}</p>
+                                            <p className="text-[10px] opacity-90">${product.price}</p>
+                                          </div>
+                                        </div>
                                       </div>
-                                    </div>
+                                    ))}
                                   </div>
                                 )}
                                 <p className={`text-sm whitespace-pre-wrap ${message.type === "ai" && styles ? styles.textColor : ""}`}>
