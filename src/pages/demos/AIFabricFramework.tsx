@@ -1841,6 +1841,64 @@ const AIFabricFramework = () => {
             </motion.div>
           )}
 
+          {/* Progress Bar for Review Migration */}
+          {isMigratingReviews && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6"
+            >
+              <Card className="border-amber-500/50 bg-amber-500/5">
+                <CardContent className="pt-6">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="font-medium">Migrating reviews...</span>
+                      <span className="text-muted-foreground">
+                        {Math.round(reviewMigrationProgress)}%
+                      </span>
+                    </div>
+                    <Progress value={reviewMigrationProgress} className="h-2" />
+                    {currentMigratingReview && (
+                      <p className="text-sm text-muted-foreground flex items-center gap-2">
+                        <Star className="h-4 w-4 animate-pulse" />
+                        Currently adding: <span className="font-semibold text-foreground">{currentMigratingReview}</span>
+                      </p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+
+          {/* Progress Bar for Coupon Migration */}
+          {isMigratingCoupons && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6"
+            >
+              <Card className="border-pink-500/50 bg-pink-500/5">
+                <CardContent className="pt-6">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="font-medium">Migrating coupons...</span>
+                      <span className="text-muted-foreground">
+                        {Math.round(couponMigrationProgress)}%
+                      </span>
+                    </div>
+                    <Progress value={couponMigrationProgress} className="h-2" />
+                    {currentMigratingCoupon && (
+                      <p className="text-sm text-muted-foreground flex items-center gap-2">
+                        <Tag className="h-4 w-4 animate-pulse" />
+                        Currently adding: <span className="font-semibold text-foreground">{currentMigratingCoupon}</span>
+                      </p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+
           <div className="flex items-start gap-4 mb-6">
             <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl">
               <Sparkles className="h-8 w-8 text-white" />
@@ -2643,34 +2701,6 @@ const AIFabricFramework = () => {
                 </CardContent>
               </Card>
 
-              {/* Progress Bar for Review Migration */}
-              {isMigratingReviews && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mb-6"
-                >
-                  <Card className="border-amber-500/50 bg-amber-500/5">
-                    <CardContent className="pt-6">
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="font-medium">Migrating reviews...</span>
-                          <span className="text-muted-foreground">
-                            {Math.round(reviewMigrationProgress)}%
-                          </span>
-                        </div>
-                        <Progress value={reviewMigrationProgress} className="h-2" />
-                        {currentMigratingReview && (
-                          <p className="text-sm text-muted-foreground flex items-center gap-2">
-                            <Star className="h-4 w-4 animate-pulse" />
-                            Currently adding: <span className="font-semibold text-foreground">{currentMigratingReview}</span>
-                          </p>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              )}
 
               {/* Review Stats */}
               <div className="grid md:grid-cols-3 gap-4">
@@ -2823,34 +2853,6 @@ const AIFabricFramework = () => {
                 </CardContent>
               </Card>
 
-              {/* Progress Bar for Coupon Migration */}
-              {isMigratingCoupons && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="mb-6"
-                >
-                  <Card className="border-pink-500/50 bg-pink-500/5">
-                    <CardContent className="pt-6">
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="font-medium">Migrating coupons...</span>
-                          <span className="text-muted-foreground">
-                            {Math.round(couponMigrationProgress)}%
-                          </span>
-                        </div>
-                        <Progress value={couponMigrationProgress} className="h-2" />
-                        {currentMigratingCoupon && (
-                          <p className="text-sm text-muted-foreground flex items-center gap-2">
-                            <Tag className="h-4 w-4 animate-pulse" />
-                            Currently adding: <span className="font-semibold text-foreground">{currentMigratingCoupon}</span>
-                          </p>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              )}
 
               {/* Coupon Stats */}
               <div className="grid md:grid-cols-3 gap-4">
