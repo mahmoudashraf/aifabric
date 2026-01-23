@@ -328,6 +328,218 @@ const getResultTypeStyles = (resultType?: ResultType) => {
   }
 };
 
+// Helper function to format field names
+const formatFieldName = (key: string): string => {
+  return key
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (str) => str.toUpperCase())
+    .trim();
+};
+
+// Helper function to format field values
+const formatFieldValue = (value: any): string => {
+  if (value === null || value === undefined) return "N/A";
+  if (typeof value === "boolean") return value ? "Yes" : "No";
+  if (typeof value === "object" && !Array.isArray(value)) {
+    return JSON.stringify(value, null, 2);
+  }
+  if (Array.isArray(value)) {
+    return value.length > 0 ? `${value.length} item(s)` : "Empty";
+  }
+  if (typeof value === "string" && value.includes("T") && value.includes("Z")) {
+    // Try to format ISO date strings
+    try {
+      const date = new Date(value);
+      return date.toLocaleString();
+    } catch {
+      return value;
+    }
+  }
+  return String(value);
+};
+
+// Component to render actionResult data generically
+const ActionResultRenderer = ({ 
+  data, 
+  messageId, 
+  expandedCount, 
+  onExpand 
+}: { 
+  data: any; 
+  messageId: string; 
+  expandedCount: number; 
+  onExpand: (count: number) => void;
+}) => {
+  if (!data) return null;
+
+  // Handle arrays
+  if (Array.isArray(data)) {
+    const visibleItems = data.slice(0, expandedCount || 3);
+    const remaining = data.length - visibleItems.length;
+
+    return (
+      <div className="mt-3 space-y-2">
+        {visibleItems.map((item: any, idx: number) => (
+          <Card key={idx} className="text-xs">
+            <CardContent className="p-3">
+              {typeof item === "object" && item !== null ? (
+                // Render object fields
+                <div className="space-y-2">
+                  {Object.entries(item).map(([key, value]) => (
+                    <div key={key} className="flex items-start justify-between gap-2">
+                      <span className="text-muted-foreground font-medium min-w-[80px]">
+                        {formatFieldName(key)}:
+                      </span>
+                      <span className="text-foreground text-right flex-1">
+                        {typeof value === "object" && value !== null && !Array.isArray(value) ? (
+                          <div className="space-y-1">
+                            {Object.entries(value).map(([nestedKey, nestedValue]) => (
+                              <div key={nestedKey} className="text-[10px]">
+                                <span className="text-muted-foreground">{formatFieldName(nestedKey)}: </span>
+                                <span>{formatFieldValue(nestedValue)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          formatFieldValue(value)
+                        )}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-foreground">{formatFieldValue(item)}</p>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+        {remaining > 0 && (
+          <Button
+            size="sm"
+            variant="ghost"
+            className="w-full text-xs"
+            onClick={() => onExpand((expandedCount || 3) + 3)}
+          >
+            Show {Math.min(3, remaining)} more
+          </Button>
+        )}
+      </div>
+    );
+  }
+
+  // Handle objects
+  if (typeof data === "object" && data !== null) {
+    // Check if object has array-like properties (e.g., { orders: [...], count: 2 })
+    const arrayKeys = Object.keys(data).filter(key => Array.isArray(data[key]));
+    
+    if (arrayKeys.length > 0) {
+      // Render each array property
+      return (
+        <div className="mt-3 space-y-3">
+          {arrayKeys.map((arrayKey) => {
+            const arrayData = data[arrayKey];
+            const visibleItems = arrayData.slice(0, expandedCount || 3);
+            const remaining = arrayData.length - visibleItems.length;
+
+            return (
+              <div key={arrayKey}>
+                <h4 className="text-sm font-semibold mb-2">{formatFieldName(arrayKey)}</h4>
+                <div className="space-y-2">
+                  {visibleItems.map((item: any, idx: number) => (
+                    <Card key={idx} className="text-xs">
+                      <CardContent className="p-3">
+                        {typeof item === "object" && item !== null ? (
+                          <div className="space-y-2">
+                            {Object.entries(item).map(([key, value]) => (
+                              <div key={key} className="flex items-start justify-between gap-2">
+                                <span className="text-muted-foreground font-medium min-w-[80px]">
+                                  {formatFieldName(key)}:
+                                </span>
+                                <span className="text-foreground text-right flex-1">
+                                  {formatFieldValue(value)}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-foreground">{formatFieldValue(item)}</p>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                  {remaining > 0 && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="w-full text-xs"
+                      onClick={() => onExpand((expandedCount || 3) + 3)}
+                    >
+                      Show {Math.min(3, remaining)} more
+                    </Button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+          {/* Render non-array properties */}
+          {Object.entries(data)
+            .filter(([key]) => !Array.isArray(data[key]))
+            .map(([key, value]) => (
+              <div key={key} className="text-xs">
+                <span className="text-muted-foreground font-medium">{formatFieldName(key)}: </span>
+                <span className="text-foreground">{formatFieldValue(value)}</span>
+              </div>
+            ))}
+        </div>
+      );
+    }
+
+    // Render simple object as key-value pairs
+    return (
+      <div className="mt-3">
+        <Card className="text-xs">
+          <CardContent className="p-3">
+            <div className="space-y-2">
+              {Object.entries(data).map(([key, value]) => (
+                <div key={key} className="flex items-start justify-between gap-2">
+                  <span className="text-muted-foreground font-medium min-w-[100px]">
+                    {formatFieldName(key)}:
+                  </span>
+                  <span className="text-foreground text-right flex-1">
+                    {typeof value === "object" && value !== null && !Array.isArray(value) ? (
+                      <div className="space-y-1 pl-2 border-l-2 border-muted">
+                        {Object.entries(value).map(([nestedKey, nestedValue]) => (
+                          <div key={nestedKey} className="text-[10px]">
+                            <span className="text-muted-foreground">{formatFieldName(nestedKey)}: </span>
+                            <span>{formatFieldValue(nestedValue)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      formatFieldValue(value)
+                    )}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Handle primitive values
+  return (
+    <div className="mt-3">
+      <Card className="text-xs">
+        <CardContent className="p-3">
+          <p className="text-foreground">{formatFieldValue(data)}</p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
 const AIFabricFramework = () => {
   const [activeTab, setActiveTab] = useState("products");
   const [searchQuery, setSearchQuery] = useState("");
@@ -2197,49 +2409,19 @@ const AIFabricFramework = () => {
                                     </Button>
                                   </div>
                                 )}
-                                {message.result?.sanitizedPayload?.data?.actionResult?.data?.orders && (
-                                  <div className="mt-3 space-y-2">
-                                    {message.result.sanitizedPayload.data.actionResult.data.orders
-                                      .slice(0, expandedOrders[message.id] || 3)
-                                      .map((order: any, idx: number) => (
-                                        <Card key={idx} className="text-xs">
-                                          <CardContent className="p-3">
-                                            <div className="flex items-start justify-between mb-2">
-                                              <div>
-                                                <p className="font-semibold text-foreground">Order #{order.orderId}</p>
-                                                <p className="text-muted-foreground text-[10px]">{order.sku}</p>
-                                              </div>
-                                              <Badge variant={order.status === "CREATED" ? "default" : "secondary"} className="text-[10px]">
-                                                {order.status}
-                                              </Badge>
-                                            </div>
-                                            <div className="grid grid-cols-2 gap-2 text-[10px]">
-                                              <div>
-                                                <span className="text-muted-foreground">Quantity:</span> {order.quantity}
-                                              </div>
-                                              <div>
-                                                <span className="text-muted-foreground">Total:</span> ${order.totalPrice}
-                                              </div>
-                                            </div>
-                                          </CardContent>
-                                        </Card>
-                                      ))}
-                                    {message.result.sanitizedPayload.data.actionResult.data.orders.length > (expandedOrders[message.id] || 3) && (
-                                      <Button
-                                        size="sm"
-                                        variant="ghost"
-                                        className="w-full text-xs"
-                                        onClick={() => {
-                                          setExpandedOrders(prev => ({
-                                            ...prev,
-                                            [message.id]: (prev[message.id] || 3) + 3
-                                          }));
-                                        }}
-                                      >
-                                        Show {Math.min(3, message.result.sanitizedPayload.data.actionResult.data.orders.length - (expandedOrders[message.id] || 3))} more
-                                      </Button>
-                                    )}
-                                  </div>
+                                {message.result?.sanitizedPayload?.type === "ACTION_EXECUTED" && 
+                                 message.result?.sanitizedPayload?.data?.actionResult?.data && (
+                                  <ActionResultRenderer
+                                    data={message.result.sanitizedPayload.data.actionResult.data}
+                                    messageId={message.id}
+                                    expandedCount={expandedOrders[message.id] || 3}
+                                    onExpand={(count) => {
+                                      setExpandedOrders(prev => ({
+                                        ...prev,
+                                        [message.id]: count
+                                      }));
+                                    }}
+                                  />
                                 )}
                               </div>
                             </div>
