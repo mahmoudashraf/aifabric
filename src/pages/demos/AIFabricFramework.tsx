@@ -2553,7 +2553,7 @@ const AIFabricFramework = () => {
                                   </Badge>
                                   {review.productId && (
                                     <Badge variant="outline" className="text-xs">
-                                      Product ID: {review.productId.slice(0, 8)}...
+                                      Product ID: {String(review.productId).slice(0, 8)}...
                                     </Badge>
                                   )}
                                 </div>
