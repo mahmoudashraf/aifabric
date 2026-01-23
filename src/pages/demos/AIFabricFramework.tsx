@@ -1607,10 +1607,10 @@ const AIFabricFramework = () => {
               </Button>
             </Link>
 
-            <div className="flex gap-3">
+            <div className="flex gap-2 flex-wrap">
               <Button
                 onClick={handleFillStock}
-                disabled={isFilling || isMigratingPolicies}
+                disabled={isFilling || isMigratingPolicies || isMigratingReviews || isMigratingCoupons}
                 size="lg"
                 className="gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
               >
@@ -1629,7 +1629,7 @@ const AIFabricFramework = () => {
 
               <Button
                 onClick={handleMigratePolicies}
-                disabled={isMigratingPolicies || isFilling}
+                disabled={isMigratingPolicies || isFilling || isMigratingReviews || isMigratingCoupons}
                 size="lg"
                 className="gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
               >
@@ -1642,6 +1642,44 @@ const AIFabricFramework = () => {
                   <>
                     <Scale className="h-5 w-5" />
                     Migrate Policies
+                  </>
+                )}
+              </Button>
+
+              <Button
+                onClick={handleMigrateReviews}
+                disabled={isMigratingReviews || isFilling || isMigratingPolicies || isMigratingCoupons}
+                size="lg"
+                className="gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700"
+              >
+                {isMigratingReviews ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Migrating Reviews...
+                  </>
+                ) : (
+                  <>
+                    <Star className="h-5 w-5" />
+                    Migrate Reviews
+                  </>
+                )}
+              </Button>
+
+              <Button
+                onClick={handleMigrateCoupons}
+                disabled={isMigratingCoupons || isFilling || isMigratingPolicies || isMigratingReviews}
+                size="lg"
+                className="gap-2 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700"
+              >
+                {isMigratingCoupons ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Migrating Coupons...
+                  </>
+                ) : (
+                  <>
+                    <Tag className="h-5 w-5" />
+                    Migrate Coupons
                   </>
                 )}
               </Button>
@@ -2431,30 +2469,10 @@ const AIFabricFramework = () => {
                         View and manage product reviews. All operations are handled via AI chat.
                       </CardDescription>
                     </div>
-                    <div className="flex gap-2">
-                      <Button onClick={loadReviews} variant="outline" size="sm">
-                        <RefreshCw className="h-4 w-4 mr-2" />
-                        Refresh
-                      </Button>
-                      <Button
-                        onClick={handleMigrateReviews}
-                        disabled={isMigratingReviews || isMigratingCoupons}
-                        size="lg"
-                        className="gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700"
-                      >
-                        {isMigratingReviews ? (
-                          <>
-                            <Loader2 className="h-5 w-5 animate-spin" />
-                            Migrating Reviews...
-                          </>
-                        ) : (
-                          <>
-                            <Star className="h-5 w-5" />
-                            Migrate Reviews
-                          </>
-                        )}
-                      </Button>
-                    </div>
+                    <Button onClick={loadReviews} variant="outline" size="sm">
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Refresh
+                    </Button>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -2467,7 +2485,7 @@ const AIFabricFramework = () => {
                       <Star className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
                       <p className="text-muted-foreground">No reviews found</p>
                       <p className="text-sm text-muted-foreground mt-2">
-                        Click "Migrate Reviews" to add sample reviews
+                        Use the "Migrate Reviews" button at the top to add sample reviews
                       </p>
                     </div>
                   ) : (
@@ -2612,30 +2630,10 @@ const AIFabricFramework = () => {
                         View and manage discount coupons. All operations are handled via AI chat.
                       </CardDescription>
                     </div>
-                    <div className="flex gap-2">
-                      <Button onClick={loadCoupons} variant="outline" size="sm">
-                        <RefreshCw className="h-4 w-4 mr-2" />
-                        Refresh
-                      </Button>
-                      <Button
-                        onClick={handleMigrateCoupons}
-                        disabled={isMigratingCoupons || isMigratingReviews}
-                        size="lg"
-                        className="gap-2 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700"
-                      >
-                        {isMigratingCoupons ? (
-                          <>
-                            <Loader2 className="h-5 w-5 animate-spin" />
-                            Migrating Coupons...
-                          </>
-                        ) : (
-                          <>
-                            <Tag className="h-5 w-5" />
-                            Migrate Coupons
-                          </>
-                        )}
-                      </Button>
-                    </div>
+                    <Button onClick={loadCoupons} variant="outline" size="sm">
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Refresh
+                    </Button>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -2648,7 +2646,7 @@ const AIFabricFramework = () => {
                       <Tag className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
                       <p className="text-muted-foreground">No coupons found</p>
                       <p className="text-sm text-muted-foreground mt-2">
-                        Click "Migrate Coupons" to add sample coupons
+                        Use the "Migrate Coupons" button at the top to add sample coupons
                       </p>
                     </div>
                   ) : (
