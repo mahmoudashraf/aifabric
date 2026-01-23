@@ -732,7 +732,7 @@ const AIFabricFramework = () => {
   const [couponCount, setCouponCount] = useState(0);
   const [migratedProductIds, setMigratedProductIds] = useState<string[]>([]);
   const [isChatExpanded, setIsChatExpanded] = useState(false);
-  const [attachedProduct, setAttachedProduct] = useState<Product | null>(null);
+  const [attachedProducts, setAttachedProducts] = useState<Product[]>([]);
   const [expandedOrders, setExpandedOrders] = useState<{ [key: string]: number }>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -1014,7 +1014,17 @@ const AIFabricFramework = () => {
   };
 
   const handleAttachProduct = (product: Product) => {
-    setAttachedProduct(product);
+    // Check if product is already attached
+    if (attachedProducts.some(p => p.id === product.id)) {
+      toast({
+        title: "Already Attached",
+        description: `${product.name} is already attached to chat`,
+        variant: "default",
+      });
+      return;
+    }
+    
+    setAttachedProducts(prev => [...prev, product]);
     setIsChatExpanded(true);
     toast({
       title: "Product Attached",
@@ -1022,8 +1032,12 @@ const AIFabricFramework = () => {
     });
   };
 
-  const handleRemoveAttachment = () => {
-    setAttachedProduct(null);
+  const handleRemoveAttachment = (productId: string) => {
+    setAttachedProducts(prev => prev.filter(p => p.id !== productId));
+    toast({
+      title: "Product Removed",
+      description: "Product removed from attachments",
+    });
   };
 
   const handleConfirmationAction = async (action: string, messageData?: any) => {
@@ -1115,8 +1129,11 @@ const AIFabricFramework = () => {
 
     // Build query with product context if attached
     let enhancedQuery = chatQuery;
-    if (attachedProduct) {
-      enhancedQuery = `${chatQuery}\n\n[Product Context: ${attachedProduct.name} - ${attachedProduct.description}, Price: $${attachedProduct.price}, SKU: ${attachedProduct.sku}]`;
+    if (attachedProducts.length > 0) {
+      const productContexts = attachedProducts.map(p => 
+        `${p.name} - ${p.description}, Price: $${p.price}, SKU: ${p.sku}`
+      ).join('\n');
+      enhancedQuery = `${chatQuery}\n\n[Product Context:\n${productContexts}]`;
     }
 
     const userMessage: ChatMessage = {
@@ -1124,18 +1141,18 @@ const AIFabricFramework = () => {
       type: "user",
       content: chatQuery,
       timestamp: new Date().toISOString(),
-      attachedProduct: attachedProduct || undefined,
+      attachedProduct: attachedProducts.length > 0 ? attachedProducts[0] : undefined, // Keep for backward compatibility
     };
 
     setChatMessages((prev) => [...prev, userMessage]);
     const currentQuery = enhancedQuery;
-    const currentAttachment = attachedProduct;
+    const currentAttachments = attachedProducts;
     setChatQuery("");
     setIsLoading(true);
     setIsChatExpanded(true);
 
-    // Remove attachment after sending
-    setAttachedProduct(null);
+    // Remove attachments after sending
+    setAttachedProducts([]);
 
     try {
       const response = await fetch(`${API_BASE_URL}/chat/query`, {
@@ -3264,39 +3281,48 @@ const AIFabricFramework = () => {
       {/* Floating Chat Input */}
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-t from-background via-background to-transparent p-4 backdrop-blur-sm border-t">
         <div className="container mx-auto max-w-[1080px]">
-          {attachedProduct && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-2"
-            >
-              <Card className="border-purple-500/50 bg-purple-500/5">
-                <CardContent className="p-3 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-purple-500/10 rounded-lg">
-                      <Package className="h-4 w-4 text-purple-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold">{attachedProduct.name}</p>
-                      <p className="text-xs text-muted-foreground">${attachedProduct.price}</p>
-                    </div>
-                  </div>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="h-8 w-8"
-                    onClick={handleRemoveAttachment}
+          {attachedProducts.length > 0 && (
+            <div className="mb-2 space-y-2 max-h-[200px] overflow-y-auto">
+              <AnimatePresence>
+                {attachedProducts.map((product) => (
+                  <motion.div
+                    key={product.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
                   >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.div>
+                  <Card className="border-purple-500/50 bg-purple-500/5">
+                    <CardContent className="p-3 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-purple-500/10 rounded-lg">
+                          <Package className="h-4 w-4 text-purple-600" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold">{product.name}</p>
+                          <p className="text-xs text-muted-foreground">${product.price}</p>
+                        </div>
+                      </div>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-8 w-8"
+                        onClick={() => handleRemoveAttachment(product.id)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </CardContent>
+                  </Card>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
           )}
           <div className="flex gap-2 items-end">
             <div className="flex-1 relative">
               <Textarea
-                placeholder={attachedProduct ? `Ask about ${attachedProduct.name}...` : "Ask AI about products, orders, or anything..."}
+                placeholder={attachedProducts.length > 0 
+                  ? `Ask about ${attachedProducts.length} attached product${attachedProducts.length > 1 ? 's' : ''}...` 
+                  : "Ask AI about products, orders, or anything..."}
                 value={chatQuery}
                 onChange={(e) => setChatQuery(e.target.value)}
                 onKeyPress={(e) => {
