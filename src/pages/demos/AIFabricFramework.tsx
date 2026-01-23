@@ -1984,43 +1984,29 @@ const AIFabricFramework = () => {
       {/* Floating AI Chat */}
       <AnimatePresence>
         {isChatExpanded && (
-          <motion.div
-            initial={{ opacity: 0, y: 20, height: 0 }}
-            animate={{ opacity: 1, y: 0, height: "auto" }}
-            exit={{ opacity: 0, y: 20, height: 0 }}
-            className="fixed bottom-24 right-4 left-4 md:left-auto md:w-[480px] z-50"
-          >
-            <Card className="border-2 border-purple-500/50 shadow-2xl shadow-purple-500/20">
-              <CardHeader className="pb-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Bot className="h-5 w-5" />
-                    AI Assistant
-                  </CardTitle>
-                  <div className="flex gap-1">
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="h-8 w-8 text-white hover:bg-white/20"
-                      onClick={() => {
-                        setChatMessages([]);
-                        setCurrentConversationId(null);
-                      }}
-                      title="Clear chat"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="h-8 w-8 text-white hover:bg-white/20"
-                      onClick={() => setIsChatExpanded(false)}
-                    >
-                      <Minimize2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
+          <>
+            {/* Backdrop for click-outside-to-dismiss */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-40"
+              onClick={() => setIsChatExpanded(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 20, height: 0 }}
+              animate={{ opacity: 1, y: 0, height: "auto" }}
+              exit={{ opacity: 0, y: 20, height: 0 }}
+              className="fixed bottom-32 left-0 right-0 z-50 px-4"
+            >
+              <div className="container mx-auto max-w-4xl">
+                <Card className="border-2 border-purple-500/50 shadow-2xl shadow-purple-500/20">
+                  <CardHeader className="pb-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Bot className="h-5 w-5" />
+                      AI Assistant
+                    </CardTitle>
+                  </CardHeader>
               <CardContent className="p-4">
                 <div className="space-y-3 max-h-[400px] overflow-y-auto mb-3">
                   <AnimatePresence>
@@ -2108,7 +2094,9 @@ const AIFabricFramework = () => {
                 </div>
               </CardContent>
             </Card>
-          </motion.div>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
 
@@ -2156,6 +2144,11 @@ const AIFabricFramework = () => {
                     handleChatQuery();
                   }
                 }}
+                onFocus={() => {
+                  if (chatMessages.length > 0 && !isChatExpanded) {
+                    setIsChatExpanded(true);
+                  }
+                }}
                 className="min-h-[60px] pr-12 resize-none shadow-lg border-2 focus:border-purple-500"
                 disabled={isLoading}
               />
@@ -2172,17 +2165,6 @@ const AIFabricFramework = () => {
                 )}
               </Button>
             </div>
-            {chatMessages.length > 0 && !isChatExpanded && (
-              <Button
-                size="icon"
-                variant="outline"
-                onClick={() => setIsChatExpanded(true)}
-                className="h-[60px] w-[60px] border-2 border-purple-500/50 hover:bg-purple-50"
-                title="Show chat history"
-              >
-                <Maximize2 className="h-5 w-5" />
-              </Button>
-            )}
           </div>
         </div>
       </div>
