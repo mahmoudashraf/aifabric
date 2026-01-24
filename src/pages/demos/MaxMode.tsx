@@ -154,6 +154,37 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     });
   };
 
+  const showSampleDocuments = () => {
+    const sampleDocs: Document[] = [
+      {
+        id: "1",
+        title: "Return Policy",
+        content: "You can return items within 30 days of purchase. Items must be in original condition with tags attached.",
+        type: "policy",
+        metadata: { category: "returns", updated: "2024-01-15" }
+      },
+      {
+        id: "2",
+        title: "Wireless Headphones Pro",
+        content: "Premium noise-canceling headphones with 30-hour battery life and crystal-clear audio.",
+        type: "product",
+        metadata: { price: "$299.99", stock: "In Stock" }
+      },
+      {
+        id: "3",
+        title: "Shipping Information",
+        content: "Free shipping on orders over $50. Standard delivery takes 3-5 business days.",
+        type: "document",
+        metadata: { region: "US", type: "shipping" }
+      }
+    ];
+    setContextDocuments(sampleDocs);
+    toast({
+      title: "Sample Documents Loaded",
+      description: "Check the right panel!",
+    });
+  };
+
   const handleChatQuery = async (presetQuery?: string) => {
     const query = presetQuery || chatQuery;
     if (!query.trim()) return;
@@ -189,6 +220,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
       const data = await response.json();
 
+      console.log("API Response:", data); // Debug log
+
       if (data.conversationId && !currentConversationId) {
         setCurrentConversationId(data.conversationId);
       }
@@ -202,9 +235,23 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         result = data.result;
         resultType = data.result.type;
 
+        console.log("Result Type:", resultType); // Debug log
+        console.log("Sanitized Payload Data:", data.result.sanitizedPayload.data); // Debug log
+
         // Extract documents if INFORMATION_PROVIDED
         if (resultType === "INFORMATION_PROVIDED" && data.result.sanitizedPayload.data?.documents) {
+          console.log("Documents found:", data.result.sanitizedPayload.data.documents); // Debug log
           setContextDocuments(data.result.sanitizedPayload.data.documents);
+        } else if (resultType === "INFORMATION_PROVIDED" && data.result.sanitizedPayload.data) {
+          // Try alternate paths
+          console.log("Checking alternate document paths..."); // Debug log
+          const possibleDocs = data.result.sanitizedPayload.data.answer?.documents ||
+                               data.result.sanitizedPayload.data.documents ||
+                               [];
+          if (possibleDocs.length > 0) {
+            console.log("Found documents in alternate path:", possibleDocs);
+            setContextDocuments(possibleDocs);
+          }
         }
       } else {
         messageContent = data.response || data.message || "I processed your query successfully.";
@@ -285,14 +332,25 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           </motion.div>
           <h1 className="text-xl font-bold text-white">MAX Mode - AI Shopping Assistant</h1>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onClose}
-          className="text-white hover:bg-white/20"
-        >
-          <X className="h-5 w-5" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={showSampleDocuments}
+            className="text-white hover:bg-white/20 text-xs"
+          >
+            <FileText className="h-4 w-4 mr-1" />
+            Test Panel
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="text-white hover:bg-white/20"
+          >
+            <X className="h-5 w-5" />
+          </Button>
+        </div>
       </div>
 
       {/* Quick Actions Bar */}
@@ -412,9 +470,19 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               className="w-96 border-l-2 border-purple-500/30 bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm overflow-y-auto p-6"
             >
               <div className="sticky top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md p-4 rounded-xl mb-4 shadow-lg border-2 border-purple-500/30">
-                <div className="flex items-center gap-2 mb-2">
-                  <Sparkles className="h-5 w-5 text-purple-600" />
-                  <h2 className="font-bold text-lg">Context Data</h2>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-purple-600" />
+                    <h2 className="font-bold text-lg">Context Data</h2>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setContextDocuments([])}
+                    className="h-6 px-2 text-xs"
+                  >
+                    Clear
+                  </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
                   {contextDocuments.length} document{contextDocuments.length > 1 ? 's' : ''} found
