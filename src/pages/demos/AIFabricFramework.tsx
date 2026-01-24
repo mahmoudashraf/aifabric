@@ -872,7 +872,7 @@ const AIFabricFramework = () => {
       } finally {
         setIsLoadingSuggestions(false);
       }
-    }, 3000); // 3 second delay
+    }, 5000); // 5 second delay
 
     return () => clearTimeout(timeoutId);
   }, [attachedProducts, attachedReviews, attachedCoupons]);
