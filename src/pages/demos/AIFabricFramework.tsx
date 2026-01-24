@@ -3555,33 +3555,32 @@ const AIFabricFramework = () => {
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-t from-background via-background to-transparent p-4 backdrop-blur-sm border-t">
         <div className="container mx-auto max-w-[1080px]">
           {(attachedProducts.length > 0 || attachedReviews.length > 0 || attachedCoupons.length > 0) && (
-            <div className="mb-2 space-y-2 max-h-[200px] overflow-y-auto">
+            <div className="mb-2 flex flex-wrap gap-2 max-h-[200px] overflow-y-auto">
               <AnimatePresence>
                 {attachedProducts.map((product) => (
                   <motion.div
                     key={product.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    className="inline-flex"
                   >
-                  <Card className="border-purple-500/50 bg-purple-500/5">
-                    <CardContent className="p-3 flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-purple-500/10 rounded-lg">
-                          <Package className="h-4 w-4 text-purple-600" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold">{product.name}</p>
-                          <p className="text-xs text-muted-foreground">${product.price}</p>
-                        </div>
+                  <Card className="border-purple-500/50 bg-purple-500/5 max-w-full">
+                    <CardContent className="p-2.5 flex items-center gap-2">
+                      <div className="p-1.5 bg-purple-500/10 rounded-lg flex-shrink-0">
+                        <Package className="h-3.5 w-3.5 text-purple-600" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-semibold truncate">{product.name}</p>
+                        <p className="text-[10px] text-muted-foreground">${product.price}</p>
                       </div>
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="h-8 w-8"
+                        className="h-6 w-6 flex-shrink-0"
                         onClick={() => handleRemoveAttachment(product.id)}
                       >
-                        <X className="h-4 w-4" />
+                        <X className="h-3 w-3" />
                       </Button>
                     </CardContent>
                   </Card>
@@ -3590,28 +3589,27 @@ const AIFabricFramework = () => {
                 {attachedReviews.map((review) => (
                   <motion.div
                     key={review.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    className="inline-flex"
                   >
-                  <Card className="border-amber-500/50 bg-amber-500/5">
-                    <CardContent className="p-3 flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-amber-500/10 rounded-lg">
-                          <Star className="h-4 w-4 text-amber-600" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold truncate">{review.title}</p>
-                          <p className="text-xs text-muted-foreground">{review.rating}/5 stars</p>
-                        </div>
+                  <Card className="border-amber-500/50 bg-amber-500/5 max-w-full">
+                    <CardContent className="p-2.5 flex items-center gap-2">
+                      <div className="p-1.5 bg-amber-500/10 rounded-lg flex-shrink-0">
+                        <Star className="h-3.5 w-3.5 text-amber-600" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-semibold truncate">{review.title}</p>
+                        <p className="text-[10px] text-muted-foreground">{review.rating}/5</p>
                       </div>
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="h-8 w-8"
+                        className="h-6 w-6 flex-shrink-0"
                         onClick={() => handleRemoveAttachedReview(review.id!)}
                       >
-                        <X className="h-4 w-4" />
+                        <X className="h-3 w-3" />
                       </Button>
                     </CardContent>
                   </Card>
@@ -3620,28 +3618,27 @@ const AIFabricFramework = () => {
                 {attachedCoupons.map((coupon) => (
                   <motion.div
                     key={coupon.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    className="inline-flex"
                   >
-                  <Card className="border-pink-500/50 bg-pink-500/5">
-                    <CardContent className="p-3 flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-pink-500/10 rounded-lg">
-                          <Tag className="h-4 w-4 text-pink-600" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold truncate font-mono">{coupon.code}</p>
-                          <p className="text-xs text-muted-foreground">{coupon.discountType === "PERCENTAGE" ? `${coupon.discountValue}%` : `$${coupon.discountValue}`} off</p>
-                        </div>
+                  <Card className="border-pink-500/50 bg-pink-500/5 max-w-full">
+                    <CardContent className="p-2.5 flex items-center gap-2">
+                      <div className="p-1.5 bg-pink-500/10 rounded-lg flex-shrink-0">
+                        <Tag className="h-3.5 w-3.5 text-pink-600" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs font-semibold truncate font-mono">{coupon.code}</p>
+                        <p className="text-[10px] text-muted-foreground">{coupon.discountType === "PERCENTAGE" ? `${coupon.discountValue}%` : `$${coupon.discountValue}`}</p>
                       </div>
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="h-8 w-8"
+                        className="h-6 w-6 flex-shrink-0"
                         onClick={() => handleRemoveAttachedCoupon(coupon.id!)}
                       >
-                        <X className="h-4 w-4" />
+                        <X className="h-3 w-3" />
                       </Button>
                     </CardContent>
                   </Card>
