@@ -237,16 +237,23 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
         console.log("Result Type:", resultType); // Debug log
         console.log("Sanitized Payload Data:", data.result.sanitizedPayload.data); // Debug log
+        console.log("Result Data:", data.result.data); // Debug log
 
         // Extract documents if INFORMATION_PROVIDED
-        if (resultType === "INFORMATION_PROVIDED" && data.result.sanitizedPayload.data) {
-          const payload = data.result.sanitizedPayload.data;
-
-          // Try to get documents from various paths
-          let rawDocs = payload.documents || payload.ragResponse?.documents || [];
+        if (resultType === "INFORMATION_PROVIDED") {
+          // Try multiple paths where documents might be
+          let rawDocs =
+            data.result.data?.documents ||
+            data.result.data?.ragResponse?.documents ||
+            data.result.sanitizedPayload.data?.documents ||
+            data.result.sanitizedPayload.data?.ragResponse?.documents ||
+            [];
 
           // Get entity type from ragResponse if available
-          const entityType = payload.ragResponse?.entityType || 'document';
+          const entityType =
+            data.result.data?.ragResponse?.entityType ||
+            data.result.sanitizedPayload.data?.ragResponse?.entityType ||
+            'document';
 
           console.log("Documents found:", rawDocs); // Debug log
           console.log("Entity type:", entityType); // Debug log
