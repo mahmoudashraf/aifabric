@@ -875,7 +875,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         transition={{ delay: idx * 0.08, type: "spring", damping: 20 }}
                         whileHover={{ scale: 1.02, y: -4 }}
                       >
-                        <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 border-purple-300 hover:border-purple-500 bg-gradient-to-br from-white via-purple-50/50 to-pink-50/50 dark:from-gray-800 dark:to-purple-900/20 overflow-hidden cursor-pointer">
+                        <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 border-purple-300 hover:border-purple-500 bg-gradient-to-br from-white via-purple-50/50 to-pink-50/50 dark:from-gray-800 dark:to-purple-900/20 overflow-hidden">
                           {doc.metadata?.imageUrl && (
                             <div className="relative h-32 overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
                               <img
@@ -884,20 +884,19 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                               />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                              <motion.div
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.9 }}
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="absolute top-2 right-2 h-10 w-10 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-xl border-2 border-white/50 hover:scale-110 transition-all z-20"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  e.preventDefault();
+                                  handleAttachDocument(doc);
+                                }}
+                                title="Add to Chat"
                               >
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  className="absolute top-2 right-2 h-9 w-9 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white backdrop-blur-sm shadow-lg"
-                                  onClick={() => handleAttachDocument(doc)}
-                                  title="Add to Chat"
-                                >
-                                  <MessageSquarePlus className="h-5 w-5" />
-                                </Button>
-                              </motion.div>
+                                <MessageSquarePlus className="h-5 w-5" />
+                              </Button>
                             </div>
                           )}
                           <CardHeader className="pb-3">
@@ -922,20 +921,19 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                 </div>
                               </div>
                               {!doc.metadata?.imageUrl && (
-                                <motion.div
-                                  whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
-                                  whileTap={{ scale: 0.9 }}
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  className="h-10 w-10 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-xl border-2 border-white/30 hover:scale-110 hover:border-white/50 transition-all z-20"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    handleAttachDocument(doc);
+                                  }}
+                                  title="Add to Chat"
                                 >
-                                  <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    className="h-9 w-9 opacity-0 group-hover:opacity-100 transition-all bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg"
-                                    onClick={() => handleAttachDocument(doc)}
-                                    title="Add to Chat"
-                                  >
-                                    <MessageSquarePlus className="h-5 w-5" />
-                                  </Button>
-                                </motion.div>
+                                  <MessageSquarePlus className="h-5 w-5" />
+                                </Button>
                               )}
                             </div>
                           </CardHeader>
