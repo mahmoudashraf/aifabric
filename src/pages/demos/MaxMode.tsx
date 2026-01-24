@@ -299,11 +299,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [attachedItems, setAttachedItems] = useState<Array<{ type: string; data: any }>>([]);
   const [contextDocuments, setContextDocuments] = useState<Document[]>([]);
-  const [currentDocIndex, setCurrentDocIndex] = useState(0);
   const [expandedActions, setExpandedActions] = useState<{ [key: string]: number }>({});
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const contextPanelRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   // Quick action tools
@@ -324,13 +324,6 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [chatMessages]);
-
-  // Reset to first document when context documents change
-  useEffect(() => {
-    if (contextDocuments.length > 0) {
-      setCurrentDocIndex(0);
-    }
-  }, [contextDocuments]);
 
   // Welcome message
   useEffect(() => {
@@ -416,12 +409,16 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     setTimeout(() => handleChatQuery(query), 100);
   };
 
-  const handlePreviousDocument = () => {
-    setCurrentDocIndex((prev) => (prev > 0 ? prev - 1 : contextDocuments.length - 1));
+  const handleScrollUp = () => {
+    if (contextPanelRef.current) {
+      contextPanelRef.current.scrollBy({ top: -300, behavior: "smooth" });
+    }
   };
 
-  const handleNextDocument = () => {
-    setCurrentDocIndex((prev) => (prev < contextDocuments.length - 1 ? prev + 1 : 0));
+  const handleScrollDown = () => {
+    if (contextPanelRef.current) {
+      contextPanelRef.current.scrollBy({ top: 300, behavior: "smooth" });
+    }
   };
 
   const handleAttachDocument = (doc: Document) => {
@@ -856,7 +853,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     <div>
                       <h2 className="font-bold text-lg text-white">Context Panel</h2>
                       <p className="text-xs text-white/80">
-                        {currentDocIndex + 1} of {contextDocuments.length} • Click to attach
+                        {contextDocuments.length} {contextDocuments.length === 1 ? 'document' : 'documents'} • Click to attach
                       </p>
                     </div>
                   </div>
@@ -873,84 +870,48 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 <div className="h-1 bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 rounded-full"></div>
               </div>
 
-              {/* Navigation Arrow Up */}
-              <div className="flex justify-center mb-4">
+              {/* Documents List - Scrollable with Floating Buttons */}
+              <div className="flex-1 relative">
+                {/* Floating Scroll Up Button - Hidden on Mobile */}
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={handlePreviousDocument}
-                  className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-xl border-2 border-white/30 hover:scale-110 transition-all"
-                  disabled={contextDocuments.length <= 1}
+                  onClick={handleScrollUp}
+                  className="hidden lg:flex absolute top-4 left-1/2 -translate-x-1/2 z-20 h-10 w-10 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-xl border-2 border-white/30 hover:scale-110 transition-all"
+                  title="Scroll Up"
                 >
-                  <ChevronUp className="h-6 w-6" />
+                  <ChevronUp className="h-5 w-5" />
                 </Button>
-              </div>
 
-              {/* Current Document */}
-              <div className="flex-1 flex items-center justify-center px-2">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentDocIndex}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ type: "spring", damping: 20 }}
-                    className="w-full"
-                  >
-                    {(() => {
-                      const doc = contextDocuments[currentDocIndex];
+                {/* Scrollable Documents Container */}
+                <div
+                  ref={contextPanelRef}
+                  className="h-full overflow-y-auto px-2 space-y-4 scrollbar-thin scrollbar-thumb-purple-500/50 scrollbar-track-purple-100/20"
+                >
+                  <AnimatePresence mode="popLayout">
+                    {contextDocuments.map((doc, idx) => {
                       const DocIcon = getDocumentIcon(doc.type);
                       return (
-                        <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 border-purple-300 hover:border-purple-500 bg-gradient-to-br from-white via-purple-50/50 to-pink-50/50 dark:from-gray-800 dark:to-purple-900/20 overflow-hidden">
-                          {doc.metadata?.imageUrl && (
-                            <div className="relative h-48 overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
-                              <img
-                                src={doc.metadata.imageUrl}
-                                alt={doc.title}
-                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                              />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                className="absolute top-2 right-2 h-10 w-10 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-xl border-2 border-white/50 hover:scale-110 transition-all z-20"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  e.preventDefault();
-                                  handleAttachDocument(doc);
-                                }}
-                                title="Add to Chat"
-                              >
-                                <MessageSquarePlus className="h-5 w-5" />
-                              </Button>
-                            </div>
-                          )}
-                          <CardHeader className="pb-3">
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="flex items-start gap-3 flex-1">
-                                {!doc.metadata?.imageUrl && (
-                                  <motion.div
-                                    whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
-                                    transition={{ duration: 0.5 }}
-                                    className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl shadow-lg"
-                                  >
-                                    <DocIcon className="h-5 w-5 text-white" />
-                                  </motion.div>
-                                )}
-                                <div className="flex-1 min-w-0">
-                                  <CardTitle className="text-base font-bold line-clamp-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                                    {doc.title}
-                                  </CardTitle>
-                                  <Badge variant="outline" className="mt-1.5 text-[10px] bg-purple-100 border-purple-300 text-purple-700">
-                                    {doc.type}
-                                  </Badge>
-                                </div>
-                              </div>
-                              {!doc.metadata?.imageUrl && (
+                        <motion.div
+                          key={doc.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          transition={{ delay: idx * 0.05 }}
+                        >
+                          <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 border-purple-300 hover:border-purple-500 bg-gradient-to-br from-white via-purple-50/50 to-pink-50/50 dark:from-gray-800 dark:to-purple-900/20 overflow-hidden">
+                            {doc.metadata?.imageUrl && (
+                              <div className="relative h-48 overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
+                                <img
+                                  src={doc.metadata.imageUrl}
+                                  alt={doc.title}
+                                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                                 <Button
                                   size="icon"
                                   variant="ghost"
-                                  className="h-10 w-10 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-xl border-2 border-white/30 hover:scale-110 hover:border-white/50 transition-all z-20"
+                                  className="absolute top-2 right-2 h-10 w-10 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-xl border-2 border-white/50 hover:scale-110 transition-all z-20"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     e.preventDefault();
@@ -960,63 +921,99 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                 >
                                   <MessageSquarePlus className="h-5 w-5" />
                                 </Button>
+                              </div>
+                            )}
+                            <CardHeader className="pb-3">
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex items-start gap-3 flex-1">
+                                  {!doc.metadata?.imageUrl && (
+                                    <motion.div
+                                      whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
+                                      transition={{ duration: 0.5 }}
+                                      className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl shadow-lg"
+                                    >
+                                      <DocIcon className="h-5 w-5 text-white" />
+                                    </motion.div>
+                                  )}
+                                  <div className="flex-1 min-w-0">
+                                    <CardTitle className="text-base font-bold line-clamp-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                                      {doc.title}
+                                    </CardTitle>
+                                    <Badge variant="outline" className="mt-1.5 text-[10px] bg-purple-100 border-purple-300 text-purple-700">
+                                      {doc.type}
+                                    </Badge>
+                                  </div>
+                                </div>
+                                {!doc.metadata?.imageUrl && (
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="h-10 w-10 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-xl border-2 border-white/30 hover:scale-110 hover:border-white/50 transition-all z-20"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      e.preventDefault();
+                                      handleAttachDocument(doc);
+                                    }}
+                                    title="Add to Chat"
+                                  >
+                                    <MessageSquarePlus className="h-5 w-5" />
+                                  </Button>
+                                )}
+                              </div>
+                            </CardHeader>
+                            <CardContent>
+                              <p className="text-sm text-muted-foreground leading-relaxed" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+                                {doc.content}
+                              </p>
+                              {(doc.similarity || doc.score) && (
+                                <div className="mt-3">
+                                  <div className="flex items-center gap-2">
+                                    <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
+                                    <Badge variant="outline" className="text-[10px] bg-gradient-to-r from-yellow-100 to-orange-100 border-yellow-300 text-yellow-800 font-semibold">
+                                      {((doc.similarity || doc.score) * 100).toFixed(1)}% Match
+                                    </Badge>
+                                  </div>
+                                </div>
                               )}
-                            </div>
-                          </CardHeader>
-                          <CardContent>
-                            <p className="text-sm text-muted-foreground leading-relaxed" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
-                              {doc.content}
-                            </p>
-                            {(doc.similarity || doc.score) && (
-                              <div className="mt-3">
-                                <div className="flex items-center gap-2">
-                                  <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
-                                  <Badge variant="outline" className="text-[10px] bg-gradient-to-r from-yellow-100 to-orange-100 border-yellow-300 text-yellow-800 font-semibold">
-                                    {((doc.similarity || doc.score) * 100).toFixed(1)}% Match
-                                  </Badge>
+                              {doc.metadata && (
+                                <div className="mt-3 pt-3 border-t border-gradient-to-r from-purple-200 via-pink-200 to-blue-200">
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {Object.entries(doc.metadata)
+                                      .filter(([key]) => !key.startsWith('_') && !key.includes('indexedCreatedAt') && key !== 'imageUrl' && key !== 'vectorSpace')
+                                      .slice(0, 4)
+                                      .map(([key, value], badgeIdx) => {
+                                        const colors = [
+                                          'bg-blue-100 text-blue-700 border-blue-300',
+                                          'bg-green-100 text-green-700 border-green-300',
+                                          'bg-pink-100 text-pink-700 border-pink-300',
+                                          'bg-indigo-100 text-indigo-700 border-indigo-300',
+                                        ];
+                                        return (
+                                          <Badge key={key} variant="outline" className={`text-[10px] ${colors[badgeIdx % colors.length]} font-medium`}>
+                                            {formatFieldName(key)}: {String(value).slice(0, 25)}
+                                          </Badge>
+                                        );
+                                      })}
+                                  </div>
                                 </div>
-                              </div>
-                            )}
-                            {doc.metadata && (
-                              <div className="mt-3 pt-3 border-t border-gradient-to-r from-purple-200 via-pink-200 to-blue-200">
-                                <div className="flex flex-wrap gap-1.5">
-                                  {Object.entries(doc.metadata)
-                                    .filter(([key]) => !key.startsWith('_') && !key.includes('indexedCreatedAt') && key !== 'imageUrl' && key !== 'vectorSpace')
-                                    .slice(0, 4)
-                                    .map(([key, value], badgeIdx) => {
-                                      const colors = [
-                                        'bg-blue-100 text-blue-700 border-blue-300',
-                                        'bg-green-100 text-green-700 border-green-300',
-                                        'bg-pink-100 text-pink-700 border-pink-300',
-                                        'bg-indigo-100 text-indigo-700 border-indigo-300',
-                                      ];
-                                      return (
-                                        <Badge key={key} variant="outline" className={`text-[10px] ${colors[badgeIdx % colors.length]} font-medium`}>
-                                          {formatFieldName(key)}: {String(value).slice(0, 25)}
-                                        </Badge>
-                                      );
-                                    })}
-                                </div>
-                              </div>
-                            )}
-                          </CardContent>
-                        </Card>
+                              )}
+                            </CardContent>
+                          </Card>
+                        </motion.div>
                       );
-                    })()}
-                  </motion.div>
-                </AnimatePresence>
-              </div>
+                    })}
+                  </AnimatePresence>
+                </div>
 
-              {/* Navigation Arrow Down */}
-              <div className="flex justify-center mt-4">
+                {/* Floating Scroll Down Button - Hidden on Mobile */}
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={handleNextDocument}
-                  className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-xl border-2 border-white/30 hover:scale-110 transition-all"
-                  disabled={contextDocuments.length <= 1}
+                  onClick={handleScrollDown}
+                  className="hidden lg:flex absolute bottom-4 left-1/2 -translate-x-1/2 z-20 h-10 w-10 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-xl border-2 border-white/30 hover:scale-110 transition-all"
+                  title="Scroll Down"
                 >
-                  <ChevronDown className="h-6 w-6" />
+                  <ChevronDown className="h-5 w-5" />
                 </Button>
               </div>
             </motion.div>
