@@ -715,6 +715,7 @@ const AIFabricFramework = () => {
   const [isFilling, setIsFilling] = useState(false);
   const [fillProgress, setFillProgress] = useState(0);
   const [currentFillingProduct, setCurrentFillingProduct] = useState("");
+  const [isClearing, setIsClearing] = useState(false);
   const [policies, setPolicies] = useState<Policy[]>([]);
   const [isLoadingPolicies, setIsLoadingPolicies] = useState(false);
   const [isMigratingPolicies, setIsMigratingPolicies] = useState(false);
@@ -1736,6 +1737,54 @@ const AIFabricFramework = () => {
     }
   };
 
+  const handleClearData = async () => {
+    if (!confirm("Are you sure you want to clear all data? This action cannot be undone.")) {
+      return;
+    }
+
+    setIsClearing(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/admin/migration/clear`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        // Reload all data
+        await loadProducts();
+        await loadProductCount();
+        await loadPolicies();
+        await loadPolicyCount();
+        await loadReviews();
+        await loadReviewCount();
+        await loadCoupons();
+        await loadCouponCount();
+        await loadOrders();
+        
+        // Clear migrated product IDs
+        setMigratedProductIds([]);
+
+        toast({
+          title: "Data Cleared",
+          description: "All data has been cleared successfully",
+        });
+      } else {
+        const errorText = await response.text();
+        throw new Error(errorText || "Failed to clear data");
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to clear data. " + (error as Error).message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsClearing(false);
+    }
+  };
+
   const handleMigrateCoupons = async () => {
     if (isMigratingCoupons) return;
 
@@ -1877,6 +1926,26 @@ const AIFabricFramework = () => {
                   <>
                     <Tag className="h-5 w-5" />
                     Migrate Coupons
+                  </>
+                )}
+              </Button>
+
+              <Button
+                onClick={handleClearData}
+                disabled={isClearing || isFilling || isMigratingPolicies || isMigratingReviews || isMigratingCoupons}
+                size="lg"
+                variant="destructive"
+                className="gap-2"
+              >
+                {isClearing ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Clearing...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="h-5 w-5" />
+                    Clear Data
                   </>
                 )}
               </Button>
