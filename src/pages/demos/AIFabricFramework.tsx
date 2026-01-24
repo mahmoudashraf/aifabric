@@ -1102,7 +1102,6 @@ const AIFabricFramework = () => {
     }
     
     setAttachedProducts(prev => [...prev, product]);
-    setIsChatExpanded(true);
     toast({
       title: "Product Attached",
       description: `${product.name} attached to chat`,
@@ -1129,7 +1128,6 @@ const AIFabricFramework = () => {
     }
     
     setAttachedReviews(prev => [...prev, review]);
-    setIsChatExpanded(true);
     toast({
       title: "Review Attached",
       description: `${review.title} attached to chat`,
@@ -1148,7 +1146,6 @@ const AIFabricFramework = () => {
     }
     
     setAttachedCoupons(prev => [...prev, coupon]);
-    setIsChatExpanded(true);
     toast({
       title: "Coupon Attached",
       description: `${coupon.code} attached to chat`,
