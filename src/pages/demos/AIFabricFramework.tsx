@@ -1749,6 +1749,11 @@ const AIFabricFramework = () => {
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({
+          confirm: true,
+          clearVectors: true,
+          clearIndexingQueue: true,
+        }),
       });
 
       if (response.ok) {
