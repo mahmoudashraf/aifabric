@@ -239,43 +239,62 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         console.log("Sanitized Payload Data:", data.result.sanitizedPayload.data); // Debug log
 
         // Extract documents if INFORMATION_PROVIDED
-        if (resultType === "INFORMATION_PROVIDED" && data.result.sanitizedPayload.data?.documents) {
-          console.log("Documents found:", data.result.sanitizedPayload.data.documents); // Debug log
+        if (resultType === "INFORMATION_PROVIDED" && data.result.sanitizedPayload.data) {
+          const payload = data.result.sanitizedPayload.data;
 
-          // Transform documents to add missing titles and types
-          const transformedDocs = data.result.sanitizedPayload.data.documents.map((doc: any) => ({
-            id: doc.id || Math.random().toString(),
-            title: doc.title || doc.content?.split(' ').slice(0, 6).join(' ') + '...' || 'Document',
-            content: doc.content || '',
-            type: doc.type || doc.metadata?.vectorSpace || doc.metadata?.classification || 'document',
-            metadata: doc.metadata || {},
-            score: doc.score,
-            similarity: doc.similarity
-          }));
+          // Try to get documents from various paths
+          let rawDocs = payload.documents || payload.ragResponse?.documents || [];
 
-          console.log("Transformed documents:", transformedDocs);
-          setContextDocuments(transformedDocs);
-        } else if (resultType === "INFORMATION_PROVIDED" && data.result.sanitizedPayload.data) {
-          // Try alternate paths
-          console.log("Checking alternate document paths..."); // Debug log
-          const possibleDocs = data.result.sanitizedPayload.data.ragResponse?.documents ||
-                               data.result.sanitizedPayload.data.documents ||
-                               [];
-          if (possibleDocs.length > 0) {
-            console.log("Found documents in alternate path:", possibleDocs);
+          // Get entity type from ragResponse if available
+          const entityType = payload.ragResponse?.entityType || 'document';
 
-            // Transform documents
-            const transformedDocs = possibleDocs.map((doc: any) => ({
-              id: doc.id || Math.random().toString(),
-              title: doc.title || doc.content?.split(' ').slice(0, 6).join(' ') + '...' || 'Document',
-              content: doc.content || '',
-              type: doc.type || doc.metadata?.vectorSpace || doc.metadata?.classification || 'document',
-              metadata: doc.metadata || {},
-              score: doc.score,
-              similarity: doc.similarity
-            }));
+          console.log("Documents found:", rawDocs); // Debug log
+          console.log("Entity type:", entityType); // Debug log
 
+          if (rawDocs.length > 0) {
+            // Transform documents to add missing titles and types
+            const transformedDocs = rawDocs.map((doc: any, idx: number) => {
+              // Extract a better title from content
+              let title = doc.title;
+              if (!title && doc.content) {
+                // Try to extract product name/description from content
+                const parts = doc.content.split(' ');
+                // Take meaningful words, skip SKUs
+                const titleParts = parts.slice(1, 8).filter((word: string) =>
+                  !word.match(/^[A-Z]+-[A-Z]+-\d+$/) &&
+                  !word.match(/^\d+\.\d+$/) &&
+                  word.toLowerCase() !== 'usd'
+                );
+                title = titleParts.join(' ') + (parts.length > 8 ? '...' : '');
+              }
+
+              // Determine document type
+              let docType = doc.type || doc.metadata?.vectorSpace || doc.metadata?.classification;
+              if (!docType) {
+                // Use entityType from ragResponse, or try to infer from content
+                if (entityType.includes(',')) {
+                  // Multiple types, use first one or try to infer
+                  docType = entityType.split(',')[0].trim();
+                } else {
+                  docType = entityType;
+                }
+              }
+
+              return {
+                id: doc.id || `doc-${idx}`,
+                title: title || `Document ${idx + 1}`,
+                content: doc.content || 'No content available',
+                type: docType,
+                metadata: doc.metadata || {},
+                score: doc.score,
+                similarity: doc.similarity
+              };
+            });
+
+            console.log("Transformed documents:", transformedDocs);
             setContextDocuments(transformedDocs);
+          } else {
+            console.log("No documents found in response");
           }
         }
       } else {
@@ -530,13 +549,34 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ delay: idx * 0.1 }}
                       >
-                        <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 border-purple-200 hover:border-purple-500 bg-gradient-to-br from-white to-purple-50 dark:from-gray-800 dark:to-purple-900/20">
+                        <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 border-purple-200 hover:border-purple-500 bg-gradient-to-br from-white to-purple-50 dark:from-gray-800 dark:to-purple-900/20 overflow-hidden">
+                          {doc.metadata?.imageUrl && (
+                            <div className="relative h-32 overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
+                              <img
+                                src={doc.metadata.imageUrl}
+                                alt={doc.title}
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity bg-purple-600/90 hover:bg-purple-700 text-white backdrop-blur-sm"
+                                onClick={() => handleAttachDocument(doc)}
+                                title="Attach to chat"
+                              >
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          )}
                           <CardHeader className="pb-3">
                             <div className="flex items-start justify-between gap-2">
                               <div className="flex items-start gap-3 flex-1">
-                                <div className="p-2 bg-purple-500/10 rounded-lg">
-                                  <DocIcon className="h-5 w-5 text-purple-600" />
-                                </div>
+                                {!doc.metadata?.imageUrl && (
+                                  <div className="p-2 bg-purple-500/10 rounded-lg">
+                                    <DocIcon className="h-5 w-5 text-purple-600" />
+                                  </div>
+                                )}
                                 <div className="flex-1 min-w-0">
                                   <CardTitle className="text-sm font-semibold line-clamp-2">
                                     {doc.title}
@@ -546,15 +586,17 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                   </Badge>
                                 </div>
                               </div>
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity bg-purple-600 hover:bg-purple-700 text-white"
-                                onClick={() => handleAttachDocument(doc)}
-                                title="Attach to chat"
-                              >
-                                <Plus className="h-4 w-4" />
-                              </Button>
+                              {!doc.metadata?.imageUrl && (
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity bg-purple-600 hover:bg-purple-700 text-white"
+                                  onClick={() => handleAttachDocument(doc)}
+                                  title="Attach to chat"
+                                >
+                                  <Plus className="h-4 w-4" />
+                                </Button>
+                              )}
                             </div>
                           </CardHeader>
                           <CardContent>
