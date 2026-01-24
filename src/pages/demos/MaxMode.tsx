@@ -151,7 +151,7 @@ const ActionResultRenderer = ({
     return (
       <div className="mt-3 space-y-2">
         {visibleItems.map((item: any, idx: number) => (
-          <Card key={idx} className="text-xs bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200 hover:border-purple-400 transition-colors">
+          <Card key={idx} className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200 hover:border-purple-400 transition-colors" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
             <CardContent className="p-3">
               {typeof item === "object" && item !== null ? (
                 <div className="space-y-2">
@@ -217,7 +217,7 @@ const ActionResultRenderer = ({
                 </h4>
                 <div className="space-y-2">
                   {visibleItems.map((item: any, idx: number) => (
-                    <Card key={idx} className="text-xs bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200 hover:border-purple-400 transition-colors">
+                    <Card key={idx} className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200 hover:border-purple-400 transition-colors" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
                       <CardContent className="p-3">
                         {typeof item === "object" && item !== null ? (
                           <div className="space-y-2">
@@ -267,7 +267,7 @@ const ActionResultRenderer = ({
     // Render simple object
     return (
       <div className="mt-3">
-        <Card className="text-xs bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200">
+        <Card className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
           <CardContent className="p-3">
             <div className="space-y-2">
               {Object.entries(data).map(([key, value]) => (
@@ -766,7 +766,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             ))}
                           </div>
                         )}
-                        <p className={`whitespace-pre-wrap ${message.type === "ai" && styles ? styles.text : ""}`}>
+                        <p className={`whitespace-pre-wrap leading-relaxed ${message.type === "ai" && styles ? styles.text : ""}`} style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
                           {message.content}
                         </p>
                         {message.result?.sanitizedPayload?.type === "ACTION_EXECUTED" &&
@@ -938,7 +938,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             </div>
                           </CardHeader>
                           <CardContent>
-                            <p className="text-xs text-muted-foreground line-clamp-3">
+                            <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
                               {doc.content}
                             </p>
                             {(doc.similarity || doc.score) && (
@@ -1075,7 +1075,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="text-xs h-auto py-2 px-3 whitespace-normal text-left bg-white/80 hover:bg-purple-100 border-purple-300 hover:border-purple-500 transition-all group"
+                        className="text-sm h-auto py-2 px-3 whitespace-normal text-left bg-white/80 hover:bg-purple-100 border-purple-300 hover:border-purple-500 transition-all group leading-relaxed"
+                        style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}
                         onClick={() => {
                           handleChatQuery(suggestion);
                         }}
@@ -1127,7 +1128,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   handleChatQuery();
                 }
               }}
-              className="min-h-[80px] pr-16 text-lg resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl"
+              className="min-h-[80px] pr-16 text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed"
+              style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}
               disabled={isLoading}
             />
             <Button
