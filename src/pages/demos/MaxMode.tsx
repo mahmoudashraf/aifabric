@@ -354,12 +354,15 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     const timeoutId = setTimeout(async () => {
       setIsLoadingSuggestions(true);
       try {
-        const parts = attachedItems.map(item => {
+        // Build context string for the API
+        const contextParts = attachedItems.map(item => {
           if (item.type === "document") {
-            return `Document: ${item.data.title} - ${item.data.content.substring(0, 100)}`;
+            return `${item.data.title}: ${item.data.content}`;
           }
-          return `${item.type}: ${JSON.stringify(item.data)}`;
+          return JSON.stringify(item.data);
         });
+
+        const contextString = contextParts.join("\n\n");
 
         const response = await fetch(`${API_BASE_URL}/chat/suggestions`, {
           method: "POST",
@@ -367,8 +370,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            context: parts.join("\n"),
+            content: contextString,
             userId: "demo-user",
+            attachments: attachedItems,
           }),
         });
 
@@ -377,6 +381,15 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           if (data.suggestions && Array.isArray(data.suggestions)) {
             setSuggestions(data.suggestions.slice(0, 4)); // Limit to 4 suggestions
           }
+        } else {
+          // Fallback to generic suggestions on error
+          const genericSuggestions = [
+            "Tell me more about this",
+            "What are the key details?",
+            "How does this compare to alternatives?",
+            "What should I know before deciding?",
+          ];
+          setSuggestions(genericSuggestions);
         }
       } catch (error) {
         console.error("Failed to load suggestions:", error);
