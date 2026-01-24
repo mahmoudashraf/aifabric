@@ -55,28 +55,28 @@ const API_BASE_URL = "https://ai-fabric-framework-production.up.railway.app/api"
 // Sample products for stock filling
 const SAMPLE_PRODUCTS = [
   // Electronics
-  { sku: "ELEC-LAPTOP-001", name: "UltraBook Pro 15", description: "High-performance laptop with Intel i7, 16GB RAM, 512GB SSD", price: 1299.99, category: "Electronics", inStockQty: 15 },
-  { sku: "ELEC-LAPTOP-002", name: "Gaming Beast X1", description: "Gaming laptop with RTX 4070, 32GB RAM, 1TB SSD", price: 2499.99, category: "Electronics", inStockQty: 8 },
-  { sku: "ELEC-PHONE-001", name: "SmartPhone Pro Max", description: "Latest flagship smartphone with 5G, 256GB storage", price: 999.99, category: "Electronics", inStockQty: 50 },
-  { sku: "ELEC-PHONE-002", name: "Budget Phone Plus", description: "Affordable smartphone with great battery life", price: 299.99, category: "Electronics", inStockQty: 100 },
-  { sku: "ELEC-TABLET-001", name: "ProTab Ultra", description: "Professional tablet with stylus, 12.9 inch display", price: 899.99, category: "Electronics", inStockQty: 25 },
-  { sku: "ELEC-WATCH-001", name: "SmartWatch Fitness Pro", description: "Fitness tracker with heart rate monitor, GPS", price: 249.99, category: "Electronics", inStockQty: 75 },
-  { sku: "ELEC-HEADPHONE-001", name: "Wireless Noise-Cancelling Headphones", description: "Premium over-ear headphones with ANC", price: 349.99, category: "Electronics", inStockQty: 40 },
-  { sku: "ELEC-EARBUDS-001", name: "True Wireless Earbuds", description: "Compact earbuds with charging case", price: 129.99, category: "Electronics", inStockQty: 120 },
-  { sku: "ELEC-SPEAKER-001", name: "Portable Bluetooth Speaker", description: "Waterproof speaker with 360° sound", price: 79.99, category: "Electronics", inStockQty: 60 },
-  { sku: "ELEC-CAMERA-001", name: "Mirrorless Camera Kit", description: "Professional camera with 24MP sensor and lens", price: 1499.99, category: "Electronics", inStockQty: 12 },
+  { sku: "ELEC-LAPTOP-001", name: "UltraBook Pro 15", description: "High-performance laptop with Intel i7, 16GB RAM, 512GB SSD", price: 1299.99, category: "Electronics", inStockQty: 15, imageUrl: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&h=300&fit=crop" },
+  { sku: "ELEC-LAPTOP-002", name: "Gaming Beast X1", description: "Gaming laptop with RTX 4070, 32GB RAM, 1TB SSD", price: 2499.99, category: "Electronics", inStockQty: 8, imageUrl: "https://images.unsplash.com/photo-1525547719571-a2d4ac8945e2?w=400&h=300&fit=crop" },
+  { sku: "ELEC-PHONE-001", name: "SmartPhone Pro Max", description: "Latest flagship smartphone with 5G, 256GB storage", price: 999.99, category: "Electronics", inStockQty: 50, imageUrl: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=300&fit=crop" },
+  { sku: "ELEC-PHONE-002", name: "Budget Phone Plus", description: "Affordable smartphone with great battery life", price: 299.99, category: "Electronics", inStockQty: 100, imageUrl: "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=300&fit=crop" },
+  { sku: "ELEC-TABLET-001", name: "ProTab Ultra", description: "Professional tablet with stylus, 12.9 inch display", price: 899.99, category: "Electronics", inStockQty: 25, imageUrl: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&h=300&fit=crop" },
+  { sku: "ELEC-WATCH-001", name: "SmartWatch Fitness Pro", description: "Fitness tracker with heart rate monitor, GPS", price: 249.99, category: "Electronics", inStockQty: 75, imageUrl: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop" },
+  { sku: "ELEC-HEADPHONE-001", name: "Wireless Noise-Cancelling Headphones", description: "Premium over-ear headphones with ANC", price: 349.99, category: "Electronics", inStockQty: 40, imageUrl: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop" },
+  { sku: "ELEC-EARBUDS-001", name: "True Wireless Earbuds", description: "Compact earbuds with charging case", price: 129.99, category: "Electronics", inStockQty: 120, imageUrl: "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=300&fit=crop" },
+  { sku: "ELEC-SPEAKER-001", name: "Portable Bluetooth Speaker", description: "Waterproof speaker with 360° sound", price: 79.99, category: "Electronics", inStockQty: 60, imageUrl: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=300&fit=crop" },
+  { sku: "ELEC-CAMERA-001", name: "Mirrorless Camera Kit", description: "Professional camera with 24MP sensor and lens", price: 1499.99, category: "Electronics", inStockQty: 12, imageUrl: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=400&h=300&fit=crop" },
 
   // Women's Footwear
-  { sku: "FOOT-HEEL-001", name: "Classic Stiletto Heels", description: "Elegant high heels perfect for formal occasions", price: 89.99, category: "Women's Footwear", inStockQty: 45 },
-  { sku: "FOOT-HEEL-002", name: "Block Heel Pumps", description: "Comfortable block heels for all-day wear", price: 69.99, category: "Women's Footwear", inStockQty: 55 },
-  { sku: "FOOT-BOOT-001", name: "Ankle Boots Leather", description: "Premium leather ankle boots with zipper", price: 129.99, category: "Women's Footwear", inStockQty: 30 },
-  { sku: "FOOT-BOOT-002", name: "Knee-High Boots", description: "Stylish knee-high boots for winter", price: 159.99, category: "Women's Footwear", inStockQty: 20 },
-  { sku: "FOOT-SNEAKER-001", name: "Running Sneakers", description: "Lightweight running shoes with cushioning", price: 79.99, category: "Women's Footwear", inStockQty: 85 },
-  { sku: "FOOT-SNEAKER-002", name: "Fashion Sneakers", description: "Trendy casual sneakers for everyday wear", price: 59.99, category: "Women's Footwear", inStockQty: 90 },
-  { sku: "FOOT-SANDAL-001", name: "Summer Flat Sandals", description: "Comfortable flat sandals for warm weather", price: 39.99, category: "Women's Footwear", inStockQty: 70 },
-  { sku: "FOOT-SANDAL-002", name: "Wedge Sandals", description: "Elegant wedge sandals with ankle strap", price: 69.99, category: "Women's Footwear", inStockQty: 35 },
-  { sku: "FOOT-FLAT-001", name: "Ballet Flats", description: "Classic ballet flats in multiple colors", price: 49.99, category: "Women's Footwear", inStockQty: 65 },
-  { sku: "FOOT-LOAFER-001", name: "Leather Loafers", description: "Professional leather loafers for office", price: 89.99, category: "Women's Footwear", inStockQty: 40 },
+  { sku: "FOOT-HEEL-001", name: "Classic Stiletto Heels", description: "Elegant high heels perfect for formal occasions", price: 89.99, category: "Women's Footwear", inStockQty: 45, imageUrl: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&h=300&fit=crop" },
+  { sku: "FOOT-HEEL-002", name: "Block Heel Pumps", description: "Comfortable block heels for all-day wear", price: 69.99, category: "Women's Footwear", inStockQty: 55, imageUrl: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=300&fit=crop" },
+  { sku: "FOOT-BOOT-001", name: "Ankle Boots Leather", description: "Premium leather ankle boots with zipper", price: 129.99, category: "Women's Footwear", inStockQty: 30, imageUrl: "https://images.unsplash.com/photo-1605812860427-4024433a70fd?w=400&h=300&fit=crop" },
+  { sku: "FOOT-BOOT-002", name: "Knee-High Boots", description: "Stylish knee-high boots for winter", price: 159.99, category: "Women's Footwear", inStockQty: 20, imageUrl: "https://images.unsplash.com/photo-1608256246200-53e6092ff478?w=400&h=300&fit=crop" },
+  { sku: "FOOT-SNEAKER-001", name: "Running Sneakers", description: "Lightweight running shoes with cushioning", price: 79.99, category: "Women's Footwear", inStockQty: 85, imageUrl: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop" },
+  { sku: "FOOT-SNEAKER-002", name: "Fashion Sneakers", description: "Trendy casual sneakers for everyday wear", price: 59.99, category: "Women's Footwear", inStockQty: 90, imageUrl: "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=400&h=300&fit=crop" },
+  { sku: "FOOT-SANDAL-001", name: "Summer Flat Sandals", description: "Comfortable flat sandals for warm weather", price: 39.99, category: "Women's Footwear", inStockQty: 70, imageUrl: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=400&h=300&fit=crop" },
+  { sku: "FOOT-SANDAL-002", name: "Wedge Sandals", description: "Elegant wedge sandals with ankle strap", price: 69.99, category: "Women's Footwear", inStockQty: 35, imageUrl: "https://images.unsplash.com/photo-1605812860427-4024433a70fd?w=400&h=300&fit=crop" },
+  { sku: "FOOT-FLAT-001", name: "Ballet Flats", description: "Classic ballet flats in multiple colors", price: 49.99, category: "Women's Footwear", inStockQty: 65, imageUrl: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=300&fit=crop" },
+  { sku: "FOOT-LOAFER-001", name: "Leather Loafers", description: "Professional leather loafers for office", price: 89.99, category: "Women's Footwear", inStockQty: 40, imageUrl: "https://images.unsplash.com/photo-1605812860427-4024433a70fd?w=400&h=300&fit=crop" },
 ];
 
 // Sample policies for migration
@@ -266,6 +266,7 @@ interface Product {
   category?: string;
   inStockQty?: number;
   relevanceScore?: number;
+  imageUrl?: string;
 }
 
 interface Order {
@@ -2059,6 +2060,18 @@ const AIFabricFramework = () => {
                             transition={{ duration: 0.3, delay: index * 0.05 }}
                           >
                             <Card className="hover:shadow-lg transition-all group relative">
+                              {product.imageUrl && (
+                                <div className="relative w-full h-48 overflow-hidden bg-muted">
+                                  <img
+                                    src={product.imageUrl}
+                                    alt={product.name}
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                    onError={(e) => {
+                                      (e.target as HTMLImageElement).style.display = 'none';
+                                    }}
+                                  />
+                                </div>
+                              )}
                               <CardHeader>
                                 <div className="flex items-start justify-between">
                                   <div className="flex-1">
