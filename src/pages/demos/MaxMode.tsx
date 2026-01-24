@@ -732,9 +732,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       </div>
 
       {/* Main Split Content */}
-      <div className="h-full pt-36 pb-40 relative">
+      <div className="h-full pt-36 relative">
         {/* Chat Messages - Full Width */}
-        <div className="absolute inset-0 overflow-y-auto px-6 py-6">
+        <div className="absolute inset-0 overflow-y-auto px-6 py-6 pb-[240px]">
           <div className="max-w-3xl mx-auto space-y-4">
             <AnimatePresence mode="popLayout">
               {chatMessages.map((message) => {
