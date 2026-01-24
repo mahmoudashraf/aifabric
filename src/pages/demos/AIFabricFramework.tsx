@@ -49,6 +49,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
+import MaxMode from "./MaxMode";
 
 const API_BASE_URL = "https://ai-fabric-framework-production.up.railway.app/api";
 
@@ -734,6 +735,7 @@ const AIFabricFramework = () => {
   const [couponCount, setCouponCount] = useState(0);
   const [migratedProductIds, setMigratedProductIds] = useState<string[]>([]);
   const [isChatExpanded, setIsChatExpanded] = useState(false);
+  const [isMaxModeOpen, setIsMaxModeOpen] = useState(false);
   const [attachedProducts, setAttachedProducts] = useState<Product[]>([]);
   const [attachedReviews, setAttachedReviews] = useState<Review[]>([]);
   const [attachedCoupons, setAttachedCoupons] = useState<Coupon[]>([]);
@@ -3661,9 +3663,20 @@ const AIFabricFramework = () => {
                 )}
               </Button>
             </div>
+            <Button
+              onClick={() => setIsMaxModeOpen(true)}
+              className="h-[108px] px-6 bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 shadow-xl flex flex-col gap-1"
+            >
+              <Sparkles className="h-6 w-6" />
+              <span className="font-bold text-sm">MAX</span>
+              <span className="text-[10px] opacity-90">Mode</span>
+            </Button>
           </div>
         </div>
       </div>
+
+      {/* MAX Mode */}
+      <MaxMode isOpen={isMaxModeOpen} onClose={() => setIsMaxModeOpen(false)} />
     </div>
   );
 };
