@@ -1098,6 +1098,11 @@ const AIFabricFramework = () => {
     });
   };
 
+  const handleAddToChat = (content: string) => {
+    setChatQuery(content);
+    setIsChatExpanded(true);
+  };
+
   const handleConfirmationAction = async (action: string, messageData?: any) => {
     const query = action === "confirm" ? "Yes, confirm" : "No, cancel";
 
@@ -1709,7 +1714,6 @@ const AIFabricFramework = () => {
             <div className="flex gap-2 flex-wrap">
               <Button
                 onClick={handleFillStock}
-                disabled={isFilling || isMigratingPolicies || isMigratingReviews || isMigratingCoupons}
                 size="lg"
                 className="gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
               >
@@ -1728,7 +1732,6 @@ const AIFabricFramework = () => {
 
               <Button
                 onClick={handleMigratePolicies}
-                disabled={isMigratingPolicies || isFilling || isMigratingReviews || isMigratingCoupons}
                 size="lg"
                 className="gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700"
               >
@@ -1747,7 +1750,6 @@ const AIFabricFramework = () => {
 
               <Button
                 onClick={handleMigrateReviews}
-                disabled={isMigratingReviews || isFilling || isMigratingPolicies || isMigratingCoupons}
                 size="lg"
                 className="gap-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700"
               >
@@ -1766,7 +1768,6 @@ const AIFabricFramework = () => {
 
               <Button
                 onClick={handleMigrateCoupons}
-                disabled={isMigratingCoupons || isFilling || isMigratingPolicies || isMigratingReviews}
                 size="lg"
                 className="gap-2 bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700"
               >
@@ -2689,6 +2690,15 @@ const AIFabricFramework = () => {
                                       </span>
                                     </div>
                                   </div>
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="h-8 w-8"
+                                    onClick={() => handleAddToChat(`Review: ${review.title} (${review.rating}/5)\\n${review.text}`)}
+                                    title="Add to chat"
+                                  >
+                                    <MessageSquare className="h-4 w-4" />
+                                  </Button>
                                 </div>
                               </CardHeader>
                               <CardContent>
@@ -2810,12 +2820,31 @@ const AIFabricFramework = () => {
                                       {coupon.description}
                                     </CardDescription>
                                   </div>
-                                  <Badge
-                                    variant={coupon.isActive ? "default" : "secondary"}
-                                    className="text-xs"
-                                  >
-                                    {coupon.isActive ? "Active" : "Inactive"}
-                                  </Badge>
+                                  <div className="flex items-center gap-2">
+                                    <Badge
+                                      variant={coupon.isActive ? "default" : "secondary"}
+                                      className="text-xs"
+                                    >
+                                      {coupon.isActive ? "Active" : "Inactive"}
+                                    </Badge>
+                                    <Button
+                                      size="icon"
+                                      variant="ghost"
+                                      className="h-8 w-8"
+                                      onClick={() =>
+                                        handleAddToChat(
+                                          `Coupon ${coupon.code}: ${coupon.description}. Discount: ${
+                                            coupon.discountType === "PERCENTAGE"
+                                              ? `${coupon.discountValue}%`
+                                              : `$${coupon.discountValue}`
+                                          }. Min purchase: ${coupon.minPurchaseAmount ?? "N/A"}.`
+                                        )
+                                      }
+                                      title="Add to chat"
+                                    >
+                                      <MessageSquare className="h-4 w-4" />
+                                    </Button>
+                                  </div>
                                 </div>
                               </CardHeader>
                               <CardContent>
@@ -3406,10 +3435,21 @@ const AIFabricFramework = () => {
               className="mb-2"
             >
               <div className="p-3 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-lg border border-purple-500/20">
-                <p className="text-xs text-muted-foreground mb-2 flex items-center gap-2">
-                  <Sparkles className="h-3 w-3 text-purple-600" />
-                  Suggested questions:
-                </p>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs text-muted-foreground flex items-center gap-2">
+                    <Sparkles className="h-3 w-3 text-purple-600" />
+                    Suggested questions:
+                  </p>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                    onClick={() => setSuggestions([])}
+                    aria-label="Dismiss suggestions"
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
                 <div className="flex flex-wrap gap-2">
                   {suggestions.map((suggestion, idx) => (
                     <Button
