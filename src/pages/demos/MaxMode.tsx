@@ -27,6 +27,10 @@ import {
   FileText,
   Image as ImageIcon,
   Paperclip,
+  MessageSquarePlus,
+  BrainCircuit,
+  Wand2,
+  ArrowRight,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -294,6 +298,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [attachedItems, setAttachedItems] = useState<Array<{ type: string; data: any }>>([]);
   const [contextDocuments, setContextDocuments] = useState<Document[]>([]);
   const [expandedActions, setExpandedActions] = useState<{ [key: string]: number }>({});
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const contextPanelEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -338,16 +344,78 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     }
   }, [isOpen]);
 
+  // Generate smart suggestions when items are attached
+  useEffect(() => {
+    if (attachedItems.length === 0) {
+      setSuggestions([]);
+      return;
+    }
+
+    const timeoutId = setTimeout(async () => {
+      setIsLoadingSuggestions(true);
+      try {
+        const parts = attachedItems.map(item => {
+          if (item.type === "document") {
+            return `Document: ${item.data.title} - ${item.data.content.substring(0, 100)}`;
+          }
+          return `${item.type}: ${JSON.stringify(item.data)}`;
+        });
+
+        const response = await fetch(`${API_BASE_URL}/chat/suggestions`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            context: parts.join("\n"),
+            userId: "demo-user",
+          }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.suggestions && Array.isArray(data.suggestions)) {
+            setSuggestions(data.suggestions.slice(0, 4)); // Limit to 4 suggestions
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load suggestions:", error);
+        // Fallback to generic suggestions
+        const genericSuggestions = [
+          "Tell me more about this",
+          "What are the key details?",
+          "How does this compare to alternatives?",
+          "What should I know before deciding?",
+        ];
+        setSuggestions(genericSuggestions);
+      } finally {
+        setIsLoadingSuggestions(false);
+      }
+    }, 2000); // 2 second delay for better UX
+
+    return () => clearTimeout(timeoutId);
+  }, [attachedItems]);
+
   const handleQuickAction = (query: string) => {
     setChatQuery(query);
     setTimeout(() => handleChatQuery(query), 100);
   };
 
   const handleAttachDocument = (doc: Document) => {
+    // Check if already attached
+    if (attachedItems.some(item => item.type === "document" && item.data.id === doc.id)) {
+      toast({
+        title: "Already Attached",
+        description: `"${doc.title}" is already in your context`,
+        variant: "default",
+      });
+      return;
+    }
+
     setAttachedItems(prev => [...prev, { type: "document", data: doc }]);
     toast({
-      title: "Document Attached",
-      description: `"${doc.title}" attached to chat`,
+      title: "✨ Added to AI Context",
+      description: `"${doc.title}" is now part of the conversation`,
     });
   };
 
@@ -386,6 +454,18 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     const query = presetQuery || chatQuery;
     if (!query.trim()) return;
 
+    // Build enhanced query with attached context
+    let enhancedQuery = query;
+    if (attachedItems.length > 0) {
+      const contexts = attachedItems.map(item => {
+        if (item.type === "document") {
+          return `Document: ${item.data.title} - ${item.data.content}`;
+        }
+        return JSON.stringify(item.data);
+      });
+      enhancedQuery = `${query}\n\n[Context: ${contexts.join("\n")}]`;
+    }
+
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       type: "user",
@@ -397,7 +477,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     setChatMessages((prev) => [...prev, userMessage]);
     setChatQuery("");
     setIsLoading(true);
+
+    // Clear attachments and suggestions after sending
+    const currentAttachments = [...attachedItems];
     setAttachedItems([]);
+    setSuggestions([]);
 
     try {
       const response = await fetch(`${API_BASE_URL}/chat/query`, {
@@ -406,7 +490,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          query: query,
+          query: enhancedQuery,
           userId: "demo-user",
           sessionId: "demo-session-max",
           conversationId: currentConversationId || undefined,
@@ -625,9 +709,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       </div>
 
       {/* Main Split Content */}
-      <div className="h-full pt-36 pb-40 flex">
-        {/* Left: Chat Messages */}
-        <div className="flex-1 overflow-y-auto px-6 py-6">
+      <div className="h-full pt-36 pb-40 relative">
+        {/* Chat Messages - Full Width */}
+        <div className="absolute inset-0 overflow-y-auto px-6 py-6">
           <div className="max-w-3xl mx-auto space-y-4">
             <AnimatePresence mode="popLayout">
               {chatMessages.map((message) => {
@@ -725,15 +809,15 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           </div>
         </div>
 
-        {/* Right: Context Panel (Documents) */}
+        {/* Right: Context Panel (Documents) - Overlay */}
         <AnimatePresence>
           {contextDocuments.length > 0 && (
             <motion.div
-              initial={{ opacity: 0, x: 300 }}
+              initial={{ opacity: 0, x: 420 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 300 }}
+              exit={{ opacity: 0, x: 420 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="w-[420px] border-l-2 border-purple-500/30 bg-gradient-to-b from-purple-50/50 via-pink-50/30 to-blue-50/50 dark:from-gray-900/50 dark:via-purple-900/30 dark:to-blue-900/50 backdrop-blur-md overflow-y-auto p-6 shadow-2xl"
+              className="absolute top-0 right-0 bottom-0 w-[420px] border-l-2 border-purple-500/30 bg-gradient-to-b from-purple-50/95 via-pink-50/95 to-blue-50/95 dark:from-gray-900/95 dark:via-purple-900/95 dark:to-blue-900/95 backdrop-blur-xl overflow-y-auto p-6 shadow-2xl z-10"
             >
               <div className="sticky top-0 bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 backdrop-blur-md p-5 rounded-2xl mb-6 shadow-2xl border-2 border-white/20">
                 <div className="flex items-center justify-between mb-3">
@@ -787,15 +871,20 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                               />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity bg-purple-600/90 hover:bg-purple-700 text-white backdrop-blur-sm"
-                                onClick={() => handleAttachDocument(doc)}
-                                title="Attach to chat"
+                              <motion.div
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
                               >
-                                <Plus className="h-4 w-4" />
-                              </Button>
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  className="absolute top-2 right-2 h-9 w-9 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white backdrop-blur-sm shadow-lg"
+                                  onClick={() => handleAttachDocument(doc)}
+                                  title="Add to AI Context"
+                                >
+                                  <BrainCircuit className="h-4 w-4" />
+                                </Button>
+                              </motion.div>
                             </div>
                           )}
                           <CardHeader className="pb-3">
@@ -820,15 +909,20 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                 </div>
                               </div>
                               {!doc.metadata?.imageUrl && (
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  className="h-9 w-9 opacity-0 group-hover:opacity-100 transition-all bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg"
-                                  onClick={() => handleAttachDocument(doc)}
-                                  title="Attach to chat"
+                                <motion.div
+                                  whileHover={{ scale: 1.1, rotate: [0, -5, 5, 0] }}
+                                  whileTap={{ scale: 0.9 }}
                                 >
-                                  <Plus className="h-4 w-4" />
-                                </Button>
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="h-9 w-9 opacity-0 group-hover:opacity-100 transition-all bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg"
+                                    onClick={() => handleAttachDocument(doc)}
+                                    title="Add to AI Context"
+                                  >
+                                    <BrainCircuit className="h-4 w-4" />
+                                  </Button>
+                                </motion.div>
                               )}
                             </div>
                           </CardHeader>
@@ -884,32 +978,136 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       {/* Input Area */}
       <div className="absolute bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t-2 border-purple-500/30 p-6">
         <div className="max-w-4xl mx-auto">
+          {/* Attached Items - Beautiful Cards */}
           {attachedItems.length > 0 && (
-            <div className="mb-3 flex flex-wrap gap-2">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-3 flex flex-wrap gap-2 max-h-[200px] overflow-y-auto"
+            >
               <AnimatePresence mode="popLayout">
                 {attachedItems.map((item, idx) => (
                   <motion.div
                     key={idx}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
+                    initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9, y: -10 }}
+                    transition={{ type: "spring", damping: 20 }}
                   >
-                    <Badge variant="secondary" className="gap-2 py-1.5 px-3">
-                      <Paperclip className="h-3 w-3" />
-                      <span className="capitalize">{item.type}:</span> {item.data.title || item.data.name}
-                      <X
-                        className="h-3 w-3 cursor-pointer hover:text-destructive"
-                        onClick={() => setAttachedItems(prev => prev.filter((_, i) => i !== idx))}
-                      />
-                    </Badge>
+                    <Card className="border-2 border-purple-400/50 bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-blue-500/20 shadow-lg hover:shadow-xl transition-all">
+                      <CardContent className="p-3 flex items-center gap-3">
+                        <motion.div
+                          whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+                          transition={{ duration: 0.5 }}
+                          className="p-2 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex-shrink-0"
+                        >
+                          <BrainCircuit className="h-4 w-4 text-white" />
+                        </motion.div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold text-purple-900 dark:text-purple-100 truncate">
+                            {item.data.title || item.data.name || "Document"}
+                          </p>
+                          <p className="text-[10px] text-purple-700 dark:text-purple-300 flex items-center gap-1">
+                            <Sparkles className="h-2.5 w-2.5" />
+                            Added to AI context
+                          </p>
+                        </div>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => setAttachedItems(prev => prev.filter((_, i) => i !== idx))}
+                          className="h-7 w-7 flex-shrink-0 hover:bg-red-500/20 text-purple-700 hover:text-red-600"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </Button>
+                      </CardContent>
+                    </Card>
                   </motion.div>
                 ))}
               </AnimatePresence>
-            </div>
+            </motion.div>
+          )}
+
+          {/* Smart Suggestions */}
+          {suggestions.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-3"
+            >
+              <div className="p-4 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 rounded-xl border-2 border-purple-300/50 shadow-lg">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-xs font-semibold text-purple-800 dark:text-purple-200 flex items-center gap-2">
+                    <Wand2 className="h-4 w-4" />
+                    AI Suggestions
+                  </p>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-6 w-6 text-purple-600 hover:text-purple-900"
+                    onClick={() => setSuggestions([])}
+                    aria-label="Dismiss suggestions"
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {suggestions.map((suggestion, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: idx * 0.1 }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-xs h-auto py-2 px-3 whitespace-normal text-left bg-white/80 hover:bg-purple-100 border-purple-300 hover:border-purple-500 transition-all group"
+                        onClick={() => {
+                          handleChatQuery(suggestion);
+                        }}
+                      >
+                        <span className="flex items-center gap-1.5">
+                          <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                          {suggestion}
+                        </span>
+                      </Button>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Loading Suggestions */}
+          {isLoadingSuggestions && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="mb-3"
+            >
+              <div className="p-3 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-lg border-2 border-purple-300/50">
+                <p className="text-xs text-purple-700 dark:text-purple-300 flex items-center gap-2">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  >
+                    <Sparkles className="h-3.5 w-3.5" />
+                  </motion.div>
+                  Generating smart suggestions...
+                </p>
+              </div>
+            </motion.div>
           )}
           <div className="relative">
             <Textarea
-              placeholder="Ask me anything... (Try: 'Show my cart', 'Find wireless headphones', 'Apply discount code')"
+              placeholder={
+                attachedItems.length > 0
+                  ? `Ask about ${attachedItems.length} attached ${attachedItems.length === 1 ? 'item' : 'items'}... 🤖✨`
+                  : "Ask me anything... (Try: 'Show my cart', 'Find wireless headphones', 'Apply discount code')"
+              }
               value={chatQuery}
               onChange={(e) => setChatQuery(e.target.value)}
               onKeyPress={(e) => {
