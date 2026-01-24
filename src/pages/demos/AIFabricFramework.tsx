@@ -1422,7 +1422,15 @@ const AIFabricFramework = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(product),
+          body: JSON.stringify({
+            sku: product.sku,
+            name: product.name,
+            description: product.description,
+            price: product.price,
+            category: product.category,
+            inStockQty: product.inStockQty,
+            imageUrl: product.imageUrl,
+          }),
         });
 
         if (response.ok) {
