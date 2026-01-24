@@ -735,6 +735,8 @@ const AIFabricFramework = () => {
   const [migratedProductIds, setMigratedProductIds] = useState<string[]>([]);
   const [isChatExpanded, setIsChatExpanded] = useState(false);
   const [attachedProducts, setAttachedProducts] = useState<Product[]>([]);
+  const [attachedReviews, setAttachedReviews] = useState<Review[]>([]);
+  const [attachedCoupons, setAttachedCoupons] = useState<Coupon[]>([]);
   const [expandedOrders, setExpandedOrders] = useState<{ [key: string]: number }>({});
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
@@ -802,9 +804,9 @@ const AIFabricFramework = () => {
     }
   }, [chatMessages, isChatExpanded]);
 
-  // Fetch suggestions when products are attached
+  // Fetch suggestions when items are attached
   useEffect(() => {
-    if (attachedProducts.length === 0) {
+    if (attachedProducts.length === 0 && attachedReviews.length === 0 && attachedCoupons.length === 0) {
       setSuggestions([]);
       return;
     }
@@ -813,9 +815,23 @@ const AIFabricFramework = () => {
       setIsLoadingSuggestions(true);
       try {
         // Build attachment content for suggestions API
-        const attachmentContent = attachedProducts.map(p => 
-          `${p.name} - ${p.description}, Price: $${p.price}, SKU: ${p.sku}`
-        ).join('\n');
+        const parts: string[] = [];
+        if (attachedProducts.length > 0) {
+          parts.push(...attachedProducts.map(p => 
+            `Product: ${p.name} - ${p.description}, Price: $${p.price}, SKU: ${p.sku}`
+          ));
+        }
+        if (attachedReviews.length > 0) {
+          parts.push(...attachedReviews.map(r => 
+            `Review: ${r.title} (${r.rating}/5) - ${r.text}`
+          ));
+        }
+        if (attachedCoupons.length > 0) {
+          parts.push(...attachedCoupons.map(c => 
+            `Coupon: ${c.code} - ${c.description}, Discount: ${c.discountType === "PERCENTAGE" ? `${c.discountValue}%` : `$${c.discountValue}`}`
+          ));
+        }
+        const attachmentContent = parts.join('\n');
 
         const response = await fetch(`${API_BASE_URL}/chat/suggestions`, {
           method: "POST",
@@ -854,7 +870,7 @@ const AIFabricFramework = () => {
     }, 3000); // 3 second delay
 
     return () => clearTimeout(timeoutId);
-  }, [attachedProducts]);
+  }, [attachedProducts, attachedReviews, attachedCoupons]);
 
   const loadProducts = async (limit = 50) => {
     setIsLoadingProducts(true);
@@ -1098,9 +1114,58 @@ const AIFabricFramework = () => {
     });
   };
 
-  const handleAddToChat = (content: string) => {
-    setChatQuery(content);
+  const handleAttachReview = (review: Review) => {
+    // Check if review is already attached
+    if (attachedReviews.some(r => r.id === review.id)) {
+      toast({
+        title: "Already Attached",
+        description: "This review is already attached to chat",
+        variant: "default",
+      });
+      return;
+    }
+    
+    setAttachedReviews(prev => [...prev, review]);
     setIsChatExpanded(true);
+    toast({
+      title: "Review Attached",
+      description: `${review.title} attached to chat`,
+    });
+  };
+
+  const handleAttachCoupon = (coupon: Coupon) => {
+    // Check if coupon is already attached
+    if (attachedCoupons.some(c => c.id === coupon.id)) {
+      toast({
+        title: "Already Attached",
+        description: "This coupon is already attached to chat",
+        variant: "default",
+      });
+      return;
+    }
+    
+    setAttachedCoupons(prev => [...prev, coupon]);
+    setIsChatExpanded(true);
+    toast({
+      title: "Coupon Attached",
+      description: `${coupon.code} attached to chat`,
+    });
+  };
+
+  const handleRemoveAttachedReview = (reviewId: string) => {
+    setAttachedReviews(prev => prev.filter(r => r.id !== reviewId));
+    toast({
+      title: "Review Removed",
+      description: "Review removed from attachments",
+    });
+  };
+
+  const handleRemoveAttachedCoupon = (couponId: string) => {
+    setAttachedCoupons(prev => prev.filter(c => c.id !== couponId));
+    toast({
+      title: "Coupon Removed",
+      description: "Coupon removed from attachments",
+    });
   };
 
   const handleConfirmationAction = async (action: string, messageData?: any) => {
@@ -1191,13 +1256,33 @@ const AIFabricFramework = () => {
     const queryToUse = queryOverride || chatQuery;
     if (!queryToUse.trim()) return;
 
-    // Build query with product context if attached
+    // Build query with all attached context
     let enhancedQuery = queryToUse;
+    const contexts: string[] = [];
+    
     if (attachedProducts.length > 0) {
       const productContexts = attachedProducts.map(p => 
         `${p.name} - ${p.description}, Price: $${p.price}, SKU: ${p.sku}`
       ).join('\n');
-      enhancedQuery = `${queryToUse}\n\n[Product Context:\n${productContexts}]`;
+      contexts.push(`Product Context:\n${productContexts}`);
+    }
+    
+    if (attachedReviews.length > 0) {
+      const reviewContexts = attachedReviews.map(r => 
+        `${r.title} (${r.rating}/5): ${r.text}`
+      ).join('\n');
+      contexts.push(`Review Context:\n${reviewContexts}`);
+    }
+    
+    if (attachedCoupons.length > 0) {
+      const couponContexts = attachedCoupons.map(c => 
+        `${c.code}: ${c.description}, Discount: ${c.discountType === "PERCENTAGE" ? `${c.discountValue}%` : `$${c.discountValue}`}, Min: $${c.minPurchaseAmount || "N/A"}`
+      ).join('\n');
+      contexts.push(`Coupon Context:\n${couponContexts}`);
+    }
+    
+    if (contexts.length > 0) {
+      enhancedQuery = `${queryToUse}\n\n[${contexts.join('\n\n')}]`;
     }
 
     const userMessage: ChatMessage = {
@@ -1218,6 +1303,8 @@ const AIFabricFramework = () => {
 
     // Remove attachments and suggestions after sending
     setAttachedProducts([]);
+    setAttachedReviews([]);
+    setAttachedCoupons([]);
     setSuggestions([]);
 
     try {
@@ -2691,13 +2778,14 @@ const AIFabricFramework = () => {
                                     </div>
                                   </div>
                                   <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    className="h-8 w-8"
-                                    onClick={() => handleAddToChat(`Review: ${review.title} (${review.rating}/5)\\n${review.text}`)}
-                                    title="Add to chat"
+                                    size="sm"
+                                    variant="default"
+                                    onClick={() => handleAttachReview(review)}
+                                    className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg"
+                                    title="Attach to chat"
                                   >
-                                    <MessageSquare className="h-4 w-4" />
+                                    <Bot className="h-4 w-4 mr-2" />
+                                    Attach
                                   </Button>
                                 </div>
                               </CardHeader>
@@ -2828,21 +2916,14 @@ const AIFabricFramework = () => {
                                       {coupon.isActive ? "Active" : "Inactive"}
                                     </Badge>
                                     <Button
-                                      size="icon"
-                                      variant="ghost"
-                                      className="h-8 w-8"
-                                      onClick={() =>
-                                        handleAddToChat(
-                                          `Coupon ${coupon.code}: ${coupon.description}. Discount: ${
-                                            coupon.discountType === "PERCENTAGE"
-                                              ? `${coupon.discountValue}%`
-                                              : `$${coupon.discountValue}`
-                                          }. Min purchase: ${coupon.minPurchaseAmount ?? "N/A"}.`
-                                        )
-                                      }
-                                      title="Add to chat"
+                                      size="sm"
+                                      variant="default"
+                                      onClick={() => handleAttachCoupon(coupon)}
+                                      className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white shadow-lg"
+                                      title="Attach to chat"
                                     >
-                                      <MessageSquare className="h-4 w-4" />
+                                      <Bot className="h-4 w-4 mr-2" />
+                                      Attach
                                     </Button>
                                   </div>
                                 </div>
@@ -3390,7 +3471,7 @@ const AIFabricFramework = () => {
       {/* Floating Chat Input */}
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-t from-background via-background to-transparent p-4 backdrop-blur-sm border-t">
         <div className="container mx-auto max-w-[1080px]">
-          {attachedProducts.length > 0 && (
+          {(attachedProducts.length > 0 || attachedReviews.length > 0 || attachedCoupons.length > 0) && (
             <div className="mb-2 space-y-2 max-h-[200px] overflow-y-auto">
               <AnimatePresence>
                 {attachedProducts.map((product) => (
@@ -3416,6 +3497,66 @@ const AIFabricFramework = () => {
                         variant="ghost"
                         className="h-8 w-8"
                         onClick={() => handleRemoveAttachment(product.id)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </CardContent>
+                  </Card>
+                  </motion.div>
+                ))}
+                {attachedReviews.map((review) => (
+                  <motion.div
+                    key={review.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                  >
+                  <Card className="border-amber-500/50 bg-amber-500/5">
+                    <CardContent className="p-3 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-amber-500/10 rounded-lg">
+                          <Star className="h-4 w-4 text-amber-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold truncate">{review.title}</p>
+                          <p className="text-xs text-muted-foreground">{review.rating}/5 stars</p>
+                        </div>
+                      </div>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-8 w-8"
+                        onClick={() => handleRemoveAttachedReview(review.id!)}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </CardContent>
+                  </Card>
+                  </motion.div>
+                ))}
+                {attachedCoupons.map((coupon) => (
+                  <motion.div
+                    key={coupon.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                  >
+                  <Card className="border-pink-500/50 bg-pink-500/5">
+                    <CardContent className="p-3 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-pink-500/10 rounded-lg">
+                          <Tag className="h-4 w-4 text-pink-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold truncate font-mono">{coupon.code}</p>
+                          <p className="text-xs text-muted-foreground">{coupon.discountType === "PERCENTAGE" ? `${coupon.discountValue}%` : `$${coupon.discountValue}`} off</p>
+                        </div>
+                      </div>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        className="h-8 w-8"
+                        onClick={() => handleRemoveAttachedCoupon(coupon.id!)}
                       >
                         <X className="h-4 w-4" />
                       </Button>
@@ -3486,9 +3627,11 @@ const AIFabricFramework = () => {
           <div className="flex gap-2 items-end">
             <div className="flex-1 relative">
               <Textarea
-                placeholder={attachedProducts.length > 0 
-                  ? `Ask about ${attachedProducts.length} attached product${attachedProducts.length > 1 ? 's' : ''}...` 
-                  : "Ask AI about products, orders, or anything..."}
+                placeholder={
+                  attachedProducts.length > 0 || attachedReviews.length > 0 || attachedCoupons.length > 0
+                    ? `Ask about ${attachedProducts.length + attachedReviews.length + attachedCoupons.length} attached item${(attachedProducts.length + attachedReviews.length + attachedCoupons.length) > 1 ? 's' : ''}...`
+                    : "Ask AI about products, orders, or anything..."
+                }
                 value={chatQuery}
                 onChange={(e) => setChatQuery(e.target.value)}
                 onKeyPress={(e) => {
