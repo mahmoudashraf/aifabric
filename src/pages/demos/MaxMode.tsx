@@ -625,9 +625,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       </div>
 
       {/* Main Split Content */}
-      <div className="h-full pt-36 pb-40 flex">
-        {/* Left: Chat Messages */}
-        <div className="flex-1 overflow-y-auto px-6 py-6">
+      <div className="h-full pt-36 pb-40 relative">
+        {/* Chat Messages - Full Width */}
+        <div className="absolute inset-0 overflow-y-auto px-6 py-6">
           <div className="max-w-3xl mx-auto space-y-4">
             <AnimatePresence mode="popLayout">
               {chatMessages.map((message) => {
@@ -725,15 +725,15 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           </div>
         </div>
 
-        {/* Right: Context Panel (Documents) */}
+        {/* Right: Context Panel (Documents) - Overlay */}
         <AnimatePresence>
           {contextDocuments.length > 0 && (
             <motion.div
-              initial={{ opacity: 0, x: 300 }}
+              initial={{ opacity: 0, x: 420 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 300 }}
+              exit={{ opacity: 0, x: 420 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="w-[420px] border-l-2 border-purple-500/30 bg-gradient-to-b from-purple-50/50 via-pink-50/30 to-blue-50/50 dark:from-gray-900/50 dark:via-purple-900/30 dark:to-blue-900/50 backdrop-blur-md overflow-y-auto p-6 shadow-2xl"
+              className="absolute top-0 right-0 bottom-0 w-[420px] border-l-2 border-purple-500/30 bg-gradient-to-b from-purple-50/95 via-pink-50/95 to-blue-50/95 dark:from-gray-900/95 dark:via-purple-900/95 dark:to-blue-900/95 backdrop-blur-xl overflow-y-auto p-6 shadow-2xl z-10"
             >
               <div className="sticky top-0 bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 backdrop-blur-md p-5 rounded-2xl mb-6 shadow-2xl border-2 border-white/20">
                 <div className="flex items-center justify-between mb-3">
