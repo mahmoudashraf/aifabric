@@ -744,6 +744,8 @@ const AIFabricFramework = () => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatInputRef = useRef<HTMLTextAreaElement>(null);
+  const isUserFocusRef = useRef(false);
   const { toast } = useToast();
 
   // Form state for add/edit
@@ -3721,10 +3723,16 @@ const AIFabricFramework = () => {
                     handleChatQuery();
                   }
                 }}
+                ref={chatInputRef}
+                onMouseDown={() => {
+                  isUserFocusRef.current = true;
+                }}
                 onFocus={() => {
-                  if (chatMessages.length > 0 && !isChatExpanded) {
+                  // Only expand if user explicitly clicked (not programmatic focus)
+                  if (isUserFocusRef.current && chatMessages.length > 0 && !isChatExpanded) {
                     setIsChatExpanded(true);
                   }
+                  isUserFocusRef.current = false;
                 }}
                 className="min-h-[108px] pr-12 resize-none shadow-lg border-2 focus:border-purple-500"
                 disabled={isLoading}
