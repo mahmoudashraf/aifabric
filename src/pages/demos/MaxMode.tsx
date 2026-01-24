@@ -16,7 +16,6 @@ import {
   Bot,
   Loader2,
   Plus,
-  Minus,
   CheckCircle2,
   XCircle,
   HelpCircle,
@@ -25,10 +24,11 @@ import {
   Ban,
   AlertTriangle,
   Zap,
-  MessageSquare,
   FileText,
+  Image as ImageIcon,
+  Paperclip,
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
@@ -90,13 +90,21 @@ interface ChatMessage {
   attachedItems?: Array<{ type: string; data: any }>;
 }
 
+interface Document {
+  id: string;
+  title: string;
+  content: string;
+  type: string;
+  metadata?: any;
+}
+
 const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [chatQuery, setChatQuery] = useState("");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [attachedItems, setAttachedItems] = useState<Array<{ type: string; data: any }>>([]);
-  const [expandedData, setExpandedData] = useState<{ [key: string]: number }>({});
+  const [contextDocuments, setContextDocuments] = useState<Document[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -125,7 +133,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       const welcomeMessage: ChatMessage = {
         id: "welcome",
         type: "ai",
-        content: "👋 Welcome to MAX Mode - your AI-powered shopping assistant! I can help you find products, manage orders, apply coupons, and much more. Try the quick actions below or just ask me anything!",
+        content: "👋 Welcome to MAX Mode - your AI-powered shopping assistant! I can help you find products, manage orders, apply coupons, and much more. Try the quick actions above or just ask me anything!",
         timestamp: new Date().toISOString(),
         resultType: "INFORMATION_PROVIDED",
       };
@@ -136,6 +144,14 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const handleQuickAction = (query: string) => {
     setChatQuery(query);
     setTimeout(() => handleChatQuery(query), 100);
+  };
+
+  const handleAttachDocument = (doc: Document) => {
+    setAttachedItems(prev => [...prev, { type: "document", data: doc }]);
+    toast({
+      title: "Document Attached",
+      description: `"${doc.title}" attached to chat`,
+    });
   };
 
   const handleChatQuery = async (presetQuery?: string) => {
@@ -185,6 +201,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         messageContent = data.result.sanitizedPayload.message || "I processed your query successfully.";
         result = data.result;
         resultType = data.result.type;
+
+        // Extract documents if INFORMATION_PROVIDED
+        if (resultType === "INFORMATION_PROVIDED" && data.result.sanitizedPayload.data?.documents) {
+          setContextDocuments(data.result.sanitizedPayload.data.documents);
+        }
       } else {
         messageContent = data.response || data.message || "I processed your query successfully.";
       }
@@ -230,6 +251,20 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     }
   };
 
+  const getDocumentIcon = (type: string) => {
+    switch (type.toLowerCase()) {
+      case "policy":
+      case "document":
+        return FileText;
+      case "product":
+        return Package;
+      case "image":
+        return ImageIcon;
+      default:
+        return FileText;
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -240,7 +275,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       className="fixed inset-0 z-[100] bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-gray-900 dark:via-purple-900/20 dark:to-blue-900/20"
     >
       {/* Header */}
-      <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 flex items-center justify-between px-6 shadow-lg">
+      <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 flex items-center justify-between px-6 shadow-lg z-10">
         <div className="flex items-center gap-3">
           <motion.div
             animate={{ rotate: [0, 360] }}
@@ -260,30 +295,30 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         </Button>
       </div>
 
-      {/* Main Content Area */}
-      <div className="h-full pt-16 pb-40 flex flex-col">
-        {/* Quick Actions Bar */}
-        <div className="px-6 py-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b">
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-            {quickActions.map((action, idx) => (
-              <motion.button
-                key={idx}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.05 }}
-                onClick={() => handleQuickAction(action.query)}
-                className={`flex flex-col items-center gap-1 p-3 rounded-xl ${action.bg} border ${action.border} hover:scale-105 transition-all min-w-[80px]`}
-              >
-                <action.icon className={`h-5 w-5 ${action.color}`} />
-                <span className="text-[10px] font-medium text-foreground whitespace-nowrap">{action.label}</span>
-              </motion.button>
-            ))}
-          </div>
+      {/* Quick Actions Bar */}
+      <div className="absolute top-16 left-0 right-0 px-6 py-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b z-10">
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          {quickActions.map((action, idx) => (
+            <motion.button
+              key={idx}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.05 }}
+              onClick={() => handleQuickAction(action.query)}
+              className={`flex flex-col items-center gap-1 p-3 rounded-xl ${action.bg} border ${action.border} hover:scale-105 transition-all min-w-[80px]`}
+            >
+              <action.icon className={`h-5 w-5 ${action.color}`} />
+              <span className="text-[10px] font-medium text-foreground whitespace-nowrap">{action.label}</span>
+            </motion.button>
+          ))}
         </div>
+      </div>
 
-        {/* Chat Messages */}
+      {/* Main Split Content */}
+      <div className="h-full pt-36 pb-40 flex">
+        {/* Left: Chat Messages */}
         <div className="flex-1 overflow-y-auto px-6 py-6">
-          <div className="max-w-4xl mx-auto space-y-4">
+          <div className="max-w-3xl mx-auto space-y-4">
             <AnimatePresence mode="popLayout">
               {chatMessages.map((message) => {
                 const styles = message.type === "ai" ? getResultStyles(message.resultType) : null;
@@ -292,14 +327,14 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 return (
                   <motion.div
                     key={message.id}
-                    initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    initial={{ opacity: 0, x: message.type === "user" ? 20 : -20, scale: 0.95 }}
+                    animate={{ opacity: 1, x: 0, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ type: "spring", damping: 25, stiffness: 300 }}
                     className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[80%] rounded-2xl overflow-hidden shadow-lg ${
+                      className={`max-w-[85%] rounded-2xl overflow-hidden shadow-lg ${
                         message.type === "user"
                           ? "bg-gradient-to-br from-purple-600 to-pink-600 text-white"
                           : `${styles?.bg} border-2 ${styles?.border}`
@@ -317,8 +352,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         {message.attachedItems && message.attachedItems.length > 0 && (
                           <div className="mb-3 space-y-2">
                             {message.attachedItems.map((item, idx) => (
-                              <div key={idx} className="p-2 bg-white/20 rounded-lg border border-white/30 text-xs">
-                                <span className="font-semibold capitalize">{item.type}:</span> {item.data.name || JSON.stringify(item.data)}
+                              <div key={idx} className="p-2 bg-white/20 rounded-lg border border-white/30 text-xs flex items-center gap-2">
+                                <Paperclip className="h-3 w-3" />
+                                <span className="font-semibold capitalize">{item.type}:</span> {item.data.title || item.data.name || JSON.stringify(item.data)}
                               </div>
                             ))}
                           </div>
@@ -364,6 +400,91 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             <div ref={messagesEndRef} />
           </div>
         </div>
+
+        {/* Right: Context Panel (Documents) */}
+        <AnimatePresence>
+          {contextDocuments.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, x: 300 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 300 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="w-96 border-l-2 border-purple-500/30 bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm overflow-y-auto p-6"
+            >
+              <div className="sticky top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md p-4 rounded-xl mb-4 shadow-lg border-2 border-purple-500/30">
+                <div className="flex items-center gap-2 mb-2">
+                  <Sparkles className="h-5 w-5 text-purple-600" />
+                  <h2 className="font-bold text-lg">Context Data</h2>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  {contextDocuments.length} document{contextDocuments.length > 1 ? 's' : ''} found
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <AnimatePresence mode="popLayout">
+                  {contextDocuments.map((doc, idx) => {
+                    const DocIcon = getDocumentIcon(doc.type);
+                    return (
+                      <motion.div
+                        key={doc.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ delay: idx * 0.1 }}
+                      >
+                        <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 border-purple-200 hover:border-purple-500 bg-gradient-to-br from-white to-purple-50 dark:from-gray-800 dark:to-purple-900/20">
+                          <CardHeader className="pb-3">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex items-start gap-3 flex-1">
+                                <div className="p-2 bg-purple-500/10 rounded-lg">
+                                  <DocIcon className="h-5 w-5 text-purple-600" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <CardTitle className="text-sm font-semibold line-clamp-2">
+                                    {doc.title}
+                                  </CardTitle>
+                                  <Badge variant="outline" className="mt-1 text-[10px]">
+                                    {doc.type}
+                                  </Badge>
+                                </div>
+                              </div>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity bg-purple-600 hover:bg-purple-700 text-white"
+                                onClick={() => handleAttachDocument(doc)}
+                                title="Attach to chat"
+                              >
+                                <Plus className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </CardHeader>
+                          <CardContent>
+                            <p className="text-xs text-muted-foreground line-clamp-3">
+                              {doc.content}
+                            </p>
+                            {doc.metadata && (
+                              <div className="mt-3 pt-3 border-t border-purple-200 dark:border-purple-800">
+                                <div className="flex flex-wrap gap-1">
+                                  {Object.entries(doc.metadata).slice(0, 3).map(([key, value]) => (
+                                    <Badge key={key} variant="secondary" className="text-[10px]">
+                                      {key}: {String(value)}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Input Area */}
@@ -371,15 +492,25 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         <div className="max-w-4xl mx-auto">
           {attachedItems.length > 0 && (
             <div className="mb-3 flex flex-wrap gap-2">
-              {attachedItems.map((item, idx) => (
-                <Badge key={idx} variant="secondary" className="gap-1">
-                  {item.type}: {item.data.name}
-                  <X
-                    className="h-3 w-3 cursor-pointer"
-                    onClick={() => setAttachedItems(prev => prev.filter((_, i) => i !== idx))}
-                  />
-                </Badge>
-              ))}
+              <AnimatePresence mode="popLayout">
+                {attachedItems.map((item, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                  >
+                    <Badge variant="secondary" className="gap-2 py-1.5 px-3">
+                      <Paperclip className="h-3 w-3" />
+                      <span className="capitalize">{item.type}:</span> {item.data.title || item.data.name}
+                      <X
+                        className="h-3 w-3 cursor-pointer hover:text-destructive"
+                        onClick={() => setAttachedItems(prev => prev.filter((_, i) => i !== idx))}
+                      />
+                    </Badge>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </div>
           )}
           <div className="relative">
