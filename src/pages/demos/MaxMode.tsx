@@ -771,7 +771,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             {message.attachedItems.map((item, idx) => (
                               <div key={idx} className="p-2 bg-white/20 rounded-lg border border-white/30 text-xs flex items-center gap-2">
                                 <Paperclip className="h-3 w-3" />
-                                <span className="font-semibold capitalize">{item.type}:</span> {item.data.title || item.data.name || JSON.stringify(item.data)}
+                                <span className="font-semibold capitalize">{item.data.type || item.type}:</span> {item.data.title || item.data.name || JSON.stringify(item.data)}
                               </div>
                             ))}
                           </div>
@@ -1058,7 +1058,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           </p>
                           <p className="text-[10px] text-purple-700 dark:text-purple-300 flex items-center gap-1">
                             <Sparkles className="h-2.5 w-2.5" />
-                            Added to chat
+                            <span className="capitalize">{item.data.type || item.type}</span> • Added to chat
                           </p>
                         </div>
                         <Button
