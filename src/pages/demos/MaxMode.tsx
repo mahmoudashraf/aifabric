@@ -241,16 +241,41 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         // Extract documents if INFORMATION_PROVIDED
         if (resultType === "INFORMATION_PROVIDED" && data.result.sanitizedPayload.data?.documents) {
           console.log("Documents found:", data.result.sanitizedPayload.data.documents); // Debug log
-          setContextDocuments(data.result.sanitizedPayload.data.documents);
+
+          // Transform documents to add missing titles and types
+          const transformedDocs = data.result.sanitizedPayload.data.documents.map((doc: any) => ({
+            id: doc.id || Math.random().toString(),
+            title: doc.title || doc.content?.split(' ').slice(0, 6).join(' ') + '...' || 'Document',
+            content: doc.content || '',
+            type: doc.type || doc.metadata?.vectorSpace || doc.metadata?.classification || 'document',
+            metadata: doc.metadata || {},
+            score: doc.score,
+            similarity: doc.similarity
+          }));
+
+          console.log("Transformed documents:", transformedDocs);
+          setContextDocuments(transformedDocs);
         } else if (resultType === "INFORMATION_PROVIDED" && data.result.sanitizedPayload.data) {
           // Try alternate paths
           console.log("Checking alternate document paths..."); // Debug log
-          const possibleDocs = data.result.sanitizedPayload.data.answer?.documents ||
+          const possibleDocs = data.result.sanitizedPayload.data.ragResponse?.documents ||
                                data.result.sanitizedPayload.data.documents ||
                                [];
           if (possibleDocs.length > 0) {
             console.log("Found documents in alternate path:", possibleDocs);
-            setContextDocuments(possibleDocs);
+
+            // Transform documents
+            const transformedDocs = possibleDocs.map((doc: any) => ({
+              id: doc.id || Math.random().toString(),
+              title: doc.title || doc.content?.split(' ').slice(0, 6).join(' ') + '...' || 'Document',
+              content: doc.content || '',
+              type: doc.type || doc.metadata?.vectorSpace || doc.metadata?.classification || 'document',
+              metadata: doc.metadata || {},
+              score: doc.score,
+              similarity: doc.similarity
+            }));
+
+            setContextDocuments(transformedDocs);
           }
         }
       } else {
@@ -302,9 +327,13 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     switch (type.toLowerCase()) {
       case "policy":
       case "document":
+      case "warranty":
+      case "terms":
         return FileText;
       case "product":
         return Package;
+      case "review":
+        return Star;
       case "image":
         return ImageIcon;
       default:
@@ -532,14 +561,24 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             <p className="text-xs text-muted-foreground line-clamp-3">
                               {doc.content}
                             </p>
+                            {(doc.similarity || doc.score) && (
+                              <div className="mt-2">
+                                <Badge variant="outline" className="text-[10px] bg-purple-50">
+                                  Relevance: {((doc.similarity || doc.score) * 100).toFixed(1)}%
+                                </Badge>
+                              </div>
+                            )}
                             {doc.metadata && (
                               <div className="mt-3 pt-3 border-t border-purple-200 dark:border-purple-800">
                                 <div className="flex flex-wrap gap-1">
-                                  {Object.entries(doc.metadata).slice(0, 3).map(([key, value]) => (
-                                    <Badge key={key} variant="secondary" className="text-[10px]">
-                                      {key}: {String(value)}
-                                    </Badge>
-                                  ))}
+                                  {Object.entries(doc.metadata)
+                                    .filter(([key]) => !key.startsWith('_') && !key.includes('indexedCreatedAt'))
+                                    .slice(0, 3)
+                                    .map(([key, value]) => (
+                                      <Badge key={key} variant="secondary" className="text-[10px]">
+                                        {key}: {String(value).slice(0, 30)}
+                                      </Badge>
+                                    ))}
                                 </div>
                               </div>
                             )}
