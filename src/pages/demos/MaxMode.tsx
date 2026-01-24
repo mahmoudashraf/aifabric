@@ -31,6 +31,8 @@ import {
   BrainCircuit,
   Wand2,
   ArrowRight,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -151,7 +153,7 @@ const ActionResultRenderer = ({
     return (
       <div className="mt-3 space-y-2">
         {visibleItems.map((item: any, idx: number) => (
-          <Card key={idx} className="text-xs bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200 hover:border-purple-400 transition-colors">
+          <Card key={idx} className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200 hover:border-purple-400 transition-colors" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
             <CardContent className="p-3">
               {typeof item === "object" && item !== null ? (
                 <div className="space-y-2">
@@ -217,7 +219,7 @@ const ActionResultRenderer = ({
                 </h4>
                 <div className="space-y-2">
                   {visibleItems.map((item: any, idx: number) => (
-                    <Card key={idx} className="text-xs bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200 hover:border-purple-400 transition-colors">
+                    <Card key={idx} className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200 hover:border-purple-400 transition-colors" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
                       <CardContent className="p-3">
                         {typeof item === "object" && item !== null ? (
                           <div className="space-y-2">
@@ -267,7 +269,7 @@ const ActionResultRenderer = ({
     // Render simple object
     return (
       <div className="mt-3">
-        <Card className="text-xs bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200">
+        <Card className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
           <CardContent className="p-3">
             <div className="space-y-2">
               {Object.entries(data).map(([key, value]) => (
@@ -297,11 +299,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [attachedItems, setAttachedItems] = useState<Array<{ type: string; data: any }>>([]);
   const [contextDocuments, setContextDocuments] = useState<Document[]>([]);
+  const [currentDocIndex, setCurrentDocIndex] = useState(0);
   const [expandedActions, setExpandedActions] = useState<{ [key: string]: number }>({});
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const contextPanelEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   // Quick action tools
@@ -323,10 +325,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     }
   }, [chatMessages]);
 
-  // Auto-scroll to latest documents in context panel
+  // Reset to first document when context documents change
   useEffect(() => {
-    if (contextPanelEndRef.current && contextDocuments.length > 0) {
-      contextPanelEndRef.current.scrollIntoView({ behavior: "smooth" });
+    if (contextDocuments.length > 0) {
+      setCurrentDocIndex(0);
     }
   }, [contextDocuments]);
 
@@ -412,6 +414,14 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const handleQuickAction = (query: string) => {
     setChatQuery(query);
     setTimeout(() => handleChatQuery(query), 100);
+  };
+
+  const handlePreviousDocument = () => {
+    setCurrentDocIndex((prev) => (prev > 0 ? prev - 1 : contextDocuments.length - 1));
+  };
+
+  const handleNextDocument = () => {
+    setCurrentDocIndex((prev) => (prev < contextDocuments.length - 1 ? prev + 1 : 0));
   };
 
   const handleAttachDocument = (doc: Document) => {
@@ -722,9 +732,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       </div>
 
       {/* Main Split Content */}
-      <div className="h-full pt-36 pb-40 relative">
+      <div className="h-full pt-36 relative">
         {/* Chat Messages - Full Width */}
-        <div className="absolute inset-0 overflow-y-auto px-6 py-6">
+        <div className="absolute inset-0 overflow-y-auto px-6 py-6 pb-[240px]">
           <div className="max-w-3xl mx-auto space-y-4">
             <AnimatePresence mode="popLayout">
               {chatMessages.map((message) => {
@@ -761,12 +771,12 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             {message.attachedItems.map((item, idx) => (
                               <div key={idx} className="p-2 bg-white/20 rounded-lg border border-white/30 text-xs flex items-center gap-2">
                                 <Paperclip className="h-3 w-3" />
-                                <span className="font-semibold capitalize">{item.type}:</span> {item.data.title || item.data.name || JSON.stringify(item.data)}
+                                <span className="font-semibold capitalize">{item.data.type || item.type}:</span> {item.data.title || item.data.name || JSON.stringify(item.data)}
                               </div>
                             ))}
                           </div>
                         )}
-                        <p className={`whitespace-pre-wrap ${message.type === "ai" && styles ? styles.text : ""}`}>
+                        <p className={`whitespace-pre-wrap leading-relaxed ${message.type === "ai" && styles ? styles.text : ""}`} style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
                           {message.content}
                         </p>
                         {message.result?.sanitizedPayload?.type === "ACTION_EXECUTED" &&
@@ -822,7 +832,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           </div>
         </div>
 
-        {/* Right: Context Panel (Documents) - Overlay */}
+        {/* Right: Context Panel (Documents) - Overlay with Arrow Navigation */}
         <AnimatePresence>
           {contextDocuments.length > 0 && (
             <motion.div
@@ -830,9 +840,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 420 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="absolute top-0 right-0 bottom-0 w-[420px] border-l-2 border-purple-500/30 bg-gradient-to-b from-purple-50/95 via-pink-50/95 to-blue-50/95 dark:from-gray-900/95 dark:via-purple-900/95 dark:to-blue-900/95 backdrop-blur-xl overflow-y-auto p-6 shadow-2xl z-10"
+              className="absolute top-0 right-0 bottom-0 w-[420px] border-l-2 border-purple-500/30 bg-gradient-to-b from-purple-50/95 via-pink-50/95 to-blue-50/95 dark:from-gray-900/95 dark:via-purple-900/95 dark:to-blue-900/95 backdrop-blur-xl p-6 shadow-2xl z-10 flex flex-col"
             >
-              <div className="sticky top-0 bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 backdrop-blur-md p-5 rounded-2xl mb-6 shadow-2xl border-2 border-white/20">
+              {/* Header */}
+              <div className="bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 backdrop-blur-md p-5 rounded-2xl mb-6 shadow-2xl border-2 border-white/20">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <motion.div
@@ -845,7 +856,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     <div>
                       <h2 className="font-bold text-lg text-white">Context Panel</h2>
                       <p className="text-xs text-white/80">
-                        {contextDocuments.length} {contextDocuments.length === 1 ? 'result' : 'results'} • Click to attach
+                        {currentDocIndex + 1} of {contextDocuments.length} • Click to attach
                       </p>
                     </div>
                   </div>
@@ -862,22 +873,37 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 <div className="h-1 bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 rounded-full"></div>
               </div>
 
-              <div className="space-y-4">
-                <AnimatePresence mode="popLayout">
-                  {contextDocuments.map((doc, idx) => {
-                    const DocIcon = getDocumentIcon(doc.type);
-                    return (
-                      <motion.div
-                        key={doc.id}
-                        initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -20, scale: 0.9 }}
-                        transition={{ delay: idx * 0.08, type: "spring", damping: 20 }}
-                        whileHover={{ scale: 1.02, y: -4 }}
-                      >
+              {/* Navigation Arrow Up */}
+              <div className="flex justify-center mb-4">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handlePreviousDocument}
+                  className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-xl border-2 border-white/30 hover:scale-110 transition-all"
+                  disabled={contextDocuments.length <= 1}
+                >
+                  <ChevronUp className="h-6 w-6" />
+                </Button>
+              </div>
+
+              {/* Current Document */}
+              <div className="flex-1 flex items-center justify-center px-2">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentDocIndex}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ type: "spring", damping: 20 }}
+                    className="w-full"
+                  >
+                    {(() => {
+                      const doc = contextDocuments[currentDocIndex];
+                      const DocIcon = getDocumentIcon(doc.type);
+                      return (
                         <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 border-purple-300 hover:border-purple-500 bg-gradient-to-br from-white via-purple-50/50 to-pink-50/50 dark:from-gray-800 dark:to-purple-900/20 overflow-hidden">
                           {doc.metadata?.imageUrl && (
-                            <div className="relative h-32 overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
+                            <div className="relative h-48 overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
                               <img
                                 src={doc.metadata.imageUrl}
                                 alt={doc.title}
@@ -912,7 +938,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                   </motion.div>
                                 )}
                                 <div className="flex-1 min-w-0">
-                                  <CardTitle className="text-sm font-bold line-clamp-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                                  <CardTitle className="text-base font-bold line-clamp-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                                     {doc.title}
                                   </CardTitle>
                                   <Badge variant="outline" className="mt-1.5 text-[10px] bg-purple-100 border-purple-300 text-purple-700">
@@ -938,11 +964,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             </div>
                           </CardHeader>
                           <CardContent>
-                            <p className="text-xs text-muted-foreground line-clamp-3">
+                            <p className="text-sm text-muted-foreground leading-relaxed" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
                               {doc.content}
                             </p>
                             {(doc.similarity || doc.score) && (
-                              <div className="mt-2">
+                              <div className="mt-3">
                                 <div className="flex items-center gap-2">
                                   <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
                                   <Badge variant="outline" className="text-[10px] bg-gradient-to-r from-yellow-100 to-orange-100 border-yellow-300 text-yellow-800 font-semibold">
@@ -975,11 +1001,23 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             )}
                           </CardContent>
                         </Card>
-                      </motion.div>
-                    );
-                  })}
+                      );
+                    })()}
+                  </motion.div>
                 </AnimatePresence>
-                <div ref={contextPanelEndRef} />
+              </div>
+
+              {/* Navigation Arrow Down */}
+              <div className="flex justify-center mt-4">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleNextDocument}
+                  className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-xl border-2 border-white/30 hover:scale-110 transition-all"
+                  disabled={contextDocuments.length <= 1}
+                >
+                  <ChevronDown className="h-6 w-6" />
+                </Button>
               </div>
             </motion.div>
           )}
@@ -1020,7 +1058,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           </p>
                           <p className="text-[10px] text-purple-700 dark:text-purple-300 flex items-center gap-1">
                             <Sparkles className="h-2.5 w-2.5" />
-                            Added to chat
+                            <span className="capitalize">{item.data.type || item.type}</span> • Added to chat
                           </p>
                         </div>
                         <Button
@@ -1075,7 +1113,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="text-xs h-auto py-2 px-3 whitespace-normal text-left bg-white/80 hover:bg-purple-100 border-purple-300 hover:border-purple-500 transition-all group"
+                        className="text-sm h-auto py-2 px-3 whitespace-normal text-left bg-white/80 hover:bg-purple-100 border-purple-300 hover:border-purple-500 transition-all group leading-relaxed"
+                        style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}
                         onClick={() => {
                           handleChatQuery(suggestion);
                         }}
@@ -1127,7 +1166,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   handleChatQuery();
                 }
               }}
-              className="min-h-[80px] pr-16 text-lg resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl"
+              className="min-h-[80px] pr-16 text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed"
+              style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}
               disabled={isLoading}
             />
             <Button
