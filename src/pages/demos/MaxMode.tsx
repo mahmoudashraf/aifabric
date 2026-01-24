@@ -98,6 +98,194 @@ interface Document {
   metadata?: any;
 }
 
+// Helper functions for formatting
+const formatFieldName = (key: string): string => {
+  return key
+    .replace(/([A-Z])/g, " $1")
+    .replace(/_/g, " ")
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ")
+    .trim();
+};
+
+const formatFieldValue = (value: any): string => {
+  if (value === null || value === undefined) return "N/A";
+  if (typeof value === "boolean") return value ? "Yes" : "No";
+  if (Array.isArray(value)) return value.join(", ");
+  if (typeof value === "object") return JSON.stringify(value, null, 2);
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value)) {
+    try {
+      const date = new Date(value);
+      return date.toLocaleString();
+    } catch {
+      return value;
+    }
+  }
+  return String(value);
+};
+
+// Component to render actionResult data generically
+const ActionResultRenderer = ({
+  data,
+  messageId,
+  expandedCount,
+  onExpand
+}: {
+  data: any;
+  messageId: string;
+  expandedCount: number;
+  onExpand: (count: number) => void;
+}) => {
+  if (!data) return null;
+
+  // Handle arrays
+  if (Array.isArray(data)) {
+    const visibleItems = data.slice(0, expandedCount || 3);
+    const remaining = data.length - visibleItems.length;
+
+    return (
+      <div className="mt-3 space-y-2">
+        {visibleItems.map((item: any, idx: number) => (
+          <Card key={idx} className="text-xs bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200 hover:border-purple-400 transition-colors">
+            <CardContent className="p-3">
+              {typeof item === "object" && item !== null ? (
+                <div className="space-y-2">
+                  {Object.entries(item).map(([key, value]) => (
+                    <div key={key} className="flex items-start justify-between gap-2">
+                      <span className="text-muted-foreground font-semibold min-w-[100px]">
+                        {formatFieldName(key)}:
+                      </span>
+                      <span className="text-foreground text-right flex-1 font-medium">
+                        {typeof value === "object" && value !== null && !Array.isArray(value) ? (
+                          <div className="space-y-1">
+                            {Object.entries(value).map(([nestedKey, nestedValue]) => (
+                              <div key={nestedKey} className="text-[10px]">
+                                <span className="text-muted-foreground">{formatFieldName(nestedKey)}: </span>
+                                <span>{formatFieldValue(nestedValue)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          formatFieldValue(value)
+                        )}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-foreground">{formatFieldValue(item)}</p>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+        {remaining > 0 && (
+          <Button
+            size="sm"
+            variant="ghost"
+            className="w-full text-xs bg-gradient-to-r from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 border border-purple-300"
+            onClick={() => onExpand((expandedCount || 3) + 3)}
+          >
+            Show {Math.min(3, remaining)} more
+          </Button>
+        )}
+      </div>
+    );
+  }
+
+  // Handle objects
+  if (typeof data === "object" && data !== null) {
+    // Check if object has array-like properties
+    const arrayKeys = Object.keys(data).filter(key => Array.isArray(data[key]));
+
+    if (arrayKeys.length > 0) {
+      return (
+        <div className="mt-3 space-y-3">
+          {arrayKeys.map((arrayKey) => {
+            const arrayData = data[arrayKey];
+            const visibleItems = arrayData.slice(0, expandedCount || 3);
+            const remaining = arrayData.length - visibleItems.length;
+
+            return (
+              <div key={arrayKey}>
+                <h4 className="text-sm font-bold mb-2 text-purple-700 dark:text-purple-300">
+                  {formatFieldName(arrayKey)}
+                </h4>
+                <div className="space-y-2">
+                  {visibleItems.map((item: any, idx: number) => (
+                    <Card key={idx} className="text-xs bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200 hover:border-purple-400 transition-colors">
+                      <CardContent className="p-3">
+                        {typeof item === "object" && item !== null ? (
+                          <div className="space-y-2">
+                            {Object.entries(item).map(([key, value]) => (
+                              <div key={key} className="flex items-start justify-between gap-2">
+                                <span className="text-muted-foreground font-semibold min-w-[100px]">
+                                  {formatFieldName(key)}:
+                                </span>
+                                <span className="text-foreground text-right flex-1 font-medium">
+                                  {formatFieldValue(value)}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-foreground">{formatFieldValue(item)}</p>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                  {remaining > 0 && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="w-full text-xs bg-gradient-to-r from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 border border-purple-300"
+                      onClick={() => onExpand((expandedCount || 3) + 3)}
+                    >
+                      Show {Math.min(3, remaining)} more
+                    </Button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+          {Object.entries(data)
+            .filter(([key]) => !Array.isArray(data[key]))
+            .map(([key, value]) => (
+              <div key={key} className="text-xs">
+                <span className="text-muted-foreground font-semibold">{formatFieldName(key)}: </span>
+                <span className="text-foreground font-medium">{formatFieldValue(value)}</span>
+              </div>
+            ))}
+        </div>
+      );
+    }
+
+    // Render simple object
+    return (
+      <div className="mt-3">
+        <Card className="text-xs bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200">
+          <CardContent className="p-3">
+            <div className="space-y-2">
+              {Object.entries(data).map(([key, value]) => (
+                <div key={key} className="flex items-start justify-between gap-2">
+                  <span className="text-muted-foreground font-semibold min-w-[120px]">
+                    {formatFieldName(key)}:
+                  </span>
+                  <span className="text-foreground text-right flex-1 font-medium">
+                    {formatFieldValue(value)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return <p className="mt-3 text-xs text-muted-foreground">{formatFieldValue(data)}</p>;
+};
+
 const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [chatQuery, setChatQuery] = useState("");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -105,7 +293,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [attachedItems, setAttachedItems] = useState<Array<{ type: string; data: any }>>([]);
   const [contextDocuments, setContextDocuments] = useState<Document[]>([]);
+  const [expandedActions, setExpandedActions] = useState<{ [key: string]: number }>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const contextPanelEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   // Quick action tools
@@ -126,6 +316,13 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [chatMessages]);
+
+  // Auto-scroll to latest documents in context panel
+  useEffect(() => {
+    if (contextPanelEndRef.current && contextDocuments.length > 0) {
+      contextPanelEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [contextDocuments]);
 
   // Welcome message
   useEffect(() => {
@@ -168,7 +365,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         title: "Wireless Headphones Pro",
         content: "Premium noise-canceling headphones with 30-hour battery life and crystal-clear audio.",
         type: "product",
-        metadata: { price: "$299.99", stock: "In Stock" }
+        metadata: { price: "$299.99", stock: "In Stock", imageUrl: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop" }
       },
       {
         id: "3",
@@ -180,7 +377,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     ];
     setContextDocuments(sampleDocs);
     toast({
-      title: "Sample Documents Loaded",
+      title: "✨ Sample Documents Loaded",
       description: "Check the right panel!",
     });
   };
@@ -475,6 +672,20 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         <p className={`whitespace-pre-wrap ${message.type === "ai" && styles ? styles.text : ""}`}>
                           {message.content}
                         </p>
+                        {message.result?.sanitizedPayload?.type === "ACTION_EXECUTED" &&
+                         message.result?.sanitizedPayload?.data?.actionResult?.data && (
+                          <ActionResultRenderer
+                            data={message.result.sanitizedPayload.data.actionResult.data}
+                            messageId={message.id}
+                            expandedCount={expandedActions[message.id] || 3}
+                            onExpand={(count) => {
+                              setExpandedActions(prev => ({
+                                ...prev,
+                                [message.id]: count
+                              }));
+                            }}
+                          />
+                        )}
                       </div>
                     </div>
                   </motion.div>
@@ -522,26 +733,36 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 300 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="w-96 border-l-2 border-purple-500/30 bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm overflow-y-auto p-6"
+              className="w-[600px] border-l-2 border-purple-500/30 bg-gradient-to-b from-purple-50/50 via-pink-50/30 to-blue-50/50 dark:from-gray-900/50 dark:via-purple-900/30 dark:to-blue-900/50 backdrop-blur-md overflow-y-auto p-6 shadow-2xl"
             >
-              <div className="sticky top-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md p-4 rounded-xl mb-4 shadow-lg border-2 border-purple-500/30">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-purple-600" />
-                    <h2 className="font-bold text-lg">Context Data</h2>
+              <div className="sticky top-0 bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 backdrop-blur-md p-5 rounded-2xl mb-6 shadow-2xl border-2 border-white/20">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <motion.div
+                      animate={{ rotate: [0, 360] }}
+                      transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                      className="p-2 bg-white/20 rounded-lg backdrop-blur-sm"
+                    >
+                      <Sparkles className="h-5 w-5 text-white" />
+                    </motion.div>
+                    <div>
+                      <h2 className="font-bold text-lg text-white">Context Panel</h2>
+                      <p className="text-xs text-white/80">
+                        {contextDocuments.length} {contextDocuments.length === 1 ? 'result' : 'results'} • Click to attach
+                      </p>
+                    </div>
                   </div>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setContextDocuments([])}
-                    className="h-6 px-2 text-xs"
+                    className="h-8 px-3 text-xs text-white hover:bg-white/20 border border-white/30"
                   >
+                    <X className="h-3 w-3 mr-1" />
                     Clear
                   </Button>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  {contextDocuments.length} document{contextDocuments.length > 1 ? 's' : ''} found
-                </p>
+                <div className="h-1 bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 rounded-full"></div>
               </div>
 
               <div className="space-y-4">
@@ -551,12 +772,13 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     return (
                       <motion.div
                         key={doc.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ delay: idx * 0.1 }}
+                        initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -20, scale: 0.9 }}
+                        transition={{ delay: idx * 0.08, type: "spring", damping: 20 }}
+                        whileHover={{ scale: 1.02, y: -4 }}
                       >
-                        <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 border-purple-200 hover:border-purple-500 bg-gradient-to-br from-white to-purple-50 dark:from-gray-800 dark:to-purple-900/20 overflow-hidden">
+                        <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 border-purple-300 hover:border-purple-500 bg-gradient-to-br from-white via-purple-50/50 to-pink-50/50 dark:from-gray-800 dark:to-purple-900/20 overflow-hidden cursor-pointer">
                           {doc.metadata?.imageUrl && (
                             <div className="relative h-32 overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
                               <img
@@ -580,15 +802,19 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             <div className="flex items-start justify-between gap-2">
                               <div className="flex items-start gap-3 flex-1">
                                 {!doc.metadata?.imageUrl && (
-                                  <div className="p-2 bg-purple-500/10 rounded-lg">
-                                    <DocIcon className="h-5 w-5 text-purple-600" />
-                                  </div>
+                                  <motion.div
+                                    whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
+                                    transition={{ duration: 0.5 }}
+                                    className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl shadow-lg"
+                                  >
+                                    <DocIcon className="h-5 w-5 text-white" />
+                                  </motion.div>
                                 )}
                                 <div className="flex-1 min-w-0">
-                                  <CardTitle className="text-sm font-semibold line-clamp-2">
+                                  <CardTitle className="text-sm font-bold line-clamp-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                                     {doc.title}
                                   </CardTitle>
-                                  <Badge variant="outline" className="mt-1 text-[10px]">
+                                  <Badge variant="outline" className="mt-1.5 text-[10px] bg-purple-100 border-purple-300 text-purple-700">
                                     {doc.type}
                                   </Badge>
                                 </div>
@@ -597,7 +823,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                 <Button
                                   size="icon"
                                   variant="ghost"
-                                  className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity bg-purple-600 hover:bg-purple-700 text-white"
+                                  className="h-9 w-9 opacity-0 group-hover:opacity-100 transition-all bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg"
                                   onClick={() => handleAttachDocument(doc)}
                                   title="Attach to chat"
                                 >
@@ -612,22 +838,33 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             </p>
                             {(doc.similarity || doc.score) && (
                               <div className="mt-2">
-                                <Badge variant="outline" className="text-[10px] bg-purple-50">
-                                  Relevance: {((doc.similarity || doc.score) * 100).toFixed(1)}%
-                                </Badge>
+                                <div className="flex items-center gap-2">
+                                  <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
+                                  <Badge variant="outline" className="text-[10px] bg-gradient-to-r from-yellow-100 to-orange-100 border-yellow-300 text-yellow-800 font-semibold">
+                                    {((doc.similarity || doc.score) * 100).toFixed(1)}% Match
+                                  </Badge>
+                                </div>
                               </div>
                             )}
                             {doc.metadata && (
-                              <div className="mt-3 pt-3 border-t border-purple-200 dark:border-purple-800">
-                                <div className="flex flex-wrap gap-1">
+                              <div className="mt-3 pt-3 border-t border-gradient-to-r from-purple-200 via-pink-200 to-blue-200">
+                                <div className="flex flex-wrap gap-1.5">
                                   {Object.entries(doc.metadata)
-                                    .filter(([key]) => !key.startsWith('_') && !key.includes('indexedCreatedAt'))
-                                    .slice(0, 3)
-                                    .map(([key, value]) => (
-                                      <Badge key={key} variant="secondary" className="text-[10px]">
-                                        {key}: {String(value).slice(0, 30)}
-                                      </Badge>
-                                    ))}
+                                    .filter(([key]) => !key.startsWith('_') && !key.includes('indexedCreatedAt') && key !== 'imageUrl' && key !== 'vectorSpace')
+                                    .slice(0, 4)
+                                    .map(([key, value], badgeIdx) => {
+                                      const colors = [
+                                        'bg-blue-100 text-blue-700 border-blue-300',
+                                        'bg-green-100 text-green-700 border-green-300',
+                                        'bg-pink-100 text-pink-700 border-pink-300',
+                                        'bg-indigo-100 text-indigo-700 border-indigo-300',
+                                      ];
+                                      return (
+                                        <Badge key={key} variant="outline" className={`text-[10px] ${colors[badgeIdx % colors.length]} font-medium`}>
+                                          {formatFieldName(key)}: {String(value).slice(0, 25)}
+                                        </Badge>
+                                      );
+                                    })}
                                 </div>
                               </div>
                             )}
@@ -637,6 +874,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     );
                   })}
                 </AnimatePresence>
+                <div ref={contextPanelEndRef} />
               </div>
             </motion.div>
           )}
