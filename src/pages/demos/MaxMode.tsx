@@ -354,12 +354,15 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     const timeoutId = setTimeout(async () => {
       setIsLoadingSuggestions(true);
       try {
-        const parts = attachedItems.map(item => {
+        // Build context string for the API
+        const contextParts = attachedItems.map(item => {
           if (item.type === "document") {
-            return `Document: ${item.data.title} - ${item.data.content.substring(0, 100)}`;
+            return `${item.data.title}: ${item.data.content}`;
           }
-          return `${item.type}: ${JSON.stringify(item.data)}`;
+          return JSON.stringify(item.data);
         });
+
+        const contextString = contextParts.join("\n\n");
 
         const response = await fetch(`${API_BASE_URL}/chat/suggestions`, {
           method: "POST",
@@ -367,8 +370,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            context: parts.join("\n"),
+            content: contextString,
             userId: "demo-user",
+            attachments: attachedItems,
           }),
         });
 
@@ -377,6 +381,15 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           if (data.suggestions && Array.isArray(data.suggestions)) {
             setSuggestions(data.suggestions.slice(0, 4)); // Limit to 4 suggestions
           }
+        } else {
+          // Fallback to generic suggestions on error
+          const genericSuggestions = [
+            "Tell me more about this",
+            "What are the key details?",
+            "How does this compare to alternatives?",
+            "What should I know before deciding?",
+          ];
+          setSuggestions(genericSuggestions);
         }
       } catch (error) {
         console.error("Failed to load suggestions:", error);
@@ -406,7 +419,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     if (attachedItems.some(item => item.type === "document" && item.data.id === doc.id)) {
       toast({
         title: "Already Attached",
-        description: `"${doc.title}" is already in your context`,
+        description: `"${doc.title}" is already attached to chat`,
         variant: "default",
       });
       return;
@@ -414,7 +427,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
     setAttachedItems(prev => [...prev, { type: "document", data: doc }]);
     toast({
-      title: "✨ Added to AI Context",
+      title: "💬 Added to Chat",
       description: `"${doc.title}" is now part of the conversation`,
     });
   };
@@ -880,9 +893,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                   variant="ghost"
                                   className="absolute top-2 right-2 h-9 w-9 opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white backdrop-blur-sm shadow-lg"
                                   onClick={() => handleAttachDocument(doc)}
-                                  title="Add to AI Context"
+                                  title="Add to Chat"
                                 >
-                                  <BrainCircuit className="h-4 w-4" />
+                                  <MessageSquarePlus className="h-5 w-5" />
                                 </Button>
                               </motion.div>
                             </div>
@@ -918,9 +931,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                     variant="ghost"
                                     className="h-9 w-9 opacity-0 group-hover:opacity-100 transition-all bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg"
                                     onClick={() => handleAttachDocument(doc)}
-                                    title="Add to AI Context"
+                                    title="Add to Chat"
                                   >
-                                    <BrainCircuit className="h-4 w-4" />
+                                    <MessageSquarePlus className="h-5 w-5" />
                                   </Button>
                                 </motion.div>
                               )}
@@ -997,11 +1010,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     <Card className="border-2 border-purple-400/50 bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-blue-500/20 shadow-lg hover:shadow-xl transition-all">
                       <CardContent className="p-3 flex items-center gap-3">
                         <motion.div
-                          whileHover={{ rotate: [0, -10, 10, -10, 0] }}
+                          whileHover={{ rotate: [0, -5, 5, -5, 0] }}
                           transition={{ duration: 0.5 }}
                           className="p-2 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex-shrink-0"
                         >
-                          <BrainCircuit className="h-4 w-4 text-white" />
+                          <MessageSquarePlus className="h-4 w-4 text-white" />
                         </motion.div>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-bold text-purple-900 dark:text-purple-100 truncate">
@@ -1009,7 +1022,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           </p>
                           <p className="text-[10px] text-purple-700 dark:text-purple-300 flex items-center gap-1">
                             <Sparkles className="h-2.5 w-2.5" />
-                            Added to AI context
+                            Added to chat
                           </p>
                         </div>
                         <Button
