@@ -3565,9 +3565,9 @@ const AIFabricFramework = () => {
                     exit={{ opacity: 0, scale: 0.9 }}
                     className="inline-flex"
                   >
-                  <Card className="border-purple-500/50 bg-purple-500/5 max-w-full">
+                  <Card className="border-purple-500/70 bg-purple-500/20 max-w-full">
                     <CardContent className="p-2.5 flex items-center gap-2">
-                      <div className="p-1.5 bg-purple-500/10 rounded-lg flex-shrink-0">
+                      <div className="p-1.5 bg-purple-500/25 rounded-lg flex-shrink-0">
                         <Package className="h-3.5 w-3.5 text-purple-600" />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -3594,9 +3594,9 @@ const AIFabricFramework = () => {
                     exit={{ opacity: 0, scale: 0.9 }}
                     className="inline-flex"
                   >
-                  <Card className="border-amber-500/50 bg-amber-500/5 max-w-full">
+                  <Card className="border-amber-500/70 bg-amber-500/20 max-w-full">
                     <CardContent className="p-2.5 flex items-center gap-2">
-                      <div className="p-1.5 bg-amber-500/10 rounded-lg flex-shrink-0">
+                      <div className="p-1.5 bg-amber-500/25 rounded-lg flex-shrink-0">
                         <Star className="h-3.5 w-3.5 text-amber-600" />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -3623,9 +3623,9 @@ const AIFabricFramework = () => {
                     exit={{ opacity: 0, scale: 0.9 }}
                     className="inline-flex"
                   >
-                  <Card className="border-pink-500/50 bg-pink-500/5 max-w-full">
+                  <Card className="border-pink-500/70 bg-pink-500/20 max-w-full">
                     <CardContent className="p-2.5 flex items-center gap-2">
-                      <div className="p-1.5 bg-pink-500/10 rounded-lg flex-shrink-0">
+                      <div className="p-1.5 bg-pink-500/25 rounded-lg flex-shrink-0">
                         <Tag className="h-3.5 w-3.5 text-pink-600" />
                       </div>
                       <div className="min-w-0 flex-1">
