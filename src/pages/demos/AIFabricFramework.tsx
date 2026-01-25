@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   ShoppingCart,
@@ -746,7 +746,32 @@ const AIFabricFramework = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLTextAreaElement>(null);
   const isUserFocusRef = useRef(false);
+  const location = useLocation();
+  const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Check URL path and auto-open MAX Mode if path contains /maxAI-Mode
+  useEffect(() => {
+    if (location.pathname.includes('/maxAI-Mode')) {
+      setIsMaxModeOpen(true);
+    }
+  }, [location.pathname]);
+
+  // Function to open MAX Mode and update URL
+  const openMaxMode = () => {
+    setIsMaxModeOpen(true);
+    if (!location.pathname.includes('/maxAI-Mode')) {
+      navigate('/demos/ai-fabric-framework/maxAI-Mode', { replace: true });
+    }
+  };
+
+  // Function to close MAX Mode and update URL
+  const closeMaxMode = () => {
+    setIsMaxModeOpen(false);
+    if (location.pathname.includes('/maxAI-Mode')) {
+      navigate('/demos/ai-fabric-framework', { replace: true });
+    }
+  };
 
   // Form state for add/edit
   const [formData, setFormData] = useState({
@@ -3748,7 +3773,7 @@ const AIFabricFramework = () => {
               </Button>
             </div>
             <Button
-              onClick={() => setIsMaxModeOpen(true)}
+              onClick={openMaxMode}
               className="h-[108px] px-6 bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 shadow-xl flex flex-col gap-1"
             >
               <Sparkles className="h-6 w-6" />
@@ -3760,7 +3785,7 @@ const AIFabricFramework = () => {
       </div>
 
       {/* MAX Mode */}
-      <MaxMode isOpen={isMaxModeOpen} onClose={() => setIsMaxModeOpen(false)} />
+      <MaxMode isOpen={isMaxModeOpen} onClose={closeMaxMode} />
     </div>
   );
 };

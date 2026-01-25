@@ -119,6 +119,7 @@ const App = () => (
             <Route path="/demos/code-documentation-search" element={<CodeDocumentationSearch />} />
             <Route path="/demos/meeting-notes-analyzer" element={<MeetingNotesAnalyzer />} />
             <Route path="/demos/ai-fabric-framework" element={<AIFabricFramework />} />
+            <Route path="/demos/ai-fabric-framework/maxAI-Mode" element={<AIFabricFramework />} />
             <Route path="/docs" element={<Documentation />} />
             <Route path="/docs/orchestrator_story" element={<OrchestratorStory />} />
             <Route path="/docs/orchestrator_story_v2" element={<OrchestratorStoryV2 />} />
