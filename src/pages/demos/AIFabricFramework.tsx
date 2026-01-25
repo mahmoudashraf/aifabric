@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   ShoppingCart,
@@ -49,7 +49,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
-import MaxMode from "./MaxMode";
 
 const API_BASE_URL = "https://ai-fabric-framework-production.up.railway.app/api";
 
@@ -736,7 +735,6 @@ const AIFabricFramework = () => {
   const [couponCount, setCouponCount] = useState(0);
   const [migratedProductIds, setMigratedProductIds] = useState<string[]>([]);
   const [isChatExpanded, setIsChatExpanded] = useState(false);
-  const [isMaxModeOpen, setIsMaxModeOpen] = useState(false);
   const [attachedProducts, setAttachedProducts] = useState<Product[]>([]);
   const [attachedReviews, setAttachedReviews] = useState<Review[]>([]);
   const [attachedCoupons, setAttachedCoupons] = useState<Coupon[]>([]);
@@ -746,32 +744,8 @@ const AIFabricFramework = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLTextAreaElement>(null);
   const isUserFocusRef = useRef(false);
-  const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
-
-  // Check URL path and auto-open MAX Mode if path contains /maxAI-Mode
-  useEffect(() => {
-    if (location.pathname.includes('/maxAI-Mode')) {
-      setIsMaxModeOpen(true);
-    }
-  }, [location.pathname]);
-
-  // Function to open MAX Mode and update URL
-  const openMaxMode = () => {
-    setIsMaxModeOpen(true);
-    if (!location.pathname.includes('/maxAI-Mode')) {
-      navigate('/demos/ai-fabric-framework/maxAI-Mode', { replace: true });
-    }
-  };
-
-  // Function to close MAX Mode and update URL
-  const closeMaxMode = () => {
-    setIsMaxModeOpen(false);
-    if (location.pathname.includes('/maxAI-Mode')) {
-      navigate('/demos/ai-fabric-framework', { replace: true });
-    }
-  };
 
   // Form state for add/edit
   const [formData, setFormData] = useState({
@@ -3773,7 +3747,7 @@ const AIFabricFramework = () => {
               </Button>
             </div>
             <Button
-              onClick={openMaxMode}
+              onClick={() => navigate('/maxAI')}
               className="h-[108px] px-6 bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 shadow-xl flex flex-col gap-1"
             >
               <Sparkles className="h-6 w-6" />
@@ -3783,9 +3757,6 @@ const AIFabricFramework = () => {
           </div>
         </div>
       </div>
-
-      {/* MAX Mode */}
-      <MaxMode isOpen={isMaxModeOpen} onClose={closeMaxMode} />
     </div>
   );
 };
