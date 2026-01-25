@@ -35,6 +35,13 @@ import {
   ChevronDown,
   Eye,
   EyeOff,
+  Truck,
+  RotateCcw,
+  User,
+  MapPin,
+  MessageSquare,
+  List,
+  ShoppingBag,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -346,16 +353,22 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const chatInputRef = useRef<HTMLTextAreaElement>(null);
   const { toast } = useToast();
 
-  // Quick action tools
+  // Quick action tools - aligned with available backend actions
   const quickActions = [
-    { icon: ShoppingCart, label: "My Cart", query: "Show me my cart", color: "text-blue-600", bg: "bg-blue-500/10", border: "border-blue-500/30" },
-    { icon: Receipt, label: "My Orders", query: "Show my recent orders", color: "text-green-600", bg: "bg-green-500/10", border: "border-green-500/30" },
-    { icon: Heart, label: "Wishlist", query: "Show my wishlist", color: "text-pink-600", bg: "bg-pink-500/10", border: "border-pink-500/30" },
-    { icon: Tag, label: "Coupons", query: "Show available coupons", color: "text-purple-600", bg: "bg-purple-500/10", border: "border-purple-500/30" },
-    { icon: Star, label: "Reviews", query: "Show recent reviews", color: "text-yellow-600", bg: "bg-yellow-500/10", border: "border-yellow-500/30" },
-    { icon: TrendingUp, label: "Trending", query: "What's trending?", color: "text-orange-600", bg: "bg-orange-500/10", border: "border-orange-500/30" },
-    { icon: Clock, label: "Order History", query: "Show my order history", color: "text-indigo-600", bg: "bg-indigo-500/10", border: "border-indigo-500/30" },
-    { icon: Search, label: "Search", query: "I want to search for something", color: "text-teal-600", bg: "bg-teal-500/10", border: "border-teal-500/30" },
+    { icon: Search, label: "Search Products", query: "Search for products", color: "text-blue-600", bg: "bg-blue-500/10", border: "border-blue-500/30" },
+    { icon: List, label: "Browse Products", query: "List all products", color: "text-purple-600", bg: "bg-purple-500/10", border: "border-purple-500/30" },
+    { icon: ShoppingCart, label: "My Cart", query: "View my cart", color: "text-green-600", bg: "bg-green-500/10", border: "border-green-500/30" },
+    { icon: ShoppingBag, label: "Checkout", query: "Checkout my cart", color: "text-orange-600", bg: "bg-orange-500/10", border: "border-orange-500/30" },
+    { icon: Receipt, label: "My Orders", query: "List my orders", color: "text-indigo-600", bg: "bg-indigo-500/10", border: "border-indigo-500/30" },
+    { icon: Clock, label: "Active Orders", query: "Show my active orders", color: "text-cyan-600", bg: "bg-cyan-500/10", border: "border-cyan-500/30" },
+    { icon: Truck, label: "Track Order", query: "Track my order shipment", color: "text-teal-600", bg: "bg-teal-500/10", border: "border-teal-500/30" },
+    { icon: RotateCcw, label: "Returns", query: "Create a return request", color: "text-red-600", bg: "bg-red-500/10", border: "border-red-500/30" },
+    { icon: Tag, label: "Coupons", query: "Show available coupons", color: "text-pink-600", bg: "bg-pink-500/10", border: "border-pink-500/30" },
+    { icon: Star, label: "Reviews", query: "Add a product review", color: "text-yellow-600", bg: "bg-yellow-500/10", border: "border-yellow-500/30" },
+    { icon: User, label: "My Account", query: "Show my account details", color: "text-slate-600", bg: "bg-slate-500/10", border: "border-slate-500/30" },
+    { icon: MapPin, label: "Addresses", query: "List my saved addresses", color: "text-emerald-600", bg: "bg-emerald-500/10", border: "border-emerald-500/30" },
+    { icon: MessageSquare, label: "Support", query: "Create a support ticket", color: "text-violet-600", bg: "bg-violet-500/10", border: "border-violet-500/30" },
+    { icon: TrendingUp, label: "Trending", query: "What's trending?", color: "text-rose-600", bg: "bg-rose-500/10", border: "border-rose-500/30" },
   ];
 
   // Auto-scroll to latest message
