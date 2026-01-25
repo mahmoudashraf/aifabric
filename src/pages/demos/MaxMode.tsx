@@ -142,12 +142,14 @@ const ActionResultRenderer = ({
   data,
   messageId,
   expandedCount,
-  onExpand
+  onExpand,
+  onAttach
 }: {
   data: any;
   messageId: string;
   expandedCount: number;
   onExpand: (count: number) => void;
+  onAttach?: (item: any) => void;
 }) => {
   if (!data) return null;
 
@@ -159,8 +161,22 @@ const ActionResultRenderer = ({
     return (
       <div className="mt-3 space-y-2">
         {visibleItems.map((item: any, idx: number) => (
-          <Card key={idx} className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200 hover:border-purple-400 transition-colors" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
-            <CardContent className="p-3">
+          <Card key={idx} className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200 hover:border-purple-400 transition-colors relative group" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+            {onAttach && typeof item === "object" && item !== null && (
+              <Button
+                size="icon"
+                variant="ghost"
+                className="absolute top-2 right-2 h-8 w-8 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg border border-white/30 hover:scale-110 transition-all z-10"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onAttach(item);
+                }}
+                title="Attach to Chat"
+              >
+                <Paperclip className="h-4 w-4" />
+              </Button>
+            )}
+            <CardContent className="p-3 pr-12">
               {typeof item === "object" && item !== null ? (
                 <div className="space-y-2">
                   {Object.entries(item).map(([key, value]) => (
@@ -225,8 +241,22 @@ const ActionResultRenderer = ({
                 </h4>
                 <div className="space-y-2">
                   {visibleItems.map((item: any, idx: number) => (
-                    <Card key={idx} className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200 hover:border-purple-400 transition-colors" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
-                      <CardContent className="p-3">
+                    <Card key={idx} className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200 hover:border-purple-400 transition-colors relative group" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+                      {onAttach && typeof item === "object" && item !== null && (
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="absolute top-2 right-2 h-8 w-8 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg border border-white/30 hover:scale-110 transition-all z-10"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onAttach(item);
+                          }}
+                          title="Attach to Chat"
+                        >
+                          <Paperclip className="h-4 w-4" />
+                        </Button>
+                      )}
+                      <CardContent className="p-3 pr-12">
                         {typeof item === "object" && item !== null ? (
                           <div className="space-y-2">
                             {Object.entries(item).map(([key, value]) => (
@@ -899,6 +929,31 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                 [message.id]: count
                               }));
                             }}
+                            onAttach={(item) => {
+                              // Create a title from the item data
+                              const title = item.productName || item.name || item.title || `Item ${item.id || ''}`;
+                              const itemType = item.type || 'item';
+
+                              // Check if already attached
+                              const itemId = item.id || JSON.stringify(item);
+                              if (attachedItems.some(attached =>
+                                attached.type === itemType &&
+                                (attached.data.id === item.id || JSON.stringify(attached.data) === JSON.stringify(item))
+                              )) {
+                                toast({
+                                  title: "Already Attached",
+                                  description: `"${title}" is already attached to chat`,
+                                  variant: "default",
+                                });
+                                return;
+                              }
+
+                              setAttachedItems(prev => [...prev, { type: itemType, data: item }]);
+                              toast({
+                                title: "💬 Added to Chat",
+                                description: `"${title}" is now part of the conversation`,
+                              });
+                            }}
                           />
                         )}
                       </div>
@@ -1196,7 +1251,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         </motion.div>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-bold text-purple-900 dark:text-purple-100 truncate">
-                            {item.data.title || item.data.name || "Document"}
+                            {item.data.productName || item.data.title || item.data.name || `Item ${item.data.id || ''}`}
                           </p>
                           <p className="text-[10px] text-purple-700 dark:text-purple-300 flex items-center gap-1">
                             <Sparkles className="h-2.5 w-2.5" />
