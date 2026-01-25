@@ -312,6 +312,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const contextPanelRef = useRef<HTMLDivElement>(null);
+  const contextPanelEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   // Quick action tools
@@ -333,7 +334,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     }
   }, [chatMessages]);
 
-  // Collect all documents from all messages
+  // Collect all documents from all messages and auto-scroll to new documents
   useEffect(() => {
     const allDocs: Document[] = [];
     chatMessages.forEach(message => {
@@ -341,8 +342,17 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         allDocs.push(...message.documents);
       }
     });
+
+    const prevCount = contextDocuments.length;
     setContextDocuments(allDocs);
-  }, [chatMessages]);
+
+    // Auto-scroll to new documents if new ones were added
+    if (allDocs.length > prevCount && contextPanelEndRef.current && isPanelVisible) {
+      setTimeout(() => {
+        contextPanelEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+      }, 100);
+    }
+  }, [chatMessages, isPanelVisible]);
 
   // Intersection Observer to detect visible messages and scroll context panel to relevant documents
   useEffect(() => {
@@ -1028,9 +1038,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                     e.preventDefault();
                                     handleAttachDocument(doc);
                                   }}
-                                  title="Add to Chat"
+                                  title="Attach to Chat"
                                 >
-                                  <MessageSquarePlus className="h-5 w-5" />
+                                  <Paperclip className="h-5 w-5" />
                                 </Button>
                               </div>
                             )}
@@ -1065,9 +1075,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                       e.preventDefault();
                                       handleAttachDocument(doc);
                                     }}
-                                    title="Add to Chat"
+                                    title="Attach to Chat"
                                   >
-                                    <MessageSquarePlus className="h-5 w-5" />
+                                    <Paperclip className="h-5 w-5" />
                                   </Button>
                                 )}
                               </div>
@@ -1114,6 +1124,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                       );
                     })}
                   </AnimatePresence>
+                  <div ref={contextPanelEndRef} />
                 </div>
 
                 {/* Floating Scroll Down Button - Hidden on Mobile */}
