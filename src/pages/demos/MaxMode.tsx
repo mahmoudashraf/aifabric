@@ -33,6 +33,8 @@ import {
   ArrowRight,
   ChevronUp,
   ChevronDown,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -304,6 +306,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [attachedItems, setAttachedItems] = useState<Array<{ type: string; data: any }>>([]);
   const [contextDocuments, setContextDocuments] = useState<Document[]>([]);
   const [focusedMessageId, setFocusedMessageId] = useState<string | null>(null);
+  const [isPanelVisible, setIsPanelVisible] = useState(true);
   const [expandedActions, setExpandedActions] = useState<{ [key: string]: number }>({});
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
@@ -861,6 +864,19 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         <p className={`whitespace-pre-wrap leading-relaxed ${message.type === "ai" && styles ? styles.text : ""}`} style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
                           {message.content}
                         </p>
+                        {message.resultType === "INFORMATION_PROVIDED" && message.documents && message.documents.length > 0 && !isPanelVisible && (
+                          <Button
+                            onClick={() => {
+                              setIsPanelVisible(true);
+                              setFocusedMessageId(message.id);
+                            }}
+                            size="sm"
+                            className="mt-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg"
+                          >
+                            <Eye className="h-3.5 w-3.5 mr-1.5" />
+                            Show {message.documents.length} {message.documents.length === 1 ? 'Document' : 'Documents'}
+                          </Button>
+                        )}
                         {message.result?.sanitizedPayload?.type === "ACTION_EXECUTED" &&
                          message.result?.sanitizedPayload?.data?.actionResult?.data && (
                           <ActionResultRenderer
@@ -916,13 +932,13 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
         {/* Right: Context Panel (Documents) - Overlay with Arrow Navigation */}
         <AnimatePresence>
-          {contextDocuments.length > 0 && (
+          {contextDocuments.length > 0 && isPanelVisible && (
             <motion.div
               initial={{ opacity: 0, x: 420 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 420 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="absolute top-0 right-0 bottom-0 w-[420px] border-l-2 border-purple-500/30 bg-gradient-to-b from-purple-50/95 via-pink-50/95 to-blue-50/95 dark:from-gray-900/95 dark:via-purple-900/95 dark:to-blue-900/95 backdrop-blur-xl p-6 shadow-2xl z-10 flex flex-col"
+              className="absolute top-0 right-0 bottom-0 w-[420px] lg:w-[420px] w-full max-w-[420px] border-l-2 border-purple-500/30 bg-gradient-to-b from-purple-50/95 via-pink-50/95 to-blue-50/95 dark:from-gray-900/95 dark:via-purple-900/95 dark:to-blue-900/95 backdrop-blur-xl p-6 shadow-2xl z-10 flex flex-col"
             >
               {/* Header */}
               <div className="bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 backdrop-blur-md p-5 rounded-2xl mb-6 shadow-2xl border-2 border-white/20">
@@ -945,11 +961,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setContextDocuments([])}
+                    onClick={() => setIsPanelVisible(false)}
                     className="h-8 px-3 text-xs text-white hover:bg-white/20 border border-white/30"
                   >
-                    <X className="h-3 w-3 mr-1" />
-                    Clear
+                    <EyeOff className="h-3 w-3 mr-1" />
+                    Hide
                   </Button>
                 </div>
                 <div className="h-1 bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 rounded-full"></div>
@@ -1111,6 +1127,29 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   <ChevronDown className="h-5 w-5" />
                 </Button>
               </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Floating Show Panel Button - Appears when panel is hidden */}
+        <AnimatePresence>
+          {contextDocuments.length > 0 && !isPanelVisible && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, x: 100 }}
+              animate={{ opacity: 1, scale: 1, x: 0 }}
+              exit={{ opacity: 0, scale: 0.8, x: 100 }}
+              transition={{ type: "spring", damping: 20 }}
+              className="absolute top-20 right-4 z-20"
+            >
+              <Button
+                onClick={() => setIsPanelVisible(true)}
+                size="lg"
+                className="bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white shadow-2xl border-2 border-white/30 rounded-full px-6"
+              >
+                <Eye className="h-5 w-5 mr-2" />
+                <span className="hidden sm:inline">Show Panel</span>
+                <span className="sm:hidden">{contextDocuments.length}</span>
+              </Button>
             </motion.div>
           )}
         </AnimatePresence>
