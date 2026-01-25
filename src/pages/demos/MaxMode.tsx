@@ -871,7 +871,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               </div>
 
               {/* Documents List - Scrollable with Floating Buttons */}
-              <div className="flex-1 relative">
+              <div className="flex-1 relative min-h-0">
                 {/* Floating Scroll Up Button - Hidden on Mobile */}
                 <Button
                   variant="ghost"
@@ -886,7 +886,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 {/* Scrollable Documents Container */}
                 <div
                   ref={contextPanelRef}
-                  className="h-full overflow-y-auto px-2 space-y-4 scrollbar-thin scrollbar-thumb-purple-500/50 scrollbar-track-purple-100/20"
+                  className="absolute inset-0 overflow-y-auto px-2 py-2 space-y-4"
+                  style={{
+                    scrollbarWidth: 'thin',
+                    scrollbarColor: 'rgba(168, 85, 247, 0.5) rgba(243, 232, 255, 0.2)'
+                  }}
                 >
                   <AnimatePresence mode="popLayout">
                     {contextDocuments.map((doc, idx) => {
