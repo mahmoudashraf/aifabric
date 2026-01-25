@@ -343,6 +343,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const contextPanelRef = useRef<HTMLDivElement>(null);
   const contextPanelEndRef = useRef<HTMLDivElement>(null);
+  const chatInputRef = useRef<HTMLTextAreaElement>(null);
   const { toast } = useToast();
 
   // Quick action tools
@@ -363,6 +364,13 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [chatMessages]);
+
+  // Always focus on chat input after sending message or when opening
+  useEffect(() => {
+    if (chatInputRef.current && isOpen) {
+      chatInputRef.current.focus();
+    }
+  }, [chatMessages, isOpen]);
 
   // Collect all documents from all messages and auto-scroll to new documents
   useEffect(() => {
@@ -1350,6 +1358,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           )}
           <div className="relative">
             <Textarea
+              ref={chatInputRef}
               placeholder={
                 attachedItems.length > 0
                   ? `Ask about ${attachedItems.length} attached ${attachedItems.length === 1 ? 'item' : 'items'}... 🤖✨`
@@ -1365,7 +1374,6 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               }}
               className="min-h-[80px] pr-16 text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed"
               style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}
-              disabled={isLoading}
             />
             <Button
               size="icon"
