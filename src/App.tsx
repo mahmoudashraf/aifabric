@@ -91,7 +91,6 @@ import AIAnnotationsDeveloperGuideStory from "./pages/docs/AIAnnotationsDevelope
 import AIAnnotationsArchitectStory from "./pages/docs/AIAnnotationsArchitectStory";
 import AIAnnotationsKillingBoilerplateStory from "./pages/docs/AIAnnotationsKillingBoilerplateStory";
 import AIAnnotationsSemanticSearchStory from "./pages/docs/AIAnnotationsSemanticSearchStory";
-import MaxAIStandalone from "./pages/MaxAIStandalone";
 import { usePageTracking } from "./hooks/usePageTracking";
 
 const queryClient = new QueryClient();
@@ -121,7 +120,6 @@ const App = () => (
             <Route path="/demos/meeting-notes-analyzer" element={<MeetingNotesAnalyzer />} />
             <Route path="/demos/ai-fabric-framework" element={<AIFabricFramework />} />
             <Route path="/demos/ai-fabric-framework/maxAI-Mode" element={<AIFabricFramework />} />
-            <Route path="/maxai" element={<MaxAIStandalone />} />
             <Route path="/docs" element={<Documentation />} />
             <Route path="/docs/orchestrator_story" element={<OrchestratorStory />} />
             <Route path="/docs/orchestrator_story_v2" element={<OrchestratorStoryV2 />} />
