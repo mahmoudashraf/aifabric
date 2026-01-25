@@ -2191,7 +2191,7 @@ const AIFabricFramework = () => {
                         Try: "find affordable accessories" or "laptop for gaming"
                       </CardDescription>
                     </div>
-                    <Button onClick={loadProducts} variant="outline" size="sm">
+                    <Button onClick={() => loadProducts()} variant="outline" size="sm">
                       <RefreshCw className="h-4 w-4 mr-2" />
                       Refresh
                     </Button>
@@ -2834,7 +2834,7 @@ const AIFabricFramework = () => {
                         View and manage product reviews. All operations are handled via AI chat.
                       </CardDescription>
                     </div>
-                    <Button onClick={loadReviews} variant="outline" size="sm">
+                    <Button onClick={() => loadReviews()} variant="outline" size="sm">
                       <RefreshCw className="h-4 w-4 mr-2" />
                       Refresh
                     </Button>
@@ -2977,7 +2977,7 @@ const AIFabricFramework = () => {
                         View and manage discount coupons. All operations are handled via AI chat.
                       </CardDescription>
                     </div>
-                    <Button onClick={loadCoupons} variant="outline" size="sm">
+                    <Button onClick={() => loadCoupons()} variant="outline" size="sm">
                       <RefreshCw className="h-4 w-4 mr-2" />
                       Refresh
                     </Button>
@@ -3761,7 +3761,7 @@ const AIFabricFramework = () => {
               />
               <Button
                 size="icon"
-                onClick={handleChatQuery}
+                onClick={() => handleChatQuery()}
                 disabled={isLoading || !chatQuery.trim()}
                 className="absolute right-2 bottom-2 h-9 w-9 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg"
               >
