@@ -103,6 +103,9 @@ interface Document {
   content: string;
   type: string;
   metadata?: any;
+  messageId?: string;
+  similarity?: number;
+  score?: number;
 }
 
 // Helper functions for formatting
@@ -300,6 +303,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [attachedItems, setAttachedItems] = useState<Array<{ type: string; data: any }>>([]);
   const [contextDocuments, setContextDocuments] = useState<Document[]>([]);
+  const [focusedMessageId, setFocusedMessageId] = useState<string | null>(null);
   const [expandedActions, setExpandedActions] = useState<{ [key: string]: number }>({});
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
@@ -326,7 +330,18 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     }
   }, [chatMessages]);
 
-  // Intersection Observer to detect visible messages and update context panel
+  // Collect all documents from all messages
+  useEffect(() => {
+    const allDocs: Document[] = [];
+    chatMessages.forEach(message => {
+      if (message.documents && message.documents.length > 0) {
+        allDocs.push(...message.documents);
+      }
+    });
+    setContextDocuments(allDocs);
+  }, [chatMessages]);
+
+  // Intersection Observer to detect visible messages and scroll context panel to relevant documents
   useEffect(() => {
     const observerOptions = {
       root: null,
@@ -350,9 +365,24 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         }
       }
 
-      // Update context panel with the visible message's documents
-      if (visibleMessageWithDocs && visibleMessageWithDocs.documents) {
-        setContextDocuments(visibleMessageWithDocs.documents);
+      // Scroll context panel to the visible message's documents
+      if (visibleMessageWithDocs) {
+        setFocusedMessageId(visibleMessageWithDocs.id);
+
+        // Scroll to the first document of this message in the context panel
+        const firstDocElement = document.querySelector(`[data-doc-message-id="${visibleMessageWithDocs.id}"]`);
+        if (firstDocElement && contextPanelRef.current) {
+          const container = contextPanelRef.current;
+          const elementTop = (firstDocElement as HTMLElement).offsetTop;
+          const containerTop = container.scrollTop;
+          const containerHeight = container.clientHeight;
+
+          // Scroll to center the document section
+          container.scrollTo({
+            top: elementTop - containerHeight / 4,
+            behavior: "smooth"
+          });
+        }
       }
     };
 
@@ -652,8 +682,18 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         messageContent = data.response || data.message || "I processed your query successfully.";
       }
 
+      const messageId = (Date.now() + 1).toString();
+
+      // Tag documents with message ID
+      if (messageDocs) {
+        messageDocs = messageDocs.map(doc => ({
+          ...doc,
+          messageId: messageId
+        }));
+      }
+
       const aiMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
+        id: messageId,
         type: "ai",
         content: messageContent,
         timestamp: new Date().toISOString(),
@@ -940,15 +980,21 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   <AnimatePresence mode="popLayout">
                     {contextDocuments.map((doc, idx) => {
                       const DocIcon = getDocumentIcon(doc.type);
+                      const isFocused = doc.messageId === focusedMessageId;
                       return (
                         <motion.div
                           key={doc.id}
+                          data-doc-message-id={doc.messageId}
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -20 }}
                           transition={{ delay: idx * 0.05 }}
                         >
-                          <Card className="relative group hover:shadow-2xl transition-all duration-300 border-2 border-purple-300 hover:border-purple-500 bg-gradient-to-br from-white via-purple-50/50 to-pink-50/50 dark:from-gray-800 dark:to-purple-900/20 overflow-hidden">
+                          <Card className={`relative group hover:shadow-2xl transition-all duration-300 border-2 ${
+                            isFocused
+                              ? 'border-yellow-400 shadow-lg shadow-yellow-200/50 bg-gradient-to-br from-yellow-50 via-purple-50/50 to-pink-50/50'
+                              : 'border-purple-300 hover:border-purple-500 bg-gradient-to-br from-white via-purple-50/50 to-pink-50/50'
+                          } dark:from-gray-800 dark:to-purple-900/20 overflow-hidden`}>
                             {doc.metadata?.imageUrl && (
                               <div className="relative h-48 overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
                                 <img
