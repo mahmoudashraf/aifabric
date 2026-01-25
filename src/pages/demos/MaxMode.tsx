@@ -94,6 +94,7 @@ interface ChatMessage {
   result?: ChatResult;
   resultType?: ResultType;
   attachedItems?: Array<{ type: string; data: any }>;
+  documents?: Document[];
 }
 
 interface Document {
@@ -325,6 +326,47 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     }
   }, [chatMessages]);
 
+  // Intersection Observer to detect visible messages and update context panel
+  useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: "-50% 0px -50% 0px", // Trigger when message crosses center of viewport
+      threshold: 0,
+    };
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      // Find the message closest to the center that has documents
+      let visibleMessageWithDocs: ChatMessage | null = null;
+
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          const messageId = entry.target.getAttribute('data-message-id');
+          const message = chatMessages.find(m => m.id === messageId);
+
+          if (message && message.documents && message.documents.length > 0) {
+            visibleMessageWithDocs = message;
+            break;
+          }
+        }
+      }
+
+      // Update context panel with the visible message's documents
+      if (visibleMessageWithDocs && visibleMessageWithDocs.documents) {
+        setContextDocuments(visibleMessageWithDocs.documents);
+      }
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    // Observe all message elements
+    const messageElements = document.querySelectorAll('[data-message-id]');
+    messageElements.forEach((el) => observer.observe(el));
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [chatMessages]);
+
   // Welcome message
   useEffect(() => {
     if (isOpen && chatMessages.length === 0) {
@@ -530,6 +572,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       let messageContent = "";
       let result: ChatResult | undefined;
       let resultType: ResultType | undefined;
+      let messageDocs: Document[] | undefined;
 
       if (data.result && data.result.sanitizedPayload) {
         messageContent = data.result.sanitizedPayload.message || "I processed your query successfully.";
@@ -600,7 +643,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             });
 
             console.log("Transformed documents:", transformedDocs);
-            setContextDocuments(transformedDocs);
+            messageDocs = transformedDocs;
           } else {
             console.log("No documents found in response");
           }
@@ -616,6 +659,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         timestamp: new Date().toISOString(),
         result: result,
         resultType: resultType,
+        documents: messageDocs,
       };
 
       setChatMessages((prev) => [...prev, aiMessage]);
@@ -741,6 +785,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 return (
                   <motion.div
                     key={message.id}
+                    data-message-id={message.id}
                     initial={{ opacity: 0, x: message.type === "user" ? 20 : -20, scale: 0.95 }}
                     animate={{ opacity: 1, x: 0, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
