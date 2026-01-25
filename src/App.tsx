@@ -16,6 +16,7 @@ import TeamSentimentTracker from "./pages/demos/TeamSentimentTracker";
 import CodeDocumentationSearch from "./pages/demos/CodeDocumentationSearch";
 import MeetingNotesAnalyzer from "./pages/demos/MeetingNotesAnalyzer";
 import AIFabricFramework from "./pages/demos/AIFabricFramework";
+import MaxAIMode from "./pages/MaxAIMode";
 import OrchestratorStory from "./pages/docs/OrchestratorStory";
 import OrchestratorStoryV2 from "./pages/docs/OrchestratorStoryV2";
 import PIIDetectionStory from "./pages/docs/PIIDetectionStory";
@@ -120,6 +121,7 @@ const App = () => (
             <Route path="/demos/meeting-notes-analyzer" element={<MeetingNotesAnalyzer />} />
             <Route path="/demos/ai-fabric-framework" element={<AIFabricFramework />} />
             <Route path="/demos/ai-fabric-framework/maxAI-Mode" element={<AIFabricFramework />} />
+            <Route path="/maxAI" element={<MaxAIMode />} />
             <Route path="/docs" element={<Documentation />} />
             <Route path="/docs/orchestrator_story" element={<OrchestratorStory />} />
             <Route path="/docs/orchestrator_story_v2" element={<OrchestratorStoryV2 />} />
