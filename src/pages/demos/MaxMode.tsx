@@ -348,7 +348,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const [collectingItem, setCollectingItem] = useState<{ title: string; type: string } | null>(null);
+  const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const latestMessageRef = useRef<HTMLDivElement>(null);
   const contextPanelRef = useRef<HTMLDivElement>(null);
   const contextPanelEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLTextAreaElement>(null);
@@ -372,10 +376,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     { icon: TrendingUp, label: "Trending", query: "What's trending?", color: "text-rose-600", bg: "bg-rose-500/10", border: "border-rose-500/30" },
   ];
 
-  // Auto-scroll to latest message
+  // Auto-scroll to latest message - show it at the top of viewport
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    if (latestMessageRef.current && chatMessages.length > 0) {
+      latestMessageRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }, [chatMessages]);
 
@@ -869,10 +873,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         </div>
       </div>
 
-      {/* Quick Actions Bar */}
-      <div className="absolute top-16 left-0 right-0 px-6 py-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b z-10">
+      {/* Quick Actions Bar - Desktop Only */}
+      <div className="hidden md:block absolute top-16 left-0 right-0 px-6 py-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b z-10">
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-          {quickActions.map((action, idx) => (
+          {quickActions.slice(0, 8).map((action, idx) => (
             <motion.button
               key={idx}
               initial={{ opacity: 0, y: -10 }}
@@ -888,19 +892,106 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         </div>
       </div>
 
+      {/* Floating Quick Actions Button - Mobile Only */}
+      <AnimatePresence>
+        {!isQuickActionsOpen && (
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
+            className="md:hidden fixed top-20 right-4 z-20"
+          >
+            <Button
+              onClick={() => setIsQuickActionsOpen(true)}
+              size="lg"
+              className="h-14 w-14 rounded-full bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white shadow-2xl border-2 border-white/30"
+            >
+              <Zap className="h-6 w-6" />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Quick Actions Bottom Sheet */}
+      <AnimatePresence>
+        {isQuickActionsOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsQuickActionsOpen(false)}
+              className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[60]"
+            />
+
+            {/* Bottom Sheet */}
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 rounded-t-3xl shadow-2xl z-[70] max-h-[70vh] overflow-hidden"
+            >
+              {/* Handle */}
+              <div className="flex justify-center pt-3 pb-2">
+                <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full" />
+              </div>
+
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+                <h3 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Quick Actions</h3>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsQuickActionsOpen(false)}
+                  className="h-8 w-8"
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+
+              {/* Actions Grid */}
+              <div className="p-6 overflow-y-auto max-h-[calc(70vh-120px)]">
+                <div className="grid grid-cols-3 gap-3">
+                  {quickActions.map((action, idx) => (
+                    <motion.button
+                      key={idx}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: idx * 0.03 }}
+                      onClick={() => {
+                        handleQuickAction(action.query);
+                        setIsQuickActionsOpen(false);
+                      }}
+                      className={`flex flex-col items-center gap-2 p-4 rounded-2xl ${action.bg} border-2 ${action.border} active:scale-95 transition-all`}
+                    >
+                      <action.icon className={`h-7 w-7 ${action.color}`} />
+                      <span className="text-[11px] font-semibold text-foreground text-center leading-tight">{action.label}</span>
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
       {/* Main Split Content */}
-      <div className="h-full pt-36 relative">
+      <div className="h-full pt-20 md:pt-36 relative">
         {/* Chat Messages - Full Width */}
-        <div className="absolute inset-0 overflow-y-auto px-6 py-6 pb-[240px]">
+        <div className={`absolute inset-0 overflow-y-auto px-3 md:px-6 py-4 md:py-6 pb-[180px] md:pb-[240px] transition-all ${isPanelVisible && contextDocuments.length > 0 ? 'lg:pr-[450px]' : ''}`}>
           <div className="max-w-3xl mx-auto space-y-4">
             <AnimatePresence mode="popLayout">
-              {chatMessages.map((message) => {
+              {chatMessages.map((message, index) => {
                 const styles = message.type === "ai" ? getResultStyles(message.resultType) : null;
                 const Icon = styles?.icon;
+                const isLatest = index === chatMessages.length - 1;
 
                 return (
                   <motion.div
                     key={message.id}
+                    ref={isLatest ? latestMessageRef : null}
                     data-message-id={message.id}
                     initial={{ opacity: 0, x: message.type === "user" ? 20 : -20, scale: 0.95 }}
                     animate={{ opacity: 1, x: 0, scale: 1 }}
@@ -909,21 +1000,21 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[85%] rounded-2xl overflow-hidden shadow-lg ${
+                      className={`max-w-[92%] md:max-w-[85%] rounded-2xl md:rounded-2xl overflow-hidden shadow-lg ${
                         message.type === "user"
                           ? "bg-gradient-to-br from-purple-600 to-pink-600 text-white"
                           : `${styles?.bg} border-2 ${styles?.border}`
                       }`}
                     >
                       {message.type === "ai" && Icon && !styles?.hideBadge && (
-                        <div className={`px-4 py-2 border-b ${styles?.border} flex items-center gap-2 bg-white/50 dark:bg-gray-800/50`}>
-                          <Icon className={`h-4 w-4 ${styles?.iconColor}`} />
-                          <span className={`text-xs font-semibold ${styles?.text}`}>
+                        <div className={`px-3 md:px-4 py-1.5 md:py-2 border-b ${styles?.border} flex items-center gap-2 bg-white/50 dark:bg-gray-800/50`}>
+                          <Icon className={`h-3.5 w-3.5 md:h-4 md:w-4 ${styles?.iconColor}`} />
+                          <span className={`text-[11px] md:text-xs font-semibold ${styles?.text}`}>
                             {styles?.label}
                           </span>
                         </div>
                       )}
-                      <div className="p-4">
+                      <div className="p-3 md:p-4">
                         {message.attachedItems && message.attachedItems.length > 0 && (
                           <div className="mb-3 space-y-2">
                             {message.attachedItems.map((item, idx) => (
@@ -934,9 +1025,22 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             ))}
                           </div>
                         )}
-                        <p className={`whitespace-pre-wrap leading-relaxed ${message.type === "ai" && styles ? styles.text : ""}`} style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+                        <p className={`text-sm md:text-base whitespace-pre-wrap leading-relaxed ${message.type === "ai" && styles ? styles.text : ""}`} style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
                           {message.content}
                         </p>
+                        {message.resultType === "INFORMATION_PROVIDED" && message.documents && message.documents.length > 0 && (
+                          <Button
+                            onClick={() => {
+                              setIsBottomSheetOpen(true);
+                              setFocusedMessageId(message.id);
+                            }}
+                            size="sm"
+                            className="mt-3 md:hidden bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg text-xs"
+                          >
+                            <Eye className="h-3 w-3 mr-1.5" />
+                            Show {message.documents.length} Doc{message.documents.length === 1 ? '' : 's'}
+                          </Button>
+                        )}
                         {message.resultType === "INFORMATION_PROVIDED" && message.documents && message.documents.length > 0 && !isPanelVisible && (
                           <Button
                             onClick={() => {
@@ -944,7 +1048,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                               setFocusedMessageId(message.id);
                             }}
                             size="sm"
-                            className="mt-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg"
+                            className="mt-3 hidden md:inline-flex bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg"
                           >
                             <Eye className="h-3.5 w-3.5 mr-1.5" />
                             Show {message.documents.length} {message.documents.length === 1 ? 'Document' : 'Documents'}
@@ -1028,7 +1132,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           </div>
         </div>
 
-        {/* Right: Context Panel (Documents) - Overlay with Arrow Navigation */}
+        {/* Desktop: Side Panel (Documents) - Hidden on Mobile */}
         <AnimatePresence>
           {contextDocuments.length > 0 && isPanelVisible && (
             <motion.div
@@ -1036,7 +1140,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 420 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="absolute top-0 right-0 bottom-0 w-[420px] lg:w-[420px] w-full max-w-[420px] border-l-2 border-purple-500/30 bg-gradient-to-b from-purple-50/95 via-pink-50/95 to-blue-50/95 dark:from-gray-900/95 dark:via-purple-900/95 dark:to-blue-900/95 backdrop-blur-xl p-6 shadow-2xl z-10 flex flex-col"
+              className="hidden md:flex absolute top-0 right-0 bottom-0 w-[420px] max-w-[420px] border-l-2 border-purple-500/30 bg-gradient-to-b from-purple-50/95 via-pink-50/95 to-blue-50/95 dark:from-gray-900/95 dark:via-purple-900/95 dark:to-blue-900/95 backdrop-blur-xl p-6 shadow-2xl z-10 flex-col"
             >
               {/* Header */}
               <div className="bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 backdrop-blur-md p-5 rounded-2xl mb-6 shadow-2xl border-2 border-white/20">
@@ -1246,7 +1350,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           )}
         </AnimatePresence>
 
-        {/* Floating Show Panel Button - Appears when panel is hidden */}
+        {/* Floating Show Panel Button - Desktop only */}
         <AnimatePresence>
           {contextDocuments.length > 0 && !isPanelVisible && (
             <motion.div
@@ -1254,7 +1358,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               animate={{ opacity: 1, scale: 1, x: 0 }}
               exit={{ opacity: 0, scale: 0.8, x: 100 }}
               transition={{ type: "spring", damping: 20 }}
-              className="absolute top-20 right-4 z-20"
+              className="hidden md:block absolute top-20 right-4 z-20"
             >
               <Button
                 onClick={() => setIsPanelVisible(true)}
@@ -1262,10 +1366,167 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 className="bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white shadow-2xl border-2 border-white/30 rounded-full px-6"
               >
                 <Eye className="h-5 w-5 mr-2" />
-                <span className="hidden sm:inline">Show Panel</span>
-                <span className="sm:hidden">{contextDocuments.length}</span>
+                Show Panel
               </Button>
             </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Mobile: Floating Documents Button */}
+        <AnimatePresence>
+          {contextDocuments.length > 0 && (
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0 }}
+              className="md:hidden fixed bottom-24 right-4 z-20"
+            >
+              <Button
+                onClick={() => setIsBottomSheetOpen(true)}
+                size="lg"
+                className="h-14 w-14 rounded-full bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white shadow-2xl border-2 border-white/30 relative"
+              >
+                <FileText className="h-6 w-6" />
+                <Badge className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center p-0">
+                  {contextDocuments.length}
+                </Badge>
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Mobile: Documents Bottom Sheet */}
+        <AnimatePresence>
+          {isBottomSheetOpen && contextDocuments.length > 0 && (
+            <>
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsBottomSheetOpen(false)}
+                className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[60]"
+              />
+
+              {/* Bottom Sheet */}
+              <motion.div
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                drag="y"
+                dragConstraints={{ top: 0, bottom: 0 }}
+                dragElastic={{ top: 0, bottom: 0.5 }}
+                onDragEnd={(e, { offset, velocity }) => {
+                  if (offset.y > 100 || velocity.y > 500) {
+                    setIsBottomSheetOpen(false);
+                  }
+                }}
+                className="md:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-b from-purple-50 via-pink-50 to-white dark:from-gray-900 dark:via-purple-900/50 dark:to-gray-900 rounded-t-3xl shadow-2xl z-[70] max-h-[80vh] flex flex-col"
+              >
+                {/* Handle */}
+                <div className="flex justify-center pt-3 pb-2">
+                  <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full" />
+                </div>
+
+                {/* Header */}
+                <div className="px-4 py-3 border-b border-purple-200 dark:border-purple-800 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="p-2 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg">
+                      <Sparkles className="h-4 w-4 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                        Context Documents
+                      </h3>
+                      <p className="text-[10px] text-muted-foreground">
+                        {contextDocuments.length} {contextDocuments.length === 1 ? 'item' : 'items'} • Tap to attach
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsBottomSheetOpen(false)}
+                    className="h-8 w-8"
+                  >
+                    <X className="h-5 w-5" />
+                  </Button>
+                </div>
+
+                {/* Documents List - Scrollable */}
+                <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+                  <AnimatePresence mode="popLayout">
+                    {contextDocuments.map((doc, idx) => {
+                      const DocIcon = getDocumentIcon(doc.type);
+                      return (
+                        <motion.div
+                          key={doc.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          transition={{ delay: idx * 0.03 }}
+                        >
+                          <Card className="relative group active:scale-98 transition-all border-2 border-purple-200 hover:border-purple-400 bg-gradient-to-br from-white via-purple-50/30 to-pink-50/30">
+                            {doc.metadata?.imageUrl && (
+                              <div className="relative h-32 overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
+                                <img
+                                  src={doc.metadata.imageUrl}
+                                  alt={doc.title}
+                                  className="w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                              </div>
+                            )}
+                            <CardHeader className="pb-2 pt-3 px-3">
+                              <div className="flex items-start gap-2">
+                                {!doc.metadata?.imageUrl && (
+                                  <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex-shrink-0">
+                                    <DocIcon className="h-4 w-4 text-white" />
+                                  </div>
+                                )}
+                                <div className="flex-1 min-w-0">
+                                  <CardTitle className="text-sm font-bold line-clamp-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                                    {doc.title}
+                                  </CardTitle>
+                                  <Badge variant="outline" className="mt-1 text-[9px] bg-purple-100 border-purple-300 text-purple-700">
+                                    {doc.type}
+                                  </Badge>
+                                </div>
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  className={`h-9 w-9 flex-shrink-0 ${
+                                    isItemAttached(doc.id)
+                                      ? 'bg-gradient-to-br from-green-500 to-emerald-500'
+                                      : 'bg-gradient-to-br from-purple-600 to-pink-600'
+                                  } text-white shadow-lg border border-white/30`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAttachDocument(doc);
+                                  }}
+                                >
+                                  {isItemAttached(doc.id) ? (
+                                    <CheckCircle2 className="h-4 w-4" />
+                                  ) : (
+                                    <Paperclip className="h-4 w-4" />
+                                  )}
+                                </Button>
+                              </div>
+                            </CardHeader>
+                            <CardContent className="px-3 pb-3">
+                              <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+                                {doc.content}
+                              </p>
+                            </CardContent>
+                          </Card>
+                        </motion.div>
+                      );
+                    })}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            </>
           )}
         </AnimatePresence>
       </div>
@@ -1365,14 +1626,14 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       </AnimatePresence>
 
       {/* Input Area */}
-      <div className="absolute bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t-2 border-purple-500/30 p-6">
+      <div className="absolute bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t-2 border-purple-500/30 p-3 md:p-6">
         <div className="max-w-4xl mx-auto">
           {/* Attached Items - Beautiful Cards */}
           {attachedItems.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-3 flex flex-wrap gap-2 max-h-[200px] overflow-y-auto"
+              className="mb-2 md:mb-3 flex flex-wrap gap-1.5 md:gap-2 max-h-[120px] md:max-h-[200px] overflow-y-auto"
             >
               <AnimatePresence mode="popLayout">
                 {attachedItems.map((item, idx) => (
@@ -1384,30 +1645,30 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     transition={{ type: "spring", damping: 20 }}
                   >
                     <Card className="border-2 border-purple-400/50 bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-blue-500/20 shadow-lg hover:shadow-xl transition-all">
-                      <CardContent className="p-3 flex items-center gap-3">
+                      <CardContent className="p-2 md:p-3 flex items-center gap-2 md:gap-3">
                         <motion.div
                           whileHover={{ rotate: [0, -5, 5, -5, 0] }}
                           transition={{ duration: 0.5 }}
-                          className="p-2 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex-shrink-0"
+                          className="p-1.5 md:p-2 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex-shrink-0"
                         >
-                          <MessageSquarePlus className="h-4 w-4 text-white" />
+                          <MessageSquarePlus className="h-3 w-3 md:h-4 md:w-4 text-white" />
                         </motion.div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs font-bold text-purple-900 dark:text-purple-100 truncate">
+                          <p className="text-[11px] md:text-xs font-bold text-purple-900 dark:text-purple-100 truncate">
                             {item.data.productName || item.data.title || item.data.name || `Item ${item.data.id || ''}`}
                           </p>
-                          <p className="text-[10px] text-purple-700 dark:text-purple-300 flex items-center gap-1">
+                          <p className="hidden md:flex text-[10px] text-purple-700 dark:text-purple-300 items-center gap-1">
                             <Sparkles className="h-2.5 w-2.5" />
-                            <span className="capitalize">{item.data.type || item.type}</span> • Added to chat
+                            <span className="capitalize">{item.data.type || item.type}</span> • Added
                           </p>
                         </div>
                         <Button
                           size="icon"
                           variant="ghost"
                           onClick={() => setAttachedItems(prev => prev.filter((_, i) => i !== idx))}
-                          className="h-7 w-7 flex-shrink-0 hover:bg-red-500/20 text-purple-700 hover:text-red-600"
+                          className="h-6 w-6 md:h-7 md:w-7 flex-shrink-0 hover:bg-red-500/20 text-purple-700 hover:text-red-600"
                         >
-                          <X className="h-3.5 w-3.5" />
+                          <X className="h-3 w-3 md:h-3.5 md:w-3.5" />
                         </Button>
                       </CardContent>
                     </Card>
@@ -1496,30 +1757,34 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               ref={chatInputRef}
               placeholder={
                 attachedItems.length > 0
-                  ? `Ask about ${attachedItems.length} attached ${attachedItems.length === 1 ? 'item' : 'items'}... 🤖✨`
-                  : "Ask me anything... (Try: 'Show my cart', 'Find wireless headphones', 'Apply discount code')"
+                  ? `Ask about ${attachedItems.length} item${attachedItems.length === 1 ? '' : 's'}...`
+                  : "Ask me anything..."
               }
               value={chatQuery}
               onChange={(e) => setChatQuery(e.target.value)}
+              onFocus={() => setIsInputFocused(true)}
+              onBlur={() => setIsInputFocused(false)}
               onKeyPress={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
                   handleChatQuery();
                 }
               }}
-              className="min-h-[80px] pr-16 text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed"
+              className={`${
+                isInputFocused ? 'min-h-[100px] md:min-h-[80px]' : 'min-h-[48px] md:min-h-[80px]'
+              } pr-14 md:pr-16 text-sm md:text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed transition-all`}
               style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}
             />
             <Button
               size="icon"
               onClick={() => handleChatQuery()}
               disabled={isLoading || !chatQuery.trim()}
-              className="absolute right-3 bottom-3 h-12 w-12 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg"
+              className="absolute right-2 md:right-3 bottom-2 md:bottom-3 h-10 w-10 md:h-12 md:w-12 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg"
             >
               {isLoading ? (
-                <Loader2 className="h-5 w-5 animate-spin" />
+                <Loader2 className="h-4 w-4 md:h-5 md:w-5 animate-spin" />
               ) : (
-                <Send className="h-5 w-5" />
+                <Send className="h-4 w-4 md:h-5 md:w-5" />
               )}
             </Button>
           </div>
