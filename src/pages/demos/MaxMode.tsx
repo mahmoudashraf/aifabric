@@ -1278,7 +1278,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: -200, opacity: 0, scale: 0.8 }}
             transition={{ type: "spring", damping: 15, stiffness: 200 }}
-            className="fixed top-24 left-1/2 -translate-x-1/2 z-[110] pointer-events-none"
+            className="fixed top-24 left-0 right-0 z-[110] pointer-events-none px-4 flex justify-center"
           >
             <motion.div
               animate={{
@@ -1286,10 +1286,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 scale: [1, 1.05, 1, 1.05, 1]
               }}
               transition={{ duration: 0.5, repeat: 2 }}
-              className="relative"
+              className="relative w-full max-w-[350px]"
             >
               {/* Main Card */}
-              <Card className="border-4 border-green-400 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 shadow-2xl min-w-[280px] max-w-[350px]">
+              <Card className="border-4 border-green-400 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 shadow-2xl w-full">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
                     {/* Animated Bucket Icon */}
