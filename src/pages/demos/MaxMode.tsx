@@ -347,6 +347,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [expandedActions, setExpandedActions] = useState<{ [key: string]: number }>({});
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+  const [collectingItem, setCollectingItem] = useState<{ title: string; type: string } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const contextPanelRef = useRef<HTMLDivElement>(null);
   const contextPanelEndRef = useRef<HTMLDivElement>(null);
@@ -355,8 +356,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
   // Quick action tools - aligned with available backend actions
   const quickActions = [
-    { icon: Search, label: "Search Products", query: "Search for products", color: "text-blue-600", bg: "bg-blue-500/10", border: "border-blue-500/30" },
-    { icon: List, label: "Browse Products", query: "List all products", color: "text-purple-600", bg: "bg-purple-500/10", border: "border-purple-500/30" },
+    { icon: Search, label: "Search Products", query: "Search for wireless headphones with good ratings and show me the prices, features, and availability", color: "text-blue-600", bg: "bg-blue-500/10", border: "border-blue-500/30" },
+    { icon: List, label: "Browse Products", query: "List all available products with their SKU, name, price, category, stock quantity, and ratings", color: "text-purple-600", bg: "bg-purple-500/10", border: "border-purple-500/30" },
     { icon: ShoppingCart, label: "My Cart", query: "View my cart", color: "text-green-600", bg: "bg-green-500/10", border: "border-green-500/30" },
     { icon: ShoppingBag, label: "Checkout", query: "Checkout my cart", color: "text-orange-600", bg: "bg-orange-500/10", border: "border-orange-500/30" },
     { icon: Receipt, label: "My Orders", query: "List my orders", color: "text-indigo-600", bg: "bg-indigo-500/10", border: "border-indigo-500/30" },
@@ -557,6 +558,13 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     }
   };
 
+  const isItemAttached = (itemId: string) => {
+    return attachedItems.some(item =>
+      (item.data.id && item.data.id === itemId) ||
+      (item.data.sku && item.data.sku === itemId)
+    );
+  };
+
   const handleAttachDocument = (doc: Document) => {
     // Check if already attached
     if (attachedItems.some(item => item.type === "document" && item.data.id === doc.id)) {
@@ -567,6 +575,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       });
       return;
     }
+
+    // Trigger collection animation
+    setCollectingItem({ title: doc.title, type: doc.type });
+    setTimeout(() => setCollectingItem(null), 1500);
 
     setAttachedItems(prev => [...prev, { type: "document", data: doc }]);
     toast({
@@ -1108,15 +1120,23 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                 <Button
                                   size="icon"
                                   variant="ghost"
-                                  className="absolute top-2 right-2 h-10 w-10 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-xl border-2 border-white/50 hover:scale-110 transition-all z-20"
+                                  className={`absolute top-2 right-2 h-10 w-10 ${
+                                    isItemAttached(doc.id)
+                                      ? 'bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
+                                      : 'bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
+                                  } text-white shadow-xl border-2 border-white/50 hover:scale-110 transition-all z-20`}
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     e.preventDefault();
                                     handleAttachDocument(doc);
                                   }}
-                                  title="Attach to Chat"
+                                  title={isItemAttached(doc.id) ? "Already in Chat" : "Attach to Chat"}
                                 >
-                                  <Paperclip className="h-5 w-5" />
+                                  {isItemAttached(doc.id) ? (
+                                    <CheckCircle2 className="h-5 w-5" />
+                                  ) : (
+                                    <Paperclip className="h-5 w-5" />
+                                  )}
                                 </Button>
                               </div>
                             )}
@@ -1145,15 +1165,23 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                   <Button
                                     size="icon"
                                     variant="ghost"
-                                    className="h-10 w-10 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-xl border-2 border-white/30 hover:scale-110 hover:border-white/50 transition-all z-20"
+                                    className={`h-10 w-10 ${
+                                      isItemAttached(doc.id)
+                                        ? 'bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
+                                        : 'bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
+                                    } text-white shadow-xl border-2 border-white/30 hover:scale-110 hover:border-white/50 transition-all z-20`}
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       e.preventDefault();
                                       handleAttachDocument(doc);
                                     }}
-                                    title="Attach to Chat"
+                                    title={isItemAttached(doc.id) ? "Already in Chat" : "Attach to Chat"}
                                   >
-                                    <Paperclip className="h-5 w-5" />
+                                    {isItemAttached(doc.id) ? (
+                                      <CheckCircle2 className="h-5 w-5" />
+                                    ) : (
+                                      <Paperclip className="h-5 w-5" />
+                                    )}
                                   </Button>
                                 )}
                               </div>
@@ -1241,6 +1269,100 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Collection Animation - Drops from top when item is attached */}
+      <AnimatePresence>
+        {collectingItem && (
+          <motion.div
+            initial={{ y: -200, opacity: 0, scale: 0.8 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: -200, opacity: 0, scale: 0.8 }}
+            transition={{ type: "spring", damping: 15, stiffness: 200 }}
+            className="fixed top-24 left-1/2 -translate-x-1/2 z-[110] pointer-events-none"
+          >
+            <motion.div
+              animate={{
+                rotate: [0, -2, 2, -2, 0],
+                scale: [1, 1.05, 1, 1.05, 1]
+              }}
+              transition={{ duration: 0.5, repeat: 2 }}
+              className="relative"
+            >
+              {/* Main Card */}
+              <Card className="border-4 border-green-400 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 shadow-2xl min-w-[280px] max-w-[350px]">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    {/* Animated Bucket Icon */}
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: [0, 1.3, 1] }}
+                      transition={{ delay: 0.2, type: "spring", damping: 10 }}
+                      className="relative"
+                    >
+                      <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl shadow-lg">
+                        <ShoppingBag className="h-6 w-6 text-white" />
+                      </div>
+                      {/* Success Checkmark Animation */}
+                      <motion.div
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ delay: 0.4, type: "spring", damping: 10 }}
+                        className="absolute -top-1 -right-1 bg-white rounded-full p-0.5 shadow-lg"
+                      >
+                        <CheckCircle2 className="h-4 w-4 text-green-600" />
+                      </motion.div>
+                    </motion.div>
+
+                    {/* Text Content */}
+                    <div className="flex-1 min-w-0">
+                      <motion.p
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.3 }}
+                        className="text-xs font-bold text-green-800 mb-1 flex items-center gap-1"
+                      >
+                        <Sparkles className="h-3 w-3" />
+                        Collected!
+                      </motion.p>
+                      <motion.p
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.4 }}
+                        className="text-sm font-semibold text-gray-900 line-clamp-2 leading-tight"
+                      >
+                        {collectingItem.title}
+                      </motion.p>
+                      <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.5 }}
+                        className="text-[10px] text-green-700 mt-1 flex items-center gap-1"
+                      >
+                        <Badge variant="outline" className="text-[9px] bg-green-100 border-green-300 text-green-800 px-1.5 py-0">
+                          {collectingItem.type}
+                        </Badge>
+                        Added to chat
+                      </motion.p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Sparkle effects */}
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: [0, 1.5, 0], opacity: [0, 1, 0] }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <div className="text-yellow-400">
+                  <Sparkles className="h-12 w-12" />
+                </div>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Input Area */}
       <div className="absolute bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t-2 border-purple-500/30 p-6">
