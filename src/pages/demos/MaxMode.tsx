@@ -355,8 +355,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
   // Quick action tools - aligned with available backend actions
   const quickActions = [
-    { icon: Search, label: "Search Products", query: "Search for products", color: "text-blue-600", bg: "bg-blue-500/10", border: "border-blue-500/30" },
-    { icon: List, label: "Browse Products", query: "List all products", color: "text-purple-600", bg: "bg-purple-500/10", border: "border-purple-500/30" },
+    { icon: Search, label: "Search Products", query: "Search for wireless headphones with good ratings and show me the prices, features, and availability", color: "text-blue-600", bg: "bg-blue-500/10", border: "border-blue-500/30" },
+    { icon: List, label: "Browse Products", query: "List all available products with their SKU, name, price, category, stock quantity, and ratings", color: "text-purple-600", bg: "bg-purple-500/10", border: "border-purple-500/30" },
     { icon: ShoppingCart, label: "My Cart", query: "View my cart", color: "text-green-600", bg: "bg-green-500/10", border: "border-green-500/30" },
     { icon: ShoppingBag, label: "Checkout", query: "Checkout my cart", color: "text-orange-600", bg: "bg-orange-500/10", border: "border-orange-500/30" },
     { icon: Receipt, label: "My Orders", query: "List my orders", color: "text-indigo-600", bg: "bg-indigo-500/10", border: "border-indigo-500/30" },
