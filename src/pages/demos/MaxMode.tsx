@@ -355,6 +355,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [selectedProduct, setSelectedProduct] = useState<Document | null>(null);
   const [isAISearchOpen, setIsAISearchOpen] = useState(false);
   const [userId] = useState<string>("demo-user-" + Math.random().toString(36).substr(2, 9));
+  const [newDocuments, setNewDocuments] = useState<Document[]>([]);
+  const [isNewDocsPreviewOpen, setIsNewDocsPreviewOpen] = useState(false);
+  const [viewedDocumentIds, setViewedDocumentIds] = useState<Set<string>>(new Set());
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const latestMessageRef = useRef<HTMLDivElement>(null);
   const contextPanelRef = useRef<HTMLDivElement>(null);
@@ -414,6 +417,18 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     });
 
     const prevCount = contextDocuments.length;
+
+    // Track new documents
+    if (allDocs.length > prevCount) {
+      const newDocs = allDocs.slice(prevCount);
+      setNewDocuments(newDocs);
+
+      // Show preview panel on mobile for new documents
+      if (window.innerWidth < 768) { // Mobile breakpoint
+        setIsNewDocsPreviewOpen(true);
+      }
+    }
+
     setContextDocuments(allDocs);
 
     // Auto-scroll to new documents if new ones were added
@@ -706,6 +721,25 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     setTimeout(() => {
       chatInputRef.current?.focus();
     }, 100);
+  };
+
+  const handleOpenBottomSheet = () => {
+    setIsBottomSheetOpen(true);
+
+    // Mark new documents as viewed
+    const newDocIds = newDocuments.map(doc => doc.id);
+    setViewedDocumentIds(prev => new Set([...prev, ...newDocIds]));
+
+    // Scroll to first new document after bottom sheet opens
+    if (newDocuments.length > 0) {
+      setTimeout(() => {
+        const firstNewDocId = newDocuments[0].id;
+        const element = document.querySelector(`[data-doc-id="${firstNewDocId}"]`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 300);
+    }
   };
 
   const showSampleDocuments = () => {
@@ -1467,10 +1501,12 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     {contextDocuments.map((doc, idx) => {
                       const DocIcon = getDocumentIcon(doc.type);
                       const isFocused = doc.messageId === focusedMessageId;
+                      const isNewDoc = !viewedDocumentIds.has(doc.id) && newDocuments.some(nd => nd.id === doc.id);
                       return (
                         <motion.div
                           key={doc.id}
                           data-doc-message-id={doc.messageId}
+                          data-doc-id={doc.id}
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -20 }}
@@ -1479,9 +1515,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           <Card
                             onClick={() => openProductDetails(doc)}
                             className={`relative group hover:shadow-2xl transition-all duration-300 border-2 cursor-pointer ${
-                            isFocused
-                              ? 'border-yellow-400 shadow-lg shadow-yellow-200/50 bg-gradient-to-br from-yellow-50 via-purple-50/50 to-pink-50/50'
-                              : 'border-purple-300 hover:border-purple-500 bg-gradient-to-br from-white via-purple-50/50 to-pink-50/50'
+                            isNewDoc
+                              ? 'border-yellow-400 shadow-lg shadow-yellow-200/50 bg-gradient-to-br from-yellow-50/90 via-purple-50/40 to-pink-50/40'
+                              : isFocused
+                                ? 'border-yellow-400 shadow-lg shadow-yellow-200/50 bg-gradient-to-br from-yellow-50 via-purple-50/50 to-pink-50/50'
+                                : 'border-purple-300 hover:border-purple-500 bg-gradient-to-br from-white via-purple-50/50 to-pink-50/50'
                           } dark:from-gray-800 dark:to-purple-900/20 overflow-hidden`}>
                             {doc.metadata?.imageUrl && (
                               <div className="relative h-48 overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
@@ -1491,6 +1529,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                                {isNewDoc && (
+                                  <div className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 text-[10px] font-bold px-2 py-1 rounded-full shadow-lg z-10">
+                                    NEW
+                                  </div>
+                                )}
                                 <Button
                                   size="icon"
                                   variant="ghost"
@@ -1530,9 +1573,16 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                     <CardTitle className="text-base font-bold line-clamp-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                                       {doc.title}
                                     </CardTitle>
-                                    <Badge variant="outline" className="mt-1.5 text-[10px] bg-purple-100 border-purple-300 text-purple-700">
-                                      {doc.type}
-                                    </Badge>
+                                    <div className="flex items-center gap-1.5 mt-1.5">
+                                      <Badge variant="outline" className="text-[10px] bg-purple-100 border-purple-300 text-purple-700">
+                                        {doc.type}
+                                      </Badge>
+                                      {isNewDoc && (
+                                        <Badge className="text-[10px] bg-yellow-400 text-yellow-900 border-yellow-500">
+                                          NEW
+                                        </Badge>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
                                 {!doc.metadata?.imageUrl && (
@@ -1696,7 +1746,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         <Button
                           onClick={() => handleAISearchCategory(category)}
                           size="lg"
-                          className={`h-16 w-16 rounded-full ${category.bg} border-2 border-white shadow-xl flex flex-col items-center justify-center p-1`}
+                          className="h-16 w-16 rounded-full bg-white hover:bg-gray-50 border-2 border-white shadow-xl flex flex-col items-center justify-center p-1"
                         >
                           <category.icon className={`h-5 w-5 ${category.color} mb-0.5`} />
                           <span className={`text-[9px] font-semibold ${category.color} leading-none`}>
@@ -1706,6 +1756,131 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                       </motion.div>
                     );
                   })}
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+
+        {/* Mobile: New Documents Preview Panel */}
+        <AnimatePresence>
+          {isNewDocsPreviewOpen && newDocuments.length > 0 && (
+            <>
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="md:hidden fixed inset-0 bg-black/30 z-[35]"
+                onClick={() => setIsNewDocsPreviewOpen(false)}
+              />
+
+              {/* Small Right Panel */}
+              <motion.div
+                initial={{ x: 300, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: 300, opacity: 0 }}
+                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                className="md:hidden fixed top-20 bottom-20 right-0 w-[280px] bg-gradient-to-b from-purple-50 via-pink-50 to-white dark:from-gray-900 dark:via-purple-900/50 dark:to-gray-900 shadow-2xl z-[40] flex flex-col rounded-l-3xl border-l-2 border-purple-300"
+              >
+                {/* Header */}
+                <div className="px-4 py-3 border-b border-purple-200 dark:border-purple-800 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="p-2 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg">
+                      <Sparkles className="h-4 w-4 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                        New Products
+                      </h3>
+                      <p className="text-[10px] text-muted-foreground">
+                        {newDocuments.length} {newDocuments.length === 1 ? 'item' : 'items'}
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsNewDocsPreviewOpen(false)}
+                    className="h-8 w-8"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                {/* New Documents List - Scrollable */}
+                <div className="flex-1 overflow-y-auto px-3 py-3 space-y-2">
+                  {newDocuments.map((doc, idx) => {
+                    const DocIcon = getDocumentIcon(doc.type);
+                    return (
+                      <motion.div
+                        key={doc.id}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.05 }}
+                      >
+                        <Card
+                          onClick={() => {
+                            openProductDetails(doc);
+                            setIsNewDocsPreviewOpen(false);
+                            setIsBottomSheetOpen(true);
+                          }}
+                          className="relative group active:scale-98 transition-all border-2 border-yellow-300 bg-gradient-to-br from-yellow-50/80 via-purple-50/30 to-pink-50/30 cursor-pointer shadow-lg"
+                        >
+                          {doc.metadata?.imageUrl && (
+                            <div className="relative h-24 overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100 rounded-t-lg">
+                              <img
+                                src={doc.metadata.imageUrl}
+                                alt={doc.title}
+                                className="w-full h-full object-cover"
+                              />
+                              <div className="absolute top-1 right-1 bg-yellow-400 text-yellow-900 text-[8px] font-bold px-1.5 py-0.5 rounded-full">
+                                NEW
+                              </div>
+                            </div>
+                          )}
+                          <CardHeader className="pb-2 pt-2 px-2">
+                            <div className="flex items-start gap-2">
+                              {!doc.metadata?.imageUrl && (
+                                <>
+                                  <div className="p-1.5 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex-shrink-0">
+                                    <DocIcon className="h-3 w-3 text-white" />
+                                  </div>
+                                  <div className="absolute top-1 right-1 bg-yellow-400 text-yellow-900 text-[8px] font-bold px-1.5 py-0.5 rounded-full">
+                                    NEW
+                                  </div>
+                                </>
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <CardTitle className="text-xs font-bold line-clamp-2 text-gray-900">
+                                  {doc.title}
+                                </CardTitle>
+                                {doc.metadata?.price && (
+                                  <p className="text-xs font-semibold text-purple-600 mt-1">
+                                    {doc.metadata.price}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+                          </CardHeader>
+                        </Card>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+
+                {/* View All Button */}
+                <div className="p-3 border-t border-purple-200">
+                  <Button
+                    onClick={() => {
+                      setIsNewDocsPreviewOpen(false);
+                      handleOpenBottomSheet();
+                    }}
+                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg"
+                    size="sm"
+                  >
+                    View All Documents
+                  </Button>
                 </div>
               </motion.div>
             </>
@@ -1722,7 +1897,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               className="md:hidden fixed bottom-40 right-4 z-20"
             >
               <Button
-                onClick={() => setIsBottomSheetOpen(true)}
+                onClick={handleOpenBottomSheet}
                 size="lg"
                 className="h-14 w-14 rounded-full bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white shadow-2xl border-2 border-white/30 relative"
               >
@@ -1890,9 +2065,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     <AnimatePresence mode="popLayout">
                     {contextDocuments.map((doc, idx) => {
                       const DocIcon = getDocumentIcon(doc.type);
+                      const isNewDoc = !viewedDocumentIds.has(doc.id) && newDocuments.some(nd => nd.id === doc.id);
                       return (
                         <motion.div
                           key={doc.id}
+                          data-doc-id={doc.id}
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -20 }}
@@ -1900,7 +2077,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         >
                           <Card
                             onClick={() => openProductDetails(doc)}
-                            className="relative group active:scale-98 transition-all border-2 border-purple-200 hover:border-purple-400 bg-gradient-to-br from-white via-purple-50/30 to-pink-50/30 cursor-pointer">
+                            className={`relative group active:scale-98 transition-all border-2 cursor-pointer ${
+                              isNewDoc
+                                ? 'border-yellow-400 bg-gradient-to-br from-yellow-50/90 via-purple-50/40 to-pink-50/40 shadow-lg'
+                                : 'border-purple-200 hover:border-purple-400 bg-gradient-to-br from-white via-purple-50/30 to-pink-50/30'
+                            }`}>
                             {doc.metadata?.imageUrl && (
                               <div className="relative h-32 overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
                                 <img
@@ -1909,6 +2090,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                   className="w-full h-full object-cover"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                                {isNewDoc && (
+                                  <div className="absolute top-2 right-2 bg-yellow-400 text-yellow-900 text-[9px] font-bold px-2 py-1 rounded-full shadow-lg">
+                                    NEW
+                                  </div>
+                                )}
                               </div>
                             )}
                             <CardHeader className="pb-2 pt-3 px-3">
@@ -1922,9 +2108,16 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                   <CardTitle className="text-sm font-bold line-clamp-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                                     {doc.title}
                                   </CardTitle>
-                                  <Badge variant="outline" className="mt-1 text-[9px] bg-purple-100 border-purple-300 text-purple-700">
-                                    {doc.type}
-                                  </Badge>
+                                  <div className="flex items-center gap-1 mt-1">
+                                    <Badge variant="outline" className="text-[9px] bg-purple-100 border-purple-300 text-purple-700">
+                                      {doc.type}
+                                    </Badge>
+                                    {isNewDoc && (
+                                      <Badge className="text-[9px] bg-yellow-400 text-yellow-900 border-yellow-500">
+                                        NEW
+                                      </Badge>
+                                    )}
+                                  </div>
                                 </div>
                                 <Button
                                   size="icon"
@@ -2225,8 +2418,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               }}
               className={`${
                 isInputFocused ? 'min-h-[100px] md:min-h-[80px]' : 'min-h-[48px] md:min-h-[80px]'
-              } pr-14 md:pr-16 text-sm md:text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed transition-all`}
-              style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}
+              } pr-14 md:pr-16 text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed transition-all`}
+              style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', fontSize: '16px' }}
             />
             <Button
               size="icon"
