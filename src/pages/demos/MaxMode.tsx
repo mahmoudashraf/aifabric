@@ -653,24 +653,97 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       [messageId]: confirmed ? 'confirmed' : 'rejected'
     }));
 
-    toast({
-      title: confirmed ? "✅ Confirmed" : "❌ Rejected",
-      description: confirmed ? "Processing your confirmation..." : "Action cancelled",
-    });
+    // Send confirmation message to continue the conversation flow
+    const confirmationQuery = confirmed ? "Yes, confirm" : "No, cancel";
 
-    // Here you would send the confirmation to the backend
-    // For now, we'll just show a message
-    const responseMessage: ChatMessage = {
+    // Add user message
+    const userMessage: ChatMessage = {
       id: Date.now().toString(),
-      type: "ai",
-      content: confirmed
-        ? "Thank you for confirming! Processing your request..."
-        : "No problem! The action has been cancelled.",
+      type: "user",
+      content: confirmationQuery,
       timestamp: new Date().toISOString(),
-      resultType: "INFORMATION_PROVIDED",
     };
 
-    setChatMessages(prev => [...prev, responseMessage]);
+    setChatMessages(prev => [...prev, userMessage]);
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/chat/query`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          query: confirmationQuery,
+          userId: "demo-user",
+          sessionId: "demo-session",
+          conversationId: currentConversationId || undefined,
+          attachments: attachedItems,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || "Failed to process confirmation");
+      }
+
+      const data = await response.json();
+
+      if (data.conversationId && !currentConversationId) {
+        setCurrentConversationId(data.conversationId);
+      }
+
+      let messageContent = "";
+      let result: ChatResult | undefined;
+      let resultType: ResultType | undefined;
+
+      if (data.result && data.result.sanitizedPayload) {
+        messageContent = data.result.sanitizedPayload.message || "I processed your confirmation.";
+        result = data.result;
+        resultType = data.result.type;
+      } else {
+        messageContent = data.response || data.message || "I processed your confirmation.";
+      }
+
+      const aiMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        type: "ai",
+        content: messageContent,
+        timestamp: new Date().toISOString(),
+        result: result,
+        resultType: resultType,
+      };
+
+      setChatMessages((prev) => [...prev, aiMessage]);
+
+      if (data.documents && Array.isArray(data.documents)) {
+        setContextDocuments(data.documents);
+      }
+
+      toast({
+        title: confirmed ? "✅ Confirmed" : "❌ Rejected",
+        description: confirmed ? "Your confirmation has been processed" : "Action cancelled",
+      });
+    } catch (error) {
+      console.error("Error processing confirmation:", error);
+      toast({
+        title: "Error",
+        description: "Failed to process confirmation. Please try again.",
+        variant: "destructive",
+      });
+
+      const errorMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        type: "ai",
+        content: "I apologize, but I encountered an error processing your confirmation. Please try again.",
+        timestamp: new Date().toISOString(),
+        resultType: "INFORMATION_PROVIDED",
+      };
+
+      setChatMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const addToCart = async (product: Document, quantity: number = 1) => {
@@ -720,18 +793,41 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
       if (response.ok) {
         const cart = await response.json();
+        console.log('Cart data received:', cart);
         setCartData(cart);
         return cart;
+      } else if (response.status === 404) {
+        // Cart not found - treat as empty cart
+        const emptyCart = {
+          items: [],
+          subtotal: 0,
+          discount: 0,
+          total: 0
+        };
+        console.log('No active cart found, using empty cart');
+        setCartData(emptyCart);
+        return emptyCart;
       } else {
-        throw new Error('Failed to fetch cart');
+        const errorText = await response.text();
+        console.error('Failed to fetch cart:', response.status, errorText);
+        throw new Error(`Failed to fetch cart: ${response.status}`);
       }
     } catch (error) {
+      console.error('Error fetching cart:', error);
+      // Set empty cart on error
+      const emptyCart = {
+        items: [],
+        subtotal: 0,
+        discount: 0,
+        total: 0
+      };
+      setCartData(emptyCart);
       toast({
-        title: "❌ Error",
-        description: "Failed to load cart. Please try again.",
+        title: "⚠️ Cart Load Issue",
+        description: "Could not load cart. Showing empty cart.",
         variant: "destructive"
       });
-      console.error('Error fetching cart:', error);
+      return emptyCart;
     }
   };
 
