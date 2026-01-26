@@ -1645,7 +1645,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
         {/* Mobile: AI Search Button */}
         <motion.div
-          className="md:hidden fixed bottom-40 right-4 z-20"
+          className="md:hidden fixed bottom-24 right-4 z-20"
         >
           <Button
             onClick={() => setIsAISearchOpen(!isAISearchOpen)}
@@ -1674,7 +1674,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0, opacity: 0 }}
-                className="md:hidden fixed bottom-40 right-4 z-40"
+                className="md:hidden fixed bottom-24 right-4 z-40"
               >
                 <div className="relative">
                   {aiSearchCategories.map((category, idx) => {
@@ -1719,7 +1719,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
-              className="md:hidden fixed bottom-24 right-4 z-20"
+              className="md:hidden fixed bottom-40 right-4 z-20"
             >
               <Button
                 onClick={() => setIsBottomSheetOpen(true)}
