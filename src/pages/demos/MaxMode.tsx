@@ -358,6 +358,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [newDocuments, setNewDocuments] = useState<Document[]>([]);
   const [isNewDocsPreviewOpen, setIsNewDocsPreviewOpen] = useState(false);
   const [viewedDocumentIds, setViewedDocumentIds] = useState<Set<string>>(new Set());
+  const [cartData, setCartData] = useState<any>(null);
+  const [isCartView, setIsCartView] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const latestMessageRef = useRef<HTMLDivElement>(null);
   const contextPanelRef = useRef<HTMLDivElement>(null);
@@ -693,8 +695,83 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     }
   };
 
+  const fetchCart = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/carts/active?userId=${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (response.ok) {
+        const cart = await response.json();
+        setCartData(cart);
+        return cart;
+      } else {
+        throw new Error('Failed to fetch cart');
+      }
+    } catch (error) {
+      toast({
+        title: "❌ Error",
+        description: "Failed to load cart. Please try again.",
+        variant: "destructive"
+      });
+      console.error('Error fetching cart:', error);
+    }
+  };
+
+  const removeFromCart = async (sku: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/carts/active/items?userId=${userId}&sku=${sku}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (response.ok) {
+        const cart = await response.json();
+        setCartData(cart);
+        toast({
+          title: "🗑️ Removed from Cart",
+          description: "Item has been removed from your cart",
+        });
+        return cart;
+      } else {
+        throw new Error('Failed to remove from cart');
+      }
+    } catch (error) {
+      toast({
+        title: "❌ Error",
+        description: "Failed to remove item. Please try again.",
+        variant: "destructive"
+      });
+      console.error('Error removing from cart:', error);
+    }
+  };
+
+  const openCart = async () => {
+    setIsCartView(true);
+    setSelectedProduct(null);
+    await fetchCart();
+
+    // On mobile, open bottom sheet
+    if (window.innerWidth < 768) {
+      setIsBottomSheetOpen(true);
+    } else {
+      setIsPanelVisible(true);
+    }
+  };
+
+  const closeCart = () => {
+    setIsCartView(false);
+    setCartData(null);
+  };
+
   const openProductDetails = (doc: Document) => {
     setSelectedProduct(doc);
+    setIsCartView(false);
   };
 
   const closeProductDetails = () => {
@@ -1371,7 +1448,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 420 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className={`hidden md:flex absolute top-0 right-0 bottom-0 ${selectedProduct ? 'w-[700px] max-w-[700px]' : 'w-[420px] max-w-[420px]'} border-l-2 border-purple-500/30 bg-gradient-to-b from-purple-50/95 via-pink-50/95 to-blue-50/95 dark:from-gray-900/95 dark:via-purple-900/95 dark:to-blue-900/95 backdrop-blur-xl p-6 shadow-2xl z-10 flex-col transition-all duration-300`}
+              className={`hidden md:flex absolute top-0 right-0 bottom-0 ${selectedProduct || isCartView ? 'w-[700px] max-w-[700px]' : 'w-[420px] max-w-[420px]'} border-l-2 border-purple-500/30 bg-gradient-to-b from-purple-50/95 via-pink-50/95 to-blue-50/95 dark:from-gray-900/95 dark:via-purple-900/95 dark:to-blue-900/95 backdrop-blur-xl p-6 shadow-2xl z-10 flex-col transition-all duration-300`}
             >
               {/* Header */}
               <div className="bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 backdrop-blur-md p-5 rounded-2xl mb-6 shadow-2xl border-2 border-white/20">
@@ -1386,22 +1463,24 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     </motion.div>
                     <div>
                       <h2 className="font-bold text-lg text-white">
-                        {selectedProduct ? 'Product Details' : 'Context Panel'}
+                        {isCartView ? 'Shopping Cart' : selectedProduct ? 'Product Details' : 'Context Panel'}
                       </h2>
                       <p className="text-xs text-white/80">
-                        {selectedProduct
-                          ? 'View details and add to cart'
-                          : `${contextDocuments.length} ${contextDocuments.length === 1 ? 'document' : 'documents'} • Click to view`
+                        {isCartView
+                          ? 'View and manage your cart'
+                          : selectedProduct
+                            ? 'View details and add to cart'
+                            : `${contextDocuments.length} ${contextDocuments.length === 1 ? 'document' : 'documents'} • Click to view`
                         }
                       </p>
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    {selectedProduct && (
+                    {(selectedProduct || isCartView) && (
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={closeProductDetails}
+                        onClick={isCartView ? closeCart : closeProductDetails}
                         className="h-8 px-3 text-xs text-white hover:bg-white/20 border border-white/30"
                       >
                         <ArrowRight className="h-3 w-3 mr-1 rotate-180" />
@@ -1422,8 +1501,105 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 <div className="h-1 bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 rounded-full"></div>
               </div>
 
-              {/* Product Details or Documents List */}
-              {selectedProduct ? (
+              {/* Cart View, Product Details or Documents List */}
+              {isCartView ? (
+                /* Cart View */
+                <div className="flex-1 overflow-y-auto space-y-4" style={{
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: 'rgba(168, 85, 247, 0.5) rgba(243, 232, 255, 0.2)'
+                }}>
+                  {cartData && cartData.items && cartData.items.length > 0 ? (
+                    <>
+                      {/* Cart Items */}
+                      <div className="space-y-3">
+                        {cartData.items.map((item: any, idx: number) => (
+                          <Card key={idx} className="border-2 border-purple-200 bg-white/60">
+                            <CardContent className="p-4">
+                              <div className="flex items-start gap-3">
+                                <div className="flex-1">
+                                  <h4 className="font-semibold text-gray-900 mb-1">{item.productName || item.sku}</h4>
+                                  <p className="text-sm text-gray-600 mb-2">SKU: {item.sku}</p>
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-lg font-bold text-purple-600">${item.price}</span>
+                                    <span className="text-sm text-gray-500">Qty: {item.quantity}</span>
+                                  </div>
+                                  <div className="mt-2 text-sm font-semibold text-gray-900">
+                                    Subtotal: ${(item.price * item.quantity).toFixed(2)}
+                                  </div>
+                                </div>
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  onClick={() => removeFromCart(item.sku)}
+                                  className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+
+                      {/* Cart Summary */}
+                      <Card className="border-2 border-purple-300 bg-gradient-to-br from-purple-50 to-pink-50">
+                        <CardContent className="p-4 space-y-2">
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Subtotal:</span>
+                            <span className="font-semibold">${cartData.subtotal?.toFixed(2) || '0.00'}</span>
+                          </div>
+                          {cartData.discount > 0 && (
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-600">Discount:</span>
+                              <span className="font-semibold text-green-600">-${cartData.discount?.toFixed(2)}</span>
+                            </div>
+                          )}
+                          <div className="border-t border-purple-200 pt-2 flex justify-between">
+                            <span className="text-lg font-bold text-gray-900">Total:</span>
+                            <span className="text-lg font-bold text-purple-600">${cartData.total?.toFixed(2) || '0.00'}</span>
+                          </div>
+                          {cartData.couponCode && (
+                            <div className="text-xs text-gray-500 flex items-center gap-1">
+                              <Tag className="h-3 w-3" />
+                              Coupon: {cartData.couponCode}
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+
+                      {/* Checkout Button */}
+                      <Button
+                        onClick={() => {
+                          setChatQuery("Checkout my cart");
+                          handleChatQuery("Checkout my cart");
+                          closeCart();
+                        }}
+                        className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg"
+                        size="lg"
+                      >
+                        <ShoppingBag className="h-5 w-5 mr-2" />
+                        Proceed to Checkout
+                      </Button>
+                    </>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-full text-center py-12">
+                      <ShoppingCart className="h-16 w-16 text-gray-300 mb-4" />
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Your cart is empty</h3>
+                      <p className="text-sm text-gray-500 mb-4">Add some products to get started!</p>
+                      <Button
+                        onClick={() => {
+                          closeCart();
+                          setChatQuery("Show me available products");
+                          handleChatQuery("Show me available products");
+                        }}
+                        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                      >
+                        Browse Products
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              ) : selectedProduct ? (
                 /* Product Details View */
                 <div className="flex-1 overflow-y-auto space-y-6" style={{
                   scrollbarWidth: 'thin',
@@ -1735,10 +1911,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           className="md:hidden fixed bottom-24 right-20 z-20"
         >
           <Button
-            onClick={() => {
-              setChatQuery("View my cart");
-              handleChatQuery("View my cart");
-            }}
+            onClick={openCart}
             size="lg"
             className="h-14 w-14 rounded-full bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white shadow-2xl border-2 border-white/30"
           >
@@ -2004,12 +2177,14 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     </div>
                     <div>
                       <h3 className="text-sm font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                        {selectedProduct ? 'Product Details' : 'Context Documents'}
+                        {isCartView ? 'Shopping Cart' : selectedProduct ? 'Product Details' : 'Context Documents'}
                       </h3>
                       <p className="text-[10px] text-muted-foreground">
-                        {selectedProduct
-                          ? 'View details and add to cart'
-                          : `${contextDocuments.length} ${contextDocuments.length === 1 ? 'item' : 'items'} • Tap to view`
+                        {isCartView
+                          ? 'View and manage your cart'
+                          : selectedProduct
+                            ? 'View details and add to cart'
+                            : `${contextDocuments.length} ${contextDocuments.length === 1 ? 'item' : 'items'} • Tap to view`
                         }
                       </p>
                     </div>
@@ -2020,6 +2195,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     onClick={() => {
                       setIsBottomSheetOpen(false);
                       setSelectedProduct(null);
+                      if (isCartView) closeCart();
                     }}
                     className="h-8 w-8"
                   >
@@ -2027,9 +2203,104 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   </Button>
                 </div>
 
-                {/* Product Details or Documents List - Scrollable */}
+                {/* Cart View, Product Details or Documents List - Scrollable */}
                 <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
-                  {selectedProduct ? (
+                  {isCartView ? (
+                    /* Mobile Cart View */
+                    <div className="space-y-3">
+                      {cartData && cartData.items && cartData.items.length > 0 ? (
+                        <>
+                          {/* Cart Items */}
+                          {cartData.items.map((item: any, idx: number) => (
+                            <Card key={idx} className="border-2 border-purple-200 bg-white/80">
+                              <CardContent className="p-3">
+                                <div className="flex items-start gap-2">
+                                  <div className="flex-1">
+                                    <h4 className="font-semibold text-sm text-gray-900 mb-1">{item.productName || item.sku}</h4>
+                                    <p className="text-xs text-gray-600 mb-1">SKU: {item.sku}</p>
+                                    <div className="flex items-center justify-between">
+                                      <span className="text-base font-bold text-purple-600">${item.price}</span>
+                                      <span className="text-xs text-gray-500">Qty: {item.quantity}</span>
+                                    </div>
+                                    <div className="mt-1 text-xs font-semibold text-gray-900">
+                                      Subtotal: ${(item.price * item.quantity).toFixed(2)}
+                                    </div>
+                                  </div>
+                                  <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    onClick={() => removeFromCart(item.sku)}
+                                    className="h-7 w-7 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))}
+
+                          {/* Cart Summary */}
+                          <Card className="border-2 border-purple-300 bg-gradient-to-br from-purple-50 to-pink-50">
+                            <CardContent className="p-3 space-y-2">
+                              <div className="flex justify-between text-xs">
+                                <span className="text-gray-600">Subtotal:</span>
+                                <span className="font-semibold">${cartData.subtotal?.toFixed(2) || '0.00'}</span>
+                              </div>
+                              {cartData.discount > 0 && (
+                                <div className="flex justify-between text-xs">
+                                  <span className="text-gray-600">Discount:</span>
+                                  <span className="font-semibold text-green-600">-${cartData.discount?.toFixed(2)}</span>
+                                </div>
+                              )}
+                              <div className="border-t border-purple-200 pt-2 flex justify-between">
+                                <span className="text-base font-bold text-gray-900">Total:</span>
+                                <span className="text-base font-bold text-purple-600">${cartData.total?.toFixed(2) || '0.00'}</span>
+                              </div>
+                              {cartData.couponCode && (
+                                <div className="text-[10px] text-gray-500 flex items-center gap-1">
+                                  <Tag className="h-3 w-3" />
+                                  Coupon: {cartData.couponCode}
+                                </div>
+                              )}
+                            </CardContent>
+                          </Card>
+
+                          {/* Checkout Button */}
+                          <Button
+                            onClick={() => {
+                              setChatQuery("Checkout my cart");
+                              handleChatQuery("Checkout my cart");
+                              setIsBottomSheetOpen(false);
+                              closeCart();
+                            }}
+                            className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg"
+                            size="lg"
+                          >
+                            <ShoppingBag className="h-5 w-5 mr-2" />
+                            Proceed to Checkout
+                          </Button>
+                        </>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center text-center py-12">
+                          <ShoppingCart className="h-12 w-12 text-gray-300 mb-3" />
+                          <h3 className="text-base font-semibold text-gray-900 mb-1">Your cart is empty</h3>
+                          <p className="text-xs text-gray-500 mb-3">Add some products to get started!</p>
+                          <Button
+                            onClick={() => {
+                              setIsBottomSheetOpen(false);
+                              closeCart();
+                              setChatQuery("Show me available products");
+                              handleChatQuery("Show me available products");
+                            }}
+                            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                            size="sm"
+                          >
+                            Browse Products
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  ) : selectedProduct ? (
                     /* Mobile Product Details */
                     <div className="space-y-4">
                       {selectedProduct.metadata?.imageUrl && (
