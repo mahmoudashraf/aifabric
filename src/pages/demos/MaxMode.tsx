@@ -554,15 +554,14 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         if (response.ok) {
           const data = await response.json();
           if (data.suggestions && Array.isArray(data.suggestions)) {
-            // Filter out already shown suggestions
-            const newSuggestions = data.suggestions.filter((s: string) => !shownSuggestions.has(s)).slice(0, 4);
+            const newSuggestions = data.suggestions.slice(0, 4);
             if (newSuggestions.length > 0) {
               setSuggestions(newSuggestions);
               setShowSuggestions(true);
-              // Auto-dismiss after 5 seconds
+              // Auto-dismiss after 5 minutes
               setTimeout(() => {
                 setShowSuggestions(false);
-              }, 5000);
+              }, 300000); // 5 minutes = 300000ms
             }
           }
         } else {
@@ -573,12 +572,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             "How does this compare to alternatives?",
             "What should I know before deciding?",
           ];
-          const newGenericSuggestions = genericSuggestions.filter(s => !shownSuggestions.has(s));
-          if (newGenericSuggestions.length > 0) {
-            setSuggestions(newGenericSuggestions);
-            setShowSuggestions(true);
-            setTimeout(() => setShowSuggestions(false), 5000);
-          }
+          setSuggestions(genericSuggestions);
+          setShowSuggestions(true);
+          setTimeout(() => setShowSuggestions(false), 300000);
         }
       } catch (error) {
         console.error("Failed to load suggestions:", error);
@@ -589,12 +585,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           "How does this compare to alternatives?",
           "What should I know before deciding?",
         ];
-        const newGenericSuggestions = genericSuggestions.filter(s => !shownSuggestions.has(s));
-        if (newGenericSuggestions.length > 0) {
-          setSuggestions(newGenericSuggestions);
-          setShowSuggestions(true);
-          setTimeout(() => setShowSuggestions(false), 5000);
-        }
+        setSuggestions(genericSuggestions);
+        setShowSuggestions(true);
+        setTimeout(() => setShowSuggestions(false), 300000);
       } finally {
         setIsLoadingSuggestions(false);
       }
