@@ -1696,7 +1696,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         <Button
                           onClick={() => handleAISearchCategory(category)}
                           size="lg"
-                          className={`h-16 w-16 rounded-full ${category.bg} border-2 border-white shadow-xl flex flex-col items-center justify-center p-1`}
+                          className="h-16 w-16 rounded-full bg-white hover:bg-gray-50 border-2 border-white shadow-xl flex flex-col items-center justify-center p-1"
                         >
                           <category.icon className={`h-5 w-5 ${category.color} mb-0.5`} />
                           <span className={`text-[9px] font-semibold ${category.color} leading-none`}>
