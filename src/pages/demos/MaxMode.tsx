@@ -382,12 +382,12 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
   // AI Search Categories for guided product search
   const aiSearchCategories = [
-    { icon: Package, label: "Laptops", query: "Search for laptops with specific requirements:", color: "text-blue-600", bg: "bg-blue-500/10" },
-    { icon: ShoppingBag, label: "Smartphones", query: "Find smartphones matching these criteria:", color: "text-purple-600", bg: "bg-purple-500/10" },
-    { icon: Package, label: "Headphones", query: "Search for headphones with features:", color: "text-pink-600", bg: "bg-pink-500/10" },
-    { icon: Package, label: "Cameras", query: "Find cameras with specifications:", color: "text-green-600", bg: "bg-green-500/10" },
-    { icon: Package, label: "Watches", query: "Search for watches matching:", color: "text-orange-600", bg: "bg-orange-500/10" },
-    { icon: Package, label: "Accessories", query: "Find accessories with criteria:", color: "text-cyan-600", bg: "bg-cyan-500/10" },
+    { icon: Package, label: "Laptops", query: "Use RAG service with vector space to retrieve laptops matching these specifications (requireGeneration=true):", color: "text-blue-600", bg: "bg-blue-500/10" },
+    { icon: ShoppingBag, label: "Smartphones", query: "Use RAG service with vector space to retrieve smartphones matching these criteria (requireGeneration=true):", color: "text-purple-600", bg: "bg-purple-500/10" },
+    { icon: Package, label: "Headphones", query: "Use RAG service with vector space to retrieve headphones with these features (requireGeneration=true):", color: "text-pink-600", bg: "bg-pink-500/10" },
+    { icon: Package, label: "Cameras", query: "Use RAG service with vector space to retrieve cameras with these specifications (requireGeneration=true):", color: "text-green-600", bg: "bg-green-500/10" },
+    { icon: Package, label: "Watches", query: "Use RAG service with vector space to retrieve watches matching these criteria (requireGeneration=true):", color: "text-orange-600", bg: "bg-orange-500/10" },
+    { icon: Package, label: "Accessories", query: "Use RAG service with vector space to retrieve accessories matching these criteria (requireGeneration=true):", color: "text-cyan-600", bg: "bg-cyan-500/10" },
   ];
 
   // Auto-scroll to latest message - show it at the top of viewport
