@@ -1728,8 +1728,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               >
                 <div className="relative">
                   {aiSearchCategories.map((category, idx) => {
-                    const angle = (idx * 60) - 90; // Spread in semicircle
-                    const radius = 120;
+                    const angle = (idx * 45) - 90; // Tighter spread in semicircle
+                    const radius = 95;
                     const x = Math.cos((angle * Math.PI) / 180) * radius;
                     const y = Math.sin((angle * Math.PI) / 180) * radius;
 
