@@ -347,6 +347,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [expandedActions, setExpandedActions] = useState<{ [key: string]: number }>({});
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(true);
+  const [shownSuggestions, setShownSuggestions] = useState<Set<string>>(new Set());
   const [collectingItem, setCollectingItem] = useState<{ title: string; type: string } | null>(null);
   const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
@@ -552,7 +554,16 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         if (response.ok) {
           const data = await response.json();
           if (data.suggestions && Array.isArray(data.suggestions)) {
-            setSuggestions(data.suggestions.slice(0, 4)); // Limit to 4 suggestions
+            // Filter out already shown suggestions
+            const newSuggestions = data.suggestions.filter((s: string) => !shownSuggestions.has(s)).slice(0, 4);
+            if (newSuggestions.length > 0) {
+              setSuggestions(newSuggestions);
+              setShowSuggestions(true);
+              // Auto-dismiss after 5 seconds
+              setTimeout(() => {
+                setShowSuggestions(false);
+              }, 5000);
+            }
           }
         } else {
           // Fallback to generic suggestions on error
@@ -562,7 +573,12 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             "How does this compare to alternatives?",
             "What should I know before deciding?",
           ];
-          setSuggestions(genericSuggestions);
+          const newGenericSuggestions = genericSuggestions.filter(s => !shownSuggestions.has(s));
+          if (newGenericSuggestions.length > 0) {
+            setSuggestions(newGenericSuggestions);
+            setShowSuggestions(true);
+            setTimeout(() => setShowSuggestions(false), 5000);
+          }
         }
       } catch (error) {
         console.error("Failed to load suggestions:", error);
@@ -573,7 +589,12 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           "How does this compare to alternatives?",
           "What should I know before deciding?",
         ];
-        setSuggestions(genericSuggestions);
+        const newGenericSuggestions = genericSuggestions.filter(s => !shownSuggestions.has(s));
+        if (newGenericSuggestions.length > 0) {
+          setSuggestions(newGenericSuggestions);
+          setShowSuggestions(true);
+          setTimeout(() => setShowSuggestions(false), 5000);
+        }
       } finally {
         setIsLoadingSuggestions(false);
       }
@@ -1567,19 +1588,47 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         </CardContent>
                       </Card>
 
-                      {/* Checkout Button */}
-                      <Button
-                        onClick={() => {
-                          setChatQuery("Checkout my cart");
-                          handleChatQuery("Checkout my cart");
-                          closeCart();
-                        }}
-                        className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg"
-                        size="lg"
-                      >
-                        <ShoppingBag className="h-5 w-5 mr-2" />
-                        Proceed to Checkout
-                      </Button>
+                      {/* Action Buttons */}
+                      <div className="space-y-2">
+                        <Button
+                          onClick={() => {
+                            setChatQuery("Checkout my cart");
+                            handleChatQuery("Checkout my cart");
+                            closeCart();
+                          }}
+                          className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg"
+                          size="lg"
+                        >
+                          <ShoppingBag className="h-5 w-5 mr-2" />
+                          Proceed to Checkout
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            const cartAttachment = {
+                              type: "cart",
+                              data: {
+                                title: `Cart (${cartData.items.length} items - $${cartData.total?.toFixed(2)})`,
+                                items: cartData.items,
+                                subtotal: cartData.subtotal,
+                                discount: cartData.discount,
+                                total: cartData.total,
+                                couponCode: cartData.couponCode
+                              }
+                            };
+                            setAttachedItems(prev => [...prev, cartAttachment]);
+                            toast({
+                              title: "💬 Cart Added to Chat",
+                              description: "Your cart details are now part of the conversation",
+                            });
+                          }}
+                          variant="outline"
+                          className="w-full border-purple-300 text-purple-600 hover:bg-purple-50"
+                          size="lg"
+                        >
+                          <BrainCircuit className="h-5 w-5 mr-2" />
+                          Attach Cart to Chat
+                        </Button>
+                      </div>
                     </>
                   ) : (
                     <div className="flex flex-col items-center justify-center h-full text-center py-12">
@@ -2265,20 +2314,47 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             </CardContent>
                           </Card>
 
-                          {/* Checkout Button */}
-                          <Button
-                            onClick={() => {
-                              setChatQuery("Checkout my cart");
-                              handleChatQuery("Checkout my cart");
-                              setIsBottomSheetOpen(false);
-                              closeCart();
-                            }}
-                            className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg"
-                            size="lg"
-                          >
-                            <ShoppingBag className="h-5 w-5 mr-2" />
-                            Proceed to Checkout
-                          </Button>
+                          {/* Action Buttons */}
+                          <div className="space-y-2">
+                            <Button
+                              onClick={() => {
+                                setChatQuery("Checkout my cart");
+                                handleChatQuery("Checkout my cart");
+                                setIsBottomSheetOpen(false);
+                                closeCart();
+                              }}
+                              className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg"
+                              size="lg"
+                            >
+                              <ShoppingBag className="h-5 w-5 mr-2" />
+                              Proceed to Checkout
+                            </Button>
+                            <Button
+                              onClick={() => {
+                                const cartAttachment = {
+                                  type: "cart",
+                                  data: {
+                                    title: `Cart (${cartData.items.length} items - $${cartData.total?.toFixed(2)})`,
+                                    items: cartData.items,
+                                    subtotal: cartData.subtotal,
+                                    discount: cartData.discount,
+                                    total: cartData.total,
+                                    couponCode: cartData.couponCode
+                                  }
+                                };
+                                setAttachedItems(prev => [...prev, cartAttachment]);
+                                toast({
+                                  title: "💬 Cart Added to Chat",
+                                  description: "Your cart details are now part of the conversation",
+                                });
+                              }}
+                              variant="outline"
+                              className="w-full border-purple-300 text-purple-600 hover:bg-purple-50"
+                            >
+                              <BrainCircuit className="h-5 w-5 mr-2" />
+                              Attach Cart to Chat
+                            </Button>
+                          </div>
                         </>
                       ) : (
                         <div className="flex flex-col items-center justify-center text-center py-12">
@@ -2638,10 +2714,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           )}
 
           {/* Smart Suggestions */}
-          {suggestions.length > 0 && (
+          {suggestions.length > 0 && showSuggestions && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
               className="mb-3"
             >
               <div className="p-4 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 rounded-xl border-2 border-purple-300/50 shadow-lg">
@@ -2654,7 +2731,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     size="icon"
                     variant="ghost"
                     className="h-6 w-6 text-purple-600 hover:text-purple-900"
-                    onClick={() => setSuggestions([])}
+                    onClick={() => {
+                      setShowSuggestions(false);
+                      // Mark all current suggestions as shown
+                      setShownSuggestions(prev => new Set([...prev, ...suggestions]));
+                    }}
                     aria-label="Dismiss suggestions"
                   >
                     <X className="h-3 w-3" />
@@ -2676,6 +2757,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         className="text-sm h-auto py-2 px-3 whitespace-normal text-left bg-white/80 hover:bg-purple-100 border-purple-300 hover:border-purple-500 transition-all group leading-relaxed"
                         style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}
                         onClick={() => {
+                          // Mark this suggestion as shown
+                          setShownSuggestions(prev => new Set([...prev, suggestion]));
                           handleChatQuery(suggestion);
                         }}
                       >
@@ -2688,6 +2771,25 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   ))}
                 </div>
               </div>
+            </motion.div>
+          )}
+
+          {/* Show AI Suggestions Button */}
+          {suggestions.length > 0 && !showSuggestions && !isLoadingSuggestions && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-3"
+            >
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setShowSuggestions(true)}
+                className="w-full bg-white/80 hover:bg-purple-50 border-purple-300 hover:border-purple-500 text-purple-700 shadow-sm"
+              >
+                <Wand2 className="h-3.5 w-3.5 mr-2" />
+                Show AI Suggestions ({suggestions.length})
+              </Button>
             </motion.div>
           )}
 
