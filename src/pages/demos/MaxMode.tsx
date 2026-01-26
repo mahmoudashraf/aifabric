@@ -351,6 +351,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(false);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
+  const [confirmationStatus, setConfirmationStatus] = useState<{ [key: string]: 'pending' | 'confirmed' | 'rejected' }>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const latestMessageRef = useRef<HTMLDivElement>(null);
   const contextPanelRef = useRef<HTMLDivElement>(null);
@@ -594,6 +595,32 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     setTimeout(() => {
       chatInputRef.current?.focus();
     }, 100);
+  };
+
+  const handleConfirmation = async (messageId: string, confirmed: boolean, message: ChatMessage) => {
+    setConfirmationStatus(prev => ({
+      ...prev,
+      [messageId]: confirmed ? 'confirmed' : 'rejected'
+    }));
+
+    toast({
+      title: confirmed ? "✅ Confirmed" : "❌ Rejected",
+      description: confirmed ? "Processing your confirmation..." : "Action cancelled",
+    });
+
+    // Here you would send the confirmation to the backend
+    // For now, we'll just show a message
+    const responseMessage: ChatMessage = {
+      id: Date.now().toString(),
+      type: "ai",
+      content: confirmed
+        ? "Thank you for confirming! Processing your request..."
+        : "No problem! The action has been cancelled.",
+      timestamp: new Date().toISOString(),
+      resultType: "INFORMATION_PROVIDED",
+    };
+
+    setChatMessages(prev => [...prev, responseMessage]);
   };
 
   const showSampleDocuments = () => {
@@ -1036,6 +1063,43 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         <p className={`text-sm md:text-base whitespace-pre-wrap leading-relaxed ${message.type === "ai" && styles ? styles.text : ""}`} style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
                           {message.content}
                         </p>
+                        {message.resultType === "CONFIRMATION_REQUIRED" && confirmationStatus[message.id] !== 'confirmed' && confirmationStatus[message.id] !== 'rejected' && (
+                          <div className="mt-4 flex gap-2">
+                            <Button
+                              onClick={() => handleConfirmation(message.id, true, message)}
+                              size="sm"
+                              className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg"
+                            >
+                              <CheckCircle2 className="h-4 w-4 mr-1.5" />
+                              Confirm
+                            </Button>
+                            <Button
+                              onClick={() => handleConfirmation(message.id, false, message)}
+                              size="sm"
+                              variant="outline"
+                              className="flex-1 border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-400"
+                            >
+                              <XCircle className="h-4 w-4 mr-1.5" />
+                              Reject
+                            </Button>
+                          </div>
+                        )}
+                        {message.resultType === "CONFIRMATION_REQUIRED" && confirmationStatus[message.id] === 'confirmed' && (
+                          <div className="mt-3 p-3 bg-green-50 border-2 border-green-200 rounded-lg">
+                            <p className="text-sm text-green-800 font-semibold flex items-center gap-2">
+                              <CheckCircle2 className="h-4 w-4" />
+                              Confirmed
+                            </p>
+                          </div>
+                        )}
+                        {message.resultType === "CONFIRMATION_REQUIRED" && confirmationStatus[message.id] === 'rejected' && (
+                          <div className="mt-3 p-3 bg-red-50 border-2 border-red-200 rounded-lg">
+                            <p className="text-sm text-red-800 font-semibold flex items-center gap-2">
+                              <XCircle className="h-4 w-4" />
+                              Rejected
+                            </p>
+                          </div>
+                        )}
                         {message.resultType === "INFORMATION_PROVIDED" && message.documents && message.documents.length > 0 && (
                           <Button
                             onClick={() => {
