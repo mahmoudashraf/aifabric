@@ -32,7 +32,9 @@ The `generateData.ts` script creates comprehensive, realistic e-commerce data in
 
 ## Running the Generator
 
-To generate fresh data:
+### Option 1: Generate JSON Files (Local)
+
+Generate data as JSON files for local testing:
 
 ```bash
 npm run generate-data
@@ -43,6 +45,28 @@ Or run directly:
 ```bash
 npx tsx scripts/generateData.ts
 ```
+
+### Option 2: Generate Data via API Calls (Production)
+
+**Recommended**: Create data directly in the production database using API endpoints:
+
+```bash
+npm run generate-data-api
+```
+
+Or run directly:
+
+```bash
+npx tsx scripts/generateDataViaAPI.ts
+```
+
+This script will:
+1. Create 20 user accounts via `POST /api/accounts`
+2. Create 100 products via `POST /api/products`
+3. Create 200 reviews (2 per product) via `POST /api/reviews`
+4. Create 50 support tickets via `POST /api/tickets`
+
+All data is created through the production API at `https://ai-fabric-framework-production.up.railway.app/api`
 
 ## Output Files
 

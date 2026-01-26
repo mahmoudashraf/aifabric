@@ -9,7 +9,8 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "generate-data": "npx tsx scripts/generateData.ts"
+    "generate-data": "npx tsx scripts/generateData.ts",
+    "generate-data-api": "npx tsx scripts/generateDataViaAPI.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
