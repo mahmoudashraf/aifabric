@@ -589,6 +589,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       title: "💬 Added to Chat",
       description: `"${doc.title}" is now part of the conversation`,
     });
+
+    // Focus on chat input after attachment
+    setTimeout(() => {
+      chatInputRef.current?.focus();
+    }, 100);
   };
 
   const showSampleDocuments = () => {
@@ -841,23 +846,26 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[100] bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-gray-900 dark:via-purple-900/20 dark:to-blue-900/20"
     >
-      {/* Header */}
-      <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 flex items-center justify-between px-6 shadow-lg z-10">
-        <div className="flex items-center gap-3">
+      {/* Header - Compact on Mobile */}
+      <div className="absolute top-0 left-0 right-0 h-12 md:h-16 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 flex items-center justify-between px-3 md:px-6 shadow-lg z-10">
+        <div className="flex items-center gap-2 md:gap-3">
           <motion.div
             animate={{ rotate: [0, 360] }}
             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
           >
-            <Sparkles className="h-6 w-6 text-white" />
+            <Sparkles className="h-4 w-4 md:h-6 md:w-6 text-white" />
           </motion.div>
-          <h1 className="text-xl font-bold text-white">MAX Mode - AI Shopping Assistant</h1>
+          <h1 className="text-sm md:text-xl font-bold text-white">
+            <span className="hidden sm:inline">MAX Mode - AI Shopping Assistant</span>
+            <span className="sm:hidden">MAX Mode</span>
+          </h1>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 md:gap-2">
           <Button
             variant="ghost"
             size="sm"
             onClick={showSampleDocuments}
-            className="text-white hover:bg-white/20 text-xs"
+            className="hidden md:flex text-white hover:bg-white/20 text-xs"
           >
             <FileText className="h-4 w-4 mr-1" />
             Test Panel
@@ -866,9 +874,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="text-white hover:bg-white/20"
+            className="text-white hover:bg-white/20 h-8 w-8 md:h-10 md:w-10"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4 md:h-5 md:w-5" />
           </Button>
         </div>
       </div>
@@ -899,7 +907,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0 }}
-            className="md:hidden fixed top-20 right-4 z-20"
+            className="md:hidden fixed top-14 right-4 z-20"
           >
             <Button
               onClick={() => setIsQuickActionsOpen(true)}
@@ -978,7 +986,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       </AnimatePresence>
 
       {/* Main Split Content */}
-      <div className="h-full pt-20 md:pt-36 relative">
+      <div className="h-full pt-12 md:pt-36 relative">
         {/* Chat Messages - Full Width */}
         <div className={`absolute inset-0 overflow-y-auto px-3 md:px-6 py-4 md:py-6 pb-[180px] md:pb-[240px] transition-all ${isPanelVisible && contextDocuments.length > 0 ? 'lg:pr-[450px]' : ''}`}>
           <div className="max-w-3xl mx-auto space-y-4">
@@ -1090,6 +1098,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                 title: "💬 Added to Chat",
                                 description: `"${title}" is now part of the conversation`,
                               });
+
+                              // Focus on chat input after attachment
+                              setTimeout(() => {
+                                chatInputRef.current?.focus();
+                              }, 100);
                             }}
                           />
                         )}
@@ -1239,7 +1252,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                   {isItemAttached(doc.id) ? (
                                     <CheckCircle2 className="h-5 w-5" />
                                   ) : (
-                                    <Paperclip className="h-5 w-5" />
+                                    <BrainCircuit className="h-5 w-5" />
                                   )}
                                 </Button>
                               </div>
@@ -1284,7 +1297,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                     {isItemAttached(doc.id) ? (
                                       <CheckCircle2 className="h-5 w-5" />
                                     ) : (
-                                      <Paperclip className="h-5 w-5" />
+                                      <BrainCircuit className="h-5 w-5" />
                                     )}
                                   </Button>
                                 )}
@@ -1509,7 +1522,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                   {isItemAttached(doc.id) ? (
                                     <CheckCircle2 className="h-4 w-4" />
                                   ) : (
-                                    <Paperclip className="h-4 w-4" />
+                                    <BrainCircuit className="h-4 w-4" />
                                   )}
                                 </Button>
                               </div>
@@ -1531,15 +1544,15 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         </AnimatePresence>
       </div>
 
-      {/* Collection Animation - Drops from top when item is attached */}
+      {/* Collection Animation - Rises from bottom when item is attached */}
       <AnimatePresence>
         {collectingItem && (
           <motion.div
-            initial={{ y: -200, opacity: 0, scale: 0.8 }}
+            initial={{ y: 200, opacity: 0, scale: 0.8 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
-            exit={{ y: -200, opacity: 0, scale: 0.8 }}
+            exit={{ y: 200, opacity: 0, scale: 0.8 }}
             transition={{ type: "spring", damping: 15, stiffness: 200 }}
-            className="fixed top-24 left-0 right-0 z-[110] pointer-events-none px-4 flex justify-center"
+            className="fixed bottom-28 md:bottom-32 left-0 right-0 z-[110] pointer-events-none px-4 flex justify-center"
           >
             <motion.div
               animate={{
@@ -1550,18 +1563,18 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               className="relative w-full max-w-[350px]"
             >
               {/* Main Card */}
-              <Card className="border-4 border-green-400 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 shadow-2xl w-full">
+              <Card className="border-4 border-purple-400 bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 shadow-2xl w-full">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
-                    {/* Animated Bucket Icon */}
+                    {/* Animated AI Icon */}
                     <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: [0, 1.3, 1] }}
                       transition={{ delay: 0.2, type: "spring", damping: 10 }}
                       className="relative"
                     >
-                      <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl shadow-lg">
-                        <ShoppingBag className="h-6 w-6 text-white" />
+                      <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl shadow-lg">
+                        <BrainCircuit className="h-6 w-6 text-white" />
                       </div>
                       {/* Success Checkmark Animation */}
                       <motion.div
@@ -1570,7 +1583,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         transition={{ delay: 0.4, type: "spring", damping: 10 }}
                         className="absolute -top-1 -right-1 bg-white rounded-full p-0.5 shadow-lg"
                       >
-                        <CheckCircle2 className="h-4 w-4 text-green-600" />
+                        <CheckCircle2 className="h-4 w-4 text-purple-600" />
                       </motion.div>
                     </motion.div>
 
@@ -1580,10 +1593,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.3 }}
-                        className="text-xs font-bold text-green-800 mb-1 flex items-center gap-1"
+                        className="text-xs font-bold text-purple-800 mb-1 flex items-center gap-1"
                       >
                         <Sparkles className="h-3 w-3" />
-                        Collected!
+                        Added to Context!
                       </motion.p>
                       <motion.p
                         initial={{ opacity: 0, x: -10 }}
@@ -1597,12 +1610,12 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.5 }}
-                        className="text-[10px] text-green-700 mt-1 flex items-center gap-1"
+                        className="text-[10px] text-purple-700 mt-1 flex items-center gap-1"
                       >
-                        <Badge variant="outline" className="text-[9px] bg-green-100 border-green-300 text-green-800 px-1.5 py-0">
+                        <Badge variant="outline" className="text-[9px] bg-purple-100 border-purple-300 text-purple-800 px-1.5 py-0">
                           {collectingItem.type}
                         </Badge>
-                        Added to chat
+                        AI will use this in chat
                       </motion.p>
                     </div>
                   </div>
