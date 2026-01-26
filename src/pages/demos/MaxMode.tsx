@@ -1728,8 +1728,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               >
                 <div className="relative">
                   {aiSearchCategories.map((category, idx) => {
-                    const angle = (idx * 45) - 90; // Tighter spread in semicircle
-                    const radius = 95;
+                    // Fan layout spreading upward in an arc
+                    const totalItems = aiSearchCategories.length;
+                    const angle = -135 + (idx * (90 / (totalItems - 1))); // Spread from upper-left to upper-right
+                    const radius = 110;
                     const x = Math.cos((angle * Math.PI) / 180) * radius;
                     const y = Math.sin((angle * Math.PI) / 180) * radius;
 
@@ -1745,11 +1747,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                       >
                         <Button
                           onClick={() => handleAISearchCategory(category)}
-                          size="lg"
-                          className="h-16 w-16 rounded-full bg-white hover:bg-gray-50 border-2 border-white shadow-xl flex flex-col items-center justify-center p-1"
+                          size="sm"
+                          className="h-14 w-14 rounded-full bg-white hover:bg-gray-50 border-2 border-purple-200 shadow-xl flex flex-col items-center justify-center p-1"
                         >
-                          <category.icon className={`h-5 w-5 ${category.color} mb-0.5`} />
-                          <span className={`text-[9px] font-semibold ${category.color} leading-none`}>
+                          <category.icon className={`h-4 w-4 ${category.color} mb-0.5`} />
+                          <span className={`text-[8px] font-semibold ${category.color} leading-none`}>
                             {category.label}
                           </span>
                         </Button>
