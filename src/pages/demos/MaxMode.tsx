@@ -418,8 +418,14 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
     const prevCount = contextDocuments.length;
 
-    // Track new documents
-    if (allDocs.length > prevCount) {
+    // Initialize: Mark all existing documents as viewed on first load
+    if (prevCount === 0 && allDocs.length > 0) {
+      const existingIds = new Set(allDocs.map(doc => doc.id));
+      setViewedDocumentIds(existingIds);
+    }
+
+    // Track new documents (only when new docs are added, not on initial load)
+    if (allDocs.length > prevCount && prevCount > 0) {
       const newDocs = allDocs.slice(prevCount);
       setNewDocuments(newDocs);
 
@@ -739,7 +745,25 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           element.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
       }, 300);
+
+      // Clear newDocuments after viewing
+      setTimeout(() => {
+        setNewDocuments([]);
+      }, 500);
     }
+  };
+
+  const handleCloseNewDocsPreview = () => {
+    setIsNewDocsPreviewOpen(false);
+
+    // Mark new documents as viewed when closing preview
+    const newDocIds = newDocuments.map(doc => doc.id);
+    setViewedDocumentIds(prev => new Set([...prev, ...newDocIds]));
+
+    // Clear newDocuments after a short delay
+    setTimeout(() => {
+      setNewDocuments([]);
+    }, 300);
   };
 
   const showSampleDocuments = () => {
@@ -1774,7 +1798,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 className="md:hidden fixed inset-0 bg-black/30 z-[35]"
-                onClick={() => setIsNewDocsPreviewOpen(false)}
+                onClick={handleCloseNewDocsPreview}
               />
 
               {/* Small Right Panel */}
@@ -1803,7 +1827,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => setIsNewDocsPreviewOpen(false)}
+                    onClick={handleCloseNewDocsPreview}
                     className="h-8 w-8"
                   >
                     <X className="h-4 w-4" />
@@ -1824,7 +1848,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         <Card
                           onClick={() => {
                             openProductDetails(doc);
-                            setIsNewDocsPreviewOpen(false);
+                            handleCloseNewDocsPreview();
                             setIsBottomSheetOpen(true);
                           }}
                           className="relative group active:scale-98 transition-all border-2 border-yellow-300 bg-gradient-to-br from-yellow-50/80 via-purple-50/30 to-pink-50/30 cursor-pointer shadow-lg"
@@ -1875,7 +1899,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 <div className="p-3 border-t border-purple-200">
                   <Button
                     onClick={() => {
-                      setIsNewDocsPreviewOpen(false);
+                      handleCloseNewDocsPreview();
                       handleOpenBottomSheet();
                     }}
                     className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg"
