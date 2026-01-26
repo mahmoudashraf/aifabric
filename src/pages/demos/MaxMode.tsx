@@ -558,10 +558,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             if (newSuggestions.length > 0) {
               setSuggestions(newSuggestions);
               setShowSuggestions(true);
-              // Auto-dismiss after 5 minutes
+              // Auto-dismiss after 5 seconds
               setTimeout(() => {
                 setShowSuggestions(false);
-              }, 300000); // 5 minutes = 300000ms
+              }, 5000); // 5 seconds = 5000ms
             }
           }
         } else {
@@ -574,7 +574,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           ];
           setSuggestions(genericSuggestions);
           setShowSuggestions(true);
-          setTimeout(() => setShowSuggestions(false), 300000);
+          setTimeout(() => setShowSuggestions(false), 5000);
         }
       } catch (error) {
         console.error("Failed to load suggestions:", error);
@@ -587,7 +587,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         ];
         setSuggestions(genericSuggestions);
         setShowSuggestions(true);
-        setTimeout(() => setShowSuggestions(false), 300000);
+        setTimeout(() => setShowSuggestions(false), 5000);
       } finally {
         setIsLoadingSuggestions(false);
       }
