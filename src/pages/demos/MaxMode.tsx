@@ -1730,6 +1730,22 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           </Button>
         </motion.div>
 
+        {/* Mobile: Cart Button */}
+        <motion.div
+          className="md:hidden fixed bottom-24 right-20 z-20"
+        >
+          <Button
+            onClick={() => {
+              setChatQuery("View my cart");
+              handleChatQuery("View my cart");
+            }}
+            size="lg"
+            className="h-14 w-14 rounded-full bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white shadow-2xl border-2 border-white/30"
+          >
+            <ShoppingCart className="h-6 w-6" />
+          </Button>
+        </motion.div>
+
         {/* Mobile: AI Search Circular Menu */}
         <AnimatePresence>
           {isAISearchOpen && (
@@ -1754,8 +1770,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   {aiSearchCategories.map((category, idx) => {
                     // Fan layout spreading upward in an arc
                     const totalItems = aiSearchCategories.length;
-                    const angle = -135 + (idx * (90 / (totalItems - 1))); // Spread from upper-left to upper-right
-                    const radius = 110;
+                    const angle = -135 + (idx * (100 / (totalItems - 1))); // Spread from upper-left to upper-right (wider arc)
+                    const radius = 130; // Increased radius to prevent overlap
                     const x = Math.cos((angle * Math.PI) / 180) * radius;
                     const y = Math.sin((angle * Math.PI) / 180) * radius;
 
