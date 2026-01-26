@@ -352,6 +352,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [confirmationStatus, setConfirmationStatus] = useState<{ [key: string]: 'pending' | 'confirmed' | 'rejected' }>({});
+  const [selectedProduct, setSelectedProduct] = useState<Document | null>(null);
+  const [isAISearchOpen, setIsAISearchOpen] = useState(false);
+  const [userId] = useState<string>("demo-user-" + Math.random().toString(36).substr(2, 9));
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const latestMessageRef = useRef<HTMLDivElement>(null);
   const contextPanelRef = useRef<HTMLDivElement>(null);
@@ -375,6 +378,16 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     { icon: MapPin, label: "Addresses", query: "List my saved addresses", color: "text-emerald-600", bg: "bg-emerald-500/10", border: "border-emerald-500/30" },
     { icon: MessageSquare, label: "Support", query: "Create a support ticket", color: "text-violet-600", bg: "bg-violet-500/10", border: "border-violet-500/30" },
     { icon: TrendingUp, label: "Trending", query: "What's trending?", color: "text-rose-600", bg: "bg-rose-500/10", border: "border-rose-500/30" },
+  ];
+
+  // AI Search Categories for guided product search
+  const aiSearchCategories = [
+    { icon: Package, label: "Laptops", query: "Search for laptops with specific requirements:", color: "text-blue-600", bg: "bg-blue-500/10" },
+    { icon: ShoppingBag, label: "Smartphones", query: "Find smartphones matching these criteria:", color: "text-purple-600", bg: "bg-purple-500/10" },
+    { icon: Package, label: "Headphones", query: "Search for headphones with features:", color: "text-pink-600", bg: "bg-pink-500/10" },
+    { icon: Package, label: "Cameras", query: "Find cameras with specifications:", color: "text-green-600", bg: "bg-green-500/10" },
+    { icon: Package, label: "Watches", query: "Search for watches matching:", color: "text-orange-600", bg: "bg-orange-500/10" },
+    { icon: Package, label: "Accessories", query: "Find accessories with criteria:", color: "text-cyan-600", bg: "bg-cyan-500/10" },
   ];
 
   // Auto-scroll to latest message - show it at the top of viewport
@@ -621,6 +634,78 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     };
 
     setChatMessages(prev => [...prev, responseMessage]);
+  };
+
+  const addToCart = async (product: Document, quantity: number = 1) => {
+    try {
+      const sku = product.metadata?.sku || product.id;
+
+      const response = await fetch(`${API_BASE_URL}/carts/active/items`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: userId,
+          sku: sku,
+          quantity: quantity
+        })
+      });
+
+      if (response.ok) {
+        const cart = await response.json();
+        toast({
+          title: "🛒 Added to Cart!",
+          description: `${product.title} has been added to your cart`,
+        });
+        return cart;
+      } else {
+        throw new Error('Failed to add to cart');
+      }
+    } catch (error) {
+      toast({
+        title: "❌ Error",
+        description: "Failed to add item to cart. Please try again.",
+        variant: "destructive"
+      });
+      console.error('Error adding to cart:', error);
+    }
+  };
+
+  const openProductDetails = (doc: Document) => {
+    setSelectedProduct(doc);
+  };
+
+  const closeProductDetails = () => {
+    setSelectedProduct(null);
+  };
+
+  const handleAISearchCategory = (category: typeof aiSearchCategories[0]) => {
+    // Create search attachment
+    const searchAttachment = {
+      type: "ai-search",
+      data: {
+        category: category.label,
+        query: category.query,
+        title: `AI Search: ${category.label}`
+      }
+    };
+
+    setAttachedItems(prev => [...prev, searchAttachment]);
+    setIsAISearchOpen(false);
+
+    // Set the query in the input
+    setInput(category.query);
+
+    toast({
+      title: "🔍 AI Search Attached",
+      description: `${category.label} search criteria added to chat`,
+    });
+
+    // Focus on chat input
+    setTimeout(() => {
+      chatInputRef.current?.focus();
+    }, 100);
   };
 
   const showSampleDocuments = () => {
@@ -1052,12 +1137,23 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                       <div className="p-3 md:p-4">
                         {message.attachedItems && message.attachedItems.length > 0 && (
                           <div className="mb-3 space-y-2">
-                            {message.attachedItems.map((item, idx) => (
-                              <div key={idx} className="p-2 bg-white/20 rounded-lg border border-white/30 text-xs flex items-center gap-2">
-                                <Paperclip className="h-3 w-3" />
-                                <span className="font-semibold capitalize">{item.data.type || item.type}:</span> {item.data.title || item.data.name || JSON.stringify(item.data)}
-                              </div>
-                            ))}
+                            {message.attachedItems.map((item, idx) => {
+                              const isAISearch = item.type === 'ai-search';
+                              return (
+                                <div key={idx} className={`p-2 rounded-lg border text-xs flex items-center gap-2 ${
+                                  isAISearch
+                                    ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border-cyan-400/50'
+                                    : 'bg-white/20 border-white/30'
+                                }`}>
+                                  {isAISearch ? (
+                                    <Search className="h-3 w-3 text-cyan-600" />
+                                  ) : (
+                                    <Paperclip className="h-3 w-3" />
+                                  )}
+                                  <span className="font-semibold">{item.data.title || `${item.data.type || item.type}: ${item.data.name || ''}`}</span>
+                                </div>
+                              );
+                            })}
                           </div>
                         )}
                         <p className={`text-sm md:text-base whitespace-pre-wrap leading-relaxed ${message.type === "ai" && styles ? styles.text : ""}`} style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
@@ -1217,7 +1313,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 420 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="hidden md:flex absolute top-0 right-0 bottom-0 w-[420px] max-w-[420px] border-l-2 border-purple-500/30 bg-gradient-to-b from-purple-50/95 via-pink-50/95 to-blue-50/95 dark:from-gray-900/95 dark:via-purple-900/95 dark:to-blue-900/95 backdrop-blur-xl p-6 shadow-2xl z-10 flex-col"
+              className={`hidden md:flex absolute top-0 right-0 bottom-0 ${selectedProduct ? 'w-[700px] max-w-[700px]' : 'w-[420px] max-w-[420px]'} border-l-2 border-purple-500/30 bg-gradient-to-b from-purple-50/95 via-pink-50/95 to-blue-50/95 dark:from-gray-900/95 dark:via-purple-900/95 dark:to-blue-900/95 backdrop-blur-xl p-6 shadow-2xl z-10 flex-col transition-all duration-300`}
             >
               {/* Header */}
               <div className="bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 backdrop-blur-md p-5 rounded-2xl mb-6 shadow-2xl border-2 border-white/20">
@@ -1231,27 +1327,122 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                       <Sparkles className="h-5 w-5 text-white" />
                     </motion.div>
                     <div>
-                      <h2 className="font-bold text-lg text-white">Context Panel</h2>
+                      <h2 className="font-bold text-lg text-white">
+                        {selectedProduct ? 'Product Details' : 'Context Panel'}
+                      </h2>
                       <p className="text-xs text-white/80">
-                        {contextDocuments.length} {contextDocuments.length === 1 ? 'document' : 'documents'} • Click to attach
+                        {selectedProduct
+                          ? 'View details and add to cart'
+                          : `${contextDocuments.length} ${contextDocuments.length === 1 ? 'document' : 'documents'} • Click to view`
+                        }
                       </p>
                     </div>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setIsPanelVisible(false)}
-                    className="h-8 px-3 text-xs text-white hover:bg-white/20 border border-white/30"
-                  >
-                    <EyeOff className="h-3 w-3 mr-1" />
-                    Hide
-                  </Button>
+                  <div className="flex gap-2">
+                    {selectedProduct && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={closeProductDetails}
+                        className="h-8 px-3 text-xs text-white hover:bg-white/20 border border-white/30"
+                      >
+                        <ArrowRight className="h-3 w-3 mr-1 rotate-180" />
+                        Back
+                      </Button>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setIsPanelVisible(false)}
+                      className="h-8 px-3 text-xs text-white hover:bg-white/20 border border-white/30"
+                    >
+                      <EyeOff className="h-3 w-3 mr-1" />
+                      Hide
+                    </Button>
+                  </div>
                 </div>
                 <div className="h-1 bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 rounded-full"></div>
               </div>
 
-              {/* Documents List - Scrollable with Floating Buttons */}
-              <div className="flex-1 relative min-h-0">
+              {/* Product Details or Documents List */}
+              {selectedProduct ? (
+                /* Product Details View */
+                <div className="flex-1 overflow-y-auto space-y-6" style={{
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: 'rgba(168, 85, 247, 0.5) rgba(243, 232, 255, 0.2)'
+                }}>
+                  {selectedProduct.metadata?.imageUrl && (
+                    <div className="relative h-80 overflow-hidden rounded-2xl bg-gradient-to-br from-purple-100 to-pink-100">
+                      <img
+                        src={selectedProduct.metadata.imageUrl}
+                        alt={selectedProduct.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                    </div>
+                  )}
+
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                        {selectedProduct.title}
+                      </h3>
+                      <Badge variant="outline" className="text-xs bg-purple-100 border-purple-300 text-purple-700">
+                        {selectedProduct.type}
+                      </Badge>
+                    </div>
+
+                    <div className="p-4 bg-white/60 rounded-xl border-2 border-purple-200">
+                      <p className="text-sm text-gray-700 leading-relaxed">
+                        {selectedProduct.content}
+                      </p>
+                    </div>
+
+                    {selectedProduct.metadata && (
+                      <div className="space-y-3">
+                        <h4 className="font-semibold text-gray-900">Product Details</h4>
+                        <div className="grid grid-cols-2 gap-3">
+                          {Object.entries(selectedProduct.metadata).map(([key, value]) => {
+                            if (key === 'imageUrl') return null;
+                            return (
+                              <div key={key} className="p-3 bg-white/60 rounded-lg border border-purple-200">
+                                <p className="text-xs text-gray-500 mb-1">{formatFieldName(key)}</p>
+                                <p className="text-sm font-semibold text-gray-900">{formatFieldValue(value)}</p>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div className="sticky bottom-0 bg-gradient-to-t from-purple-50 via-purple-50 to-transparent pt-6 pb-2 space-y-3">
+                      <Button
+                        onClick={() => addToCart(selectedProduct)}
+                        className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg"
+                        size="lg"
+                      >
+                        <ShoppingCart className="h-5 w-5 mr-2" />
+                        Add to Cart
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          handleAttachDocument(selectedProduct);
+                          closeProductDetails();
+                        }}
+                        variant="outline"
+                        className="w-full border-purple-300 text-purple-600 hover:bg-purple-50"
+                        size="lg"
+                      >
+                        <BrainCircuit className="h-5 w-5 mr-2" />
+                        Attach to Chat
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* Documents List - Scrollable with Floating Buttons */
+                <div className="flex-1 relative min-h-0">
                 {/* Floating Scroll Up Button - Hidden on Mobile */}
                 <Button
                   variant="ghost"
@@ -1285,7 +1476,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           exit={{ opacity: 0, y: -20 }}
                           transition={{ delay: idx * 0.05 }}
                         >
-                          <Card className={`relative group hover:shadow-2xl transition-all duration-300 border-2 ${
+                          <Card
+                            onClick={() => openProductDetails(doc)}
+                            className={`relative group hover:shadow-2xl transition-all duration-300 border-2 cursor-pointer ${
                             isFocused
                               ? 'border-yellow-400 shadow-lg shadow-yellow-200/50 bg-gradient-to-br from-yellow-50 via-purple-50/50 to-pink-50/50'
                               : 'border-purple-300 hover:border-purple-500 bg-gradient-to-br from-white via-purple-50/50 to-pink-50/50'
@@ -1422,7 +1615,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 >
                   <ChevronDown className="h-5 w-5" />
                 </Button>
-              </div>
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -1446,6 +1640,75 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 Show Panel
               </Button>
             </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Mobile: AI Search Button */}
+        <motion.div
+          className="md:hidden fixed bottom-40 right-4 z-20"
+        >
+          <Button
+            onClick={() => setIsAISearchOpen(!isAISearchOpen)}
+            size="lg"
+            className="h-14 w-14 rounded-full bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-500 hover:from-cyan-600 hover:via-blue-600 hover:to-purple-600 text-white shadow-2xl border-2 border-white/30"
+          >
+            <Search className="h-6 w-6" />
+          </Button>
+        </motion.div>
+
+        {/* Mobile: AI Search Circular Menu */}
+        <AnimatePresence>
+          {isAISearchOpen && (
+            <>
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="md:hidden fixed inset-0 bg-black/50 z-30"
+                onClick={() => setIsAISearchOpen(false)}
+              />
+
+              {/* Circular Menu */}
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                className="md:hidden fixed bottom-40 right-4 z-40"
+              >
+                <div className="relative">
+                  {aiSearchCategories.map((category, idx) => {
+                    const angle = (idx * 60) - 90; // Spread in semicircle
+                    const radius = 120;
+                    const x = Math.cos((angle * Math.PI) / 180) * radius;
+                    const y = Math.sin((angle * Math.PI) / 180) * radius;
+
+                    return (
+                      <motion.div
+                        key={category.label}
+                        initial={{ scale: 0, x: 0, y: 0 }}
+                        animate={{ scale: 1, x, y }}
+                        exit={{ scale: 0, x: 0, y: 0 }}
+                        transition={{ delay: idx * 0.05 }}
+                        className="absolute"
+                        style={{ bottom: 0, right: 0 }}
+                      >
+                        <Button
+                          onClick={() => handleAISearchCategory(category)}
+                          size="lg"
+                          className={`h-16 w-16 rounded-full ${category.bg} border-2 border-white shadow-xl flex flex-col items-center justify-center p-1`}
+                        >
+                          <category.icon className={`h-5 w-5 ${category.color} mb-0.5`} />
+                          <span className={`text-[9px] font-semibold ${category.color} leading-none`}>
+                            {category.label}
+                          </span>
+                        </Button>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            </>
           )}
         </AnimatePresence>
 
@@ -1509,31 +1772,122 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 {/* Header */}
                 <div className="px-4 py-3 border-b border-purple-200 dark:border-purple-800 flex items-center justify-between">
                   <div className="flex items-center gap-2">
+                    {selectedProduct && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={closeProductDetails}
+                        className="h-8 w-8 -ml-2"
+                      >
+                        <ArrowRight className="h-5 w-5 rotate-180" />
+                      </Button>
+                    )}
                     <div className="p-2 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg">
                       <Sparkles className="h-4 w-4 text-white" />
                     </div>
                     <div>
                       <h3 className="text-sm font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                        Context Documents
+                        {selectedProduct ? 'Product Details' : 'Context Documents'}
                       </h3>
                       <p className="text-[10px] text-muted-foreground">
-                        {contextDocuments.length} {contextDocuments.length === 1 ? 'item' : 'items'} • Tap to attach
+                        {selectedProduct
+                          ? 'View details and add to cart'
+                          : `${contextDocuments.length} ${contextDocuments.length === 1 ? 'item' : 'items'} • Tap to view`
+                        }
                       </p>
                     </div>
                   </div>
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => setIsBottomSheetOpen(false)}
+                    onClick={() => {
+                      setIsBottomSheetOpen(false);
+                      setSelectedProduct(null);
+                    }}
                     className="h-8 w-8"
                   >
                     <X className="h-5 w-5" />
                   </Button>
                 </div>
 
-                {/* Documents List - Scrollable */}
+                {/* Product Details or Documents List - Scrollable */}
                 <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
-                  <AnimatePresence mode="popLayout">
+                  {selectedProduct ? (
+                    /* Mobile Product Details */
+                    <div className="space-y-4">
+                      {selectedProduct.metadata?.imageUrl && (
+                        <div className="relative h-64 overflow-hidden rounded-xl bg-gradient-to-br from-purple-100 to-pink-100 -mx-4">
+                          <img
+                            src={selectedProduct.metadata.imageUrl}
+                            alt={selectedProduct.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+
+                      <div>
+                        <h3 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                          {selectedProduct.title}
+                        </h3>
+                        <Badge variant="outline" className="text-xs bg-purple-100 border-purple-300 text-purple-700">
+                          {selectedProduct.type}
+                        </Badge>
+                      </div>
+
+                      <div className="p-3 bg-white/80 rounded-lg border-2 border-purple-200">
+                        <p className="text-sm text-gray-700 leading-relaxed">
+                          {selectedProduct.content}
+                        </p>
+                      </div>
+
+                      {selectedProduct.metadata && (
+                        <div className="space-y-3">
+                          <h4 className="font-semibold text-gray-900 text-sm">Product Details</h4>
+                          <div className="space-y-2">
+                            {Object.entries(selectedProduct.metadata).map(([key, value]) => {
+                              if (key === 'imageUrl') return null;
+                              return (
+                                <div key={key} className="p-3 bg-white/80 rounded-lg border border-purple-200">
+                                  <p className="text-xs text-gray-500 mb-0.5">{formatFieldName(key)}</p>
+                                  <p className="text-sm font-semibold text-gray-900">{formatFieldValue(value)}</p>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Action Buttons */}
+                      <div className="sticky bottom-0 bg-gradient-to-t from-white via-white to-transparent pt-4 pb-2 space-y-2 -mx-4 px-4">
+                        <Button
+                          onClick={() => {
+                            addToCart(selectedProduct);
+                            setIsBottomSheetOpen(false);
+                            setSelectedProduct(null);
+                          }}
+                          className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg"
+                          size="lg"
+                        >
+                          <ShoppingCart className="h-5 w-5 mr-2" />
+                          Add to Cart
+                        </Button>
+                        <Button
+                          onClick={() => {
+                            handleAttachDocument(selectedProduct);
+                            setIsBottomSheetOpen(false);
+                            setSelectedProduct(null);
+                          }}
+                          variant="outline"
+                          className="w-full border-purple-300 text-purple-600 hover:bg-purple-50"
+                        >
+                          <BrainCircuit className="h-5 w-5 mr-2" />
+                          Attach to Chat
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Documents List */
+                    <AnimatePresence mode="popLayout">
                     {contextDocuments.map((doc, idx) => {
                       const DocIcon = getDocumentIcon(doc.type);
                       return (
@@ -1544,7 +1898,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           exit={{ opacity: 0, y: -20 }}
                           transition={{ delay: idx * 0.03 }}
                         >
-                          <Card className="relative group active:scale-98 transition-all border-2 border-purple-200 hover:border-purple-400 bg-gradient-to-br from-white via-purple-50/30 to-pink-50/30">
+                          <Card
+                            onClick={() => openProductDetails(doc)}
+                            className="relative group active:scale-98 transition-all border-2 border-purple-200 hover:border-purple-400 bg-gradient-to-br from-white via-purple-50/30 to-pink-50/30 cursor-pointer">
                             {doc.metadata?.imageUrl && (
                               <div className="relative h-32 overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
                                 <img
@@ -1600,7 +1956,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         </motion.div>
                       );
                     })}
-                  </AnimatePresence>
+                    </AnimatePresence>
+                  )}
                 </div>
               </motion.div>
             </>
@@ -1713,7 +2070,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               className="mb-2 md:mb-3 flex flex-wrap gap-1.5 md:gap-2 max-h-[120px] md:max-h-[200px] overflow-y-auto"
             >
               <AnimatePresence mode="popLayout">
-                {attachedItems.map((item, idx) => (
+                {attachedItems.map((item, idx) => {
+                  const isAISearch = item.type === 'ai-search';
+                  return (
                   <motion.div
                     key={idx}
                     initial={{ opacity: 0, scale: 0.9, y: 10 }}
@@ -1721,22 +2080,38 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     exit={{ opacity: 0, scale: 0.9, y: -10 }}
                     transition={{ type: "spring", damping: 20 }}
                   >
-                    <Card className="border-2 border-purple-400/50 bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-blue-500/20 shadow-lg hover:shadow-xl transition-all">
+                    <Card className={`border-2 shadow-lg hover:shadow-xl transition-all ${
+                      isAISearch
+                        ? 'border-cyan-400/50 bg-gradient-to-br from-cyan-500/20 via-blue-500/20 to-purple-500/20'
+                        : 'border-purple-400/50 bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-blue-500/20'
+                    }`}>
                       <CardContent className="p-2 md:p-3 flex items-center gap-2 md:gap-3">
                         <motion.div
                           whileHover={{ rotate: [0, -5, 5, -5, 0] }}
                           transition={{ duration: 0.5 }}
-                          className="p-1.5 md:p-2 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex-shrink-0"
+                          className={`p-1.5 md:p-2 rounded-lg flex-shrink-0 ${
+                            isAISearch
+                              ? 'bg-gradient-to-br from-cyan-600 to-blue-600'
+                              : 'bg-gradient-to-br from-purple-600 to-pink-600'
+                          }`}
                         >
-                          <MessageSquarePlus className="h-3 w-3 md:h-4 md:w-4 text-white" />
+                          {isAISearch ? (
+                            <Search className="h-3 w-3 md:h-4 md:w-4 text-white" />
+                          ) : (
+                            <MessageSquarePlus className="h-3 w-3 md:h-4 md:w-4 text-white" />
+                          )}
                         </motion.div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-[11px] md:text-xs font-bold text-purple-900 dark:text-purple-100 truncate">
-                            {item.data.productName || item.data.title || item.data.name || `Item ${item.data.id || ''}`}
+                          <p className={`text-[11px] md:text-xs font-bold truncate ${
+                            isAISearch ? 'text-cyan-900 dark:text-cyan-100' : 'text-purple-900 dark:text-purple-100'
+                          }`}>
+                            {item.data.title || item.data.productName || item.data.name || `Item ${item.data.id || ''}`}
                           </p>
-                          <p className="hidden md:flex text-[10px] text-purple-700 dark:text-purple-300 items-center gap-1">
+                          <p className={`hidden md:flex text-[10px] items-center gap-1 ${
+                            isAISearch ? 'text-cyan-700 dark:text-cyan-300' : 'text-purple-700 dark:text-purple-300'
+                          }`}>
                             <Sparkles className="h-2.5 w-2.5" />
-                            <span className="capitalize">{item.data.type || item.type}</span> • Added
+                            <span className="capitalize">{isAISearch ? 'AI Search' : (item.data.type || item.type)}</span> • Added
                           </p>
                         </div>
                         <Button
@@ -1750,7 +2125,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                       </CardContent>
                     </Card>
                   </motion.div>
-                ))}
+                  );
+                })}
               </AnimatePresence>
             </motion.div>
           )}
