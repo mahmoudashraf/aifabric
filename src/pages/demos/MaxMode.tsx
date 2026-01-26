@@ -750,7 +750,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     try {
       const sku = product.metadata?.sku || product.id;
 
-      const response = await fetch(`${API_BASE_URL}/carts/active/items`, {
+      const response = await fetch(`${API_BASE_URL}/cart/items`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -784,7 +784,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
   const fetchCart = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/carts/active?userId=${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/cart?userId=${userId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -833,7 +833,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
   const removeFromCart = async (sku: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/carts/active/items?userId=${userId}&sku=${sku}`, {
+      const response = await fetch(`${API_BASE_URL}/cart/items?userId=${userId}&sku=${sku}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
