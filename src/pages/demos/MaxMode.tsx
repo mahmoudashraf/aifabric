@@ -2061,9 +2061,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                       </div>
                     </div>
                   ) : (
-                    /* Documents List */
+                    /* Documents List - Newer first on mobile */
                     <AnimatePresence mode="popLayout">
-                    {contextDocuments.map((doc, idx) => {
+                    {[...contextDocuments].reverse().map((doc, idx) => {
                       const DocIcon = getDocumentIcon(doc.type);
                       const isNewDoc = !viewedDocumentIds.has(doc.id) && newDocuments.some(nd => nd.id === doc.id);
                       return (
