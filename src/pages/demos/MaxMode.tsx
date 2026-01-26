@@ -2225,8 +2225,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               }}
               className={`${
                 isInputFocused ? 'min-h-[100px] md:min-h-[80px]' : 'min-h-[48px] md:min-h-[80px]'
-              } pr-14 md:pr-16 text-sm md:text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed transition-all`}
-              style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}
+              } pr-14 md:pr-16 text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed transition-all`}
+              style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', fontSize: '16px' }}
             />
             <Button
               size="icon"
