@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-27T12:35:39.821Z",
+  "generatedAt": "2026-01-27T20:40:03.905Z",
   "counts": {
     "products": 100,
     "reviews": 200,
@@ -10,62 +10,62 @@
   "categories": [
     {
       "name": "Electronics",
-      "productCount": 7
+      "productCount": 9
     },
     {
       "name": "Home & Kitchen",
-      "productCount": 12
-    },
-    {
-      "name": "Fashion",
-      "productCount": 5
-    },
-    {
-      "name": "Sports & Outdoors",
-      "productCount": 9
-    },
-    {
-      "name": "Beauty & Personal Care",
       "productCount": 13
     },
     {
+      "name": "Fashion",
+      "productCount": 11
+    },
+    {
+      "name": "Sports & Outdoors",
+      "productCount": 13
+    },
+    {
+      "name": "Beauty & Personal Care",
+      "productCount": 7
+    },
+    {
       "name": "Toys & Games",
-      "productCount": 15
+      "productCount": 8
     },
     {
       "name": "Books & Media",
-      "productCount": 3
+      "productCount": 11
     },
     {
       "name": "Office Supplies",
-      "productCount": 12
-    },
-    {
-      "name": "Automotive",
       "productCount": 9
     },
     {
+      "name": "Automotive",
+      "productCount": 10
+    },
+    {
       "name": "Health & Wellness",
-      "productCount": 15
+      "productCount": 9
     }
   ],
   "stats": {
-    "averageProductPrice": "520.87",
-    "totalReviewRating": "4.3",
+    "averageProductPrice": "528.63",
+    "totalReviewRating": "4.2",
     "ticketsByStatus": {
-      "open": 9,
-      "inProgress": 16,
-      "waitingCustomer": 10,
+      "open": 11,
+      "inProgress": 7,
+      "waitingCustomer": 8,
       "resolved": 10,
-      "closed": 5
+      "closed": 14
     },
     "activePolicies": 19,
-    "activeCoupons": 16,
+    "activeCoupons": 17,
     "couponsByType": {
-      "percentage": 5,
-      "fixed": 5,
-      "freeShipping": 2,
-      "buyOneGetOne": 8
+      "percentage": 8,
+      "fixed": 8,
+      "freeShipping": 1,
+      "buyOneGetOne": 3
     }
   }
 }

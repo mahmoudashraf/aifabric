@@ -133,6 +133,74 @@ const adjectives = [
   'Stylish', 'Modern', 'Classic', 'Luxury', 'Budget-Friendly', 'High-Performance'
 ];
 
+// Image search terms by subcategory for more relevant product images
+const subcategoryImageTerms: Record<string, string> = {
+  'Smartphones': 'smartphone,phone,mobile',
+  'Laptops': 'laptop,computer,macbook',
+  'Tablets': 'tablet,ipad,digital',
+  'Cameras': 'camera,photography,dslr',
+  'Audio': 'headphones,speaker,audio',
+  'Wearables': 'smartwatch,wearable,fitness',
+  'Accessories': 'tech,gadget,accessory',
+  'Appliances': 'appliance,kitchen,modern',
+  'Cookware': 'cookware,pan,kitchen',
+  'Furniture': 'furniture,modern,interior',
+  'Bedding': 'bedding,bedroom,pillow',
+  'Storage': 'storage,organize,container',
+  'Decor': 'decor,home,interior',
+  'Lighting': 'lamp,light,lighting',
+  "Men's Clothing": 'menswear,fashion,clothing',
+  "Women's Clothing": 'dress,fashion,women',
+  'Shoes': 'shoes,sneakers,footwear',
+  'Jewelry': 'jewelry,necklace,ring',
+  'Watches': 'watch,luxury,timepiece',
+  'Bags': 'bag,handbag,backpack',
+  'Fitness': 'fitness,gym,workout',
+  'Camping': 'camping,outdoor,tent',
+  'Cycling': 'bicycle,cycling,bike',
+  'Water Sports': 'swimming,water,sports',
+  'Team Sports': 'sports,ball,athletic',
+  'Outdoor Gear': 'outdoor,hiking,adventure',
+  'Athletic Wear': 'sportswear,athletic,running',
+  'Skincare': 'skincare,beauty,cosmetic',
+  'Makeup': 'makeup,cosmetic,beauty',
+  'Hair Care': 'haircare,shampoo,hair',
+  'Fragrances': 'perfume,fragrance,cologne',
+  'Tools': 'tools,equipment,beauty',
+  "Men's Grooming": 'grooming,razor,mens',
+  'Bath & Body': 'bath,soap,body',
+  'Educational': 'toys,educational,learning',
+  'Board Games': 'boardgame,game,puzzle',
+  'Action Figures': 'toys,action,figure',
+  'Dolls': 'doll,toys,children',
+  'Building Sets': 'lego,building,blocks',
+  'Outdoor Play': 'playground,outdoor,toys',
+  'Puzzles': 'puzzle,jigsaw,brain',
+  'Fiction': 'book,reading,novel',
+  'Non-Fiction': 'book,knowledge,reading',
+  "Children's Books": 'childrens,book,colorful',
+  'eBooks': 'ebook,digital,reading',
+  'Audiobooks': 'audiobook,headphones,book',
+  'Movies': 'movie,film,cinema',
+  'Music': 'music,vinyl,record',
+  'Stationery': 'stationery,pen,paper',
+  'Organizers': 'organizer,desk,office',
+  'Art Supplies': 'art,paint,creative',
+  'Shipping': 'box,package,shipping',
+  'Presentation': 'presentation,office,business',
+  'Parts': 'car,auto,parts',
+  'Car Care': 'carwash,cleaning,auto',
+  'Interior': 'car,interior,seat',
+  'Exterior': 'car,exterior,accessory',
+  'Vitamins': 'vitamins,health,supplement',
+  'Supplements': 'supplement,protein,health',
+  'Medical Supplies': 'medical,health,firstaid',
+  'Fitness Equipment': 'gym,equipment,fitness',
+  'Nutrition': 'nutrition,healthy,food',
+  'Personal Care': 'personalcare,wellness,health',
+  'Mobility': 'mobility,wheelchair,health'
+};
+
 const userNames = [
   'Sarah Johnson', 'Michael Chen', 'Emily Rodriguez', 'David Kim', 'Jessica Williams',
   'James Brown', 'Amanda Lee', 'Christopher Davis', 'Ashley Martinez', 'Matthew Wilson',
@@ -191,6 +259,17 @@ function generateProducts(count: number): Product[] {
     const specs = generateSpecifications(category.name, subcategory);
     const productId = `prod_${String(i + 1).padStart(4, '0')}`;
 
+    // Get image search terms based on subcategory
+    const imageTerms = subcategoryImageTerms[subcategory] || category.name.toLowerCase().replace(/\s+/g, ',');
+    const primaryTerm = imageTerms.split(',')[0];
+
+    // Use Unsplash source for category-relevant images
+    const imageUrl = `https://source.unsplash.com/800x600/?${encodeURIComponent(primaryTerm)}&sig=${productId}`;
+    const images = Array(randomInt(3, 6)).fill(0).map((_, idx) => {
+      const term = imageTerms.split(',')[idx % imageTerms.split(',').length];
+      return `https://source.unsplash.com/800x600/?${encodeURIComponent(term)}&sig=${productId}-${idx}`;
+    });
+
     const product: Product = {
       id: productId,
       sku: `SKU-${brand.substring(0, 3).toUpperCase()}-${randomInt(10000, 99999)}`,
@@ -204,10 +283,8 @@ function generateProducts(count: number): Product[] {
       compareAtPrice,
       inStock: Math.random() > 0.1,
       stockQuantity: randomInt(0, 500),
-      imageUrl: `https://picsum.photos/seed/${productId}/800/600`,
-      images: Array(randomInt(3, 6)).fill(0).map((_, idx) =>
-        `https://picsum.photos/seed/${productId}-${idx}/800/600`
-      ),
+      imageUrl,
+      images,
       rating: randomFloat(3.5, 5.0, 1),
       reviewCount: 0, // Will be updated when reviews are generated
       features,
