@@ -1,4 +1,5 @@
-import { Search, Plus, Edit, Trash2, MessageSquare, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { Search, Plus, Edit, Trash2, Loader2, Bot, Eye, Sparkles } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -108,67 +109,13 @@ export function ProductsTab({
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {products.map((product) => (
-            <Card key={product.id} className="overflow-hidden group">
-              <div className="aspect-video bg-muted relative">
-                {product.imageUrl ? (
-                  <img
-                    src={product.imageUrl}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                    No image
-                  </div>
-                )}
-                {/* Quick actions overlay */}
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    onClick={() => onOpenEditDialog(product)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    onClick={() => onDeleteProduct(product.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    onClick={() => onAttachProduct(product)}
-                  >
-                    <MessageSquare className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <h3 className="font-medium truncate">{product.name}</h3>
-                    <p className="text-sm text-muted-foreground truncate">
-                      {product.sku}
-                    </p>
-                  </div>
-                  <Badge variant="outline">${product.price?.toFixed(2)}</Badge>
-                </div>
-                <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
-                  {product.description}
-                </p>
-                <div className="flex items-center gap-2 mt-3">
-                  {product.category && (
-                    <Badge variant="secondary">{product.category}</Badge>
-                  )}
-                  <span className="text-xs text-muted-foreground">
-                    Stock: {product.inStockQty ?? 0}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
+            <ProductCard
+              key={product.id}
+              product={product}
+              onEdit={() => onOpenEditDialog(product)}
+              onDelete={() => onDeleteProduct(product.id)}
+              onAttach={() => onAttachProduct(product)}
+            />
           ))}
         </div>
       )}
@@ -207,6 +154,138 @@ export function ProductsTab({
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+// Product card component with details dialog
+function ProductCard({
+  product,
+  onEdit,
+  onDelete,
+  onAttach,
+}: {
+  product: Product;
+  onEdit: () => void;
+  onDelete: () => void;
+  onAttach: () => void;
+}) {
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+
+  return (
+    <>
+      <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer border-2 hover:border-primary/30">
+        <div className="relative" onClick={() => setIsDetailsOpen(true)}>
+          {product.imageUrl && (
+            <div className="aspect-video w-full overflow-hidden bg-muted">
+              <img
+                src={product.imageUrl}
+                alt={product.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            </div>
+          )}
+          {/* Always visible Add to AI button */}
+          <Button
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onAttach();
+            }}
+            className="absolute top-2 right-2 gap-1 bg-primary/90 hover:bg-primary shadow-lg"
+            title="Add to AI Chat"
+          >
+            <Sparkles className="h-3 w-3" />
+            <span className="text-xs">Add to AI</span>
+          </Button>
+        </div>
+        <CardContent className="p-4" onClick={() => setIsDetailsOpen(true)}>
+          <div className="flex items-start justify-between gap-2 mb-2">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold truncate">{product.name}</h3>
+              <p className="text-sm text-muted-foreground">{product.sku}</p>
+            </div>
+            <Badge variant={product.inStockQty > 0 ? "default" : "destructive"}>
+              {product.inStockQty > 0 ? `${product.inStockQty} in stock` : "Out of stock"}
+            </Badge>
+          </div>
+          <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+            {product.description}
+          </p>
+          <div className="flex items-center justify-between">
+            <span className="text-lg font-bold text-primary">
+              ${product.price.toFixed(2)}
+            </span>
+            <div className="flex gap-1" onClick={(e) => e.stopPropagation()}>
+              <Button size="icon" variant="ghost" onClick={onEdit} title="Edit">
+                <Edit className="h-4 w-4" />
+              </Button>
+              <Button size="icon" variant="ghost" onClick={onDelete} title="Delete">
+                <Trash2 className="h-4 w-4 text-destructive" />
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Product Details Dialog */}
+      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              {product.name}
+              <Badge variant="secondary" className="ml-2">{product.category}</Badge>
+            </DialogTitle>
+            <DialogDescription>{product.sku}</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4">
+            {product.imageUrl && (
+              <div className="aspect-video w-full overflow-hidden rounded-lg bg-muted">
+                <img
+                  src={product.imageUrl}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-muted-foreground">Price</Label>
+                <p className="text-2xl font-bold text-primary">${product.price.toFixed(2)}</p>
+              </div>
+              <div>
+                <Label className="text-muted-foreground">Stock</Label>
+                <p className="text-lg font-semibold">
+                  {product.inStockQty > 0 ? (
+                    <span className="text-green-600">{product.inStockQty} units available</span>
+                  ) : (
+                    <span className="text-destructive">Out of stock</span>
+                  )}
+                </p>
+              </div>
+            </div>
+            <div>
+              <Label className="text-muted-foreground">Description</Label>
+              <p className="text-sm mt-1">{product.description}</p>
+            </div>
+          </div>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button
+              onClick={() => {
+                onAttach();
+                setIsDetailsOpen(false);
+              }}
+              className="gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+            >
+              <Sparkles className="h-4 w-4" />
+              Add to AI Chat
+            </Button>
+            <Button variant="outline" onClick={() => setIsDetailsOpen(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 
