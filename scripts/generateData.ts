@@ -189,9 +189,10 @@ function generateProducts(count: number): Product[] {
 
     const features = generateFeatures(category.name, subcategory);
     const specs = generateSpecifications(category.name, subcategory);
+    const productId = `prod_${String(i + 1).padStart(4, '0')}`;
 
     const product: Product = {
-      id: `prod_${String(i + 1).padStart(4, '0')}`,
+      id: productId,
       sku: `SKU-${brand.substring(0, 3).toUpperCase()}-${randomInt(10000, 99999)}`,
       title: `${adjective} ${subcategory.replace(/'/g, '')} - ${brand}`,
       description: generateShortDescription(category.name, subcategory, adjective),
@@ -203,9 +204,9 @@ function generateProducts(count: number): Product[] {
       compareAtPrice,
       inStock: Math.random() > 0.1,
       stockQuantity: randomInt(0, 500),
-      imageUrl: `https://images.unsplash.com/photo-${randomInt(1500000000000, 1700000000000)}`,
+      imageUrl: `https://picsum.photos/seed/${productId}/800/600`,
       images: Array(randomInt(3, 6)).fill(0).map((_, idx) =>
-        `https://images.unsplash.com/photo-${randomInt(1500000000000, 1700000000000)}-${idx}`
+        `https://picsum.photos/seed/${productId}-${idx}/800/600`
       ),
       rating: randomFloat(3.5, 5.0, 1),
       reviewCount: 0, // Will be updated when reviews are generated
