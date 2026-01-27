@@ -257,6 +257,110 @@ const SAMPLE_COUPONS = [
   },
 ];
 
+// Sample tickets for migration
+const SAMPLE_TICKETS = [
+  {
+    userId: "demo-user-001",
+    issueType: "Order Issue",
+    description: "I placed an order over a week ago and still haven't received it. The tracking shows it was delivered but I never got the package. Can you please help me locate it or send a replacement?"
+  },
+  {
+    userId: "demo-user-002",
+    issueType: "Shipping",
+    description: "My tracking number hasn't updated in 5 days. Can you check the status of my shipment?"
+  },
+  {
+    userId: "demo-user-003",
+    issueType: "Product Quality",
+    description: "The product arrived damaged. The box was in good condition but the item inside has visible scratches and dents. I would like to return it for a refund or exchange."
+  },
+  {
+    userId: "demo-user-004",
+    issueType: "Returns & Refunds",
+    description: "I would like to return this item as it doesn't meet my needs. What is the return process and will I get a full refund?"
+  },
+  {
+    userId: "demo-user-005",
+    issueType: "Payment",
+    description: "I was charged twice for my order. Please refund the duplicate payment immediately."
+  },
+  {
+    userId: "demo-user-006",
+    issueType: "Technical Support",
+    description: "I need to file a warranty claim. The product stopped working after just 2 months of use."
+  },
+  {
+    userId: "demo-user-007",
+    issueType: "Account",
+    description: "I can't log into my account. Password reset isn't working either. Need urgent help."
+  },
+  {
+    userId: "demo-user-008",
+    issueType: "Product Information",
+    description: "Can you provide detailed installation instructions? The manual that came with it is unclear."
+  },
+  {
+    userId: "demo-user-009",
+    issueType: "Order Issue",
+    description: "I ordered the blue version but received the red one instead. I need to exchange it for the correct color as soon as possible."
+  },
+  {
+    userId: "demo-user-010",
+    issueType: "Shipping",
+    description: "My order was supposed to arrive yesterday but there's been a delay. When can I expect delivery?"
+  },
+  {
+    userId: "demo-user-011",
+    issueType: "Product Quality",
+    description: "The product quality is not as expected. It feels cheap and flimsy. Very disappointed."
+  },
+  {
+    userId: "demo-user-012",
+    issueType: "Returns & Refunds",
+    description: "The color in person is completely different from the website photos. I want to return this."
+  },
+  {
+    userId: "demo-user-013",
+    issueType: "Payment",
+    description: "I tried using the discount code from your email but it says it's invalid. Can you help?"
+  },
+  {
+    userId: "demo-user-014",
+    issueType: "Technical Support",
+    description: "Will this product work with my existing setup? I need compatibility information before installing."
+  },
+  {
+    userId: "demo-user-015",
+    issueType: "Website Issue",
+    description: "The website keeps giving me an error when I try to checkout. I've tried multiple times with different payment methods."
+  },
+  {
+    userId: "demo-user-016",
+    issueType: "Order Issue",
+    description: "The product seems to be missing some essential parts mentioned in the manual. Could you send the missing components?"
+  },
+  {
+    userId: "demo-user-017",
+    issueType: "Shipping",
+    description: "Do you ship to my country? The checkout won't let me select my shipping address."
+  },
+  {
+    userId: "demo-user-018",
+    issueType: "Product Quality",
+    description: "I received my order but the product doesn't work as described. I've tried troubleshooting but no luck. Please advise on next steps."
+  },
+  {
+    userId: "demo-user-019",
+    issueType: "Returns & Refunds",
+    description: "I ordered the large size but it fits like a medium. I need to return this for the correct size."
+  },
+  {
+    userId: "demo-user-020",
+    issueType: "Other",
+    description: "I need to order 50 units for my business. Do you offer bulk discounts?"
+  }
+];
+
 interface Product {
   id: string;
   sku: string;
@@ -733,6 +837,10 @@ const AIFabricFramework = () => {
   const [couponMigrationProgress, setCouponMigrationProgress] = useState(0);
   const [currentMigratingCoupon, setCurrentMigratingCoupon] = useState("");
   const [couponCount, setCouponCount] = useState(0);
+  const [isMigratingTickets, setIsMigratingTickets] = useState(false);
+  const [ticketMigrationProgress, setTicketMigrationProgress] = useState(0);
+  const [currentMigratingTicket, setCurrentMigratingTicket] = useState("");
+  const [ticketCount, setTicketCount] = useState(0);
   const [migratedProductIds, setMigratedProductIds] = useState<string[]>([]);
   const [isChatExpanded, setIsChatExpanded] = useState(false);
   const [attachedProducts, setAttachedProducts] = useState<Product[]>([]);
@@ -1842,6 +1950,60 @@ const AIFabricFramework = () => {
     });
   };
 
+  const handleMigrateTickets = async () => {
+    if (isMigratingTickets) return;
+
+    setIsMigratingTickets(true);
+    setTicketMigrationProgress(0);
+    let successCount = 0;
+    let failCount = 0;
+
+    for (let i = 0; i < SAMPLE_TICKETS.length; i++) {
+      const ticket = SAMPLE_TICKETS[i];
+      setCurrentMigratingTicket(`Ticket ${i + 1} - ${ticket.issueType}`);
+      setTicketMigrationProgress(((i + 1) / SAMPLE_TICKETS.length) * 100);
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/tickets`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(ticket),
+        });
+
+        if (response.ok) {
+          successCount++;
+        } else {
+          failCount++;
+          const errorText = await response.text();
+          console.error(`Failed to create ticket ${i + 1}:`, errorText);
+        }
+      } catch (error) {
+        failCount++;
+        console.error(`Error creating ticket ${i + 1}:`, error);
+      }
+
+      // Small delay between requests
+      if (i < SAMPLE_TICKETS.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+    }
+
+    setIsMigratingTickets(false);
+    setTicketMigrationProgress(0);
+    setCurrentMigratingTicket("");
+
+    // Update ticket count if there's a load function for it
+    // await loadTickets(); // Add this if you have a loadTickets function
+    // await loadTicketCount(); // Add this if you have a loadTicketCount function
+
+    toast({
+      title: "Ticket Migration Complete",
+      description: `Successfully added ${successCount} support tickets. ${failCount > 0 ? `Failed: ${failCount}` : ''}`,
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
       <div className="container mx-auto px-4 pt-24 pb-16">
@@ -1934,8 +2096,26 @@ const AIFabricFramework = () => {
               </Button>
 
               <Button
+                onClick={handleMigrateTickets}
+                size="lg"
+                className="gap-2 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700"
+              >
+                {isMigratingTickets ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Migrating Tickets...
+                  </>
+                ) : (
+                  <>
+                    <HelpCircle className="h-5 w-5" />
+                    Migrate Tickets
+                  </>
+                )}
+              </Button>
+
+              <Button
                 onClick={handleClearData}
-                disabled={isClearing || isFilling || isMigratingPolicies || isMigratingReviews || isMigratingCoupons}
+                disabled={isClearing || isFilling || isMigratingPolicies || isMigratingReviews || isMigratingCoupons || isMigratingTickets}
                 size="lg"
                 variant="destructive"
                 className="gap-2"
@@ -2063,6 +2243,35 @@ const AIFabricFramework = () => {
                       <p className="text-sm text-muted-foreground flex items-center gap-2">
                         <Tag className="h-4 w-4 animate-pulse" />
                         Currently adding: <span className="font-semibold text-foreground">{currentMigratingCoupon}</span>
+                      </p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+
+          {/* Progress Bar for Ticket Migration */}
+          {isMigratingTickets && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6"
+            >
+              <Card className="border-indigo-500/50 bg-indigo-500/5">
+                <CardContent className="pt-6">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="font-medium">Migrating support tickets...</span>
+                      <span className="text-muted-foreground">
+                        {Math.round(ticketMigrationProgress)}%
+                      </span>
+                    </div>
+                    <Progress value={ticketMigrationProgress} className="h-2" />
+                    {currentMigratingTicket && (
+                      <p className="text-sm text-muted-foreground flex items-center gap-2">
+                        <HelpCircle className="h-4 w-4 animate-pulse" />
+                        Currently adding: <span className="font-semibold text-foreground">{currentMigratingTicket}</span>
                       </p>
                     )}
                   </div>
