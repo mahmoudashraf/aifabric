@@ -1165,13 +1165,18 @@ const AIFabricFramework = () => {
         })),
       ];
 
+      // Build query with context instruction if attachments exist
+      const queryWithContext = attachmentsWithMetadata.length > 0
+        ? `[Consider this context as the main context. Use its metadata for action params and for building optimized query.]\n\n${queryToUse}`
+        : queryToUse;
+
       const response = await fetch(`${API_BASE_URL}/chat/query`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          query: queryToUse,
+          query: queryWithContext,
           userId: "demo-user",
           sessionId: "demo-session",
           conversationId: currentConversationId || undefined,
