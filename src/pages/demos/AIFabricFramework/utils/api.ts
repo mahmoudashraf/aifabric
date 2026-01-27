@@ -211,6 +211,12 @@ export async function createTicket(ticket: { userId: string; issueType: string; 
 export async function clearAllData(): Promise<void> {
   const response = await fetch(`${API_BASE_URL}/admin/migration/clear`, {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      confirm: true,
+      clearVectors: true,
+      clearIndexingQueue: true,
+    }),
   });
   if (!response.ok) throw new Error("Failed to clear data");
 }
