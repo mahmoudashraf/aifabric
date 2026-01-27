@@ -210,7 +210,7 @@ export async function createTicket(ticket: { userId: string; issueType: string; 
 // Admin API
 export async function clearAllData(): Promise<void> {
   const response = await fetch(`${API_BASE_URL}/admin/migration/clear`, {
-    method: "DELETE",
+    method: "POST",
   });
   if (!response.ok) throw new Error("Failed to clear data");
 }
