@@ -750,7 +750,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     try {
       const sku = product.metadata?.sku || product.id;
 
-      const response = await fetch(`${API_BASE_URL}/cart/items`, {
+      const response = await fetch(`${API_BASE_URL}/carts/active/items`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -784,7 +784,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
   const fetchCart = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/cart?userId=${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/carts/active?userId=${userId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -833,7 +833,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
   const removeFromCart = async (sku: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/cart/items?userId=${userId}&sku=${sku}`, {
+      const response = await fetch(`${API_BASE_URL}/carts/active/items?userId=${userId}&sku=${sku}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -1345,7 +1345,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       {/* Main Split Content */}
       <div className="h-full relative">
         {/* Chat Messages - Full Width */}
-        <div className={`absolute top-12 md:top-[168px] left-0 right-0 bottom-0 overflow-y-auto px-3 md:px-6 py-4 md:py-6 pb-[180px] md:pb-[240px] transition-all ${isPanelVisible && contextDocuments.length > 0 ? (selectedProduct || isCartView ? 'md:pr-[730px]' : 'md:pr-[450px]') : 'md:pr-4'}`}>
+        <div className={`absolute top-12 md:top-[165px] left-0 right-0 bottom-0 overflow-y-auto px-3 md:px-6 py-4 md:py-6 pb-[180px] md:pb-[240px] transition-all ${isPanelVisible && contextDocuments.length > 0 ? (selectedProduct || isCartView ? 'md:pr-[730px]' : 'md:pr-[450px]') : 'md:pr-4'}`}>
           <div className="max-w-3xl mx-auto space-y-4">
             <AnimatePresence mode="popLayout">
               {chatMessages.map((message, index) => {
@@ -1558,7 +1558,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 420 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className={`hidden md:flex absolute top-16 right-0 bottom-0 mr-2 ${selectedProduct || isCartView ? 'w-[700px] max-w-[700px]' : 'w-[420px] max-w-[420px]'} border-l-2 border-purple-500/30 bg-gradient-to-b from-purple-50/95 via-pink-50/95 to-blue-50/95 dark:from-gray-900/95 dark:via-purple-900/95 dark:to-blue-900/95 backdrop-blur-xl p-6 shadow-2xl z-10 flex-col transition-all duration-300`}
+              className={`hidden md:flex absolute top-[165px] right-0 bottom-0 mr-2 ${selectedProduct || isCartView ? 'w-[700px] max-w-[700px]' : 'w-[420px] max-w-[420px]'} border-l-2 border-purple-500/30 bg-gradient-to-b from-purple-50/95 via-pink-50/95 to-blue-50/95 dark:from-gray-900/95 dark:via-purple-900/95 dark:to-blue-900/95 backdrop-blur-xl p-6 shadow-2xl z-10 flex-col transition-all duration-300`}
             >
               {/* Header */}
               <div className="bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 backdrop-blur-md p-5 rounded-2xl mb-6 shadow-2xl border-2 border-white/20">
