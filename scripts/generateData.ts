@@ -242,11 +242,17 @@ const ticketCategories = [
 ];
 
 // Specific product types for migration (20 each = 100 total)
+// Using curated Unsplash photo IDs for reliable, relevant product images
 const productTypes = [
   {
     type: 'Laptop',
     category: 'Electronics',
-    imageKeyword: 'laptop',
+    imageIds: [
+      'XMFZqrGyV-Q', 'Im7lZjxeLhg', '1SAnrIxw5OY', 'Hin-rzhOdWs', '9SoCnyQmkzI',
+      'C6T6vr1sQI0', 'vpOeXr5wmR4', 'fPkvU7RDmCo', '4Hg8LH9Hoxc', 'jLwVAUtLOAQ',
+      'gySMaocSdqs', 'Lq1rOaigDoY', '95YRwf6CNw8', 'OqtafYT5kTw', 'cckf4TsHAuw',
+      'FO7JIlwjOtU', 'Lp9Zr0gLiVs', '5NE6mX0WVfQ', 'hGV2TfOh0ns', 'dC6Pb2JdAqs'
+    ],
     brands: ['Apple', 'Dell', 'HP', 'Lenovo', 'ASUS', 'Acer', 'Microsoft', 'Samsung', 'MSI', 'Razer'],
     adjectives: ['Pro', 'Ultra', 'Air', 'Elite', 'Premium', 'Gaming', 'Business', 'Slim', 'Powerful', 'Lightweight'],
     features: ['16GB RAM', '512GB SSD', '1TB Storage', 'Backlit Keyboard', 'Fingerprint Reader', 'Thunderbolt 4', 'Wi-Fi 6E', '4K Display'],
@@ -254,7 +260,12 @@ const productTypes = [
   {
     type: 'Smartphone',
     category: 'Electronics',
-    imageKeyword: 'smartphone',
+    imageIds: [
+      'FmB9wNGT5eA', 'N0g-deioHO4', '1osIUArK5oA', 'WiONHd_zYI4', 'dcLoVtlasLU',
+      'T0WpSP8fvDQ', 'JwMGy1h-JsY', 'XDQRS0CNXRY', 'gXsJ9Gvw-c4', 'KFFtDGfxSAA',
+      'eBRTYyjwpRY', 'Ylpb7Asqq6k', '5hcV51EmeVc', '-1QDLCI0SkY', 'hfO1RMEY0PY',
+      'FHnnjk1Yj7Y', 'NKCamXoJVEo', 'ulgXHfMYZdE', 'iIWDt0fXa84', 'K5mPtONmpHM'
+    ],
     brands: ['Apple', 'Samsung', 'Google', 'OnePlus', 'Xiaomi', 'Sony', 'Motorola', 'Nokia', 'OPPO', 'Huawei'],
     adjectives: ['Pro', 'Ultra', 'Max', 'Plus', 'Lite', 'Mini', 'Elite', 'Premium', 'Advanced', 'Smart'],
     features: ['5G Enabled', 'OLED Display', '128GB Storage', '256GB Storage', 'Triple Camera', 'Fast Charging', 'Water Resistant', 'Face ID'],
@@ -262,7 +273,12 @@ const productTypes = [
   {
     type: 'Headphones',
     category: 'Electronics',
-    imageKeyword: 'headphones',
+    imageIds: [
+      'PDX_a_82obo', 'Dv_1FScvG_E', '3GZNPBLImWc', 'YmIbZ8VTQUY', 'J1OScm_uHUQ',
+      'nKO_1QyFh9o', 'mcqMINdFn34', '9F1LlmPJ7eI', 'hS91CC5fbTk', 'JfRzwscvPkk',
+      'y3aP9oo9Pjc', 'CUs8dxOkzEk', 'L8KQIPCODV8', 'szFUQoyvrxM', '5brvJbR1Pn8',
+      'aQfhbxailCs', 'Og-L2FGEEOM', 'CmC4eg9_HI4', 'cPF2nlWcMY4', 'E8H76nY1v6Q'
+    ],
     brands: ['Sony', 'Bose', 'Apple', 'Sennheiser', 'JBL', 'Beats', 'Audio-Technica', 'Jabra', 'Bang & Olufsen', 'Skullcandy'],
     adjectives: ['Wireless', 'Pro', 'Studio', 'Premium', 'Elite', 'Sport', 'Noise-Canceling', 'Hi-Fi', 'Professional', 'Comfort'],
     features: ['Active Noise Cancellation', '40-Hour Battery', 'Bluetooth 5.2', 'Hi-Res Audio', 'Foldable Design', 'Touch Controls', 'Multi-Device Pairing', 'Voice Assistant'],
@@ -270,7 +286,12 @@ const productTypes = [
   {
     type: 'Camera',
     category: 'Electronics',
-    imageKeyword: 'camera',
+    imageIds: [
+      'IU4JkaUfNZ4', 'WEDDYpNejy4', 'VCtI-0qlVgA', 'ob-hsLNxYPc', 'tJrSEkTJpPg',
+      'kG71BXh8KFw', 'JVD3XPqjLaQ', 'auijD19Byq8', 'mSchGl1OOEY', 'iEiUITs149M',
+      'uq2E2V4LhCY', 'I-ENNB6IVFU', 'c04p30dNwxs', 'lsdJV1oWBvs', 'YKW0JjP7rlU',
+      'FO7bKvgETgQ', 'I3Nl6nkstuc', 'AxKqiv5F5aE', 'ZE4AqIVqsDk', 'sDw1TYo2rkE'
+    ],
     brands: ['Canon', 'Sony', 'Nikon', 'Fujifilm', 'Panasonic', 'Leica', 'Olympus', 'GoPro', 'DJI', 'Hasselblad'],
     adjectives: ['Professional', 'Mirrorless', 'DSLR', 'Compact', 'Action', 'Cinema', 'Travel', 'Advanced', 'Premium', 'Ultra HD'],
     features: ['4K Video', '8K Video', '45MP Sensor', 'Image Stabilization', 'Weather Sealed', 'Dual Card Slots', 'Fast Autofocus', 'Touchscreen LCD'],
@@ -278,7 +299,12 @@ const productTypes = [
   {
     type: 'Monitor',
     category: 'Electronics',
-    imageKeyword: 'monitor',
+    imageIds: [
+      '1lfI7wkGWZ4', 'Im7lZjxeLhg', 'hpjSkU2UYSU', 'FewHpO4VC9Y', 'p0j-mE6mGo4',
+      'JzE4cpg1jeA', 'dUx0gwLbhzs', 'OmjCj6EH6Z4', 'weRQAu9TA-A', 'fPxOowbR6ls',
+      'gZB-i-dA6ns', 'Pk7LjoP3JK0', 'vVSleEYPSGY', 'oqStl2L5oxI', '-WXQm_NTK0U',
+      '1HCb2gPk3ik', 'QLqNalPe0RA', 'gy08FXeM2L4', 'lP_FqHwP16c', 'IjQdCrknYXI'
+    ],
     brands: ['LG', 'Samsung', 'Dell', 'ASUS', 'BenQ', 'Acer', 'ViewSonic', 'HP', 'MSI', 'AOC'],
     adjectives: ['Gaming', 'Professional', 'UltraWide', 'Curved', '4K', 'HDR', 'Studio', 'Ergonomic', 'Premium', 'High-Refresh'],
     features: ['4K Resolution', '144Hz Refresh', '240Hz Refresh', 'HDR10', 'USB-C Hub', 'Built-in Speakers', 'Adjustable Stand', 'Blue Light Filter'],
@@ -309,11 +335,13 @@ function generateProducts(count: number): Product[] {
 
       const productId = `prod_${String(productIndex).padStart(4, '0')}`;
 
-      // Use loremflickr for product-specific images
-      const imageUrl = `https://loremflickr.com/800/600/${productType.imageKeyword}?lock=${productIndex}`;
-      const images = Array(randomInt(3, 5)).fill(0).map((_, idx) =>
-        `https://loremflickr.com/800/600/${productType.imageKeyword}?lock=${productIndex * 100 + idx}`
-      );
+      // Use curated Unsplash images for reliable product-specific images
+      const imageId = productType.imageIds[i % productType.imageIds.length];
+      const imageUrl = `https://images.unsplash.com/photo-${imageId}?w=800&h=600&fit=crop&auto=format`;
+      const images = Array(randomInt(3, 5)).fill(0).map((_, idx) => {
+        const altImageId = productType.imageIds[(i + idx + 1) % productType.imageIds.length];
+        return `https://images.unsplash.com/photo-${altImageId}?w=800&h=600&fit=crop&auto=format`;
+      });
 
       const product: Product = {
         id: productId,
