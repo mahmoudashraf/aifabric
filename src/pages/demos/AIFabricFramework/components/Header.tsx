@@ -8,14 +8,9 @@ import {
   RefreshCw,
   Trash2,
   Loader2,
-  Database,
-  Search,
-  Bot,
-  Receipt,
   Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { MigrationProgress } from "./MigrationProgress";
 import type { MigrationProgress as MigrationProgressType } from "../hooks/useMigration";
 
@@ -190,35 +185,19 @@ export function Header({
 
       {/* Title */}
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent mb-4">
-          AI Fabric Framework
-        </h1>
-        <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
-          A comprehensive demo showcasing intelligent product management, natural language search,
-          conversational AI, and smart orchestration capabilities.
-        </p>
-        <div className="flex items-center justify-center gap-2 flex-wrap">
-          <Badge variant="secondary" className="gap-1">
-            <Database className="h-3 w-3" />
-            Database
-          </Badge>
-          <Badge variant="secondary" className="gap-1">
-            <Search className="h-3 w-3" />
-            Semantic Search
-          </Badge>
-          <Badge variant="secondary" className="gap-1">
-            <Bot className="h-3 w-3" />
-            Conversational AI
-          </Badge>
-          <Badge variant="secondary" className="gap-1">
-            <Receipt className="h-3 w-3" />
-            Orders
-          </Badge>
-          <Badge variant="secondary" className="gap-1">
-            <Zap className="h-3 w-3" />
-            Orchestration
-          </Badge>
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-4 rounded-full bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-orange-500/10 border border-purple-500/20">
+          <Zap className="h-4 w-4 text-purple-500" />
+          <span className="text-sm font-medium bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent">
+            Next Generation AI Commerce
+          </span>
         </div>
+        <h1 className="text-5xl font-black bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 bg-clip-text text-transparent mb-4 tracking-tight">
+          AI Shopping Experience
+        </h1>
+        <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+          Welcome to the future of ecommerce. Chat with AI, discover products through natural conversations,
+          and experience intelligent shopping like never before.
+        </p>
       </div>
     </div>
   );

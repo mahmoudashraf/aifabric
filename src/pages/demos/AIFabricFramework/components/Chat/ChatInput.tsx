@@ -1,6 +1,6 @@
 import { RefObject, KeyboardEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, X, Maximize2, Loader2, Sparkles } from "lucide-react";
+import { Send, X, Zap, Loader2, Sparkles, Bot } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -53,7 +53,7 @@ export function ChatInput({
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background to-transparent pt-8 pb-4 px-4 z-40">
+    <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background/95 to-transparent pt-12 pb-6 px-4 z-40">
       <div className="max-w-4xl mx-auto">
         {/* Attachments display */}
         <AnimatePresence>
@@ -62,7 +62,7 @@ export function ChatInput({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              className="mb-2 flex flex-wrap gap-2"
+              className="mb-3 flex flex-wrap gap-2"
             >
               {attachedProducts.map((product) => (
                 <Badge
@@ -143,7 +143,10 @@ export function ChatInput({
         </AnimatePresence>
 
         {/* Input area */}
-        <div className="flex gap-2 items-end bg-background/80 backdrop-blur-sm rounded-2xl border shadow-lg p-2">
+        <div className="flex gap-3 items-end bg-background/95 backdrop-blur-md rounded-2xl border-2 border-primary/20 shadow-xl shadow-primary/5 p-3">
+          <div className="flex items-center text-primary/60 pl-1">
+            <Bot className="h-5 w-5" />
+          </div>
           <Textarea
             ref={inputRef}
             value={query}
@@ -155,29 +158,31 @@ export function ChatInput({
                 ? "Ask about attached items..."
                 : "Ask about products, orders, or get help..."
             }
-            className="flex-1 min-h-[44px] max-h-[120px] resize-none border-0 focus-visible:ring-0 bg-transparent"
+            className="flex-1 min-h-[52px] max-h-[140px] resize-none border-0 focus-visible:ring-0 bg-transparent text-base"
             rows={1}
           />
-          <div className="flex gap-1">
+          <div className="flex gap-2 items-center">
             <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => navigate("/max-mode")}
-              className="h-9 w-9"
-              title="Open MAX Mode"
+              variant="outline"
+              onClick={() => navigate("/maxAI")}
+              className="h-10 px-3 gap-2 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border-purple-500/30 hover:border-purple-500/50 hover:bg-purple-500/20"
+              title="Open MAX AI Mode"
             >
-              <Maximize2 className="h-4 w-4" />
+              <Zap className="h-4 w-4 text-purple-500" />
+              <span className="text-sm font-medium bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                MAX
+              </span>
             </Button>
             <Button
               size="icon"
               onClick={onSubmit}
               disabled={isLoading || !query.trim()}
-              className="h-9 w-9"
+              className="h-10 w-10"
             >
               {isLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
-                <Send className="h-4 w-4" />
+                <Send className="h-5 w-5" />
               )}
             </Button>
           </div>
