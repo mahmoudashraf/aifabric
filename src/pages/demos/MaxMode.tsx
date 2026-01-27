@@ -431,7 +431,13 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     // Track new documents (only when new docs are added, not on initial load)
     if (allDocs.length > prevCount && prevCount > 0) {
       const newDocs = allDocs.slice(prevCount);
-      setNewDocuments(newDocs);
+      // Sort new documents by score/similarity (highest first)
+      const sortedNewDocs = [...newDocs].sort((a, b) => {
+        const scoreA = a.score ?? a.similarity ?? 0;
+        const scoreB = b.score ?? b.similarity ?? 0;
+        return scoreB - scoreA;
+      });
+      setNewDocuments(sortedNewDocs);
 
       // Show preview panel on mobile for new documents
       if (window.innerWidth < 768) { // Mobile breakpoint
@@ -1017,13 +1023,18 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         }
       }));
 
+      // Build query with context instruction if attachments exist
+      const queryWithContext = attachmentsWithMetadata.length > 0
+        ? `[Consider this context as the main context. Use its metadata for action params and for building optimized query.]\n\n${query}`
+        : query;
+
       const response = await fetch(`${API_BASE_URL}/chat/query`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          query: query,
+          query: queryWithContext,
           userId: "demo-user",
           sessionId: "demo-session-max",
           conversationId: currentConversationId || undefined,
