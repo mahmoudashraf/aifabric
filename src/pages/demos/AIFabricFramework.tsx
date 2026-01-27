@@ -1514,16 +1514,12 @@ const AIFabricFramework = () => {
 
     setIsFilling(true);
     setFillProgress(0);
-    let successCount = 0;
-    let failCount = 0;
+    setCurrentFillingProduct("Creating products in parallel...");
     const createdProductIds: string[] = [];
 
-    for (let i = 0; i < SAMPLE_PRODUCTS.length; i++) {
-      const product = SAMPLE_PRODUCTS[i];
-      setCurrentFillingProduct(product.name);
-      setFillProgress(((i + 1) / SAMPLE_PRODUCTS.length) * 100);
-
-      try {
+    // Create all products in parallel using Promise.allSettled
+    const results = await Promise.allSettled(
+      SAMPLE_PRODUCTS.map(async (product) => {
         const response = await fetch(`${API_BASE_URL}/products`, {
           method: "POST",
           headers: {
@@ -1540,24 +1536,29 @@ const AIFabricFramework = () => {
           }),
         });
 
-        if (response.ok) {
-          const createdProduct = await response.json();
-          if (createdProduct.id) {
-            createdProductIds.push(createdProduct.id);
-          }
-          successCount++;
-        } else {
-          failCount++;
+        if (!response.ok) {
+          throw new Error(`Failed to create ${product.name}`);
         }
-      } catch (error) {
+
+        const createdProduct = await response.json();
+        return createdProduct;
+      })
+    );
+
+    // Process results and count successes/failures
+    let successCount = 0;
+    let failCount = 0;
+
+    results.forEach((result) => {
+      if (result.status === 'fulfilled' && result.value?.id) {
+        createdProductIds.push(result.value.id);
+        successCount++;
+      } else {
         failCount++;
       }
+    });
 
-      // Wait 2 seconds before next product
-      if (i < SAMPLE_PRODUCTS.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
-      }
-    }
+    setFillProgress(100);
 
     // Store the created product IDs for review migration
     setMigratedProductIds(createdProductIds);
@@ -1609,15 +1610,11 @@ const AIFabricFramework = () => {
 
     setIsMigratingPolicies(true);
     setPolicyMigrationProgress(0);
-    let successCount = 0;
-    let failCount = 0;
+    setCurrentMigratingPolicy("Creating policies in parallel...");
 
-    for (let i = 0; i < SAMPLE_POLICIES.length; i++) {
-      const policy = SAMPLE_POLICIES[i];
-      setCurrentMigratingPolicy(policy.title);
-      setPolicyMigrationProgress(((i + 1) / SAMPLE_POLICIES.length) * 100);
-
-      try {
+    // Create all policies in parallel using Promise.allSettled
+    const results = await Promise.allSettled(
+      SAMPLE_POLICIES.map(async (policy) => {
         const response = await fetch(`${API_BASE_URL}/policies`, {
           method: "POST",
           headers: {
@@ -1626,21 +1623,27 @@ const AIFabricFramework = () => {
           body: JSON.stringify(policy),
         });
 
-        if (response.ok) {
-          successCount++;
-        } else {
-          failCount++;
+        if (!response.ok) {
+          throw new Error(`Failed to create ${policy.title}`);
         }
-      } catch (error) {
+
+        return await response.json();
+      })
+    );
+
+    // Process results and count successes/failures
+    let successCount = 0;
+    let failCount = 0;
+
+    results.forEach((result) => {
+      if (result.status === 'fulfilled') {
+        successCount++;
+      } else {
         failCount++;
       }
+    });
 
-      // Wait 2 seconds before next policy
-      if (i < SAMPLE_POLICIES.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
-      }
-    }
-
+    setPolicyMigrationProgress(100);
     setIsMigratingPolicies(false);
     setCurrentMigratingPolicy("");
 
@@ -1739,7 +1742,7 @@ const AIFabricFramework = () => {
 
     // Check if we have migrated product IDs, if not, fetch products from backend
     let productIdsToUse = migratedProductIds;
-    
+
     if (productIdsToUse.length === 0) {
       // Fallback: get products from backend if no migrated IDs available
       const productsResponse = await fetch(`${API_BASE_URL}/products?limit=50`);
@@ -1760,19 +1763,16 @@ const AIFabricFramework = () => {
 
     setIsMigratingReviews(true);
     setReviewMigrationProgress(0);
-    let successCount = 0;
-    let failCount = 0;
+    setCurrentMigratingReview("Creating reviews in parallel...");
 
-    for (let i = 0; i < SAMPLE_REVIEWS.length; i++) {
-      const review = { ...SAMPLE_REVIEWS[i] };
-      // Assign review to product from migrated products (cycle through if needed)
-      const productIndex = i % productIdsToUse.length;
-      review.productId = productIdsToUse[productIndex];
-      
-      setCurrentMigratingReview(review.title);
-      setReviewMigrationProgress(((i + 1) / SAMPLE_REVIEWS.length) * 100);
+    // Create all reviews in parallel using Promise.allSettled
+    const results = await Promise.allSettled(
+      SAMPLE_REVIEWS.map(async (sampleReview, i) => {
+        const review = { ...sampleReview };
+        // Assign review to product from migrated products (cycle through if needed)
+        const productIndex = i % productIdsToUse.length;
+        review.productId = productIdsToUse[productIndex];
 
-      try {
         const response = await fetch(`${API_BASE_URL}/reviews`, {
           method: "POST",
           headers: {
@@ -1781,26 +1781,30 @@ const AIFabricFramework = () => {
           body: JSON.stringify(review),
         });
 
-        if (response.ok) {
-          successCount++;
-        } else {
-          failCount++;
+        if (!response.ok) {
           const errorText = await response.text();
-          console.error(`Failed to create review ${i + 1}:`, errorText);
+          throw new Error(`Failed to create review: ${errorText}`);
         }
-      } catch (error) {
+
+        return await response.json();
+      })
+    );
+
+    // Process results and count successes/failures
+    let successCount = 0;
+    let failCount = 0;
+
+    results.forEach((result) => {
+      if (result.status === 'fulfilled') {
+        successCount++;
+      } else {
         failCount++;
-        console.error(`Error creating review ${i + 1}:`, error);
+        console.error('Review creation failed:', result.reason);
       }
+    });
 
-      // Small delay between requests
-      if (i < SAMPLE_REVIEWS.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-      }
-    }
-
+    setReviewMigrationProgress(100);
     setIsMigratingReviews(false);
-    setReviewMigrationProgress(0);
     setCurrentMigratingReview("");
 
     // Reload reviews
@@ -1901,15 +1905,11 @@ const AIFabricFramework = () => {
 
     setIsMigratingCoupons(true);
     setCouponMigrationProgress(0);
-    let successCount = 0;
-    let failCount = 0;
+    setCurrentMigratingCoupon("Creating coupons in parallel...");
 
-    for (let i = 0; i < SAMPLE_COUPONS.length; i++) {
-      const coupon = SAMPLE_COUPONS[i];
-      setCurrentMigratingCoupon(coupon.code);
-      setCouponMigrationProgress(((i + 1) / SAMPLE_COUPONS.length) * 100);
-
-      try {
+    // Create all coupons in parallel using Promise.allSettled
+    const results = await Promise.allSettled(
+      SAMPLE_COUPONS.map(async (coupon) => {
         const response = await fetch(`${API_BASE_URL}/coupons`, {
           method: "POST",
           headers: {
@@ -1918,26 +1918,30 @@ const AIFabricFramework = () => {
           body: JSON.stringify(coupon),
         });
 
-        if (response.ok) {
-          successCount++;
-        } else {
-          failCount++;
+        if (!response.ok) {
           const errorText = await response.text();
-          console.error(`Failed to create coupon ${coupon.code}:`, errorText);
+          throw new Error(`Failed to create coupon ${coupon.code}: ${errorText}`);
         }
-      } catch (error) {
+
+        return await response.json();
+      })
+    );
+
+    // Process results and count successes/failures
+    let successCount = 0;
+    let failCount = 0;
+
+    results.forEach((result) => {
+      if (result.status === 'fulfilled') {
+        successCount++;
+      } else {
         failCount++;
-        console.error(`Error creating coupon ${coupon.code}:`, error);
+        console.error('Coupon creation failed:', result.reason);
       }
+    });
 
-      // Small delay between requests
-      if (i < SAMPLE_COUPONS.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-      }
-    }
-
+    setCouponMigrationProgress(100);
     setIsMigratingCoupons(false);
-    setCouponMigrationProgress(0);
     setCurrentMigratingCoupon("");
 
     // Reload coupons
@@ -1955,15 +1959,11 @@ const AIFabricFramework = () => {
 
     setIsMigratingTickets(true);
     setTicketMigrationProgress(0);
-    let successCount = 0;
-    let failCount = 0;
+    setCurrentMigratingTicket("Creating tickets in parallel...");
 
-    for (let i = 0; i < SAMPLE_TICKETS.length; i++) {
-      const ticket = SAMPLE_TICKETS[i];
-      setCurrentMigratingTicket(`Ticket ${i + 1} - ${ticket.issueType}`);
-      setTicketMigrationProgress(((i + 1) / SAMPLE_TICKETS.length) * 100);
-
-      try {
+    // Create all tickets in parallel using Promise.allSettled
+    const results = await Promise.allSettled(
+      SAMPLE_TICKETS.map(async (ticket) => {
         const response = await fetch(`${API_BASE_URL}/tickets`, {
           method: "POST",
           headers: {
@@ -1972,26 +1972,30 @@ const AIFabricFramework = () => {
           body: JSON.stringify(ticket),
         });
 
-        if (response.ok) {
-          successCount++;
-        } else {
-          failCount++;
+        if (!response.ok) {
           const errorText = await response.text();
-          console.error(`Failed to create ticket ${i + 1}:`, errorText);
+          throw new Error(`Failed to create ticket: ${errorText}`);
         }
-      } catch (error) {
+
+        return await response.json();
+      })
+    );
+
+    // Process results and count successes/failures
+    let successCount = 0;
+    let failCount = 0;
+
+    results.forEach((result) => {
+      if (result.status === 'fulfilled') {
+        successCount++;
+      } else {
         failCount++;
-        console.error(`Error creating ticket ${i + 1}:`, error);
+        console.error('Ticket creation failed:', result.reason);
       }
+    });
 
-      // Small delay between requests
-      if (i < SAMPLE_TICKETS.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 500));
-      }
-    }
-
+    setTicketMigrationProgress(100);
     setIsMigratingTickets(false);
-    setTicketMigrationProgress(0);
     setCurrentMigratingTicket("");
 
     // Update ticket count if there's a load function for it
