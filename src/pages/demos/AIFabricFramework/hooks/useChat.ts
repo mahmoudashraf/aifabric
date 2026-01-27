@@ -40,15 +40,16 @@ export function useChat() {
   }, []);
 
   // Fetch suggestions based on attached products
-  const fetchSuggestions = useCallback(async () => {
-    if (attachedProducts.length === 0) {
+  const fetchSuggestions = useCallback(async (products?: Product[]) => {
+    const productsToUse = products || attachedProducts;
+    if (productsToUse.length === 0) {
       setSuggestions([]);
       return;
     }
 
     setIsLoadingSuggestions(true);
     try {
-      const data = await api.fetchSuggestions(attachedProducts);
+      const data = await api.fetchSuggestions(productsToUse);
       setSuggestions(data);
     } catch (error) {
       console.error("Failed to fetch suggestions:", error);
@@ -244,18 +245,44 @@ export function useChat() {
     [attachedProducts, currentConversationId, toast]
   );
 
-  // Attachment handlers
-  const handleAttachProduct = useCallback((product: Product) => {
-    setAttachedProducts((prev) => {
-      if (prev.find((p) => p.id === product.id)) return prev;
-      return [...prev, product];
-    });
-    setIsChatExpanded(true);
+  // Fetch suggestions for specific products
+  const fetchSuggestionsForProducts = useCallback(async (products: Product[]) => {
+    if (products.length === 0) {
+      setSuggestions([]);
+      return;
+    }
+    setIsLoadingSuggestions(true);
+    try {
+      const data = await api.fetchSuggestions(products);
+      setSuggestions(data);
+    } catch (error) {
+      console.error("Failed to fetch suggestions:", error);
+      setSuggestions([]);
+    } finally {
+      setIsLoadingSuggestions(false);
+    }
   }, []);
 
+  // Attachment handlers
+  const handleAttachProduct = useCallback((product: Product) => {
+    // Check if already attached and compute new list
+    const isAlreadyAttached = attachedProducts.find((p) => p.id === product.id);
+    if (isAlreadyAttached) return;
+
+    const newProducts = [...attachedProducts, product];
+    setAttachedProducts(newProducts);
+    setIsChatExpanded(true);
+
+    // Fetch suggestions for the new products list
+    fetchSuggestionsForProducts(newProducts);
+  }, [attachedProducts, fetchSuggestionsForProducts]);
+
   const handleRemoveAttachment = useCallback((productId: string) => {
-    setAttachedProducts((prev) => prev.filter((p) => p.id !== productId));
-  }, []);
+    const newProducts = attachedProducts.filter((p) => p.id !== productId);
+    setAttachedProducts(newProducts);
+    // Update suggestions for remaining products
+    fetchSuggestionsForProducts(newProducts);
+  }, [attachedProducts, fetchSuggestionsForProducts]);
 
   const handleAttachReview = useCallback((review: Review) => {
     setAttachedReviews((prev) => {

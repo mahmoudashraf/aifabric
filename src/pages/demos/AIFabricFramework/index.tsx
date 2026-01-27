@@ -38,12 +38,6 @@ export default function AIFabricFramework() {
     migration.loadCouponCount();
   }, []);
 
-  // Fetch suggestions when attached products change
-  // fetchSuggestions is memoized with attachedProducts as dependency, so it changes when products change
-  useEffect(() => {
-    chat.fetchSuggestions();
-  }, [chat.fetchSuggestions]);
-
   // Scroll to bottom when messages change
   useEffect(() => {
     chat.scrollToBottom();
