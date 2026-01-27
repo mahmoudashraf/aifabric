@@ -259,15 +259,15 @@ function generateProducts(count: number): Product[] {
     const specs = generateSpecifications(category.name, subcategory);
     const productId = `prod_${String(i + 1).padStart(4, '0')}`;
 
-    // Get image search terms based on subcategory
+    // Get image search terms based on subcategory for product-relevant images
     const imageTerms = subcategoryImageTerms[subcategory] || category.name.toLowerCase().replace(/\s+/g, ',');
     const primaryTerm = imageTerms.split(',')[0];
 
-    // Use Unsplash source for category-relevant images
-    const imageUrl = `https://source.unsplash.com/800x600/?${encodeURIComponent(primaryTerm)}&sig=${productId}`;
+    // Use loremflickr for more reliable category-specific product images
+    const imageUrl = `https://loremflickr.com/800/600/${encodeURIComponent(primaryTerm)}?lock=${i + 1}`;
     const images = Array(randomInt(3, 6)).fill(0).map((_, idx) => {
       const term = imageTerms.split(',')[idx % imageTerms.split(',').length];
-      return `https://source.unsplash.com/800x600/?${encodeURIComponent(term)}&sig=${productId}-${idx}`;
+      return `https://loremflickr.com/800/600/${encodeURIComponent(term)}?lock=${(i + 1) * 100 + idx}`;
     });
 
     const product: Product = {
