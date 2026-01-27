@@ -241,181 +241,224 @@ const ticketCategories = [
   'Payment', 'Technical Support', 'Product Information', 'Website Issue', 'Other'
 ];
 
-// Generate Products
+// Specific product types for migration (20 each = 100 total)
+const productTypes = [
+  {
+    type: 'Laptop',
+    category: 'Electronics',
+    imageKeyword: 'laptop',
+    brands: ['Apple', 'Dell', 'HP', 'Lenovo', 'ASUS', 'Acer', 'Microsoft', 'Samsung', 'MSI', 'Razer'],
+    adjectives: ['Pro', 'Ultra', 'Air', 'Elite', 'Premium', 'Gaming', 'Business', 'Slim', 'Powerful', 'Lightweight'],
+    features: ['16GB RAM', '512GB SSD', '1TB Storage', 'Backlit Keyboard', 'Fingerprint Reader', 'Thunderbolt 4', 'Wi-Fi 6E', '4K Display'],
+  },
+  {
+    type: 'Smartphone',
+    category: 'Electronics',
+    imageKeyword: 'smartphone',
+    brands: ['Apple', 'Samsung', 'Google', 'OnePlus', 'Xiaomi', 'Sony', 'Motorola', 'Nokia', 'OPPO', 'Huawei'],
+    adjectives: ['Pro', 'Ultra', 'Max', 'Plus', 'Lite', 'Mini', 'Elite', 'Premium', 'Advanced', 'Smart'],
+    features: ['5G Enabled', 'OLED Display', '128GB Storage', '256GB Storage', 'Triple Camera', 'Fast Charging', 'Water Resistant', 'Face ID'],
+  },
+  {
+    type: 'Headphones',
+    category: 'Electronics',
+    imageKeyword: 'headphones',
+    brands: ['Sony', 'Bose', 'Apple', 'Sennheiser', 'JBL', 'Beats', 'Audio-Technica', 'Jabra', 'Bang & Olufsen', 'Skullcandy'],
+    adjectives: ['Wireless', 'Pro', 'Studio', 'Premium', 'Elite', 'Sport', 'Noise-Canceling', 'Hi-Fi', 'Professional', 'Comfort'],
+    features: ['Active Noise Cancellation', '40-Hour Battery', 'Bluetooth 5.2', 'Hi-Res Audio', 'Foldable Design', 'Touch Controls', 'Multi-Device Pairing', 'Voice Assistant'],
+  },
+  {
+    type: 'Camera',
+    category: 'Electronics',
+    imageKeyword: 'camera',
+    brands: ['Canon', 'Sony', 'Nikon', 'Fujifilm', 'Panasonic', 'Leica', 'Olympus', 'GoPro', 'DJI', 'Hasselblad'],
+    adjectives: ['Professional', 'Mirrorless', 'DSLR', 'Compact', 'Action', 'Cinema', 'Travel', 'Advanced', 'Premium', 'Ultra HD'],
+    features: ['4K Video', '8K Video', '45MP Sensor', 'Image Stabilization', 'Weather Sealed', 'Dual Card Slots', 'Fast Autofocus', 'Touchscreen LCD'],
+  },
+  {
+    type: 'Monitor',
+    category: 'Electronics',
+    imageKeyword: 'monitor',
+    brands: ['LG', 'Samsung', 'Dell', 'ASUS', 'BenQ', 'Acer', 'ViewSonic', 'HP', 'MSI', 'AOC'],
+    adjectives: ['Gaming', 'Professional', 'UltraWide', 'Curved', '4K', 'HDR', 'Studio', 'Ergonomic', 'Premium', 'High-Refresh'],
+    features: ['4K Resolution', '144Hz Refresh', '240Hz Refresh', 'HDR10', 'USB-C Hub', 'Built-in Speakers', 'Adjustable Stand', 'Blue Light Filter'],
+  },
+];
+
+// Generate Products with specific types
 function generateProducts(count: number): Product[] {
   const products: Product[] = [];
+  const productsPerType = count / productTypes.length; // 20 each
 
-  for (let i = 0; i < count; i++) {
-    const category = getRandomElement(categories);
-    const subcategory = getRandomElement(category.subcategories);
-    const brand = getRandomElement(brands);
-    const adjective = getRandomElement(adjectives);
+  let productIndex = 0;
 
-    const basePrice = randomFloat(9.99, 999.99);
-    const hasDiscount = Math.random() > 0.7;
-    const compareAtPrice = hasDiscount ? basePrice * randomFloat(1.2, 1.5) : undefined;
+  for (const productType of productTypes) {
+    for (let i = 0; i < productsPerType; i++) {
+      productIndex++;
+      const brand = productType.brands[i % productType.brands.length];
+      const adjective = productType.adjectives[i % productType.adjectives.length];
 
-    const features = generateFeatures(category.name, subcategory);
-    const specs = generateSpecifications(category.name, subcategory);
-    const productId = `prod_${String(i + 1).padStart(4, '0')}`;
+      const basePrice = productType.type === 'Laptop' ? randomFloat(599, 2499) :
+                        productType.type === 'Smartphone' ? randomFloat(299, 1499) :
+                        productType.type === 'Headphones' ? randomFloat(49, 549) :
+                        productType.type === 'Camera' ? randomFloat(499, 3999) :
+                        randomFloat(199, 1299); // Monitor
 
-    // Get image search terms based on subcategory for product-relevant images
-    const imageTerms = subcategoryImageTerms[subcategory] || category.name.toLowerCase().replace(/\s+/g, ',');
-    const primaryTerm = imageTerms.split(',')[0];
+      const hasDiscount = Math.random() > 0.7;
+      const compareAtPrice = hasDiscount ? basePrice * randomFloat(1.1, 1.3) : undefined;
 
-    // Use loremflickr for more reliable category-specific product images
-    const imageUrl = `https://loremflickr.com/800/600/${encodeURIComponent(primaryTerm)}?lock=${i + 1}`;
-    const images = Array(randomInt(3, 6)).fill(0).map((_, idx) => {
-      const term = imageTerms.split(',')[idx % imageTerms.split(',').length];
-      return `https://loremflickr.com/800/600/${encodeURIComponent(term)}?lock=${(i + 1) * 100 + idx}`;
-    });
+      const productId = `prod_${String(productIndex).padStart(4, '0')}`;
 
-    const product: Product = {
-      id: productId,
-      sku: `SKU-${brand.substring(0, 3).toUpperCase()}-${randomInt(10000, 99999)}`,
-      title: `${adjective} ${subcategory.replace(/'/g, '')} - ${brand}`,
-      description: generateShortDescription(category.name, subcategory, adjective),
-      longDescription: generateLongDescription(category.name, subcategory, adjective, brand),
-      category: category.name,
-      subcategory,
-      brand,
-      price: basePrice,
-      compareAtPrice,
-      inStock: Math.random() > 0.1,
-      stockQuantity: randomInt(0, 500),
-      imageUrl,
-      images,
-      rating: randomFloat(3.5, 5.0, 1),
-      reviewCount: 0, // Will be updated when reviews are generated
-      features,
-      specifications: specs,
-      tags: generateTags(category.name, subcategory, adjective),
-      weight: `${randomFloat(0.1, 50, 2)} lbs`,
-      dimensions: `${randomInt(1, 30)}"L x ${randomInt(1, 20)}"W x ${randomInt(1, 15)}"H`,
-      colors: getRandomElements(['Black', 'White', 'Gray', 'Silver', 'Blue', 'Red', 'Green', 'Gold', 'Rose Gold'], randomInt(1, 4)),
-      sizes: category.name === 'Fashion' ? getRandomElements(['XS', 'S', 'M', 'L', 'XL', 'XXL'], randomInt(3, 6)) : undefined,
-      material: getMaterial(category.name),
-      warranty: getWarranty(),
-      createdAt: generatePastDate(365),
-      updatedAt: generatePastDate(30)
-    };
+      // Use loremflickr for product-specific images
+      const imageUrl = `https://loremflickr.com/800/600/${productType.imageKeyword}?lock=${productIndex}`;
+      const images = Array(randomInt(3, 5)).fill(0).map((_, idx) =>
+        `https://loremflickr.com/800/600/${productType.imageKeyword}?lock=${productIndex * 100 + idx}`
+      );
 
-    products.push(product);
+      const product: Product = {
+        id: productId,
+        sku: `SKU-${brand.substring(0, 3).toUpperCase()}-${randomInt(10000, 99999)}`,
+        title: `${brand} ${adjective} ${productType.type}`,
+        description: generateProductDescription(productType.type, brand, adjective),
+        longDescription: generateLongProductDescription(productType.type, brand, adjective),
+        category: productType.category,
+        subcategory: productType.type + 's',
+        brand,
+        price: basePrice,
+        compareAtPrice,
+        inStock: Math.random() > 0.1,
+        stockQuantity: randomInt(0, 500),
+        imageUrl,
+        images,
+        rating: randomFloat(3.8, 5.0, 1),
+        reviewCount: 0,
+        features: getRandomElements(productType.features, randomInt(4, 6)),
+        specifications: generateProductSpecs(productType.type, brand),
+        tags: [productType.type.toLowerCase(), brand.toLowerCase(), adjective.toLowerCase(), 'electronics', 'tech'],
+        weight: `${randomFloat(0.2, 5, 2)} lbs`,
+        dimensions: `${randomInt(5, 20)}"L x ${randomInt(5, 15)}"W x ${randomInt(1, 10)}"H`,
+        colors: getRandomElements(['Black', 'Silver', 'Space Gray', 'White', 'Blue', 'Rose Gold'], randomInt(1, 3)),
+        warranty: getRandomElement(['1-year warranty', '2-year warranty', '3-year warranty']),
+        createdAt: generatePastDate(365),
+        updatedAt: generatePastDate(30)
+      };
+
+      products.push(product);
+    }
   }
 
   return products;
 }
 
-function generateShortDescription(category: string, subcategory: string, adjective: string): string {
-  const templates = [
-    `Experience the ${adjective.toLowerCase()} quality of this exceptional ${subcategory.toLowerCase()} that has been meticulously crafted to deliver outstanding performance in every aspect. Perfect for everyday use, this product combines cutting-edge innovation with practical functionality, making it an indispensable addition to your ${category.toLowerCase()} collection. Whether you're a professional seeking reliable equipment or an enthusiast who appreciates superior craftsmanship, this ${subcategory.toLowerCase()} will exceed your expectations with its remarkable durability, elegant design, and user-friendly features that make it stand out from the competition.`,
-    `Discover our ${adjective.toLowerCase()} ${subcategory.toLowerCase()}, expertly designed with meticulous precision and built to withstand the test of time. This remarkable product represents the perfect fusion of form and function, offering unparalleled performance that adapts seamlessly to your needs. A must-have for your ${category.toLowerCase()} collection, it features innovative technologies and thoughtful design elements that enhance usability while maintaining aesthetic appeal. From its robust construction to its intuitive interface, every detail has been carefully considered to provide you with an exceptional experience that delivers consistent, reliable results day after day.`,
-    `Elevate your lifestyle with this ${adjective.toLowerCase()} ${subcategory.toLowerCase()} that masterfully combines sophisticated style, practical functionality, and unwavering reliability in one impressive package. Designed for discerning customers who refuse to compromise on quality, this product showcases superior engineering and attention to detail that sets it apart from ordinary alternatives. Its versatile design adapts to various applications while maintaining peak performance, making it the ideal choice for both professional and personal use. Experience the difference that premium materials and expert craftsmanship can make in transforming your daily routine into something truly extraordinary.`,
-    `This ${adjective.toLowerCase()} ${subcategory.toLowerCase()} sets an entirely new standard in the ${category.toLowerCase()} industry, redefining what customers can expect from premium products. Meticulously crafted for those who demand nothing but the best, it delivers exceptional performance through innovative features and cutting-edge technology. The thoughtful design addresses real-world challenges while maintaining an elegant aesthetic that complements any environment. Built with premium materials and subjected to rigorous quality control testing, this product represents a long-term investment in excellence that will continue to deliver outstanding results for years to come.`,
-    `Transform your experience with our ${adjective.toLowerCase()} ${subcategory.toLowerCase()}, expertly engineered for excellence and thoughtfully designed with your unique needs in mind. This outstanding product showcases the perfect balance between advanced functionality and intuitive usability, making complex tasks simple and everyday activities more efficient. Backed by years of research and development, it incorporates the latest innovations to deliver performance that consistently exceeds industry standards. From its durable construction to its sleek appearance, every aspect reflects our commitment to creating products that enhance your life while providing exceptional value and lasting satisfaction.`
-  ];
-  return getRandomElement(templates);
+function generateProductDescription(type: string, brand: string, adjective: string): string {
+  const descriptions: Record<string, string[]> = {
+    'Laptop': [
+      `The ${brand} ${adjective} Laptop delivers exceptional performance for work and play. Featuring a stunning display, powerful processor, and all-day battery life, this laptop is designed for professionals and creators who demand the best.`,
+      `Experience premium computing with the ${brand} ${adjective} Laptop. Built with cutting-edge technology and a sleek design, it offers the perfect balance of power, portability, and style for modern professionals.`,
+      `Unleash your productivity with the ${brand} ${adjective} Laptop. With lightning-fast performance, crystal-clear graphics, and a comfortable keyboard, it's the ultimate tool for getting things done anywhere.`,
+    ],
+    'Smartphone': [
+      `The ${brand} ${adjective} Smartphone redefines mobile excellence. With an advanced camera system, brilliant display, and powerful chip, capture life's moments and stay connected like never before.`,
+      `Meet the ${brand} ${adjective} Smartphone - where innovation meets elegance. Experience stunning photography, seamless performance, and all-day battery life in a beautifully crafted device.`,
+      `Elevate your mobile experience with the ${brand} ${adjective} Smartphone. Featuring pro-level cameras, a gorgeous display, and 5G connectivity for the fastest speeds.`,
+    ],
+    'Headphones': [
+      `Immerse yourself in pure audio bliss with ${brand} ${adjective} Headphones. Industry-leading noise cancellation, exceptional sound quality, and supreme comfort for endless listening.`,
+      `The ${brand} ${adjective} Headphones deliver studio-quality sound wherever you go. With advanced active noise cancellation and long battery life, your music never sounded better.`,
+      `Experience audio perfection with ${brand} ${adjective} Headphones. Precision-engineered drivers, adaptive sound, and a comfortable fit for the ultimate listening experience.`,
+    ],
+    'Camera': [
+      `Capture stunning images with the ${brand} ${adjective} Camera. Professional-grade features, exceptional low-light performance, and intuitive controls help you create masterpieces.`,
+      `The ${brand} ${adjective} Camera empowers your creative vision. With advanced autofocus, high-resolution sensor, and 4K video, bring your stories to life with cinematic quality.`,
+      `Unleash your creativity with the ${brand} ${adjective} Camera. Whether shooting photos or video, this versatile camera delivers outstanding results in any situation.`,
+    ],
+    'Monitor': [
+      `Transform your workspace with the ${brand} ${adjective} Monitor. Stunning visuals, accurate colors, and ergonomic design make every task a pleasure.`,
+      `The ${brand} ${adjective} Monitor delivers an immersive viewing experience. With high refresh rates, vibrant colors, and eye-care technology, it's perfect for work and gaming.`,
+      `Elevate your visual experience with the ${brand} ${adjective} Monitor. Crystal-clear resolution, wide color gamut, and sleek design for professionals and enthusiasts.`,
+    ],
+  };
+
+  return getRandomElement(descriptions[type] || descriptions['Laptop']);
 }
 
-function generateLongDescription(category: string, subcategory: string, adjective: string, brand: string): string {
+function generateLongProductDescription(type: string, brand: string, adjective: string): string {
   return `
-Introducing the ${adjective} ${subcategory} by ${brand}, a truly revolutionary product that completely redefines what you can expect from ${category.toLowerCase()} products in today's competitive marketplace. This exceptional offering represents years of dedicated research, development, and refinement to create something that not only meets but dramatically exceeds the expectations of even the most discerning customers.
+Introducing the ${brand} ${adjective} ${type} - a premium device engineered for excellence.
 
-**Superior Design & Construction**
-Meticulously crafted with unwavering attention to every single detail, this premium ${subcategory.toLowerCase()} seamlessly combines cutting-edge technology with timeless design principles that have proven effective across generations. The result is a remarkable product that not only performs exceptionally well in all conditions but also looks absolutely stunning in any environment, whether that's a professional office setting, a modern home, or an active outdoor location. Every curve, every button, every surface has been thoughtfully designed to provide both aesthetic pleasure and functional excellence.
+**Exceptional Performance**
+Built with the latest technology, this ${type.toLowerCase()} delivers outstanding performance for demanding tasks. Whether you're working, creating, or enjoying entertainment, experience smooth and responsive operation.
 
-**Advanced Features & Capabilities**
-Packed with innovative features and capabilities that genuinely make your life easier and more productive, this product represents the absolute pinnacle of modern engineering excellence. From intuitive controls that require no learning curve to smart connectivity options that seamlessly integrate with your existing ecosystem, every aspect has been carefully optimized for the ultimate user experience. Advanced sensors, intelligent automation, and responsive interfaces work together harmoniously to anticipate your needs and deliver consistent, reliable performance that you can depend on day after day.
+**Premium Design**
+Crafted with premium materials and meticulous attention to detail, the ${brand} ${adjective} ${type} combines beauty with functionality. Its sleek profile and refined finish make a statement wherever you go.
 
-**Uncompromising Quality & Durability**
-We use only the finest premium materials and state-of-the-art manufacturing processes to ensure that each and every unit meets our exacting quality standards without exception. Rigorous quality control testing at multiple stages of production guarantees that you're getting a product genuinely built to last for years of dependable service. Every component is carefully inspected, every connection is verified, and every unit undergoes comprehensive testing before it earns the ${brand} seal of approval and ships to your door.
+**Advanced Features**
+Packed with innovative features that enhance your experience. From intuitive controls to smart connectivity options, everything is designed with you in mind.
 
-**Perfect For Every Need**
-Whether you're a seasoned professional seeking reliable, high-performance tools that won't let you down during critical moments, or someone who simply appreciates quality and craftsmanship in everyday items, this ${subcategory.toLowerCase()} is specifically designed to exceed your expectations in every possible way. It's the ideal choice for both demanding professional applications and personal use, adapting effortlessly to whatever challenges you present while maintaining peak performance throughout.
+**Built to Last**
+Quality construction and rigorous testing ensure reliability you can count on. Backed by ${brand}'s commitment to excellence and comprehensive warranty coverage.
 
-**Customer Satisfaction Guaranteed**
-Join thousands of satisfied customers worldwide who have made this their go-to choice for ${category.toLowerCase()} needs and have experienced the difference that true quality makes. Backed by our comprehensive warranty program and world-class customer support team that's available whenever you need assistance, you can purchase with complete confidence knowing that we stand behind every product we sell and are committed to your total satisfaction.
+**What's in the Box**
+- ${brand} ${adjective} ${type}
+- Power adapter and cables
+- Quick start guide
+- Warranty documentation
 
-**Environmental Responsibility**
-${brand} is deeply committed to environmental responsibility and sustainable business practices. This product is manufactured using carefully selected sustainable practices and eco-friendly materials wherever possible, without compromising on quality or performance. We believe that exceptional products and environmental stewardship can and should go hand in hand.
-
-**Innovation & Technology**
-Incorporating the latest technological innovations and breakthrough features, this ${subcategory.toLowerCase()} represents the cutting edge of what's possible in ${category.toLowerCase()} today. From energy-efficient operation that reduces your environmental footprint to smart features that enhance usability and convenience, every innovation serves a practical purpose.
-
-Order today and experience the remarkable ${brand} difference for yourself! Transform the way you work, play, and live with a product that truly understands and exceeds your needs.
+Experience the ${brand} difference today.
   `.trim();
 }
 
-function generateFeatures(category: string, subcategory: string): string[] {
-  const universalFeatures = [
-    'Premium build quality',
-    'Easy to use interface',
-    'Durable construction',
-    'Sleek modern design',
-    'Energy efficient',
-    'Eco-friendly materials',
-    'Quick setup process',
-    'Compact storage'
-  ];
-
-  const categoryFeatures: Record<string, string[]> = {
-    'Electronics': ['Wireless connectivity', 'Long battery life', 'Fast charging', 'HD display', 'Smart features', '5-year warranty'],
-    'Home & Kitchen': ['Dishwasher safe', 'BPA-free', 'Non-stick surface', 'Heat resistant', 'Easy to clean', 'Space-saving design'],
-    'Fashion': ['Breathable fabric', 'Machine washable', 'Wrinkle resistant', 'Multiple color options', 'Adjustable fit', 'Premium materials'],
-    'Sports & Outdoors': ['Weather resistant', 'Lightweight design', 'Portable', 'Adjustable settings', 'Safety certified', 'Professional grade'],
-    'Beauty & Personal Care': ['Dermatologist tested', 'Hypoallergenic', 'Cruelty-free', 'Natural ingredients', 'Long-lasting', 'Suitable for all skin types']
-  };
-
-  const features = [
-    ...getRandomElements(universalFeatures, 3),
-    ...getRandomElements(categoryFeatures[category] || universalFeatures, 3)
-  ];
-
-  return features;
-}
-
-function generateSpecifications(category: string, subcategory: string): Record<string, string> {
+function generateProductSpecs(type: string, brand: string): Record<string, string> {
   const baseSpecs: Record<string, string> = {
-    'Model Number': `MN-${randomInt(1000, 9999)}`,
-    'Manufacturer': getRandomElement(brands),
-    'Country of Origin': getRandomElement(['USA', 'Germany', 'Japan', 'South Korea', 'China']),
-    'Item Weight': `${randomFloat(0.5, 25, 2)} pounds`
+    'Brand': brand,
+    'Model Number': `${brand.substring(0, 2).toUpperCase()}-${randomInt(1000, 9999)}`,
+    'Warranty': getRandomElement(['1 Year', '2 Years', '3 Years']),
   };
 
-  if (category === 'Electronics') {
-    return {
-      ...baseSpecs,
-      'Battery': `${randomInt(3000, 10000)}mAh`,
-      'Connectivity': getRandomElement(['WiFi, Bluetooth 5.0', 'Bluetooth 5.2', 'WiFi 6, Bluetooth']),
-      'Display': `${randomFloat(5.0, 15.6, 1)}" ${getRandomElement(['LCD', 'OLED', 'LED', 'AMOLED'])}`,
-      'Processor': getRandomElement(['Quad-core 2.4GHz', 'Octa-core 3.0GHz', 'Hexa-core 2.8GHz']),
-      'Storage': getRandomElement(['64GB', '128GB', '256GB', '512GB', '1TB'])
-    };
-  }
-
-  return baseSpecs;
-}
-
-function generateTags(category: string, subcategory: string, adjective: string): string[] {
-  return [
-    category.toLowerCase(),
-    subcategory.toLowerCase().replace(/\s+/g, '-'),
-    adjective.toLowerCase(),
-    getRandomElement(['trending', 'bestseller', 'new-arrival', 'featured', 'popular']),
-    getRandomElement(['gift-idea', 'must-have', 'top-rated', 'customer-favorite'])
-  ];
-}
-
-function getMaterial(category: string): string {
-  const materials: Record<string, string[]> = {
-    'Electronics': ['Aluminum', 'Plastic', 'Glass', 'Carbon Fiber'],
-    'Home & Kitchen': ['Stainless Steel', 'Ceramic', 'Glass', 'Bamboo', 'Silicone'],
-    'Fashion': ['Cotton', 'Polyester', 'Leather', 'Wool', 'Nylon', 'Silk'],
-    'Sports & Outdoors': ['Nylon', 'Polyester', 'Aluminum', 'Carbon Fiber', 'Rubber'],
-    'Beauty & Personal Care': ['Plastic', 'Glass', 'Silicone', 'Stainless Steel']
+  const typeSpecs: Record<string, Record<string, string>> = {
+    'Laptop': {
+      'Processor': getRandomElement(['Intel Core i7', 'Intel Core i9', 'AMD Ryzen 7', 'AMD Ryzen 9', 'Apple M3', 'Apple M3 Pro']),
+      'RAM': getRandomElement(['8GB', '16GB', '32GB', '64GB']),
+      'Storage': getRandomElement(['256GB SSD', '512GB SSD', '1TB SSD', '2TB SSD']),
+      'Display': getRandomElement(['13.3" FHD', '14" QHD', '15.6" FHD', '16" 4K', '17" QHD']),
+      'Graphics': getRandomElement(['Integrated', 'NVIDIA RTX 4060', 'NVIDIA RTX 4070', 'NVIDIA RTX 4080', 'AMD Radeon']),
+      'Battery': getRandomElement(['8 hours', '10 hours', '12 hours', '15 hours', '20 hours']),
+    },
+    'Smartphone': {
+      'Display': getRandomElement(['6.1" OLED', '6.5" AMOLED', '6.7" Super Retina', '6.8" Dynamic AMOLED']),
+      'Processor': getRandomElement(['A17 Pro', 'Snapdragon 8 Gen 3', 'Exynos 2400', 'Tensor G3', 'Dimensity 9300']),
+      'Storage': getRandomElement(['128GB', '256GB', '512GB', '1TB']),
+      'Camera': getRandomElement(['48MP Triple', '50MP Quad', '200MP Main', '108MP Triple']),
+      'Battery': getRandomElement(['4000mAh', '4500mAh', '5000mAh', '5500mAh']),
+      'OS': getRandomElement(['iOS 17', 'Android 14', 'Android 15']),
+    },
+    'Headphones': {
+      'Driver Size': getRandomElement(['30mm', '40mm', '50mm', '53mm']),
+      'Frequency Response': getRandomElement(['20Hz-20kHz', '4Hz-40kHz', '10Hz-40kHz']),
+      'Battery Life': getRandomElement(['20 hours', '30 hours', '40 hours', '60 hours']),
+      'Connectivity': getRandomElement(['Bluetooth 5.0', 'Bluetooth 5.2', 'Bluetooth 5.3']),
+      'Noise Cancellation': getRandomElement(['Active (ANC)', 'Adaptive ANC', 'Hybrid ANC']),
+      'Weight': getRandomElement(['250g', '280g', '320g', '350g']),
+    },
+    'Camera': {
+      'Sensor': getRandomElement(['24.2MP APS-C', '33MP APS-C', '45MP Full-Frame', '61MP Full-Frame', '102MP Medium Format']),
+      'ISO Range': getRandomElement(['100-51200', '100-102400', '64-25600', '50-204800']),
+      'Video': getRandomElement(['4K 30fps', '4K 60fps', '4K 120fps', '8K 30fps']),
+      'Autofocus': getRandomElement(['Hybrid AF', 'Phase Detection', 'Dual Pixel AF', 'AI Autofocus']),
+      'Stabilization': getRandomElement(['5-axis IBIS', 'Optical IS', 'Dual IS', 'SteadyShot']),
+      'Screen': getRandomElement(['3" LCD', '3.2" Touchscreen', '3" Tilt Screen', '3.2" Vari-angle']),
+    },
+    'Monitor': {
+      'Screen Size': getRandomElement(['24"', '27"', '32"', '34" Ultrawide', '38" Curved', '49" Super Ultrawide']),
+      'Resolution': getRandomElement(['1920x1080 FHD', '2560x1440 QHD', '3840x2160 4K', '5120x1440 DQHD']),
+      'Refresh Rate': getRandomElement(['60Hz', '75Hz', '144Hz', '165Hz', '240Hz', '360Hz']),
+      'Panel Type': getRandomElement(['IPS', 'VA', 'OLED', 'Mini LED']),
+      'Response Time': getRandomElement(['1ms', '4ms', '5ms', '0.1ms OLED']),
+      'HDR': getRandomElement(['HDR10', 'HDR400', 'HDR600', 'HDR1000', 'DisplayHDR True Black']),
+    },
   };
 
-  return getRandomElement(materials[category] || ['Mixed Materials', 'Composite', 'Synthetic']);
+  return { ...baseSpecs, ...typeSpecs[type] };
 }
 
 function getWarranty(): string {
@@ -423,9 +466,6 @@ function getWarranty(): string {
     '1-year limited warranty',
     '2-year manufacturer warranty',
     '3-year extended warranty',
-    '5-year warranty',
-    'Lifetime warranty',
-    '90-day warranty'
   ]);
 }
 
