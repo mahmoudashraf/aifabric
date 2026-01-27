@@ -431,7 +431,13 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     // Track new documents (only when new docs are added, not on initial load)
     if (allDocs.length > prevCount && prevCount > 0) {
       const newDocs = allDocs.slice(prevCount);
-      setNewDocuments(newDocs);
+      // Sort new documents by score/similarity (highest first)
+      const sortedNewDocs = [...newDocs].sort((a, b) => {
+        const scoreA = a.score ?? a.similarity ?? 0;
+        const scoreB = b.score ?? b.similarity ?? 0;
+        return scoreB - scoreA;
+      });
+      setNewDocuments(sortedNewDocs);
 
       // Show preview panel on mobile for new documents
       if (window.innerWidth < 768) { // Mobile breakpoint
