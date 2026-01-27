@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-27T21:52:35.208Z",
+  "generatedAt": "2026-01-27T22:16:37.034Z",
   "counts": {
     "products": 100,
     "reviews": 200,
@@ -50,22 +50,22 @@
     }
   ],
   "stats": {
-    "averageProductPrice": "1180.56",
-    "totalReviewRating": "4.1",
+    "averageProductPrice": "1178.60",
+    "totalReviewRating": "4.0",
     "ticketsByStatus": {
-      "open": 12,
-      "inProgress": 11,
-      "waitingCustomer": 14,
-      "resolved": 4,
-      "closed": 9
+      "open": 8,
+      "inProgress": 14,
+      "waitingCustomer": 8,
+      "resolved": 13,
+      "closed": 7
     },
-    "activePolicies": 18,
-    "activeCoupons": 20,
+    "activePolicies": 17,
+    "activeCoupons": 19,
     "couponsByType": {
-      "percentage": 6,
-      "fixed": 8,
-      "freeShipping": 4,
-      "buyOneGetOne": 2
+      "percentage": 8,
+      "fixed": 3,
+      "freeShipping": 5,
+      "buyOneGetOne": 4
     }
   }
 }

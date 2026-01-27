@@ -242,16 +242,16 @@ const ticketCategories = [
 ];
 
 // Specific product types for migration (20 each = 100 total)
-// Using curated Unsplash photo IDs for reliable, relevant product images
+// Using actual Unsplash photo IDs for reliable, relevant product images
 const productTypes = [
   {
     type: 'Laptop',
     category: 'Electronics',
     imageIds: [
-      'XMFZqrGyV-Q', 'Im7lZjxeLhg', '1SAnrIxw5OY', 'Hin-rzhOdWs', '9SoCnyQmkzI',
-      'C6T6vr1sQI0', 'vpOeXr5wmR4', 'fPkvU7RDmCo', '4Hg8LH9Hoxc', 'jLwVAUtLOAQ',
-      'gySMaocSdqs', 'Lq1rOaigDoY', '95YRwf6CNw8', 'OqtafYT5kTw', 'cckf4TsHAuw',
-      'FO7JIlwjOtU', 'Lp9Zr0gLiVs', '5NE6mX0WVfQ', 'hGV2TfOh0ns', 'dC6Pb2JdAqs'
+      '1496181133206-80ce9b88a853', '1525547719851-df4c4c21e37d', '1517336714731-489689fd1ca8', '1504707748692-419802cf939d', '1498050108023-c5249f4df085',
+      '1531297484001-80022131f5a1', '1593062096033-9a26b09da705', '1588872657578-7efd1f1555ed', '1541807084-5c52b6b92ae2', '1484788984921-03950022c9ef',
+      '1611186871348-b1ce696e52c9', '1496181133206-80ce9b88a853', '1515378791036-0648a3ef77b2', '1460925895917-afdab827c52f', '1499951360447-b19be8fe80f5',
+      '1516387938699-a93567ec168e', '1587614382346-4ec70e388b28', '1603302576837-37561b2e2302', '1544244015-0df4b3ffc6b0', '1629131726692-1accd0c53ce0'
     ],
     brands: ['Apple', 'Dell', 'HP', 'Lenovo', 'ASUS', 'Acer', 'Microsoft', 'Samsung', 'MSI', 'Razer'],
     adjectives: ['Pro', 'Ultra', 'Air', 'Elite', 'Premium', 'Gaming', 'Business', 'Slim', 'Powerful', 'Lightweight'],
@@ -261,10 +261,10 @@ const productTypes = [
     type: 'Smartphone',
     category: 'Electronics',
     imageIds: [
-      'FmB9wNGT5eA', 'N0g-deioHO4', '1osIUArK5oA', 'WiONHd_zYI4', 'dcLoVtlasLU',
-      'T0WpSP8fvDQ', 'JwMGy1h-JsY', 'XDQRS0CNXRY', 'gXsJ9Gvw-c4', 'KFFtDGfxSAA',
-      'eBRTYyjwpRY', 'Ylpb7Asqq6k', '5hcV51EmeVc', '-1QDLCI0SkY', 'hfO1RMEY0PY',
-      'FHnnjk1Yj7Y', 'NKCamXoJVEo', 'ulgXHfMYZdE', 'iIWDt0fXa84', 'K5mPtONmpHM'
+      '1511707171634-5f897ff02aa9', '1510557880182-3d4d3cba35a5', '1592750475338-74b7b21085ab', '1565849904461-04a58ad377e0', '1574944985070-8f3ebc6b79d2',
+      '1605236453806-6ff36851218e', '1512941937669-90a1b58e7e9c', '1591337676887-a217a6970a8a', '1580910051074-3eb694886f2e', '1601784551446-20c9e07cdbdb',
+      '1585060544812-6b45742d762f', '1598327105666-5b89351aff97', '1533228100845-08145b01de14', '1523206489230-c012c64b2b48', '1556656793-08538906a9f8',
+      '1609692814858-f7cd2f0afa4f', '1567581935884-3349723552ca', '1570891836654-d4961a7b6929', '1604076913837-52ab5629fba9', '1611532736597-de2d4265fba3'
     ],
     brands: ['Apple', 'Samsung', 'Google', 'OnePlus', 'Xiaomi', 'Sony', 'Motorola', 'Nokia', 'OPPO', 'Huawei'],
     adjectives: ['Pro', 'Ultra', 'Max', 'Plus', 'Lite', 'Mini', 'Elite', 'Premium', 'Advanced', 'Smart'],
@@ -274,10 +274,10 @@ const productTypes = [
     type: 'Headphones',
     category: 'Electronics',
     imageIds: [
-      'PDX_a_82obo', 'Dv_1FScvG_E', '3GZNPBLImWc', 'YmIbZ8VTQUY', 'J1OScm_uHUQ',
-      'nKO_1QyFh9o', 'mcqMINdFn34', '9F1LlmPJ7eI', 'hS91CC5fbTk', 'JfRzwscvPkk',
-      'y3aP9oo9Pjc', 'CUs8dxOkzEk', 'L8KQIPCODV8', 'szFUQoyvrxM', '5brvJbR1Pn8',
-      'aQfhbxailCs', 'Og-L2FGEEOM', 'CmC4eg9_HI4', 'cPF2nlWcMY4', 'E8H76nY1v6Q'
+      '1505740420928-5e560c06d30e', '1583394838336-acd977736f90', '1484704849700-f032a568e944', '1546435770-a3e426bf472b', '1524678606370-a47ad25cb82a',
+      '1487215078519-e21cc028cb29', '1558756520-22cfe5d382ca', '1545127398-14699f92334b', '1572536147248-ac59a8abfa4b', '1599669454699-248893623440',
+      '1493225457124-a3eb161ffa5f', '1520170350707-b2da59970118', '1577174881658-0f30ed549adc', '1570993492881-25240ce854f4', '1613040809024-b4ef7ba99bc3',
+      '1606220588913-b3aacb4d2f46', '1614149162883-504ce4d13909', '1618366712010-f4ae9c647dcb', '1608043152269-423dbba4e7e1', '1590658268037-6bf12165a8df'
     ],
     brands: ['Sony', 'Bose', 'Apple', 'Sennheiser', 'JBL', 'Beats', 'Audio-Technica', 'Jabra', 'Bang & Olufsen', 'Skullcandy'],
     adjectives: ['Wireless', 'Pro', 'Studio', 'Premium', 'Elite', 'Sport', 'Noise-Canceling', 'Hi-Fi', 'Professional', 'Comfort'],
@@ -287,10 +287,10 @@ const productTypes = [
     type: 'Camera',
     category: 'Electronics',
     imageIds: [
-      'IU4JkaUfNZ4', 'WEDDYpNejy4', 'VCtI-0qlVgA', 'ob-hsLNxYPc', 'tJrSEkTJpPg',
-      'kG71BXh8KFw', 'JVD3XPqjLaQ', 'auijD19Byq8', 'mSchGl1OOEY', 'iEiUITs149M',
-      'uq2E2V4LhCY', 'I-ENNB6IVFU', 'c04p30dNwxs', 'lsdJV1oWBvs', 'YKW0JjP7rlU',
-      'FO7bKvgETgQ', 'I3Nl6nkstuc', 'AxKqiv5F5aE', 'ZE4AqIVqsDk', 'sDw1TYo2rkE'
+      '1516035069371-29a1b244cc32', '1502920917128-1aa500764cbd', '1510127034890-ba27508e9f1c', '1495745966610-2a67f2297e5e', '1581591524425-c7e0978cca2e',
+      '1617005082133-548c4dd27f35', '1452780212940-6f5c0d14d848', '1500634245200-e5245c7574ef', '1512790182412-b19e6d62bc39', '1560518883-ce09059eeffa',
+      '1606986628492-c01a5686d9b4', '1519638399535-1b036603ac77', '1609952542840-df54cfddc3fb', '1510784722466-f2aa9c52fff6', '1516724562728-afc824a36e84',
+      '1471341971476-ae15ff5dd4ea', '1473091534298-04dcbce3278c', '1542567455-cd733f23fbb1', '1502982720700-bfff97f2ecac', '1607462109225-6b64ae2dd3cb'
     ],
     brands: ['Canon', 'Sony', 'Nikon', 'Fujifilm', 'Panasonic', 'Leica', 'Olympus', 'GoPro', 'DJI', 'Hasselblad'],
     adjectives: ['Professional', 'Mirrorless', 'DSLR', 'Compact', 'Action', 'Cinema', 'Travel', 'Advanced', 'Premium', 'Ultra HD'],
@@ -300,10 +300,10 @@ const productTypes = [
     type: 'Monitor',
     category: 'Electronics',
     imageIds: [
-      '1lfI7wkGWZ4', 'Im7lZjxeLhg', 'hpjSkU2UYSU', 'FewHpO4VC9Y', 'p0j-mE6mGo4',
-      'JzE4cpg1jeA', 'dUx0gwLbhzs', 'OmjCj6EH6Z4', 'weRQAu9TA-A', 'fPxOowbR6ls',
-      'gZB-i-dA6ns', 'Pk7LjoP3JK0', 'vVSleEYPSGY', 'oqStl2L5oxI', '-WXQm_NTK0U',
-      '1HCb2gPk3ik', 'QLqNalPe0RA', 'gy08FXeM2L4', 'lP_FqHwP16c', 'IjQdCrknYXI'
+      '1527443224154-c4a3942d3acf', '1585792180666-f7347c490ee2', '1593640408182-31c70c8268f5', '1616763355548-1b11f1a73290', '1558618666-fcd25c85cd64',
+      '1498049794561-7780e7231661', '1586210579191-33b45e38fa2c', '1609619385002-f40f1df827b7', '1547658719-da2b51169166', '1621259182978-fbf93132d53d',
+      '1559163499-413811fb2344', '1567603532449-e2b5c0f01943', '1612815154929-0dc2e8e8bdc5', '1550751827-4bd374c3f58b', '1618172193763-c511deb635ca',
+      '1563089145-599997674d42', '1603481588273-2f908a9a7a1b', '1541877944-ac82a091518a', '1625842268584-8f3e34f6f2e4', '1615573588078-23c3fb3c8a39'
     ],
     brands: ['LG', 'Samsung', 'Dell', 'ASUS', 'BenQ', 'Acer', 'ViewSonic', 'HP', 'MSI', 'AOC'],
     adjectives: ['Gaming', 'Professional', 'UltraWide', 'Curved', '4K', 'HDR', 'Studio', 'Ergonomic', 'Premium', 'High-Refresh'],
