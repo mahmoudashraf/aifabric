@@ -1,0 +1,71 @@
+{
+  "generatedAt": "2026-01-27T01:38:47.183Z",
+  "counts": {
+    "products": 100,
+    "reviews": 200,
+    "tickets": 50,
+    "policies": 20,
+    "coupons": 20
+  },
+  "categories": [
+    {
+      "name": "Electronics",
+      "productCount": 15
+    },
+    {
+      "name": "Home & Kitchen",
+      "productCount": 7
+    },
+    {
+      "name": "Fashion",
+      "productCount": 9
+    },
+    {
+      "name": "Sports & Outdoors",
+      "productCount": 5
+    },
+    {
+      "name": "Beauty & Personal Care",
+      "productCount": 14
+    },
+    {
+      "name": "Toys & Games",
+      "productCount": 11
+    },
+    {
+      "name": "Books & Media",
+      "productCount": 7
+    },
+    {
+      "name": "Office Supplies",
+      "productCount": 15
+    },
+    {
+      "name": "Automotive",
+      "productCount": 9
+    },
+    {
+      "name": "Health & Wellness",
+      "productCount": 8
+    }
+  ],
+  "stats": {
+    "averageProductPrice": "462.84",
+    "totalReviewRating": "4.3",
+    "ticketsByStatus": {
+      "open": 3,
+      "inProgress": 13,
+      "waitingCustomer": 14,
+      "resolved": 7,
+      "closed": 13
+    },
+    "activePolicies": 19,
+    "activeCoupons": 18,
+    "couponsByType": {
+      "percentage": 8,
+      "fixed": 4,
+      "freeShipping": 4,
+      "buyOneGetOne": 4
+    }
+  }
+}
