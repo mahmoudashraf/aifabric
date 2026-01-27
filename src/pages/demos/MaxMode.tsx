@@ -967,7 +967,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         title: "Wireless Headphones Pro",
         content: "Premium noise-canceling headphones with 30-hour battery life and crystal-clear audio.",
         type: "product",
-        metadata: { price: "$299.99", stock: "In Stock", imageUrl: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop" }
+        metadata: { price: "$299.99", stock: "In Stock", imageUrl: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=300&fit=crop&q=80" }
       },
       {
         id: "3",
