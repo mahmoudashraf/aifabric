@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-27T20:40:03.905Z",
+  "generatedAt": "2026-01-27T21:16:46.852Z",
   "counts": {
     "products": 100,
     "reviews": 200,
@@ -14,58 +14,58 @@
     },
     {
       "name": "Home & Kitchen",
-      "productCount": 13
-    },
-    {
-      "name": "Fashion",
-      "productCount": 11
-    },
-    {
-      "name": "Sports & Outdoors",
-      "productCount": 13
-    },
-    {
-      "name": "Beauty & Personal Care",
-      "productCount": 7
-    },
-    {
-      "name": "Toys & Games",
-      "productCount": 8
-    },
-    {
-      "name": "Books & Media",
-      "productCount": 11
-    },
-    {
-      "name": "Office Supplies",
-      "productCount": 9
-    },
-    {
-      "name": "Automotive",
       "productCount": 10
     },
     {
+      "name": "Fashion",
+      "productCount": 10
+    },
+    {
+      "name": "Sports & Outdoors",
+      "productCount": 6
+    },
+    {
+      "name": "Beauty & Personal Care",
+      "productCount": 10
+    },
+    {
+      "name": "Toys & Games",
+      "productCount": 15
+    },
+    {
+      "name": "Books & Media",
+      "productCount": 10
+    },
+    {
+      "name": "Office Supplies",
+      "productCount": 11
+    },
+    {
+      "name": "Automotive",
+      "productCount": 11
+    },
+    {
       "name": "Health & Wellness",
-      "productCount": 9
+      "productCount": 8
     }
   ],
   "stats": {
-    "averageProductPrice": "528.63",
-    "totalReviewRating": "4.2",
+    "averageProductPrice": "513.00",
+    "totalReviewRating": "4.3",
     "ticketsByStatus": {
-      "open": 11,
-      "inProgress": 7,
-      "waitingCustomer": 8,
-      "resolved": 10,
-      "closed": 14
+      "open": 12,
+      "inProgress": 3,
+      "waitingCustomer": 10,
+      "resolved": 16,
+      "closed": 9
     },
     "activePolicies": 19,
-    "activeCoupons": 17,
+    "activeCoupons": 15,
     "couponsByType": {
-      "percentage": 8,
-      "fixed": 8,
-      "freeShipping": 1,
-      "buyOneGetOne": 3
+      "percentage": 4,
+      "fixed": 7,
+      "freeShipping": 4,
+      "buyOneGetOne": 5
     }
   }
 }
