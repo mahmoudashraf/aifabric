@@ -1151,7 +1151,9 @@ const AIFabricFramework = () => {
 
     setChatMessages((prev) => [...prev, userMessage]);
     const currentQuery = enhancedQuery;
-    const currentAttachments = attachedProducts;
+    const currentAttachedProducts = attachedProducts;
+    const currentAttachedReviews = attachedReviews;
+    const currentAttachedCoupons = attachedCoupons;
     setChatQuery("");
     setIsLoading(true);
     setIsChatExpanded(true);
@@ -1163,6 +1165,45 @@ const AIFabricFramework = () => {
     setSuggestions([]);
 
     try {
+      // Build attachments with metadata
+      const attachmentsWithMetadata = [
+        ...currentAttachedProducts.map(p => ({
+          type: "product",
+          data: {
+            ...p,
+            metadata: {
+              id: p.id,
+              sku: p.sku,
+              category: p.category,
+              imageUrl: p.imageUrl,
+            }
+          }
+        })),
+        ...currentAttachedReviews.map(r => ({
+          type: "review",
+          data: {
+            ...r,
+            metadata: {
+              id: r.id,
+              productId: r.productId,
+              rating: r.rating,
+            }
+          }
+        })),
+        ...currentAttachedCoupons.map(c => ({
+          type: "coupon",
+          data: {
+            ...c,
+            metadata: {
+              id: c.id,
+              code: c.code,
+              discountType: c.discountType,
+              discountValue: c.discountValue,
+            }
+          }
+        })),
+      ];
+
       const response = await fetch(`${API_BASE_URL}/chat/query`, {
         method: "POST",
         headers: {
@@ -1173,6 +1214,7 @@ const AIFabricFramework = () => {
           userId: "demo-user",
           sessionId: "demo-session",
           conversationId: currentConversationId || undefined,
+          attachments: attachmentsWithMetadata.length > 0 ? attachmentsWithMetadata : undefined,
         }),
       });
 

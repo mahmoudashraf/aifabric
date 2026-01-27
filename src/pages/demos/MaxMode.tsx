@@ -1018,6 +1018,20 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     setSuggestions([]);
 
     try {
+      // Build attachments with metadata
+      const attachmentsWithMetadata = currentAttachments.map(item => ({
+        type: item.type,
+        data: {
+          ...item.data,
+          metadata: item.data.metadata || {
+            id: item.data.id,
+            sku: item.data.sku,
+            category: item.data.category || item.data.type,
+            imageUrl: item.data.imageUrl,
+          }
+        }
+      }));
+
       const response = await fetch(`${API_BASE_URL}/chat/query`, {
         method: "POST",
         headers: {
@@ -1028,6 +1042,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           userId: "demo-user",
           sessionId: "demo-session-max",
           conversationId: currentConversationId || undefined,
+          attachments: attachmentsWithMetadata.length > 0 ? attachmentsWithMetadata : undefined,
         }),
       });
 
