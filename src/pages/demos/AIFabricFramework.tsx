@@ -1718,7 +1718,7 @@ const AIFabricFramework = () => {
     // Create all tickets in parallel using Promise.allSettled
     const results = await Promise.allSettled(
       SAMPLE_TICKETS.map(async (ticket) => {
-        const response = await fetch(`${API_BASE_URL}/tickets`, {
+        const response = await fetch(`${API_BASE_URL}/support-tickets`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
