@@ -988,18 +988,6 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     const query = presetQuery || chatQuery;
     if (!query.trim()) return;
 
-    // Build enhanced query with attached context
-    let enhancedQuery = query;
-    if (attachedItems.length > 0) {
-      const contexts = attachedItems.map(item => {
-        if (item.type === "document") {
-          return `Document: ${item.data.title} - ${item.data.content}`;
-        }
-        return JSON.stringify(item.data);
-      });
-      enhancedQuery = `${query}\n\n[Context: ${contexts.join("\n")}]`;
-    }
-
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       type: "user",
@@ -1038,7 +1026,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          query: enhancedQuery,
+          query: query,
           userId: "demo-user",
           sessionId: "demo-session-max",
           conversationId: currentConversationId || undefined,

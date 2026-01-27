@@ -1111,35 +1111,6 @@ const AIFabricFramework = () => {
     const queryToUse = queryOverride || chatQuery;
     if (!queryToUse.trim()) return;
 
-    // Build query with all attached context
-    let enhancedQuery = queryToUse;
-    const contexts: string[] = [];
-    
-    if (attachedProducts.length > 0) {
-      const productContexts = attachedProducts.map(p => 
-        `${p.name} - ${p.description}, Price: $${p.price}, SKU: ${p.sku}`
-      ).join('\n');
-      contexts.push(`Product Context:\n${productContexts}`);
-    }
-    
-    if (attachedReviews.length > 0) {
-      const reviewContexts = attachedReviews.map(r => 
-        `${r.title} (${r.rating}/5): ${r.text}`
-      ).join('\n');
-      contexts.push(`Review Context:\n${reviewContexts}`);
-    }
-    
-    if (attachedCoupons.length > 0) {
-      const couponContexts = attachedCoupons.map(c => 
-        `${c.code}: ${c.description}, Discount: ${c.discountType === "PERCENTAGE" ? `${c.discountValue}%` : `$${c.discountValue}`}, Min: $${c.minPurchaseAmount || "N/A"}`
-      ).join('\n');
-      contexts.push(`Coupon Context:\n${couponContexts}`);
-    }
-    
-    if (contexts.length > 0) {
-      enhancedQuery = `${queryToUse}\n\n[${contexts.join('\n\n')}]`;
-    }
-
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       type: "user",
@@ -1150,7 +1121,6 @@ const AIFabricFramework = () => {
     };
 
     setChatMessages((prev) => [...prev, userMessage]);
-    const currentQuery = enhancedQuery;
     const currentAttachedProducts = attachedProducts;
     const currentAttachedReviews = attachedReviews;
     const currentAttachedCoupons = attachedCoupons;
@@ -1210,7 +1180,7 @@ const AIFabricFramework = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          query: currentQuery,
+          query: queryToUse,
           userId: "demo-user",
           sessionId: "demo-session",
           conversationId: currentConversationId || undefined,
