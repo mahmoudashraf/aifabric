@@ -1006,17 +1006,14 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     setSuggestions([]);
 
     try {
-      // Build attachments with metadata
+      // Build attachments with only metadata
       const attachmentsWithMetadata = currentAttachments.map(item => ({
         type: item.type,
-        data: {
-          ...item.data,
-          metadata: item.data.metadata || {
-            id: item.data.id,
-            sku: item.data.sku,
-            category: item.data.category || item.data.type,
-            imageUrl: item.data.imageUrl,
-          }
+        metadata: item.data.metadata || {
+          id: item.data.id,
+          sku: item.data.sku,
+          category: item.data.category || item.data.type,
+          imageUrl: item.data.imageUrl,
         }
       }));
 

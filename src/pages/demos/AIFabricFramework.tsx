@@ -1135,41 +1135,32 @@ const AIFabricFramework = () => {
     setSuggestions([]);
 
     try {
-      // Build attachments with metadata
+      // Build attachments with only metadata
       const attachmentsWithMetadata = [
         ...currentAttachedProducts.map(p => ({
           type: "product",
-          data: {
-            ...p,
-            metadata: {
-              id: p.id,
-              sku: p.sku,
-              category: p.category,
-              imageUrl: p.imageUrl,
-            }
+          metadata: {
+            id: p.id,
+            sku: p.sku,
+            category: p.category,
+            imageUrl: p.imageUrl,
           }
         })),
         ...currentAttachedReviews.map(r => ({
           type: "review",
-          data: {
-            ...r,
-            metadata: {
-              id: r.id,
-              productId: r.productId,
-              rating: r.rating,
-            }
+          metadata: {
+            id: r.id,
+            productId: r.productId,
+            rating: r.rating,
           }
         })),
         ...currentAttachedCoupons.map(c => ({
           type: "coupon",
-          data: {
-            ...c,
-            metadata: {
-              id: c.id,
-              code: c.code,
-              discountType: c.discountType,
-              discountValue: c.discountValue,
-            }
+          metadata: {
+            id: c.id,
+            code: c.code,
+            discountType: c.discountType,
+            discountValue: c.discountValue,
           }
         })),
       ];
