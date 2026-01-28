@@ -88,44 +88,52 @@ export function useChat() {
     setSuggestions([]);
 
     try {
-      // Build attachments with only metadata
+      // Build attachments with vector space format
       const attachmentsWithMetadata = [
         ...currentAttachedProducts.map((p) => ({
-          type: "product",
+          id: p.id,
+          vectorSpace: "product",
+          contentSnippet: p.name || p.description || "",
           metadata: {
             id: p.id,
             sku: p.sku,
             category: p.category,
-            imageUrl: p.imageUrl,
           },
+          source: "product",
+          url: "",
+          imageUrl: p.imageUrl || "",
         })),
         ...currentAttachedReviews.map((r) => ({
-          type: "review",
+          id: r.id,
+          vectorSpace: "review",
+          contentSnippet: r.comment || "",
           metadata: {
             id: r.id,
             productId: r.productId,
             rating: r.rating,
           },
+          source: "review",
+          url: "",
+          imageUrl: "",
         })),
         ...currentAttachedCoupons.map((c) => ({
-          type: "coupon",
+          id: c.id,
+          vectorSpace: "coupon",
+          contentSnippet: c.description || c.code || "",
           metadata: {
             id: c.id,
             code: c.code,
             discountType: c.discountType,
             discountValue: c.discountValue,
           },
+          source: "coupon",
+          url: "",
+          imageUrl: "",
         })),
       ];
 
-      // Build query with context instruction if attachments exist
-      const queryWithContext =
-        attachmentsWithMetadata.length > 0
-          ? `[Consider this context as the main context. Use its metadata for action params and for building optimized query.]\n\n${queryToUse}`
-          : queryToUse;
-
       const data = await api.sendChatQuery(
-        queryWithContext,
+        queryToUse,
         DEFAULT_USER_ID,
         DEFAULT_SESSION_ID,
         currentConversationId || undefined,

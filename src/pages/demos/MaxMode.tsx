@@ -1012,21 +1012,20 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     setSuggestions([]);
 
     try {
-      // Build attachments with only metadata
+      // Build attachments with vector space format
       const attachmentsWithMetadata = currentAttachments.map(item => ({
-        type: item.type,
+        id: item.data.id,
+        vectorSpace: item.type,
+        contentSnippet: item.data.name || item.data.description || item.data.comment || item.data.code || "",
         metadata: item.data.metadata || {
           id: item.data.id,
           sku: item.data.sku,
           category: item.data.category || item.data.type,
-          imageUrl: item.data.imageUrl,
-        }
+        },
+        source: item.type,
+        url: "",
+        imageUrl: item.data.imageUrl || "",
       }));
-
-      // Build query with context instruction if attachments exist
-      const queryWithContext = attachmentsWithMetadata.length > 0
-        ? `[Consider this context as the main context. Use its metadata for action params and for building optimized query.]\n\n${query}`
-        : query;
 
       const response = await fetch(`${API_BASE_URL}/chat/query`, {
         method: "POST",
@@ -1034,7 +1033,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          query: queryWithContext,
+          query,
           userId: "demo-user",
           sessionId: "demo-session-max",
           conversationId: currentConversationId || undefined,
