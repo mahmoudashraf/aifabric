@@ -1,950 +1,969 @@
 [
   {
     "id": "tick_0001",
-    "ticketNumber": "TKT-375777",
-    "userId": "user_2255",
-    "userName": "Christopher Davis",
-    "userEmail": "christopher.davis@email.com",
-    "subject": "Item damaged during shipping",
-    "description": "I was charged twice for my order. Please refund the duplicate payment immediately.",
-    "category": "Account",
-    "priority": "medium",
-    "status": "in-progress",
-    "assignedTo": "Emily Chen",
+    "ticketNumber": "TKT-991563",
+    "userId": "user_8039",
+    "userName": "Matthew Wilson",
+    "userEmail": "matthew.wilson@email.com",
+    "subject": "Product compatibility question",
+    "description": "I received my order but the product doesn't work as described. I've tried troubleshooting but no luck. Please advise on next steps.",
+    "category": "Product Information",
+    "priority": "high",
+    "status": "resolved",
+    "assignedTo": "Mike Johnson",
     "tags": [
       "urgent",
-      "payment",
-      "shipping"
+      "order",
+      "quality"
     ],
-    "createdAt": "2026-01-11T12:35:39.813Z",
-    "updatedAt": "2026-01-15T12:35:39.813Z"
+    "createdAt": "2025-12-26T02:29:57.334Z",
+    "updatedAt": "2026-01-15T02:29:57.335Z",
+    "resolvedAt": "2026-01-23T02:29:57.335Z"
   },
   {
     "id": "tick_0002",
-    "ticketNumber": "TKT-551872",
-    "userId": "user_7054",
-    "userName": "Matthew Wilson",
-    "userEmail": "matthew.wilson@email.com",
-    "subject": "Color different from photo",
-    "description": "I received my order but the product doesn't work as described. I've tried troubleshooting but no luck. Please advise on next steps.",
-    "category": "Other",
-    "priority": "medium",
-    "status": "in-progress",
-    "assignedTo": "Mike Johnson",
+    "ticketNumber": "TKT-845565",
+    "userId": "user_4317",
+    "userName": "Daniel Anderson",
+    "userEmail": "daniel.anderson@email.com",
+    "subject": "Product not working as expected",
+    "description": "The website keeps giving me an error when I try to checkout. I've tried multiple times with different payment methods.",
+    "category": "Technical Support",
+    "priority": "high",
+    "status": "resolved",
+    "assignedTo": "Support Team",
     "tags": [
-      "shipping"
+      "payment",
+      "order",
+      "urgent"
     ],
-    "createdAt": "2025-12-27T12:35:39.813Z",
-    "updatedAt": "2026-01-26T12:35:39.813Z"
+    "createdAt": "2026-01-14T02:29:57.335Z",
+    "updatedAt": "2026-01-18T02:29:57.335Z",
+    "resolvedAt": "2026-01-15T02:29:57.335Z"
   },
   {
     "id": "tick_0003",
-    "ticketNumber": "TKT-777803",
-    "userId": "user_1990",
-    "userName": "Ashley Martinez",
-    "userEmail": "ashley.martinez@email.com",
-    "subject": "Product not working as expected",
-    "description": "Can you provide detailed installation instructions? The manual that came with it is unclear.",
-    "category": "Product Quality",
-    "priority": "high",
-    "status": "closed",
+    "ticketNumber": "TKT-685799",
+    "userId": "user_5863",
+    "userName": "Steven Martinez",
+    "userEmail": "steven.martinez@email.com",
+    "subject": "Size/fit issues",
+    "description": "I ordered the blue version but received the red one instead. I need to exchange it for the correct color as soon as possible.",
+    "category": "Order Issue",
+    "priority": "urgent",
+    "status": "in-progress",
     "assignedTo": "Support Team",
     "tags": [
       "quality",
-      "urgent"
+      "order"
     ],
-    "createdAt": "2025-12-01T12:35:39.813Z",
-    "updatedAt": "2026-01-08T12:35:39.813Z",
-    "resolvedAt": "2026-01-20T12:35:39.813Z"
+    "createdAt": "2026-01-26T02:29:57.335Z",
+    "updatedAt": "2026-01-17T02:29:57.335Z"
   },
   {
     "id": "tick_0004",
-    "ticketNumber": "TKT-378629",
-    "userId": "user_3267",
-    "userName": "Daniel Anderson",
-    "userEmail": "daniel.anderson@email.com",
-    "subject": "Product quality concerns",
-    "description": "Will this product work with my existing setup? I need compatibility information before installing.",
-    "category": "Other",
-    "priority": "urgent",
-    "status": "open",
-    "tags": [
-      "quality",
-      "refund",
-      "shipping"
-    ],
-    "createdAt": "2025-12-10T12:35:39.813Z",
-    "updatedAt": "2026-01-16T12:35:39.813Z"
-  },
-  {
-    "id": "tick_0005",
-    "ticketNumber": "TKT-725859",
-    "userId": "user_5642",
-    "userName": "Michael Chen",
-    "userEmail": "michael.chen@email.com",
-    "subject": "Wrong item delivered",
-    "description": "I ordered the large size but it fits like a medium. Do you have sizing charts?",
-    "category": "Product Quality",
-    "priority": "medium",
-    "status": "in-progress",
-    "assignedTo": "Emily Chen",
-    "tags": [
-      "refund"
-    ],
-    "createdAt": "2025-12-21T12:35:39.813Z",
-    "updatedAt": "2026-01-24T12:35:39.813Z"
-  },
-  {
-    "id": "tick_0006",
-    "ticketNumber": "TKT-345722",
-    "userId": "user_5000",
-    "userName": "Matthew Wilson",
-    "userEmail": "matthew.wilson@email.com",
-    "subject": "Payment not processed",
-    "description": "The color in person is completely different from the website photos. This is misleading.",
-    "category": "Product Information",
-    "priority": "urgent",
-    "status": "resolved",
-    "assignedTo": "Mike Johnson",
-    "tags": [
-      "quality",
-      "refund"
-    ],
-    "createdAt": "2025-12-23T12:35:39.813Z",
-    "updatedAt": "2026-01-25T12:35:39.814Z",
-    "resolvedAt": "2026-01-24T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0007",
-    "ticketNumber": "TKT-843943",
-    "userId": "user_9634",
-    "userName": "Robert Jackson",
-    "userEmail": "robert.jackson@email.com",
-    "subject": "Account login issues",
-    "description": "I need to order 50 units for my business. Do you offer bulk discounts?",
-    "category": "Product Information",
-    "priority": "low",
-    "status": "resolved",
-    "assignedTo": "John Smith",
-    "tags": [
-      "order",
-      "payment",
-      "technical"
-    ],
-    "createdAt": "2026-01-22T12:35:39.814Z",
-    "updatedAt": "2026-01-21T12:35:39.814Z",
-    "resolvedAt": "2026-01-25T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0008",
-    "ticketNumber": "TKT-801334",
-    "userId": "user_6752",
+    "ticketNumber": "TKT-880757",
+    "userId": "user_4747",
     "userName": "James Brown",
     "userEmail": "james.brown@email.com",
-    "subject": "Request for return/refund",
-    "description": "I need to order 50 units for my business. Do you offer bulk discounts?",
-    "category": "Other",
-    "priority": "low",
-    "status": "waiting-customer",
-    "assignedTo": "Support Team",
-    "tags": [
-      "urgent",
-      "payment",
-      "order"
-    ],
-    "createdAt": "2026-01-01T12:35:39.814Z",
-    "updatedAt": "2026-01-11T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0009",
-    "ticketNumber": "TKT-784302",
-    "userId": "user_9871",
-    "userName": "Ashley Martinez",
-    "userEmail": "ashley.martinez@email.com",
-    "subject": "Product compatibility question",
-    "description": "I ordered the large size but it fits like a medium. Do you have sizing charts?",
-    "category": "Shipping",
-    "priority": "medium",
-    "status": "resolved",
-    "assignedTo": "Sarah Williams",
-    "tags": [
-      "urgent",
-      "order",
-      "shipping"
-    ],
-    "createdAt": "2026-01-08T12:35:39.814Z",
-    "updatedAt": "2026-01-23T12:35:39.814Z",
-    "resolvedAt": "2026-01-21T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0010",
-    "ticketNumber": "TKT-401634",
-    "userId": "user_4689",
-    "userName": "Michelle White",
-    "userEmail": "michelle.white@email.com",
-    "subject": "Product quality concerns",
-    "description": "My tracking number hasn't updated in 5 days. Can you check the status of my shipment?",
-    "category": "Product Quality",
-    "priority": "low",
-    "status": "resolved",
-    "assignedTo": "Mike Johnson",
-    "tags": [
-      "urgent"
-    ],
-    "createdAt": "2026-01-07T12:35:39.814Z",
-    "updatedAt": "2026-01-13T12:35:39.814Z",
-    "resolvedAt": "2026-01-25T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0011",
-    "ticketNumber": "TKT-369603",
-    "userId": "user_6210",
-    "userName": "Kevin Harris",
-    "userEmail": "kevin.harris@email.com",
-    "subject": "Installation help needed",
-    "description": "The product seems to be missing some essential parts mentioned in the manual. Could you send the missing components or arrange a return?",
-    "category": "Order Issue",
-    "priority": "high",
-    "status": "open",
-    "tags": [
-      "order"
-    ],
-    "createdAt": "2025-12-30T12:35:39.814Z",
-    "updatedAt": "2026-01-04T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0012",
-    "ticketNumber": "TKT-586150",
-    "userId": "user_2392",
-    "userName": "Steven Martinez",
-    "userEmail": "steven.martinez@email.com",
-    "subject": "Product compatibility question",
-    "description": "The website keeps giving me an error when I try to checkout. I've tried multiple times with different payment methods.",
-    "category": "Website Issue",
-    "priority": "medium",
-    "status": "waiting-customer",
-    "assignedTo": "Mike Johnson",
-    "tags": [
-      "urgent"
-    ],
-    "createdAt": "2026-01-21T12:35:39.814Z",
-    "updatedAt": "2026-01-10T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0013",
-    "ticketNumber": "TKT-448877",
-    "userId": "user_6606",
-    "userName": "Steven Martinez",
-    "userEmail": "steven.martinez@email.com",
-    "subject": "Discount code not working",
-    "description": "I received my order but the product doesn't work as described. I've tried troubleshooting but no luck. Please advise on next steps.",
-    "category": "Shipping",
-    "priority": "medium",
-    "status": "waiting-customer",
-    "assignedTo": "Sarah Williams",
-    "tags": [
-      "shipping",
-      "technical"
-    ],
-    "createdAt": "2026-01-05T12:35:39.814Z",
-    "updatedAt": "2026-01-24T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0014",
-    "ticketNumber": "TKT-659797",
-    "userId": "user_3983",
-    "userName": "Michael Chen",
-    "userEmail": "michael.chen@email.com",
-    "subject": "Discount code not working",
-    "description": "Will this product work with my existing setup? I need compatibility information before installing.",
-    "category": "Other",
-    "priority": "urgent",
-    "status": "closed",
-    "assignedTo": "Mike Johnson",
-    "tags": [
-      "urgent"
-    ],
-    "createdAt": "2026-01-20T12:35:39.814Z",
-    "updatedAt": "2026-01-09T12:35:39.814Z",
-    "resolvedAt": "2026-01-26T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0015",
-    "ticketNumber": "TKT-598354",
-    "userId": "user_1127",
-    "userName": "Robert Jackson",
-    "userEmail": "robert.jackson@email.com",
-    "subject": "Missing parts/accessories",
-    "description": "I tried using the discount code from your email but it says it's invalid. Can you help?",
-    "category": "Website Issue",
-    "priority": "medium",
-    "status": "in-progress",
-    "assignedTo": "John Smith",
-    "tags": [
-      "shipping",
-      "payment"
-    ],
-    "createdAt": "2026-01-08T12:35:39.814Z",
-    "updatedAt": "2026-01-26T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0016",
-    "ticketNumber": "TKT-710463",
-    "userId": "user_9543",
-    "userName": "Emily Rodriguez",
-    "userEmail": "emily.rodriguez@email.com",
-    "subject": "Wrong item delivered",
-    "description": "I need to order 50 units for my business. Do you offer bulk discounts?",
-    "category": "Other",
-    "priority": "high",
-    "status": "waiting-customer",
-    "assignedTo": "John Smith",
-    "tags": [
-      "quality"
-    ],
-    "createdAt": "2026-01-25T12:35:39.814Z",
-    "updatedAt": "2026-01-26T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0017",
-    "ticketNumber": "TKT-858159",
-    "userId": "user_4548",
-    "userName": "Kevin Harris",
-    "userEmail": "kevin.harris@email.com",
-    "subject": "Payment not processed",
-    "description": "I tried using the discount code from your email but it says it's invalid. Can you help?",
-    "category": "Website Issue",
-    "priority": "urgent",
-    "status": "open",
-    "tags": [
-      "technical"
-    ],
-    "createdAt": "2025-12-25T12:35:39.814Z",
-    "updatedAt": "2026-01-19T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0018",
-    "ticketNumber": "TKT-981014",
-    "userId": "user_1332",
-    "userName": "Jennifer Taylor",
-    "userEmail": "jennifer.taylor@email.com",
-    "subject": "Item damaged during shipping",
-    "description": "The product quality is not as expected. It feels cheap and flimsy. Very disappointed.",
-    "category": "Shipping",
-    "priority": "urgent",
-    "status": "in-progress",
-    "assignedTo": "Support Team",
-    "tags": [
-      "payment",
-      "technical"
-    ],
-    "createdAt": "2025-12-13T12:35:39.814Z",
-    "updatedAt": "2026-01-19T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0019",
-    "ticketNumber": "TKT-155669",
-    "userId": "user_6219",
-    "userName": "Jennifer Taylor",
-    "userEmail": "jennifer.taylor@email.com",
-    "subject": "Shipping delay inquiry",
-    "description": "I ordered the blue version but received the red one instead. I need to exchange it for the correct color as soon as possible.",
-    "category": "Other",
-    "priority": "medium",
-    "status": "open",
-    "tags": [
-      "payment",
-      "refund"
-    ],
-    "createdAt": "2025-12-26T12:35:39.814Z",
-    "updatedAt": "2026-01-17T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0020",
-    "ticketNumber": "TKT-261084",
-    "userId": "user_5216",
-    "userName": "Matthew Wilson",
-    "userEmail": "matthew.wilson@email.com",
-    "subject": "Warranty claim",
-    "description": "I placed an order over a week ago and still haven't received it. The tracking shows it was delivered but I never got the package. Can you please help me locate it or send a replacement?",
-    "category": "Returns & Refunds",
-    "priority": "urgent",
-    "status": "in-progress",
-    "assignedTo": "Sarah Williams",
-    "tags": [
-      "refund"
-    ],
-    "createdAt": "2025-12-20T12:35:39.814Z",
-    "updatedAt": "2026-01-04T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0021",
-    "ticketNumber": "TKT-912525",
-    "userId": "user_9178",
-    "userName": "Sarah Johnson",
-    "userEmail": "sarah.johnson@email.com",
-    "subject": "Wrong item delivered",
-    "description": "The product seems to be missing some essential parts mentioned in the manual. Could you send the missing components or arrange a return?",
-    "category": "Payment",
-    "priority": "urgent",
-    "status": "in-progress",
-    "assignedTo": "Sarah Williams",
-    "tags": [
-      "order"
-    ],
-    "createdAt": "2025-12-28T12:35:39.814Z",
-    "updatedAt": "2026-01-24T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0022",
-    "ticketNumber": "TKT-390494",
-    "userId": "user_9591",
-    "userName": "Michelle White",
-    "userEmail": "michelle.white@email.com",
-    "subject": "Shipping delay inquiry",
-    "description": "I need to file a warranty claim. The product stopped working after just 2 months of use.",
-    "category": "Order Issue",
-    "priority": "low",
-    "status": "waiting-customer",
-    "assignedTo": "Sarah Williams",
-    "tags": [
-      "order",
-      "shipping",
-      "quality"
-    ],
-    "createdAt": "2025-12-16T12:35:39.814Z",
-    "updatedAt": "2026-01-23T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0023",
-    "ticketNumber": "TKT-906148",
-    "userId": "user_9286",
-    "userName": "Daniel Anderson",
-    "userEmail": "daniel.anderson@email.com",
-    "subject": "Tracking information not updating",
-    "description": "The color in person is completely different from the website photos. This is misleading.",
-    "category": "Returns & Refunds",
-    "priority": "medium",
-    "status": "resolved",
-    "assignedTo": "Sarah Williams",
-    "tags": [
-      "quality",
-      "order",
-      "payment"
-    ],
-    "createdAt": "2025-12-15T12:35:39.814Z",
-    "updatedAt": "2026-01-26T12:35:39.814Z",
-    "resolvedAt": "2026-01-22T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0024",
-    "ticketNumber": "TKT-827346",
-    "userId": "user_8805",
-    "userName": "Lisa Thomas",
-    "userEmail": "lisa.thomas@email.com",
-    "subject": "Size/fit issues",
-    "description": "I placed an order over a week ago and still haven't received it. The tracking shows it was delivered but I never got the package. Can you please help me locate it or send a replacement?",
-    "category": "Other",
-    "priority": "urgent",
-    "status": "in-progress",
-    "assignedTo": "Emily Chen",
-    "tags": [
-      "payment"
-    ],
-    "createdAt": "2026-01-20T12:35:39.814Z",
-    "updatedAt": "2026-01-26T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0025",
-    "ticketNumber": "TKT-632925",
-    "userId": "user_9050",
-    "userName": "Kevin Harris",
-    "userEmail": "kevin.harris@email.com",
     "subject": "Account login issues",
-    "description": "I would like to return this item as it doesn't meet my needs. What is the return process and will I get a full refund?",
-    "category": "Returns & Refunds",
-    "priority": "urgent",
-    "status": "in-progress",
-    "assignedTo": "Mike Johnson",
-    "tags": [
-      "refund",
-      "urgent"
-    ],
-    "createdAt": "2025-12-19T12:35:39.814Z",
-    "updatedAt": "2026-01-19T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0026",
-    "ticketNumber": "TKT-446635",
-    "userId": "user_1884",
-    "userName": "Robert Jackson",
-    "userEmail": "robert.jackson@email.com",
-    "subject": "Warranty claim",
-    "description": "Will this product work with my existing setup? I need compatibility information before installing.",
-    "category": "Payment",
-    "priority": "high",
-    "status": "waiting-customer",
-    "assignedTo": "Support Team",
-    "tags": [
-      "payment",
-      "shipping",
-      "quality"
-    ],
-    "createdAt": "2025-12-29T12:35:39.814Z",
-    "updatedAt": "2026-01-23T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0027",
-    "ticketNumber": "TKT-491002",
-    "userId": "user_7212",
-    "userName": "Jennifer Taylor",
-    "userEmail": "jennifer.taylor@email.com",
-    "subject": "Color different from photo",
-    "description": "Will this product work with my existing setup? I need compatibility information before installing.",
-    "category": "Other",
-    "priority": "medium",
-    "status": "open",
+    "description": "I was charged twice for my order. Please refund the duplicate payment immediately.",
+    "category": "Product Information",
+    "priority": "low",
+    "status": "closed",
+    "assignedTo": "Sarah Williams",
     "tags": [
       "technical",
       "urgent",
-      "shipping"
+      "payment"
     ],
-    "createdAt": "2026-01-19T12:35:39.814Z",
-    "updatedAt": "2026-01-05T12:35:39.814Z"
+    "createdAt": "2026-01-27T02:29:57.335Z",
+    "updatedAt": "2026-01-18T02:29:57.335Z",
+    "resolvedAt": "2026-01-18T02:29:57.335Z"
   },
   {
-    "id": "tick_0028",
-    "ticketNumber": "TKT-130345",
-    "userId": "user_4325",
-    "userName": "Emily Rodriguez",
-    "userEmail": "emily.rodriguez@email.com",
-    "subject": "Size/fit issues",
+    "id": "tick_0005",
+    "ticketNumber": "TKT-844860",
+    "userId": "user_5972",
+    "userName": "Sarah Johnson",
+    "userEmail": "sarah.johnson@email.com",
+    "subject": "Warranty claim",
     "description": "The product quality is not as expected. It feels cheap and flimsy. Very disappointed.",
+    "category": "Shipping",
+    "priority": "medium",
+    "status": "resolved",
+    "assignedTo": "Sarah Williams",
+    "tags": [
+      "quality"
+    ],
+    "createdAt": "2026-01-02T02:29:57.335Z",
+    "updatedAt": "2026-01-14T02:29:57.335Z",
+    "resolvedAt": "2026-01-23T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0006",
+    "ticketNumber": "TKT-892009",
+    "userId": "user_9113",
+    "userName": "Ashley Martinez",
+    "userEmail": "ashley.martinez@email.com",
+    "subject": "Shipping delay inquiry",
+    "description": "I need to file a warranty claim. The product stopped working after just 2 months of use.",
+    "category": "Technical Support",
+    "priority": "low",
+    "status": "open",
+    "tags": [
+      "urgent",
+      "technical",
+      "shipping"
+    ],
+    "createdAt": "2025-12-18T02:29:57.335Z",
+    "updatedAt": "2026-01-16T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0007",
+    "ticketNumber": "TKT-263151",
+    "userId": "user_9104",
+    "userName": "Jennifer Taylor",
+    "userEmail": "jennifer.taylor@email.com",
+    "subject": "Request for return/refund",
+    "description": "I placed an order over a week ago and still haven't received it. The tracking shows it was delivered but I never got the package. Can you please help me locate it or send a replacement?",
+    "category": "Product Information",
+    "priority": "high",
+    "status": "in-progress",
+    "assignedTo": "Sarah Williams",
+    "tags": [
+      "shipping"
+    ],
+    "createdAt": "2026-01-25T02:29:57.335Z",
+    "updatedAt": "2026-01-27T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0008",
+    "ticketNumber": "TKT-155586",
+    "userId": "user_5608",
+    "userName": "Nicole Garcia",
+    "userEmail": "nicole.garcia@email.com",
+    "subject": "Color different from photo",
+    "description": "I would like to return this item as it doesn't meet my needs. What is the return process and will I get a full refund?",
+    "category": "Technical Support",
+    "priority": "urgent",
+    "status": "in-progress",
+    "assignedTo": "Emily Chen",
+    "tags": [
+      "quality",
+      "refund",
+      "payment"
+    ],
+    "createdAt": "2025-12-08T02:29:57.335Z",
+    "updatedAt": "2026-01-24T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0009",
+    "ticketNumber": "TKT-443838",
+    "userId": "user_7810",
+    "userName": "Christopher Davis",
+    "userEmail": "christopher.davis@email.com",
+    "subject": "Installation help needed",
+    "description": "The product seems to be missing some essential parts mentioned in the manual. Could you send the missing components or arrange a return?",
+    "category": "Payment",
+    "priority": "medium",
+    "status": "open",
+    "tags": [
+      "quality"
+    ],
+    "createdAt": "2026-01-23T02:29:57.335Z",
+    "updatedAt": "2026-01-27T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0010",
+    "ticketNumber": "TKT-795919",
+    "userId": "user_5466",
+    "userName": "Christopher Davis",
+    "userEmail": "christopher.davis@email.com",
+    "subject": "Order not received",
+    "description": "My order was supposed to arrive yesterday but there's been a delay. When can I expect delivery?",
+    "category": "Payment",
+    "priority": "high",
+    "status": "closed",
+    "assignedTo": "Mike Johnson",
+    "tags": [
+      "quality",
+      "payment",
+      "technical"
+    ],
+    "createdAt": "2025-12-11T02:29:57.335Z",
+    "updatedAt": "2026-01-22T02:29:57.335Z",
+    "resolvedAt": "2026-01-27T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0011",
+    "ticketNumber": "TKT-199381",
+    "userId": "user_7242",
+    "userName": "Daniel Anderson",
+    "userEmail": "daniel.anderson@email.com",
+    "subject": "Tracking information not updating",
+    "description": "I ordered the large size but it fits like a medium. Do you have sizing charts?",
+    "category": "Returns & Refunds",
+    "priority": "urgent",
+    "status": "waiting-customer",
+    "assignedTo": "Support Team",
+    "tags": [
+      "urgent",
+      "payment"
+    ],
+    "createdAt": "2025-12-04T02:29:57.335Z",
+    "updatedAt": "2026-01-04T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0012",
+    "ticketNumber": "TKT-177368",
+    "userId": "user_5703",
+    "userName": "Michael Chen",
+    "userEmail": "michael.chen@email.com",
+    "subject": "Bulk order inquiry",
+    "description": "The product seems to be missing some essential parts mentioned in the manual. Could you send the missing components or arrange a return?",
+    "category": "Product Quality",
+    "priority": "low",
+    "status": "waiting-customer",
+    "assignedTo": "John Smith",
+    "tags": [
+      "shipping",
+      "urgent",
+      "order"
+    ],
+    "createdAt": "2025-12-24T02:29:57.335Z",
+    "updatedAt": "2026-01-27T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0013",
+    "ticketNumber": "TKT-549781",
+    "userId": "user_7722",
+    "userName": "Robert Jackson",
+    "userEmail": "robert.jackson@email.com",
+    "subject": "Product compatibility question",
+    "description": "I need to file a warranty claim. The product stopped working after just 2 months of use.",
     "category": "Payment",
     "priority": "urgent",
     "status": "closed",
     "assignedTo": "Sarah Williams",
     "tags": [
-      "urgent"
-    ],
-    "createdAt": "2025-12-02T12:35:39.814Z",
-    "updatedAt": "2026-01-16T12:35:39.814Z",
-    "resolvedAt": "2026-01-22T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0029",
-    "ticketNumber": "TKT-387514",
-    "userId": "user_7734",
-    "userName": "James Brown",
-    "userEmail": "james.brown@email.com",
-    "subject": "Product not working as expected",
-    "description": "I ordered the large size but it fits like a medium. Do you have sizing charts?",
-    "category": "Technical Support",
-    "priority": "low",
-    "status": "resolved",
-    "assignedTo": "John Smith",
-    "tags": [
+      "technical",
       "quality",
       "refund"
     ],
-    "createdAt": "2025-12-13T12:35:39.814Z",
-    "updatedAt": "2026-01-22T12:35:39.814Z",
-    "resolvedAt": "2026-01-26T12:35:39.814Z"
+    "createdAt": "2026-01-13T02:29:57.335Z",
+    "updatedAt": "2026-01-20T02:29:57.335Z",
+    "resolvedAt": "2026-01-26T02:29:57.335Z"
   },
   {
-    "id": "tick_0030",
-    "ticketNumber": "TKT-697629",
-    "userId": "user_6105",
-    "userName": "Steven Martinez",
-    "userEmail": "steven.martinez@email.com",
-    "subject": "Discount code not working",
+    "id": "tick_0014",
+    "ticketNumber": "TKT-842396",
+    "userId": "user_5874",
+    "userName": "Robert Jackson",
+    "userEmail": "robert.jackson@email.com",
+    "subject": "Request for return/refund",
     "description": "I ordered the large size but it fits like a medium. Do you have sizing charts?",
+    "category": "Website Issue",
+    "priority": "high",
+    "status": "in-progress",
+    "assignedTo": "Sarah Williams",
+    "tags": [
+      "quality",
+      "refund",
+      "shipping"
+    ],
+    "createdAt": "2026-01-15T02:29:57.335Z",
+    "updatedAt": "2026-01-22T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0015",
+    "ticketNumber": "TKT-912901",
+    "userId": "user_3151",
+    "userName": "Jennifer Taylor",
+    "userEmail": "jennifer.taylor@email.com",
+    "subject": "Shipping delay inquiry",
+    "description": "My order was supposed to arrive yesterday but there's been a delay. When can I expect delivery?",
     "category": "Returns & Refunds",
     "priority": "low",
     "status": "in-progress",
-    "assignedTo": "John Smith",
-    "tags": [
-      "payment"
-    ],
-    "createdAt": "2025-12-06T12:35:39.814Z",
-    "updatedAt": "2026-01-18T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0031",
-    "ticketNumber": "TKT-170603",
-    "userId": "user_9990",
-    "userName": "Matthew Wilson",
-    "userEmail": "matthew.wilson@email.com",
-    "subject": "Item damaged during shipping",
-    "description": "My tracking number hasn't updated in 5 days. Can you check the status of my shipment?",
-    "category": "Order Issue",
-    "priority": "high",
-    "status": "in-progress",
     "assignedTo": "Support Team",
-    "tags": [
-      "quality",
-      "shipping",
-      "technical"
-    ],
-    "createdAt": "2026-01-07T12:35:39.814Z",
-    "updatedAt": "2026-01-20T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0032",
-    "ticketNumber": "TKT-875867",
-    "userId": "user_1636",
-    "userName": "Robert Jackson",
-    "userEmail": "robert.jackson@email.com",
-    "subject": "Size/fit issues",
-    "description": "The website keeps giving me an error when I try to checkout. I've tried multiple times with different payment methods.",
-    "category": "Account",
-    "priority": "medium",
-    "status": "open",
     "tags": [
       "urgent",
       "shipping",
-      "quality"
-    ],
-    "createdAt": "2025-12-27T12:35:39.814Z",
-    "updatedAt": "2026-01-24T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0033",
-    "ticketNumber": "TKT-712538",
-    "userId": "user_7757",
-    "userName": "Emily Rodriguez",
-    "userEmail": "emily.rodriguez@email.com",
-    "subject": "Product not working as expected",
-    "description": "I ordered the blue version but received the red one instead. I need to exchange it for the correct color as soon as possible.",
-    "category": "Shipping",
-    "priority": "medium",
-    "status": "in-progress",
-    "assignedTo": "Support Team",
-    "tags": [
-      "urgent"
-    ],
-    "createdAt": "2025-12-11T12:35:39.814Z",
-    "updatedAt": "2026-01-25T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0034",
-    "ticketNumber": "TKT-558846",
-    "userId": "user_1321",
-    "userName": "Emily Rodriguez",
-    "userEmail": "emily.rodriguez@email.com",
-    "subject": "Item damaged during shipping",
-    "description": "Do you ship to my country? The checkout won't let me select my shipping address.",
-    "category": "Website Issue",
-    "priority": "high",
-    "status": "waiting-customer",
-    "assignedTo": "Mike Johnson",
-    "tags": [
-      "order",
-      "urgent"
-    ],
-    "createdAt": "2025-12-24T12:35:39.814Z",
-    "updatedAt": "2026-01-10T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0035",
-    "ticketNumber": "TKT-492135",
-    "userId": "user_6141",
-    "userName": "Matthew Wilson",
-    "userEmail": "matthew.wilson@email.com",
-    "subject": "Color different from photo",
-    "description": "I can't log into my account. Password reset isn't working either. Need urgent help.",
-    "category": "Shipping",
-    "priority": "low",
-    "status": "in-progress",
-    "assignedTo": "Mike Johnson",
-    "tags": [
-      "order",
-      "urgent"
-    ],
-    "createdAt": "2026-01-01T12:35:39.814Z",
-    "updatedAt": "2026-01-20T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0036",
-    "ticketNumber": "TKT-715447",
-    "userId": "user_1414",
-    "userName": "Ashley Martinez",
-    "userEmail": "ashley.martinez@email.com",
-    "subject": "Payment not processed",
-    "description": "The product arrived damaged. The box was in good condition but the item inside has visible scratches and dents. I would like to return it for a refund or exchange.",
-    "category": "Other",
-    "priority": "urgent",
-    "status": "resolved",
-    "assignedTo": "John Smith",
-    "tags": [
-      "urgent",
-      "shipping",
-      "refund"
-    ],
-    "createdAt": "2025-12-12T12:35:39.814Z",
-    "updatedAt": "2026-01-18T12:35:39.814Z",
-    "resolvedAt": "2026-01-25T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0037",
-    "ticketNumber": "TKT-693352",
-    "userId": "user_3265",
-    "userName": "Ashley Martinez",
-    "userEmail": "ashley.martinez@email.com",
-    "subject": "Tracking information not updating",
-    "description": "I placed an order over a week ago and still haven't received it. The tracking shows it was delivered but I never got the package. Can you please help me locate it or send a replacement?",
-    "category": "Other",
-    "priority": "urgent",
-    "status": "open",
-    "tags": [
-      "refund",
-      "shipping",
       "payment"
     ],
-    "createdAt": "2025-11-28T12:35:39.814Z",
-    "updatedAt": "2026-01-24T12:35:39.814Z"
+    "createdAt": "2025-12-14T02:29:57.335Z",
+    "updatedAt": "2026-01-23T02:29:57.335Z"
   },
   {
-    "id": "tick_0038",
-    "ticketNumber": "TKT-484208",
-    "userId": "user_8870",
-    "userName": "Brian Thompson",
-    "userEmail": "brian.thompson@email.com",
-    "subject": "Size/fit issues",
+    "id": "tick_0016",
+    "ticketNumber": "TKT-285117",
+    "userId": "user_5850",
+    "userName": "Steven Martinez",
+    "userEmail": "steven.martinez@email.com",
+    "subject": "Product quality concerns",
     "description": "Can you provide detailed installation instructions? The manual that came with it is unclear.",
-    "category": "Technical Support",
-    "priority": "high",
-    "status": "open",
+    "category": "Returns & Refunds",
+    "priority": "low",
+    "status": "waiting-customer",
+    "assignedTo": "Emily Chen",
     "tags": [
       "urgent",
+      "refund",
+      "payment"
+    ],
+    "createdAt": "2026-01-07T02:29:57.335Z",
+    "updatedAt": "2026-01-21T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0017",
+    "ticketNumber": "TKT-296602",
+    "userId": "user_6479",
+    "userName": "Matthew Wilson",
+    "userEmail": "matthew.wilson@email.com",
+    "subject": "Bulk order inquiry",
+    "description": "Will this product work with my existing setup? I need compatibility information before installing.",
+    "category": "Product Quality",
+    "priority": "medium",
+    "status": "resolved",
+    "assignedTo": "Emily Chen",
+    "tags": [
+      "technical",
       "shipping"
     ],
-    "createdAt": "2025-12-15T12:35:39.814Z",
-    "updatedAt": "2026-01-26T12:35:39.814Z"
+    "createdAt": "2025-12-15T02:29:57.335Z",
+    "updatedAt": "2026-01-26T02:29:57.335Z",
+    "resolvedAt": "2026-01-26T02:29:57.335Z"
   },
   {
-    "id": "tick_0039",
-    "ticketNumber": "TKT-365154",
-    "userId": "user_3253",
+    "id": "tick_0018",
+    "ticketNumber": "TKT-909262",
+    "userId": "user_9066",
     "userName": "Laura Martin",
     "userEmail": "laura.martin@email.com",
-    "subject": "Shipping delay inquiry",
-    "description": "I ordered the blue version but received the red one instead. I need to exchange it for the correct color as soon as possible.",
-    "category": "Other",
-    "priority": "urgent",
-    "status": "resolved",
-    "assignedTo": "Sarah Williams",
-    "tags": [
-      "quality"
-    ],
-    "createdAt": "2025-12-08T12:35:39.814Z",
-    "updatedAt": "2026-01-09T12:35:39.814Z",
-    "resolvedAt": "2026-01-21T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0040",
-    "ticketNumber": "TKT-609615",
-    "userId": "user_1045",
-    "userName": "Sarah Johnson",
-    "userEmail": "sarah.johnson@email.com",
-    "subject": "Discount code not working",
-    "description": "Will this product work with my existing setup? I need compatibility information before installing.",
-    "category": "Order Issue",
+    "subject": "Unable to place order",
+    "description": "I can't log into my account. Password reset isn't working either. Need urgent help.",
+    "category": "Product Quality",
     "priority": "high",
     "status": "in-progress",
-    "assignedTo": "John Smith",
+    "assignedTo": "Mike Johnson",
     "tags": [
-      "urgent",
-      "shipping",
-      "refund"
+      "payment"
     ],
-    "createdAt": "2025-12-27T12:35:39.814Z",
-    "updatedAt": "2026-01-22T12:35:39.814Z"
+    "createdAt": "2025-12-08T02:29:57.335Z",
+    "updatedAt": "2026-01-13T02:29:57.335Z"
   },
   {
-    "id": "tick_0041",
-    "ticketNumber": "TKT-313748",
-    "userId": "user_6143",
+    "id": "tick_0019",
+    "ticketNumber": "TKT-750655",
+    "userId": "user_1746",
+    "userName": "Amanda Lee",
+    "userEmail": "amanda.lee@email.com",
+    "subject": "Installation help needed",
+    "description": "I need to order 50 units for my business. Do you offer bulk discounts?",
+    "category": "Returns & Refunds",
+    "priority": "medium",
+    "status": "resolved",
+    "assignedTo": "Mike Johnson",
+    "tags": [
+      "quality",
+      "urgent",
+      "payment"
+    ],
+    "createdAt": "2025-12-08T02:29:57.335Z",
+    "updatedAt": "2026-01-19T02:29:57.335Z",
+    "resolvedAt": "2026-01-18T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0020",
+    "ticketNumber": "TKT-303185",
+    "userId": "user_8602",
     "userName": "James Brown",
     "userEmail": "james.brown@email.com",
-    "subject": "Product not working as expected",
-    "description": "The product quality is not as expected. It feels cheap and flimsy. Very disappointed.",
-    "category": "Technical Support",
-    "priority": "urgent",
-    "status": "in-progress",
-    "assignedTo": "Emily Chen",
-    "tags": [
-      "quality"
-    ],
-    "createdAt": "2025-12-17T12:35:39.814Z",
-    "updatedAt": "2026-01-21T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0042",
-    "ticketNumber": "TKT-991967",
-    "userId": "user_1627",
-    "userName": "David Kim",
-    "userEmail": "david.kim@email.com",
-    "subject": "Installation help needed",
-    "description": "I tried using the discount code from your email but it says it's invalid. Can you help?",
-    "category": "Shipping",
-    "priority": "urgent",
-    "status": "in-progress",
-    "assignedTo": "Sarah Williams",
-    "tags": [
-      "technical"
-    ],
-    "createdAt": "2026-01-10T12:35:39.814Z",
-    "updatedAt": "2026-01-25T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0043",
-    "ticketNumber": "TKT-153449",
-    "userId": "user_9582",
-    "userName": "Brian Thompson",
-    "userEmail": "brian.thompson@email.com",
-    "subject": "Account login issues",
-    "description": "I need to order 50 units for my business. Do you offer bulk discounts?",
-    "category": "Website Issue",
-    "priority": "medium",
-    "status": "waiting-customer",
-    "assignedTo": "Emily Chen",
-    "tags": [
-      "quality"
-    ],
-    "createdAt": "2025-12-10T12:35:39.814Z",
-    "updatedAt": "2026-01-23T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0044",
-    "ticketNumber": "TKT-652050",
-    "userId": "user_2837",
-    "userName": "Jessica Williams",
-    "userEmail": "jessica.williams@email.com",
-    "subject": "Tracking information not updating",
-    "description": "My tracking number hasn't updated in 5 days. Can you check the status of my shipment?",
-    "category": "Account",
-    "priority": "medium",
-    "status": "closed",
-    "assignedTo": "John Smith",
-    "tags": [
-      "shipping",
-      "quality"
-    ],
-    "createdAt": "2025-12-22T12:35:39.814Z",
-    "updatedAt": "2026-01-16T12:35:39.814Z",
-    "resolvedAt": "2026-01-21T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0045",
-    "ticketNumber": "TKT-767141",
-    "userId": "user_4589",
-    "userName": "Lisa Thomas",
-    "userEmail": "lisa.thomas@email.com",
-    "subject": "Bulk order inquiry",
-    "description": "I placed an order over a week ago and still haven't received it. The tracking shows it was delivered but I never got the package. Can you please help me locate it or send a replacement?",
-    "category": "Account",
-    "priority": "medium",
-    "status": "resolved",
-    "assignedTo": "Sarah Williams",
-    "tags": [
-      "refund",
-      "shipping"
-    ],
-    "createdAt": "2026-01-18T12:35:39.814Z",
-    "updatedAt": "2026-01-16T12:35:39.814Z",
-    "resolvedAt": "2026-01-21T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0046",
-    "ticketNumber": "TKT-132882",
-    "userId": "user_7751",
-    "userName": "Daniel Anderson",
-    "userEmail": "daniel.anderson@email.com",
-    "subject": "Item damaged during shipping",
-    "description": "I tried using the discount code from your email but it says it's invalid. Can you help?",
-    "category": "Website Issue",
-    "priority": "high",
-    "status": "waiting-customer",
-    "assignedTo": "Sarah Williams",
-    "tags": [
-      "quality"
-    ],
-    "createdAt": "2026-01-07T12:35:39.814Z",
-    "updatedAt": "2025-12-31T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0047",
-    "ticketNumber": "TKT-778193",
-    "userId": "user_1499",
-    "userName": "Michael Chen",
-    "userEmail": "michael.chen@email.com",
-    "subject": "Product quality concerns",
-    "description": "I need to order 50 units for my business. Do you offer bulk discounts?",
-    "category": "Technical Support",
-    "priority": "high",
-    "status": "open",
-    "tags": [
-      "payment",
-      "technical"
-    ],
-    "createdAt": "2026-01-05T12:35:39.814Z",
-    "updatedAt": "2026-01-25T12:35:39.814Z"
-  },
-  {
-    "id": "tick_0048",
-    "ticketNumber": "TKT-164984",
-    "userId": "user_7123",
-    "userName": "Michelle White",
-    "userEmail": "michelle.white@email.com",
     "subject": "Unable to place order",
-    "description": "I was charged twice for my order. Please refund the duplicate payment immediately.",
+    "description": "The color in person is completely different from the website photos. This is misleading.",
     "category": "Product Quality",
     "priority": "high",
     "status": "waiting-customer",
-    "assignedTo": "Sarah Williams",
+    "assignedTo": "Mike Johnson",
     "tags": [
       "order"
     ],
-    "createdAt": "2025-12-03T12:35:39.814Z",
-    "updatedAt": "2026-01-23T12:35:39.814Z"
+    "createdAt": "2026-01-14T02:29:57.335Z",
+    "updatedAt": "2026-01-11T02:29:57.335Z"
   },
   {
-    "id": "tick_0049",
-    "ticketNumber": "TKT-770821",
-    "userId": "user_4439",
-    "userName": "Kevin Harris",
-    "userEmail": "kevin.harris@email.com",
-    "subject": "Discount code not working",
-    "description": "The color in person is completely different from the website photos. This is misleading.",
-    "category": "Order Issue",
+    "id": "tick_0021",
+    "ticketNumber": "TKT-891692",
+    "userId": "user_1620",
+    "userName": "Michelle White",
+    "userEmail": "michelle.white@email.com",
+    "subject": "Item damaged during shipping",
+    "description": "Can you provide detailed installation instructions? The manual that came with it is unclear.",
+    "category": "Technical Support",
     "priority": "medium",
-    "status": "resolved",
+    "status": "in-progress",
     "assignedTo": "Support Team",
+    "tags": [
+      "urgent",
+      "quality"
+    ],
+    "createdAt": "2025-12-23T02:29:57.335Z",
+    "updatedAt": "2026-01-11T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0022",
+    "ticketNumber": "TKT-150333",
+    "userId": "user_2218",
+    "userName": "Jessica Williams",
+    "userEmail": "jessica.williams@email.com",
+    "subject": "Warranty claim",
+    "description": "I received my order but the product doesn't work as described. I've tried troubleshooting but no luck. Please advise on next steps.",
+    "category": "Returns & Refunds",
+    "priority": "low",
+    "status": "closed",
+    "assignedTo": "Sarah Williams",
+    "tags": [
+      "urgent",
+      "shipping"
+    ],
+    "createdAt": "2026-01-20T02:29:57.335Z",
+    "updatedAt": "2025-12-31T02:29:57.335Z",
+    "resolvedAt": "2026-01-27T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0023",
+    "ticketNumber": "TKT-908287",
+    "userId": "user_6065",
+    "userName": "James Brown",
+    "userEmail": "james.brown@email.com",
+    "subject": "Color different from photo",
+    "description": "My tracking number hasn't updated in 5 days. Can you check the status of my shipment?",
+    "category": "Product Quality",
+    "priority": "high",
+    "status": "open",
+    "tags": [
+      "order"
+    ],
+    "createdAt": "2026-01-27T02:29:57.335Z",
+    "updatedAt": "2026-01-26T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0024",
+    "ticketNumber": "TKT-465368",
+    "userId": "user_4227",
+    "userName": "Steven Martinez",
+    "userEmail": "steven.martinez@email.com",
+    "subject": "Discount code not working",
+    "description": "I need to file a warranty claim. The product stopped working after just 2 months of use.",
+    "category": "Order Issue",
+    "priority": "high",
+    "status": "in-progress",
+    "assignedTo": "John Smith",
+    "tags": [
+      "refund",
+      "quality"
+    ],
+    "createdAt": "2026-01-22T02:29:57.335Z",
+    "updatedAt": "2026-01-18T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0025",
+    "ticketNumber": "TKT-585810",
+    "userId": "user_2719",
+    "userName": "Sarah Johnson",
+    "userEmail": "sarah.johnson@email.com",
+    "subject": "Product compatibility question",
+    "description": "My order was supposed to arrive yesterday but there's been a delay. When can I expect delivery?",
+    "category": "Returns & Refunds",
+    "priority": "high",
+    "status": "waiting-customer",
+    "assignedTo": "John Smith",
     "tags": [
       "refund"
     ],
-    "createdAt": "2026-01-12T12:35:39.814Z",
-    "updatedAt": "2026-01-22T12:35:39.814Z",
-    "resolvedAt": "2026-01-21T12:35:39.814Z"
+    "createdAt": "2025-12-31T02:29:57.335Z",
+    "updatedAt": "2026-01-21T02:29:57.335Z"
   },
   {
-    "id": "tick_0050",
-    "ticketNumber": "TKT-993957",
-    "userId": "user_6864",
+    "id": "tick_0026",
+    "ticketNumber": "TKT-884714",
+    "userId": "user_1487",
+    "userName": "Jennifer Taylor",
+    "userEmail": "jennifer.taylor@email.com",
+    "subject": "Size/fit issues",
+    "description": "The color in person is completely different from the website photos. This is misleading.",
+    "category": "Order Issue",
+    "priority": "low",
+    "status": "resolved",
+    "assignedTo": "Mike Johnson",
+    "tags": [
+      "quality",
+      "urgent",
+      "shipping"
+    ],
+    "createdAt": "2026-01-19T02:29:57.335Z",
+    "updatedAt": "2026-01-06T02:29:57.335Z",
+    "resolvedAt": "2026-01-26T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0027",
+    "ticketNumber": "TKT-666477",
+    "userId": "user_4818",
+    "userName": "Lisa Thomas",
+    "userEmail": "lisa.thomas@email.com",
+    "subject": "Request for return/refund",
+    "description": "The color in person is completely different from the website photos. This is misleading.",
+    "category": "Returns & Refunds",
+    "priority": "medium",
+    "status": "closed",
+    "assignedTo": "John Smith",
+    "tags": [
+      "payment",
+      "order"
+    ],
+    "createdAt": "2026-01-26T02:29:57.335Z",
+    "updatedAt": "2026-01-18T02:29:57.335Z",
+    "resolvedAt": "2026-01-27T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0028",
+    "ticketNumber": "TKT-696950",
+    "userId": "user_1836",
+    "userName": "Matthew Wilson",
+    "userEmail": "matthew.wilson@email.com",
+    "subject": "Wrong item delivered",
+    "description": "The product arrived damaged. The box was in good condition but the item inside has visible scratches and dents. I would like to return it for a refund or exchange.",
+    "category": "Payment",
+    "priority": "low",
+    "status": "closed",
+    "assignedTo": "Support Team",
+    "tags": [
+      "refund",
+      "quality"
+    ],
+    "createdAt": "2025-12-12T02:29:57.335Z",
+    "updatedAt": "2026-01-20T02:29:57.335Z",
+    "resolvedAt": "2026-01-26T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0029",
+    "ticketNumber": "TKT-289671",
+    "userId": "user_7459",
+    "userName": "Daniel Anderson",
+    "userEmail": "daniel.anderson@email.com",
+    "subject": "Shipping delay inquiry",
+    "description": "I placed an order over a week ago and still haven't received it. The tracking shows it was delivered but I never got the package. Can you please help me locate it or send a replacement?",
+    "category": "Returns & Refunds",
+    "priority": "high",
+    "status": "resolved",
+    "assignedTo": "John Smith",
+    "tags": [
+      "order",
+      "quality"
+    ],
+    "createdAt": "2026-01-16T02:29:57.335Z",
+    "updatedAt": "2026-01-20T02:29:57.335Z",
+    "resolvedAt": "2026-01-24T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0030",
+    "ticketNumber": "TKT-147029",
+    "userId": "user_6853",
+    "userName": "Lisa Thomas",
+    "userEmail": "lisa.thomas@email.com",
+    "subject": "Missing parts/accessories",
+    "description": "My order was supposed to arrive yesterday but there's been a delay. When can I expect delivery?",
+    "category": "Account",
+    "priority": "high",
+    "status": "open",
+    "tags": [
+      "urgent"
+    ],
+    "createdAt": "2026-01-13T02:29:57.335Z",
+    "updatedAt": "2026-01-19T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0031",
+    "ticketNumber": "TKT-283579",
+    "userId": "user_9414",
+    "userName": "Michelle White",
+    "userEmail": "michelle.white@email.com",
+    "subject": "Request for return/refund",
+    "description": "My order was supposed to arrive yesterday but there's been a delay. When can I expect delivery?",
+    "category": "Payment",
+    "priority": "medium",
+    "status": "waiting-customer",
+    "assignedTo": "Mike Johnson",
+    "tags": [
+      "refund",
+      "order"
+    ],
+    "createdAt": "2025-12-24T02:29:57.335Z",
+    "updatedAt": "2026-01-25T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0032",
+    "ticketNumber": "TKT-610577",
+    "userId": "user_8825",
     "userName": "Nicole Garcia",
     "userEmail": "nicole.garcia@email.com",
-    "subject": "Request for return/refund",
-    "description": "I can't log into my account. Password reset isn't working either. Need urgent help.",
-    "category": "Shipping",
+    "subject": "Item damaged during shipping",
+    "description": "I tried using the discount code from your email but it says it's invalid. Can you help?",
+    "category": "Account",
     "priority": "high",
+    "status": "in-progress",
+    "assignedTo": "Support Team",
+    "tags": [
+      "order",
+      "refund"
+    ],
+    "createdAt": "2025-12-12T02:29:57.335Z",
+    "updatedAt": "2026-01-27T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0033",
+    "ticketNumber": "TKT-811639",
+    "userId": "user_9894",
+    "userName": "Michelle White",
+    "userEmail": "michelle.white@email.com",
+    "subject": "Request for return/refund",
+    "description": "I received my order but the product doesn't work as described. I've tried troubleshooting but no luck. Please advise on next steps.",
+    "category": "Order Issue",
+    "priority": "high",
+    "status": "open",
+    "tags": [
+      "technical",
+      "quality"
+    ],
+    "createdAt": "2026-01-23T02:29:57.335Z",
+    "updatedAt": "2026-01-10T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0034",
+    "ticketNumber": "TKT-411839",
+    "userId": "user_8579",
+    "userName": "Daniel Anderson",
+    "userEmail": "daniel.anderson@email.com",
+    "subject": "Item damaged during shipping",
+    "description": "I ordered the large size but it fits like a medium. Do you have sizing charts?",
+    "category": "Shipping",
+    "priority": "low",
+    "status": "waiting-customer",
+    "assignedTo": "Mike Johnson",
+    "tags": [
+      "payment",
+      "quality"
+    ],
+    "createdAt": "2025-12-02T02:29:57.335Z",
+    "updatedAt": "2026-01-23T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0035",
+    "ticketNumber": "TKT-664781",
+    "userId": "user_7821",
+    "userName": "Lisa Thomas",
+    "userEmail": "lisa.thomas@email.com",
+    "subject": "Bulk order inquiry",
+    "description": "The color in person is completely different from the website photos. This is misleading.",
+    "category": "Product Quality",
+    "priority": "medium",
+    "status": "in-progress",
+    "assignedTo": "John Smith",
+    "tags": [
+      "technical",
+      "refund"
+    ],
+    "createdAt": "2025-12-21T02:29:57.335Z",
+    "updatedAt": "2026-01-17T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0036",
+    "ticketNumber": "TKT-344545",
+    "userId": "user_7774",
+    "userName": "Kevin Harris",
+    "userEmail": "kevin.harris@email.com",
+    "subject": "Order not received",
+    "description": "I was charged twice for my order. Please refund the duplicate payment immediately.",
+    "category": "Other",
+    "priority": "low",
+    "status": "open",
+    "tags": [
+      "urgent",
+      "shipping"
+    ],
+    "createdAt": "2025-12-04T02:29:57.335Z",
+    "updatedAt": "2026-01-23T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0037",
+    "ticketNumber": "TKT-503928",
+    "userId": "user_2036",
+    "userName": "Lisa Thomas",
+    "userEmail": "lisa.thomas@email.com",
+    "subject": "Warranty claim",
+    "description": "I can't log into my account. Password reset isn't working either. Need urgent help.",
+    "category": "Product Information",
+    "priority": "low",
+    "status": "resolved",
+    "assignedTo": "Emily Chen",
+    "tags": [
+      "urgent",
+      "technical",
+      "shipping"
+    ],
+    "createdAt": "2025-12-15T02:29:57.335Z",
+    "updatedAt": "2026-01-25T02:29:57.335Z",
+    "resolvedAt": "2026-01-26T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0038",
+    "ticketNumber": "TKT-451962",
+    "userId": "user_2732",
+    "userName": "Kevin Harris",
+    "userEmail": "kevin.harris@email.com",
+    "subject": "Installation help needed",
+    "description": "I ordered the large size but it fits like a medium. Do you have sizing charts?",
+    "category": "Shipping",
+    "priority": "low",
+    "status": "waiting-customer",
+    "assignedTo": "John Smith",
+    "tags": [
+      "payment",
+      "shipping",
+      "urgent"
+    ],
+    "createdAt": "2025-12-15T02:29:57.335Z",
+    "updatedAt": "2026-01-26T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0039",
+    "ticketNumber": "TKT-207824",
+    "userId": "user_8969",
+    "userName": "Emily Rodriguez",
+    "userEmail": "emily.rodriguez@email.com",
+    "subject": "Product not working as expected",
+    "description": "My tracking number hasn't updated in 5 days. Can you check the status of my shipment?",
+    "category": "Product Quality",
+    "priority": "high",
+    "status": "waiting-customer",
+    "assignedTo": "Support Team",
+    "tags": [
+      "quality"
+    ],
+    "createdAt": "2026-01-16T02:29:57.335Z",
+    "updatedAt": "2026-01-03T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0040",
+    "ticketNumber": "TKT-657219",
+    "userId": "user_5266",
+    "userName": "Jennifer Taylor",
+    "userEmail": "jennifer.taylor@email.com",
+    "subject": "Color different from photo",
+    "description": "The product arrived damaged. The box was in good condition but the item inside has visible scratches and dents. I would like to return it for a refund or exchange.",
+    "category": "Other",
+    "priority": "high",
+    "status": "waiting-customer",
+    "assignedTo": "John Smith",
+    "tags": [
+      "quality",
+      "technical",
+      "payment"
+    ],
+    "createdAt": "2025-12-31T02:29:57.335Z",
+    "updatedAt": "2026-01-19T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0041",
+    "ticketNumber": "TKT-436377",
+    "userId": "user_5451",
+    "userName": "Matthew Wilson",
+    "userEmail": "matthew.wilson@email.com",
+    "subject": "Request for return/refund",
+    "description": "Can you provide detailed installation instructions? The manual that came with it is unclear.",
+    "category": "Returns & Refunds",
+    "priority": "medium",
+    "status": "open",
+    "tags": [
+      "shipping",
+      "payment"
+    ],
+    "createdAt": "2025-12-22T02:29:57.335Z",
+    "updatedAt": "2026-01-15T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0042",
+    "ticketNumber": "TKT-554352",
+    "userId": "user_4129",
+    "userName": "Sarah Johnson",
+    "userEmail": "sarah.johnson@email.com",
+    "subject": "Unable to place order",
+    "description": "I ordered the large size but it fits like a medium. Do you have sizing charts?",
+    "category": "Shipping",
+    "priority": "medium",
+    "status": "waiting-customer",
+    "assignedTo": "Support Team",
+    "tags": [
+      "technical",
+      "order"
+    ],
+    "createdAt": "2025-12-08T02:29:57.335Z",
+    "updatedAt": "2026-01-25T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0043",
+    "ticketNumber": "TKT-450677",
+    "userId": "user_7326",
+    "userName": "Michael Chen",
+    "userEmail": "michael.chen@email.com",
+    "subject": "Product not working as expected",
+    "description": "I was charged twice for my order. Please refund the duplicate payment immediately.",
+    "category": "Other",
+    "priority": "urgent",
+    "status": "closed",
+    "assignedTo": "Sarah Williams",
+    "tags": [
+      "technical",
+      "payment",
+      "refund"
+    ],
+    "createdAt": "2026-01-25T02:29:57.335Z",
+    "updatedAt": "2026-01-19T02:29:57.335Z",
+    "resolvedAt": "2026-01-23T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0044",
+    "ticketNumber": "TKT-717028",
+    "userId": "user_1691",
+    "userName": "Jessica Williams",
+    "userEmail": "jessica.williams@email.com",
+    "subject": "Product compatibility question",
+    "description": "Will this product work with my existing setup? I need compatibility information before installing.",
+    "category": "Other",
+    "priority": "urgent",
+    "status": "resolved",
+    "assignedTo": "John Smith",
+    "tags": [
+      "shipping"
+    ],
+    "createdAt": "2026-01-24T02:29:57.335Z",
+    "updatedAt": "2026-01-01T02:29:57.335Z",
+    "resolvedAt": "2026-01-22T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0045",
+    "ticketNumber": "TKT-668534",
+    "userId": "user_5079",
+    "userName": "Lisa Thomas",
+    "userEmail": "lisa.thomas@email.com",
+    "subject": "Product not working as expected",
+    "description": "I need to order 50 units for my business. Do you offer bulk discounts?",
+    "category": "Technical Support",
+    "priority": "high",
+    "status": "resolved",
+    "assignedTo": "Mike Johnson",
+    "tags": [
+      "order"
+    ],
+    "createdAt": "2026-01-17T02:29:57.335Z",
+    "updatedAt": "2026-01-20T02:29:57.335Z",
+    "resolvedAt": "2026-01-25T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0046",
+    "ticketNumber": "TKT-868083",
+    "userId": "user_8204",
+    "userName": "Ashley Martinez",
+    "userEmail": "ashley.martinez@email.com",
+    "subject": "Missing parts/accessories",
+    "description": "The color in person is completely different from the website photos. This is misleading.",
+    "category": "Account",
+    "priority": "low",
     "status": "closed",
     "assignedTo": "Emily Chen",
     "tags": [
       "urgent"
     ],
-    "createdAt": "2025-12-06T12:35:39.814Z",
-    "updatedAt": "2026-01-16T12:35:39.814Z",
-    "resolvedAt": "2026-01-24T12:35:39.814Z"
+    "createdAt": "2025-12-26T02:29:57.335Z",
+    "updatedAt": "2026-01-12T02:29:57.335Z",
+    "resolvedAt": "2026-01-26T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0047",
+    "ticketNumber": "TKT-528802",
+    "userId": "user_9133",
+    "userName": "Daniel Anderson",
+    "userEmail": "daniel.anderson@email.com",
+    "subject": "Product quality concerns",
+    "description": "The website keeps giving me an error when I try to checkout. I've tried multiple times with different payment methods.",
+    "category": "Order Issue",
+    "priority": "urgent",
+    "status": "in-progress",
+    "assignedTo": "John Smith",
+    "tags": [
+      "urgent",
+      "quality"
+    ],
+    "createdAt": "2025-12-27T02:29:57.335Z",
+    "updatedAt": "2026-01-24T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0048",
+    "ticketNumber": "TKT-230353",
+    "userId": "user_3172",
+    "userName": "Emily Rodriguez",
+    "userEmail": "emily.rodriguez@email.com",
+    "subject": "Account login issues",
+    "description": "The color in person is completely different from the website photos. This is misleading.",
+    "category": "Payment",
+    "priority": "medium",
+    "status": "waiting-customer",
+    "assignedTo": "Support Team",
+    "tags": [
+      "payment",
+      "shipping",
+      "urgent"
+    ],
+    "createdAt": "2026-01-10T02:29:57.335Z",
+    "updatedAt": "2026-01-25T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0049",
+    "ticketNumber": "TKT-492055",
+    "userId": "user_9323",
+    "userName": "Lisa Thomas",
+    "userEmail": "lisa.thomas@email.com",
+    "subject": "Account login issues",
+    "description": "I can't log into my account. Password reset isn't working either. Need urgent help.",
+    "category": "Account",
+    "priority": "high",
+    "status": "waiting-customer",
+    "assignedTo": "John Smith",
+    "tags": [
+      "urgent",
+      "payment",
+      "shipping"
+    ],
+    "createdAt": "2025-11-29T02:29:57.335Z",
+    "updatedAt": "2026-01-27T02:29:57.335Z"
+  },
+  {
+    "id": "tick_0050",
+    "ticketNumber": "TKT-239647",
+    "userId": "user_5991",
+    "userName": "Steven Martinez",
+    "userEmail": "steven.martinez@email.com",
+    "subject": "Shipping delay inquiry",
+    "description": "The product seems to be missing some essential parts mentioned in the manual. Could you send the missing components or arrange a return?",
+    "category": "Product Information",
+    "priority": "high",
+    "status": "in-progress",
+    "assignedTo": "Sarah Williams",
+    "tags": [
+      "urgent"
+    ],
+    "createdAt": "2025-12-06T02:29:57.335Z",
+    "updatedAt": "2026-01-26T02:29:57.335Z"
   }
 ]
