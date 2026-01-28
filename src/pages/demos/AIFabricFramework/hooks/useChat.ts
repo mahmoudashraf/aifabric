@@ -1,8 +1,34 @@
 import { useState, useCallback, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import * as api from "../utils/api";
+import type { ChatPosition, ChatMode } from "../utils/api";
 import { DEFAULT_USER_ID, DEFAULT_SESSION_ID } from "../constants";
 import type { ChatMessage, Product, Review, Coupon, Conversation } from "../types";
+
+// Helper to determine position based on context
+function determinePosition(
+  hasAttachments: boolean,
+  isFirstQuery: boolean,
+  isSuggestionQuery: boolean
+): { position: ChatPosition; mode: ChatMode } {
+  // If user has attached products, they're in checkout/action mode
+  if (hasAttachments) {
+    return { position: "checkout", mode: "copilot" };
+  }
+
+  // If using AI suggestions, they're browsing catalog
+  if (isSuggestionQuery) {
+    return { position: "catalog", mode: "navigator" };
+  }
+
+  // First query defaults to landing
+  if (isFirstQuery) {
+    return { position: "landing", mode: "navigator" };
+  }
+
+  // Default to catalog for normal text queries
+  return { position: "catalog", mode: "navigator" };
+}
 
 export function useChat() {
   const { toast } = useToast();
@@ -15,6 +41,10 @@ export function useChat() {
   const [isLoading, setIsLoading] = useState(false);
   const [isChatExpanded, setIsChatExpanded] = useState(false);
 
+  // Position state for routing
+  const [currentPosition, setCurrentPosition] = useState<ChatPosition>("landing");
+  const [currentMode, setCurrentMode] = useState<ChatMode>("navigator");
+
   // Attachments
   const [attachedProducts, setAttachedProducts] = useState<Product[]>([]);
   const [attachedReviews, setAttachedReviews] = useState<Review[]>([]);
@@ -23,6 +53,9 @@ export function useChat() {
   // Suggestions
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+
+  // Track if query came from suggestion
+  const isSuggestionQueryRef = useRef(false);
 
   // Refs
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -60,7 +93,7 @@ export function useChat() {
   }, [attachedProducts]);
 
   // Handle chat query
-  const handleChatQuery = useCallback(async (queryOverride?: string) => {
+  const handleChatQuery = useCallback(async (queryOverride?: string, fromSuggestion?: boolean) => {
     const queryToUse = queryOverride || chatQuery;
     if (!queryToUse.trim()) return;
 
@@ -80,6 +113,15 @@ export function useChat() {
     setChatQuery("");
     setIsLoading(true);
     setIsChatExpanded(true);
+
+    // Determine position and mode based on context
+    const hasAttachments = currentAttachedProducts.length > 0 || currentAttachedReviews.length > 0 || currentAttachedCoupons.length > 0;
+    const isFirstQuery = chatMessages.length === 0;
+    const isSuggestionQuery = fromSuggestion || false;
+
+    const { position, mode } = determinePosition(hasAttachments, isFirstQuery, isSuggestionQuery);
+    setCurrentPosition(position);
+    setCurrentMode(mode);
 
     // Remove attachments and suggestions after sending
     setAttachedProducts([]);
@@ -132,12 +174,18 @@ export function useChat() {
         })),
       ];
 
+      // Get active attachment IDs
+      const activeAttachmentIds = attachmentsWithMetadata.map(a => a.id);
+
       const data = await api.sendChatQuery(
         queryToUse,
         DEFAULT_USER_ID,
         DEFAULT_SESSION_ID,
         currentConversationId || undefined,
-        attachmentsWithMetadata.length > 0 ? attachmentsWithMetadata : undefined
+        attachmentsWithMetadata.length > 0 ? attachmentsWithMetadata : undefined,
+        position,
+        mode,
+        activeAttachmentIds.length > 0 ? activeAttachmentIds : undefined
       );
 
       // Store conversation ID for future messages
@@ -281,6 +329,10 @@ export function useChat() {
     setAttachedProducts(newProducts);
     setIsChatExpanded(true);
 
+    // Set position to checkout when product is attached
+    setCurrentPosition("checkout");
+    setCurrentMode("copilot");
+
     // Fetch suggestions for the new products list
     fetchSuggestionsForProducts(newProducts);
   }, [attachedProducts, fetchSuggestionsForProducts]);
@@ -290,7 +342,13 @@ export function useChat() {
     setAttachedProducts(newProducts);
     // Update suggestions for remaining products
     fetchSuggestionsForProducts(newProducts);
-  }, [attachedProducts, fetchSuggestionsForProducts]);
+
+    // Reset position to catalog if no more attachments
+    if (newProducts.length === 0 && attachedReviews.length === 0 && attachedCoupons.length === 0) {
+      setCurrentPosition("catalog");
+      setCurrentMode("navigator");
+    }
+  }, [attachedProducts, attachedReviews, attachedCoupons, fetchSuggestionsForProducts]);
 
   const handleAttachReview = useCallback((review: Review) => {
     setAttachedReviews((prev) => {
@@ -298,11 +356,20 @@ export function useChat() {
       return [...prev, review];
     });
     setIsChatExpanded(true);
+    // Set position to checkout when review is attached
+    setCurrentPosition("checkout");
+    setCurrentMode("copilot");
   }, []);
 
   const handleRemoveAttachedReview = useCallback((reviewId: string) => {
-    setAttachedReviews((prev) => prev.filter((r) => r.id !== reviewId));
-  }, []);
+    const newReviews = attachedReviews.filter((r) => r.id !== reviewId);
+    setAttachedReviews(newReviews);
+    // Reset position if no more attachments
+    if (attachedProducts.length === 0 && newReviews.length === 0 && attachedCoupons.length === 0) {
+      setCurrentPosition("catalog");
+      setCurrentMode("navigator");
+    }
+  }, [attachedProducts, attachedReviews, attachedCoupons]);
 
   const handleAttachCoupon = useCallback((coupon: Coupon) => {
     setAttachedCoupons((prev) => {
@@ -310,15 +377,35 @@ export function useChat() {
       return [...prev, coupon];
     });
     setIsChatExpanded(true);
+    // Set position to checkout when coupon is attached
+    setCurrentPosition("checkout");
+    setCurrentMode("copilot");
   }, []);
 
   const handleRemoveAttachedCoupon = useCallback((couponId: string) => {
-    setAttachedCoupons((prev) => prev.filter((c) => c.id !== couponId));
-  }, []);
+    const newCoupons = attachedCoupons.filter((c) => c.id !== couponId);
+    setAttachedCoupons(newCoupons);
+    // Reset position if no more attachments
+    if (attachedProducts.length === 0 && attachedReviews.length === 0 && newCoupons.length === 0) {
+      setCurrentPosition("catalog");
+      setCurrentMode("navigator");
+    }
+  }, [attachedProducts, attachedReviews, attachedCoupons]);
 
   // Scroll to bottom
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
+  // Set position manually (for use by UI actions)
+  const setPosition = useCallback((position: ChatPosition, mode?: ChatMode) => {
+    setCurrentPosition(position);
+    if (mode) {
+      setCurrentMode(mode);
+    } else {
+      // Auto-determine mode based on position
+      setCurrentMode(position === "checkout" ? "copilot" : "navigator");
+    }
   }, []);
 
   return {
@@ -334,6 +421,8 @@ export function useChat() {
     attachedCoupons,
     suggestions,
     isLoadingSuggestions,
+    currentPosition,
+    currentMode,
 
     // Refs
     messagesEndRef,
@@ -343,6 +432,7 @@ export function useChat() {
     // Setters
     setChatQuery,
     setIsChatExpanded,
+    setPosition,
 
     // Actions
     loadConversations,
