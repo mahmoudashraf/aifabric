@@ -362,6 +362,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [viewedDocumentIds, setViewedDocumentIds] = useState<Set<string>>(new Set());
   const [cartData, setCartData] = useState<any>(null);
   const [isCartView, setIsCartView] = useState(false);
+  // Position state for routing
+  const [currentPosition, setCurrentPosition] = useState<"landing" | "catalog" | "checkout">("landing");
+  const [currentMode, setCurrentMode] = useState<"navigator" | "copilot">("navigator");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const latestMessageRef = useRef<HTMLDivElement>(null);
   const contextPanelRef = useRef<HTMLDivElement>(null);
@@ -370,21 +373,22 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const { toast } = useToast();
 
   // Quick action tools - aligned with available backend actions
+  // Position: "catalog" for browsing/discovery, "checkout" for cart/order actions
   const quickActions = [
-    { icon: Search, label: "Search Products", query: "Search for wireless headphones with good ratings and show me the prices, features, and availability", color: "text-blue-600", bg: "bg-blue-500/10", border: "border-blue-500/30" },
-    { icon: List, label: "Browse Products", query: "List all available products with their SKU, name, price, category, stock quantity, and ratings", color: "text-purple-600", bg: "bg-purple-500/10", border: "border-purple-500/30" },
-    { icon: ShoppingCart, label: "My Cart", query: "View my cart", color: "text-green-600", bg: "bg-green-500/10", border: "border-green-500/30" },
-    { icon: ShoppingBag, label: "Checkout", query: "Checkout my cart", color: "text-orange-600", bg: "bg-orange-500/10", border: "border-orange-500/30" },
-    { icon: Receipt, label: "My Orders", query: "List my orders", color: "text-indigo-600", bg: "bg-indigo-500/10", border: "border-indigo-500/30" },
-    { icon: Clock, label: "Active Orders", query: "Show my active orders", color: "text-cyan-600", bg: "bg-cyan-500/10", border: "border-cyan-500/30" },
-    { icon: Truck, label: "Track Order", query: "Track my order shipment", color: "text-teal-600", bg: "bg-teal-500/10", border: "border-teal-500/30" },
-    { icon: RotateCcw, label: "Returns", query: "Create a return request", color: "text-red-600", bg: "bg-red-500/10", border: "border-red-500/30" },
-    { icon: Tag, label: "Coupons", query: "Show available coupons", color: "text-pink-600", bg: "bg-pink-500/10", border: "border-pink-500/30" },
-    { icon: Star, label: "Reviews", query: "Add a product review", color: "text-yellow-600", bg: "bg-yellow-500/10", border: "border-yellow-500/30" },
-    { icon: User, label: "My Account", query: "Show my account details", color: "text-slate-600", bg: "bg-slate-500/10", border: "border-slate-500/30" },
-    { icon: MapPin, label: "Addresses", query: "List my saved addresses", color: "text-emerald-600", bg: "bg-emerald-500/10", border: "border-emerald-500/30" },
-    { icon: MessageSquare, label: "Support", query: "Create a support ticket", color: "text-violet-600", bg: "bg-violet-500/10", border: "border-violet-500/30" },
-    { icon: TrendingUp, label: "Trending", query: "What's trending?", color: "text-rose-600", bg: "bg-rose-500/10", border: "border-rose-500/30" },
+    { icon: Search, label: "Search Products", query: "Search for wireless headphones with good ratings and show me the prices, features, and availability", color: "text-blue-600", bg: "bg-blue-500/10", border: "border-blue-500/30", position: "catalog" as const, mode: "navigator" as const },
+    { icon: List, label: "Browse Products", query: "List all available products with their SKU, name, price, category, stock quantity, and ratings", color: "text-purple-600", bg: "bg-purple-500/10", border: "border-purple-500/30", position: "catalog" as const, mode: "navigator" as const },
+    { icon: ShoppingCart, label: "My Cart", query: "View my cart", color: "text-green-600", bg: "bg-green-500/10", border: "border-green-500/30", position: "checkout" as const, mode: "copilot" as const },
+    { icon: ShoppingBag, label: "Checkout", query: "Checkout my cart", color: "text-orange-600", bg: "bg-orange-500/10", border: "border-orange-500/30", position: "checkout" as const, mode: "copilot" as const },
+    { icon: Receipt, label: "My Orders", query: "List my orders", color: "text-indigo-600", bg: "bg-indigo-500/10", border: "border-indigo-500/30", position: "checkout" as const, mode: "copilot" as const },
+    { icon: Clock, label: "Active Orders", query: "Show my active orders", color: "text-cyan-600", bg: "bg-cyan-500/10", border: "border-cyan-500/30", position: "checkout" as const, mode: "copilot" as const },
+    { icon: Truck, label: "Track Order", query: "Track my order shipment", color: "text-teal-600", bg: "bg-teal-500/10", border: "border-teal-500/30", position: "checkout" as const, mode: "copilot" as const },
+    { icon: RotateCcw, label: "Returns", query: "Create a return request", color: "text-red-600", bg: "bg-red-500/10", border: "border-red-500/30", position: "checkout" as const, mode: "copilot" as const },
+    { icon: Tag, label: "Coupons", query: "Show available coupons", color: "text-pink-600", bg: "bg-pink-500/10", border: "border-pink-500/30", position: "catalog" as const, mode: "navigator" as const },
+    { icon: Star, label: "Reviews", query: "Add a product review", color: "text-yellow-600", bg: "bg-yellow-500/10", border: "border-yellow-500/30", position: "catalog" as const, mode: "navigator" as const },
+    { icon: User, label: "My Account", query: "Show my account details", color: "text-slate-600", bg: "bg-slate-500/10", border: "border-slate-500/30", position: "checkout" as const, mode: "copilot" as const },
+    { icon: MapPin, label: "Addresses", query: "List my saved addresses", color: "text-emerald-600", bg: "bg-emerald-500/10", border: "border-emerald-500/30", position: "checkout" as const, mode: "copilot" as const },
+    { icon: MessageSquare, label: "Support", query: "Create a support ticket", color: "text-violet-600", bg: "bg-violet-500/10", border: "border-violet-500/30", position: "checkout" as const, mode: "copilot" as const },
+    { icon: TrendingUp, label: "Trending", query: "What's trending?", color: "text-rose-600", bg: "bg-rose-500/10", border: "border-rose-500/30", position: "catalog" as const, mode: "navigator" as const },
   ];
 
   // AI Search Categories for guided product search
@@ -602,9 +606,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     return () => clearTimeout(timeoutId);
   }, [attachedItems]);
 
-  const handleQuickAction = (query: string) => {
+  const handleQuickAction = (query: string, position?: "landing" | "catalog" | "checkout", mode?: "navigator" | "copilot") => {
     setChatQuery(query);
-    setTimeout(() => handleChatQuery(query), 100);
+    setTimeout(() => handleChatQuery(query, position, mode), 100);
   };
 
   const handleScrollUp = () => {
@@ -642,6 +646,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     setTimeout(() => setCollectingItem(null), 1500);
 
     setAttachedItems(prev => [...prev, { type: "document", data: doc }]);
+
+    // Set position to checkout when attaching items
+    setCurrentPosition("checkout");
+    setCurrentMode("copilot");
+
     toast({
       title: "💬 Added to Chat",
       description: `"${doc.title}" is now part of the conversation`,
@@ -908,6 +917,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     setAttachedItems(prev => [...prev, searchAttachment]);
     setIsAISearchOpen(false);
 
+    // AI Search uses catalog position (discovery/browsing)
+    setCurrentPosition("catalog");
+    setCurrentMode("navigator");
+
     // Set the query in the input
     setInput(category.query);
 
@@ -990,7 +1003,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     });
   };
 
-  const handleChatQuery = async (presetQuery?: string) => {
+  const handleChatQuery = async (presetQuery?: string, actionPosition?: "landing" | "catalog" | "checkout", actionMode?: "navigator" | "copilot") => {
     const query = presetQuery || chatQuery;
     if (!query.trim()) return;
 
@@ -1011,22 +1024,54 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     setAttachedItems([]);
     setSuggestions([]);
 
+    // Determine position and mode
+    const hasAttachments = currentAttachments.length > 0;
+    const isFirstQuery = chatMessages.length === 0;
+
+    // Priority: action-specified > attachment-based > first query > default
+    let position: "landing" | "catalog" | "checkout";
+    let mode: "navigator" | "copilot";
+
+    if (actionPosition && actionMode) {
+      // Use action-specified position/mode (from quick actions)
+      position = actionPosition;
+      mode = actionMode;
+    } else if (hasAttachments) {
+      // Attachments mean checkout/copilot mode
+      position = "checkout";
+      mode = "copilot";
+    } else if (isFirstQuery) {
+      // First query defaults to landing
+      position = "landing";
+      mode = "navigator";
+    } else {
+      // Default to catalog for normal queries
+      position = "catalog";
+      mode = "navigator";
+    }
+
+    // Update global position state
+    setCurrentPosition(position);
+    setCurrentMode(mode);
+
     try {
-      // Build attachments with only metadata
+      // Build attachments with vector space format
       const attachmentsWithMetadata = currentAttachments.map(item => ({
-        type: item.type,
+        id: item.data.id,
+        vectorSpace: item.type,
+        contentSnippet: item.data.name || item.data.description || item.data.comment || item.data.code || "",
         metadata: item.data.metadata || {
           id: item.data.id,
           sku: item.data.sku,
           category: item.data.category || item.data.type,
-          imageUrl: item.data.imageUrl,
-        }
+        },
+        source: item.type,
+        url: "",
+        imageUrl: item.data.imageUrl || "",
       }));
 
-      // Build query with context instruction if attachments exist
-      const queryWithContext = attachmentsWithMetadata.length > 0
-        ? `[Consider this context as the main context. Use its metadata for action params and for building optimized query.]\n\n${query}`
-        : query;
+      // Get active attachment IDs
+      const activeAttachmentIds = attachmentsWithMetadata.map(a => a.id);
 
       const response = await fetch(`${API_BASE_URL}/chat/query`, {
         method: "POST",
@@ -1034,11 +1079,14 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          query: queryWithContext,
+          query,
           userId: "demo-user",
           sessionId: "demo-session-max",
           conversationId: currentConversationId || undefined,
+          position,
+          mode,
           attachments: attachmentsWithMetadata.length > 0 ? attachmentsWithMetadata : undefined,
+          activeAttachmentIds: activeAttachmentIds.length > 0 ? activeAttachmentIds : undefined,
         }),
       });
 
@@ -1258,7 +1306,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.05 }}
-              onClick={() => handleQuickAction(action.query)}
+              onClick={() => handleQuickAction(action.query, action.position, action.mode)}
               className={`flex flex-col items-center gap-1 p-3 rounded-xl ${action.bg} border ${action.border} hover:scale-105 transition-all min-w-[80px]`}
             >
               <action.icon className={`h-5 w-5 ${action.color}`} />
@@ -1337,7 +1385,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: idx * 0.03 }}
                       onClick={() => {
-                        handleQuickAction(action.query);
+                        handleQuickAction(action.query, action.position, action.mode);
                         setIsQuickActionsOpen(false);
                       }}
                       className={`flex flex-col items-center gap-2 p-4 rounded-2xl ${action.bg} border-2 ${action.border} active:scale-95 transition-all`}
@@ -1510,6 +1558,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                               }
 
                               setAttachedItems(prev => [...prev, { type: itemType, data: item }]);
+
+                              // Set position to checkout when attaching items
+                              setCurrentPosition("checkout");
+                              setCurrentMode("copilot");
+
                               toast({
                                 title: "💬 Added to Chat",
                                 description: `"${title}" is now part of the conversation`,
@@ -1716,6 +1769,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                               }
                             };
                             setAttachedItems(prev => [...prev, cartAttachment]);
+
+                            // Cart attachments use checkout position
+                            setCurrentPosition("checkout");
+                            setCurrentMode("copilot");
+
                             toast({
                               title: "💬 Cart Added to Chat",
                               description: "Your cart details are now part of the conversation",
@@ -2443,6 +2501,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                   }
                                 };
                                 setAttachedItems(prev => [...prev, cartAttachment]);
+
+                                // Cart attachments use checkout position
+                                setCurrentPosition("checkout");
+                                setCurrentMode("copilot");
+
                                 toast({
                                   title: "💬 Cart Added to Chat",
                                   description: "Your cart details are now part of the conversation",
@@ -2859,7 +2922,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         onClick={() => {
                           // Mark this suggestion as shown
                           setShownSuggestions(prev => new Set([...prev, suggestion]));
-                          handleChatQuery(suggestion);
+                          // AI suggestions use catalog position
+                          handleChatQuery(suggestion, "catalog", "navigator");
                         }}
                       >
                         <span className="flex items-center gap-1.5">

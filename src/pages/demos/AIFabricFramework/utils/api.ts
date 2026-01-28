@@ -70,13 +70,20 @@ export async function fetchConversations(ownerId: string): Promise<Conversation[
   return response.json();
 }
 
+// Position types for routing
+export type ChatPosition = "landing" | "catalog" | "checkout";
+export type ChatMode = "navigator" | "copilot";
+
 // Chat API
 export async function sendChatQuery(
   query: string,
   userId: string,
   sessionId: string,
   conversationId?: string,
-  attachments?: any[]
+  attachments?: any[],
+  position?: ChatPosition,
+  mode?: ChatMode,
+  activeAttachmentIds?: string[]
 ): Promise<any> {
   const response = await fetch(`${API_BASE_URL}/chat/query`, {
     method: "POST",
@@ -86,7 +93,10 @@ export async function sendChatQuery(
       userId,
       sessionId,
       conversationId: conversationId || undefined,
+      position: position || "landing",
+      mode: mode || "navigator",
       attachments: attachments && attachments.length > 0 ? attachments : undefined,
+      activeAttachmentIds: activeAttachmentIds && activeAttachmentIds.length > 0 ? activeAttachmentIds : undefined,
     }),
   });
   if (!response.ok) {
