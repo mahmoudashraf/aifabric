@@ -957,7 +957,7 @@ const coupons = generateCoupons(20);
 console.log(`✅ Generated ${coupons.length} coupons\n`);
 
 // Create output directory
-const outputDir = path.join(process.cwd(), 'scripts', 'generated-data');
+const outputDir = path.join(process.cwd(), 'src', 'data', 'generated');
 if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true });
 }
