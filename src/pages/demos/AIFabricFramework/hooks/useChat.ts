@@ -130,16 +130,24 @@ export function useChat() {
     setSuggestions([]);
 
     try {
-      // Build attachments with vector space format
+      // Build attachments with vector space format - include FULL data
       const attachmentsWithMetadata = [
         ...currentAttachedProducts.map((p) => ({
           id: p.id,
           vectorSpace: "product",
-          contentSnippet: p.name || p.description || "",
+          contentSnippet: p.description || p.name || "",
           metadata: {
+            // Include all product fields
             id: p.id,
             sku: p.sku,
+            name: p.name,
+            description: p.description,
+            price: p.price,
             category: p.category,
+            inStockQty: p.inStockQty,
+            imageUrl: p.imageUrl,
+            rating: p.rating,
+            reviewCount: p.reviewCount,
           },
           source: "product",
           url: "",
@@ -150,9 +158,13 @@ export function useChat() {
           vectorSpace: "review",
           contentSnippet: r.comment || "",
           metadata: {
+            // Include all review fields
             id: r.id,
             productId: r.productId,
+            userId: r.userId,
             rating: r.rating,
+            comment: r.comment,
+            createdAt: r.createdAt,
           },
           source: "review",
           url: "",
@@ -163,10 +175,18 @@ export function useChat() {
           vectorSpace: "coupon",
           contentSnippet: c.description || c.code || "",
           metadata: {
+            // Include all coupon fields
             id: c.id,
             code: c.code,
+            description: c.description,
             discountType: c.discountType,
             discountValue: c.discountValue,
+            minPurchase: c.minPurchase,
+            maxDiscount: c.maxDiscount,
+            validFrom: c.validFrom,
+            validUntil: c.validUntil,
+            usageLimit: c.usageLimit,
+            usedCount: c.usedCount,
           },
           source: "coupon",
           url: "",

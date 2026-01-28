@@ -1055,20 +1055,55 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     setCurrentMode(mode);
 
     try {
-      // Build attachments with vector space format
-      const attachmentsWithMetadata = currentAttachments.map(item => ({
-        id: item.data.id,
-        vectorSpace: item.type,
-        contentSnippet: item.data.name || item.data.description || item.data.comment || item.data.code || "",
-        metadata: item.data.metadata || {
+      // Build attachments with vector space format - include FULL data
+      const attachmentsWithMetadata = currentAttachments.map(item => {
+        // Get the full content from the item
+        const content = item.data.content || item.data.description || item.data.name || "";
+
+        // Build comprehensive metadata including all item fields
+        const fullMetadata = {
+          // Include existing metadata
+          ...(item.data.metadata || {}),
+          // Add all other relevant fields from the item data
           id: item.data.id,
           sku: item.data.sku,
           category: item.data.category || item.data.type,
-        },
-        source: item.type,
-        url: "",
-        imageUrl: item.data.imageUrl || "",
-      }));
+          name: item.data.name,
+          title: item.data.title,
+          price: item.data.price,
+          totalPrice: item.data.totalPrice,
+          quantity: item.data.quantity,
+          status: item.data.status,
+          orderId: item.data.orderId,
+          orderNumber: item.data.orderNumber,
+          productName: item.data.productName,
+          currency: item.data.currency,
+          createdAt: item.data.createdAt,
+          rating: item.data.rating,
+          code: item.data.code,
+          discountType: item.data.discountType,
+          discountValue: item.data.discountValue,
+          score: item.data.score,
+          similarity: item.data.similarity,
+        };
+
+        // Remove undefined values from metadata
+        Object.keys(fullMetadata).forEach(key => {
+          if (fullMetadata[key] === undefined) {
+            delete fullMetadata[key];
+          }
+        });
+
+        return {
+          id: item.data.id || item.data.orderId?.toString() || item.data.sku || Date.now().toString(),
+          vectorSpace: item.type === "document" ? (item.data.metadata?.category?.toLowerCase() || "product") : item.type,
+          contentSnippet: content,
+          metadata: fullMetadata,
+          source: item.type,
+          url: item.data.url || "",
+          imageUrl: item.data.imageUrl || item.data.metadata?.imageUrl || "",
+        };
+      });
 
       // Get active attachment IDs
       const activeAttachmentIds = attachmentsWithMetadata.map(a => a.id);
