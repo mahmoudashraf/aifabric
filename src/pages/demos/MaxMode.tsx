@@ -1360,13 +1360,25 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             exit={{ scale: 0 }}
             className="md:hidden fixed top-14 right-4 z-20"
           >
-            <Button
-              onClick={() => setIsQuickActionsOpen(true)}
-              size="lg"
-              className="h-14 w-14 rounded-full bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white shadow-2xl border-2 border-white/30"
-            >
-              <Zap className="h-6 w-6" />
-            </Button>
+            <div className="flex flex-col items-center gap-1">
+              <Button
+                onClick={() => setIsQuickActionsOpen(true)}
+                size="lg"
+                className="h-14 w-14 rounded-full bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white shadow-2xl border-2 border-white/30"
+              >
+                <Zap className="h-6 w-6" />
+              </Button>
+              {/* Position indicator - Mobile */}
+              <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm ${
+                currentPosition === "checkout"
+                  ? "bg-orange-500 text-white"
+                  : currentPosition === "catalog"
+                  ? "bg-blue-500 text-white"
+                  : "bg-green-500 text-white"
+              }`}>
+                {currentPosition}
+              </span>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -3035,6 +3047,16 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               } pr-14 md:pr-16 text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed transition-all`}
               style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', fontSize: '16px' }}
             />
+            {/* Position indicator - Desktop (above send button) */}
+            <span className={`hidden md:block absolute right-3 bottom-16 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm ${
+              currentPosition === "checkout"
+                ? "bg-orange-500 text-white"
+                : currentPosition === "catalog"
+                ? "bg-blue-500 text-white"
+                : "bg-green-500 text-white"
+            }`}>
+              {currentPosition}
+            </span>
             <Button
               size="icon"
               onClick={() => handleChatQuery()}
