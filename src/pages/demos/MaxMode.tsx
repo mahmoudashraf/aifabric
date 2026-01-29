@@ -1521,7 +1521,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       {/* Main Split Content */}
       <div className="h-full relative">
         {/* Chat Messages - Full Width */}
-        <div className={`absolute top-12 md:top-[165px] left-0 right-0 bottom-0 overflow-y-auto px-3 md:px-6 py-4 md:py-6 pb-[180px] md:pb-[240px] transition-all ${isPanelVisible && contextDocuments.length > 0 ? (selectedProduct || isCartView ? 'md:pr-[730px]' : 'md:pr-[450px]') : 'md:pr-4'}`}>
+        <div className={`absolute top-12 md:top-[165px] left-0 right-0 bottom-0 overflow-y-auto px-3 md:px-6 py-4 md:py-6 pb-[180px] md:pb-[240px] transition-all ${isPanelVisible && contextDocuments.length > 0 ? (selectedProduct || isCartView ? 'md:pr-[730px]' : 'md:pr-[450px]') : 'md:pr-4'} ${isDebugModalOpen ? 'xl:pl-[420px]' : ''}`}>
           <div className="max-w-3xl mx-auto space-y-4">
             <AnimatePresence mode="popLayout">
               {chatMessages.map((message, index) => {
@@ -3184,36 +3184,36 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         </div>
       </div>
 
-      {/* Debug Info Modal */}
+      {/* Debug Panel - Fixed Side Panel on XL, Modal on smaller screens */}
       <AnimatePresence>
         {isDebugModalOpen && (
           <>
-            {/* Backdrop */}
+            {/* Backdrop - Only on smaller screens */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsDebugModalOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] xl:hidden"
             />
 
-            {/* Modal - Maximized */}
+            {/* Panel/Modal Container */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed inset-2 md:inset-4 lg:inset-6 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl z-[101] overflow-hidden flex flex-col"
+              className="fixed inset-2 md:inset-4 xl:inset-y-2 xl:left-2 xl:right-auto xl:w-[400px] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl z-[101] overflow-hidden flex flex-col"
             >
-              {/* Modal Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-purple-600 to-pink-600">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-white/20 flex items-center justify-center">
-                    <FileText className="h-5 w-5 text-white" />
+              {/* Panel Header */}
+              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-purple-600 to-pink-600">
+                <div className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-lg bg-white/20 flex items-center justify-center">
+                    <FileText className="h-4 w-4 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-bold text-white">API Debug Inspector</h2>
-                    <p className="text-xs text-white/70">Request & Response Details</p>
+                    <h2 className="text-sm font-bold text-white">API Debug Inspector</h2>
+                    <p className="text-[10px] text-white/70">Request & Response</p>
                   </div>
                 </div>
                 <Button
@@ -3223,14 +3223,14 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     setIsDebugModalOpen(false);
                     setSelectedDebugMessage(null);
                   }}
-                  className="h-8 w-8 rounded-lg text-white hover:bg-white/20"
+                  className="h-7 w-7 rounded-lg text-white hover:bg-white/20"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-4 w-4" />
                 </Button>
               </div>
 
-              {/* Modal Content */}
-              <div className="flex-1 overflow-auto p-4 md:p-6">
+              {/* Panel Content - Vertical Layout (Request then Response) */}
+              <div className="flex-1 overflow-auto p-3">
                 {(() => {
                   // Use selected message debug data or fall back to last request/response
                   const debugRequest = selectedDebugMessage?.debugData?.request || lastRequestData;
@@ -3238,51 +3238,51 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
                   if (!debugRequest && !debugResponse) {
                     return (
-                      <div className="flex flex-col items-center justify-center h-full text-center py-12">
-                        <div className="h-16 w-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
-                          <Info className="h-8 w-8 text-gray-400" />
+                      <div className="flex flex-col items-center justify-center h-full text-center py-8">
+                        <div className="h-12 w-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-3">
+                          <Info className="h-6 w-6 text-gray-400" />
                         </div>
-                        <h3 className="text-lg font-semibold text-gray-600 dark:text-gray-300">No API Calls Yet</h3>
-                        <p className="text-sm text-gray-500 mt-2">Send a message to see request and response details here.</p>
+                        <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-300">No API Calls Yet</h3>
+                        <p className="text-xs text-gray-500 mt-1">Send a message to see details here.</p>
                       </div>
                     );
                   }
 
                   return (
-                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
+                  <div className="space-y-4">
                     {/* Request Section */}
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className="h-8 w-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                          <ArrowRight className="h-4 w-4 text-blue-600" />
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <div className="h-6 w-6 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                          <ArrowRight className="h-3 w-3 text-blue-600" />
                         </div>
-                        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">Request</h3>
+                        <h3 className="text-sm font-bold text-gray-800 dark:text-gray-200">Request</h3>
                         {debugRequest?.timestamp && (
-                          <span className="text-xs text-gray-500 ml-auto">{new Date(debugRequest.timestamp).toLocaleTimeString()}</span>
+                          <span className="text-[10px] text-gray-500 ml-auto">{new Date(debugRequest.timestamp).toLocaleTimeString()}</span>
                         )}
                       </div>
 
                       {debugRequest && (
-                        <div className="space-y-3">
+                        <div className="space-y-2">
                           {/* Endpoint */}
-                          <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+                          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
                             <div className="flex items-center gap-2">
-                              <span className="px-2 py-1 text-xs font-bold bg-green-500 text-white rounded">POST</span>
-                              <span className="text-xs text-gray-500 truncate">{debugRequest.endpoint}</span>
+                              <span className="px-1.5 py-0.5 text-[10px] font-bold bg-green-500 text-white rounded">POST</span>
+                              <span className="text-[10px] text-gray-500 truncate">{debugRequest.endpoint}</span>
                             </div>
                           </div>
 
                           {/* Query */}
-                          <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
-                            <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Query</h4>
-                            <p className="text-sm text-gray-800 dark:text-gray-200">{debugRequest.payload?.query}</p>
+                          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
+                            <h4 className="text-[10px] font-semibold text-gray-500 uppercase mb-1">Query</h4>
+                            <p className="text-xs text-gray-800 dark:text-gray-200">{debugRequest.payload?.query}</p>
                           </div>
 
                           {/* Position & Mode */}
-                          <div className="grid grid-cols-2 gap-2">
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">Position</h4>
-                              <span className={`inline-block px-2 py-1 text-xs font-bold rounded-full ${
+                          <div className="grid grid-cols-2 gap-1.5">
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
+                              <h4 className="text-[9px] font-semibold text-gray-500 uppercase mb-0.5">Position</h4>
+                              <span className={`inline-block px-1.5 py-0.5 text-[10px] font-bold rounded ${
                                 debugRequest.payload?.position === "checkout"
                                   ? "bg-orange-500 text-white"
                                   : debugRequest.payload?.position === "catalog"
@@ -3292,9 +3292,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                 {debugRequest.payload?.position || "landing"}
                               </span>
                             </div>
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">Mode</h4>
-                              <span className={`inline-block px-2 py-1 text-xs font-bold rounded-full ${
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
+                              <h4 className="text-[9px] font-semibold text-gray-500 uppercase mb-0.5">Mode</h4>
+                              <span className={`inline-block px-1.5 py-0.5 text-[10px] font-bold rounded ${
                                 debugRequest.payload?.mode === "copilot"
                                   ? "bg-purple-500 text-white"
                                   : "bg-indigo-500 text-white"
@@ -3306,18 +3306,18 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
                           {/* Attachments */}
                           {debugRequest.payload?.attachments && debugRequest.payload.attachments.length > 0 && (
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
+                              <h4 className="text-[10px] font-semibold text-gray-500 uppercase mb-1">
                                 Attachments ({debugRequest.payload.attachments.length})
                               </h4>
-                              <div className="space-y-1 max-h-32 overflow-auto">
+                              <div className="space-y-0.5 max-h-20 overflow-auto">
                                 {debugRequest.payload.attachments.map((att: any, idx: number) => (
-                                  <div key={idx} className="text-xs bg-white dark:bg-gray-700 rounded-lg p-2">
-                                    <div className="flex items-center gap-2">
-                                      <span className="px-1.5 py-0.5 bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 rounded text-[10px] font-medium">
+                                  <div key={idx} className="text-[10px] bg-white dark:bg-gray-700 rounded px-1.5 py-1">
+                                    <div className="flex items-center gap-1">
+                                      <span className="px-1 py-0.5 bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 rounded text-[8px] font-medium">
                                         {att.vectorSpace}
                                       </span>
-                                      <span className="text-gray-600 dark:text-gray-300 truncate">{att.id}</span>
+                                      <span className="text-gray-600 dark:text-gray-300 truncate text-[9px]">{att.id}</span>
                                     </div>
                                   </div>
                                 ))}
@@ -3325,12 +3325,12 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             </div>
                           )}
 
-                          {/* Full Payload - Expandable */}
-                          <details className="bg-gray-50 dark:bg-gray-800 rounded-xl" open>
-                            <summary className="px-3 py-2 cursor-pointer text-xs font-semibold text-gray-500 uppercase hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl">
+                          {/* Full Payload - Collapsed by default */}
+                          <details className="bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <summary className="px-2 py-1.5 cursor-pointer text-[10px] font-semibold text-gray-500 uppercase hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
                               Full Request Payload
                             </summary>
-                            <pre className="px-3 pb-3 text-[10px] overflow-auto max-h-[400px] text-gray-700 dark:text-gray-300 font-mono">
+                            <pre className="px-2 pb-2 text-[8px] overflow-auto max-h-32 text-gray-700 dark:text-gray-300 font-mono">
                               {JSON.stringify(debugRequest.payload, null, 2)}
                             </pre>
                           </details>
@@ -3339,14 +3339,14 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     </div>
 
                     {/* Response Section */}
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="h-8 w-8 rounded-lg bg-green-500/10 flex items-center justify-center">
-                          <CheckCircle2 className="h-4 w-4 text-green-600" />
+                    <div className="space-y-2 border-t border-gray-200 dark:border-gray-700 pt-3">
+                      <div className="flex items-center gap-2">
+                        <div className="h-6 w-6 rounded-lg bg-green-500/10 flex items-center justify-center">
+                          <CheckCircle2 className="h-3 w-3 text-green-600" />
                         </div>
-                        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">Response</h3>
+                        <h3 className="text-sm font-bold text-gray-800 dark:text-gray-200">Response</h3>
                         {debugResponse?.timestamp && (
-                          <span className="text-xs text-gray-500 ml-auto">{new Date(debugResponse.timestamp).toLocaleTimeString()}</span>
+                          <span className="text-[10px] text-gray-500 ml-auto">{new Date(debugResponse.timestamp).toLocaleTimeString()}</span>
                         )}
                       </div>
 
