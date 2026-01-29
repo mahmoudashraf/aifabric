@@ -365,6 +365,12 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   // Position state for routing
   const [currentPosition, setCurrentPosition] = useState<"landing" | "catalog" | "checkout">("landing");
   const [currentMode, setCurrentMode] = useState<"navigator" | "copilot">("navigator");
+
+  // Debug modal state - stores last request/response for inspection
+  const [isDebugModalOpen, setIsDebugModalOpen] = useState(false);
+  const [lastRequestData, setLastRequestData] = useState<any>(null);
+  const [lastResponseData, setLastResponseData] = useState<any>(null);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const latestMessageRef = useRef<HTMLDivElement>(null);
   const contextPanelRef = useRef<HTMLDivElement>(null);
@@ -1108,26 +1114,44 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       // Get active attachment IDs
       const activeAttachmentIds = attachmentsWithMetadata.map(a => a.id);
 
+      // Build request payload
+      const requestPayload = {
+        query,
+        userId: "demo-user",
+        sessionId: "demo-session-max",
+        conversationId: currentConversationId || undefined,
+        position,
+        mode,
+        attachments: attachmentsWithMetadata.length > 0 ? attachmentsWithMetadata : undefined,
+        activeAttachmentIds: activeAttachmentIds.length > 0 ? activeAttachmentIds : undefined,
+      };
+
+      // Store request data for debug modal
+      setLastRequestData({
+        endpoint: `${API_BASE_URL}/chat/query`,
+        method: "POST",
+        timestamp: new Date().toISOString(),
+        payload: requestPayload,
+      });
+
       const response = await fetch(`${API_BASE_URL}/chat/query`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          query,
-          userId: "demo-user",
-          sessionId: "demo-session-max",
-          conversationId: currentConversationId || undefined,
-          position,
-          mode,
-          attachments: attachmentsWithMetadata.length > 0 ? attachmentsWithMetadata : undefined,
-          activeAttachmentIds: activeAttachmentIds.length > 0 ? activeAttachmentIds : undefined,
-        }),
+        body: JSON.stringify(requestPayload),
       });
 
       if (!response.ok) throw new Error("Failed to process query");
 
       const data = await response.json();
+
+      // Store response data for debug modal
+      setLastResponseData({
+        timestamp: new Date().toISOString(),
+        status: response.status,
+        data: data,
+      });
 
       console.log("API Response:", data); // Debug log
 
@@ -1368,16 +1392,25 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               >
                 <Zap className="h-6 w-6" />
               </Button>
-              {/* Position indicator - Mobile */}
-              <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm ${
-                currentPosition === "checkout"
-                  ? "bg-orange-500 text-white"
-                  : currentPosition === "catalog"
-                  ? "bg-blue-500 text-white"
-                  : "bg-green-500 text-white"
-              }`}>
-                {currentPosition}
-              </span>
+              {/* Position indicator and Debug button - Mobile */}
+              <div className="flex items-center gap-1">
+                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm ${
+                  currentPosition === "checkout"
+                    ? "bg-orange-500 text-white"
+                    : currentPosition === "catalog"
+                    ? "bg-blue-500 text-white"
+                    : "bg-green-500 text-white"
+                }`}>
+                  {currentPosition}
+                </span>
+                <button
+                  onClick={() => setIsDebugModalOpen(true)}
+                  className="h-5 w-5 rounded-full bg-gray-800/80 text-white flex items-center justify-center hover:bg-gray-700 transition-colors"
+                  title="View API Debug Info"
+                >
+                  <Info className="h-3 w-3" />
+                </button>
+              </div>
             </div>
           </motion.div>
         )}
@@ -3047,16 +3080,25 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               } pr-14 md:pr-16 text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed transition-all`}
               style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', fontSize: '16px' }}
             />
-            {/* Position indicator - Desktop (above send button) */}
-            <span className={`hidden md:block absolute right-3 bottom-16 text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm ${
-              currentPosition === "checkout"
-                ? "bg-orange-500 text-white"
-                : currentPosition === "catalog"
-                ? "bg-blue-500 text-white"
-                : "bg-green-500 text-white"
-            }`}>
-              {currentPosition}
-            </span>
+            {/* Position indicator and Debug button - Desktop (above send button) */}
+            <div className="hidden md:flex absolute right-3 bottom-16 items-center gap-1">
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm ${
+                currentPosition === "checkout"
+                  ? "bg-orange-500 text-white"
+                  : currentPosition === "catalog"
+                  ? "bg-blue-500 text-white"
+                  : "bg-green-500 text-white"
+              }`}>
+                {currentPosition}
+              </span>
+              <button
+                onClick={() => setIsDebugModalOpen(true)}
+                className="h-5 w-5 rounded-full bg-gray-800/80 text-white flex items-center justify-center hover:bg-gray-700 transition-colors"
+                title="View API Debug Info"
+              >
+                <Info className="h-3 w-3" />
+              </button>
+            </div>
             <Button
               size="icon"
               onClick={() => handleChatQuery()}
@@ -3072,6 +3114,272 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           </div>
         </div>
       </div>
+
+      {/* Debug Info Modal */}
+      <AnimatePresence>
+        {isDebugModalOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsDebugModalOpen(false)}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
+            />
+
+            {/* Modal */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="fixed inset-4 md:inset-10 lg:inset-20 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl z-[101] overflow-hidden flex flex-col"
+            >
+              {/* Modal Header */}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-purple-600 to-pink-600">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-white/20 flex items-center justify-center">
+                    <FileText className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-bold text-white">API Debug Inspector</h2>
+                    <p className="text-xs text-white/70">Request & Response Details</p>
+                  </div>
+                </div>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => setIsDebugModalOpen(false)}
+                  className="h-8 w-8 rounded-lg text-white hover:bg-white/20"
+                >
+                  <X className="h-5 w-5" />
+                </Button>
+              </div>
+
+              {/* Modal Content */}
+              <div className="flex-1 overflow-auto p-6">
+                {!lastRequestData && !lastResponseData ? (
+                  <div className="flex flex-col items-center justify-center h-full text-center py-12">
+                    <div className="h-16 w-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
+                      <Info className="h-8 w-8 text-gray-400" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-600 dark:text-gray-300">No API Calls Yet</h3>
+                    <p className="text-sm text-gray-500 mt-2">Send a message to see request and response details here.</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Request Section */}
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="h-8 w-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                          <ArrowRight className="h-4 w-4 text-blue-600" />
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">Request</h3>
+                        {lastRequestData?.timestamp && (
+                          <span className="text-xs text-gray-500 ml-auto">{new Date(lastRequestData.timestamp).toLocaleTimeString()}</span>
+                        )}
+                      </div>
+
+                      {lastRequestData && (
+                        <div className="space-y-3">
+                          {/* Endpoint */}
+                          <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="px-2 py-1 text-xs font-bold bg-green-500 text-white rounded">POST</span>
+                              <span className="text-xs text-gray-500 truncate">{lastRequestData.endpoint}</span>
+                            </div>
+                          </div>
+
+                          {/* Query */}
+                          <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                            <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Query</h4>
+                            <p className="text-sm text-gray-800 dark:text-gray-200">{lastRequestData.payload?.query}</p>
+                          </div>
+
+                          {/* Position & Mode */}
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Position</h4>
+                              <span className={`inline-block px-2 py-1 text-xs font-bold rounded-full ${
+                                lastRequestData.payload?.position === "checkout"
+                                  ? "bg-orange-500 text-white"
+                                  : lastRequestData.payload?.position === "catalog"
+                                  ? "bg-blue-500 text-white"
+                                  : "bg-green-500 text-white"
+                              }`}>
+                                {lastRequestData.payload?.position || "landing"}
+                              </span>
+                            </div>
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Mode</h4>
+                              <span className={`inline-block px-2 py-1 text-xs font-bold rounded-full ${
+                                lastRequestData.payload?.mode === "copilot"
+                                  ? "bg-purple-500 text-white"
+                                  : "bg-indigo-500 text-white"
+                              }`}>
+                                {lastRequestData.payload?.mode || "navigator"}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Attachments */}
+                          {lastRequestData.payload?.attachments && lastRequestData.payload.attachments.length > 0 && (
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">
+                                Attachments ({lastRequestData.payload.attachments.length})
+                              </h4>
+                              <div className="space-y-2 max-h-40 overflow-auto">
+                                {lastRequestData.payload.attachments.map((att: any, idx: number) => (
+                                  <div key={idx} className="text-xs bg-white dark:bg-gray-700 rounded-lg p-2">
+                                    <div className="flex items-center gap-2">
+                                      <span className="px-1.5 py-0.5 bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 rounded text-[10px] font-medium">
+                                        {att.vectorSpace}
+                                      </span>
+                                      <span className="text-gray-600 dark:text-gray-300 truncate">{att.id}</span>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Full Payload */}
+                          <details className="bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <summary className="px-4 py-3 cursor-pointer text-xs font-semibold text-gray-500 uppercase hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl">
+                              Full Request Payload
+                            </summary>
+                            <pre className="px-4 pb-4 text-xs overflow-auto max-h-60 text-gray-700 dark:text-gray-300">
+                              {JSON.stringify(lastRequestData.payload, null, 2)}
+                            </pre>
+                          </details>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Response Section */}
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="h-8 w-8 rounded-lg bg-green-500/10 flex items-center justify-center">
+                          <CheckCircle2 className="h-4 w-4 text-green-600" />
+                        </div>
+                        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">Response</h3>
+                        {lastResponseData?.timestamp && (
+                          <span className="text-xs text-gray-500 ml-auto">{new Date(lastResponseData.timestamp).toLocaleTimeString()}</span>
+                        )}
+                      </div>
+
+                      {lastResponseData && (
+                        <div className="space-y-3">
+                          {/* Status & Type */}
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Status</h4>
+                              <span className={`inline-block px-2 py-1 text-xs font-bold rounded-full ${
+                                lastResponseData.data?.success ? "bg-green-500 text-white" : "bg-red-500 text-white"
+                              }`}>
+                                {lastResponseData.data?.success ? "Success" : "Failed"}
+                              </span>
+                            </div>
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Result Type</h4>
+                              <span className={`inline-block px-2 py-1 text-xs font-bold rounded-full ${
+                                lastResponseData.data?.result?.type === "ACTION_EXECUTED" ? "bg-green-500 text-white" :
+                                lastResponseData.data?.result?.type === "CONFIRMATION_REQUIRED" ? "bg-yellow-500 text-white" :
+                                lastResponseData.data?.result?.type === "INFORMATION_PROVIDED" ? "bg-blue-500 text-white" :
+                                "bg-gray-500 text-white"
+                              }`}>
+                                {lastResponseData.data?.result?.type || "N/A"}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Message */}
+                          {lastResponseData.data?.result?.sanitizedPayload?.message && (
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Message</h4>
+                              <p className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap max-h-32 overflow-auto">
+                                {lastResponseData.data.result.sanitizedPayload.message}
+                              </p>
+                            </div>
+                          )}
+
+                          {/* Orchestration Policy */}
+                          {lastResponseData.data?.result?.metadata?.orchestrationPolicy && (
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Orchestration Policy</h4>
+                              <div className="flex flex-wrap gap-2">
+                                <span className="px-2 py-1 text-xs bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 rounded-full">
+                                  {lastResponseData.data.result.metadata.orchestrationPolicy.profile}
+                                </span>
+                                <span className="px-2 py-1 text-xs bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 rounded-full">
+                                  Mode: {lastResponseData.data.result.metadata.orchestrationPolicy.mode}
+                                </span>
+                                <span className="px-2 py-1 text-xs bg-cyan-100 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300 rounded-full">
+                                  {lastResponseData.data.result.metadata.orchestrationPolicy.informationModeEffective}
+                                </span>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Documents Count */}
+                          {lastResponseData.data?.result?.data?.documents && (
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Retrieved Documents</h4>
+                              <div className="flex items-center gap-4">
+                                <div className="text-center">
+                                  <div className="text-2xl font-bold text-purple-600">{lastResponseData.data.result.data.documents.length}</div>
+                                  <div className="text-xs text-gray-500">Documents</div>
+                                </div>
+                                {lastResponseData.data.result.data.confidenceScore && (
+                                  <div className="text-center">
+                                    <div className="text-2xl font-bold text-green-600">
+                                      {(lastResponseData.data.result.data.confidenceScore * 100).toFixed(1)}%
+                                    </div>
+                                    <div className="text-xs text-gray-500">Confidence</div>
+                                  </div>
+                                )}
+                                {lastResponseData.data.result.data.processingTimeMs && (
+                                  <div className="text-center">
+                                    <div className="text-2xl font-bold text-blue-600">
+                                      {lastResponseData.data.result.data.processingTimeMs}ms
+                                    </div>
+                                    <div className="text-xs text-gray-500">Processing</div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Action Result */}
+                          {lastResponseData.data?.result?.data?.actionResult && (
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Action Result</h4>
+                              <pre className="text-xs overflow-auto max-h-40 text-gray-700 dark:text-gray-300">
+                                {JSON.stringify(lastResponseData.data.result.data.actionResult, null, 2)}
+                              </pre>
+                            </div>
+                          )}
+
+                          {/* Full Response */}
+                          <details className="bg-gray-50 dark:bg-gray-800 rounded-xl">
+                            <summary className="px-4 py-3 cursor-pointer text-xs font-semibold text-gray-500 uppercase hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl">
+                              Full Response Data
+                            </summary>
+                            <pre className="px-4 pb-4 text-xs overflow-auto max-h-60 text-gray-700 dark:text-gray-300">
+                              {JSON.stringify(lastResponseData.data, null, 2)}
+                            </pre>
+                          </details>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };
