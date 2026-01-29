@@ -95,6 +95,20 @@ interface ChatResult {
   sanitizedPayload: SanitizedPayload;
 }
 
+interface DebugData {
+  request: {
+    endpoint: string;
+    method: string;
+    timestamp: string;
+    payload: any;
+  };
+  response: {
+    timestamp: string;
+    status: number;
+    data: any;
+  };
+}
+
 interface ChatMessage {
   id: string;
   type: "user" | "ai";
@@ -104,6 +118,7 @@ interface ChatMessage {
   resultType?: ResultType;
   attachedItems?: Array<{ type: string; data: any }>;
   documents?: Document[];
+  debugData?: DebugData;
 }
 
 interface Document {
@@ -370,6 +385,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [isDebugModalOpen, setIsDebugModalOpen] = useState(false);
   const [lastRequestData, setLastRequestData] = useState<any>(null);
   const [lastResponseData, setLastResponseData] = useState<any>(null);
+  // Per-message debug data - when set, shows debug for specific message
+  const [selectedDebugMessage, setSelectedDebugMessage] = useState<ChatMessage | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const latestMessageRef = useRef<HTMLDivElement>(null);
@@ -1252,6 +1269,21 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         }));
       }
 
+      // Build debug data for this message
+      const messageDebugData: DebugData = {
+        request: {
+          endpoint: `${API_BASE_URL}/chat/query`,
+          method: "POST",
+          timestamp: new Date().toISOString(),
+          payload: requestPayload,
+        },
+        response: {
+          timestamp: new Date().toISOString(),
+          status: response.status,
+          data: data,
+        },
+      };
+
       const aiMessage: ChatMessage = {
         id: messageId,
         type: "ai",
@@ -1260,6 +1292,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         result: result,
         resultType: resultType,
         documents: messageDocs,
+        debugData: messageDebugData,
       };
 
       setChatMessages((prev) => [...prev, aiMessage]);
@@ -1511,11 +1544,26 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                       }`}
                     >
                       {message.type === "ai" && Icon && !styles?.hideBadge && (
-                        <div className={`px-3 md:px-4 py-1.5 md:py-2 border-b ${styles?.border} flex items-center gap-2 bg-white/50 dark:bg-gray-800/50`}>
-                          <Icon className={`h-3.5 w-3.5 md:h-4 md:w-4 ${styles?.iconColor}`} />
-                          <span className={`text-[11px] md:text-xs font-semibold ${styles?.text}`}>
-                            {styles?.label}
-                          </span>
+                        <div className={`px-3 md:px-4 py-1.5 md:py-2 border-b ${styles?.border} flex items-center justify-between bg-white/50 dark:bg-gray-800/50`}>
+                          <div className="flex items-center gap-2">
+                            <Icon className={`h-3.5 w-3.5 md:h-4 md:w-4 ${styles?.iconColor}`} />
+                            <span className={`text-[11px] md:text-xs font-semibold ${styles?.text}`}>
+                              {styles?.label}
+                            </span>
+                          </div>
+                          {message.debugData && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedDebugMessage(message);
+                                setIsDebugModalOpen(true);
+                              }}
+                              className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                              title="View API Debug Data"
+                            >
+                              <Info className="h-3.5 w-3.5 text-gray-500 hover:text-purple-600" />
+                            </button>
+                          )}
                         </div>
                       )}
                       <div className="p-3 md:p-4">
@@ -1654,6 +1702,23 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                               }, 100);
                             }}
                           />
+                        )}
+                        {/* Debug button for messages without header badge */}
+                        {message.type === "ai" && message.debugData && styles?.hideBadge && (
+                          <div className="mt-3 flex justify-end">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedDebugMessage(message);
+                                setIsDebugModalOpen(true);
+                              }}
+                              className="flex items-center gap-1 text-[10px] text-gray-400 hover:text-purple-600 transition-colors"
+                              title="View API Debug Data"
+                            >
+                              <Info className="h-3 w-3" />
+                              <span>Debug</span>
+                            </button>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -3150,7 +3215,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 <Button
                   size="icon"
                   variant="ghost"
-                  onClick={() => setIsDebugModalOpen(false)}
+                  onClick={() => {
+                    setIsDebugModalOpen(false);
+                    setSelectedDebugMessage(null);
+                  }}
                   className="h-8 w-8 rounded-lg text-white hover:bg-white/20"
                 >
                   <X className="h-5 w-5" />
@@ -3159,15 +3227,24 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
               {/* Modal Content */}
               <div className="flex-1 overflow-auto p-4 md:p-6">
-                {!lastRequestData && !lastResponseData ? (
-                  <div className="flex flex-col items-center justify-center h-full text-center py-12">
-                    <div className="h-16 w-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
-                      <Info className="h-8 w-8 text-gray-400" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-600 dark:text-gray-300">No API Calls Yet</h3>
-                    <p className="text-sm text-gray-500 mt-2">Send a message to see request and response details here.</p>
-                  </div>
-                ) : (
+                {(() => {
+                  // Use selected message debug data or fall back to last request/response
+                  const debugRequest = selectedDebugMessage?.debugData?.request || lastRequestData;
+                  const debugResponse = selectedDebugMessage?.debugData?.response || lastResponseData;
+
+                  if (!debugRequest && !debugResponse) {
+                    return (
+                      <div className="flex flex-col items-center justify-center h-full text-center py-12">
+                        <div className="h-16 w-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
+                          <Info className="h-8 w-8 text-gray-400" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-600 dark:text-gray-300">No API Calls Yet</h3>
+                        <p className="text-sm text-gray-500 mt-2">Send a message to see request and response details here.</p>
+                      </div>
+                    );
+                  }
+
+                  return (
                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
                     {/* Request Section */}
                     <div className="space-y-3">
@@ -3176,25 +3253,25 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           <ArrowRight className="h-4 w-4 text-blue-600" />
                         </div>
                         <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">Request</h3>
-                        {lastRequestData?.timestamp && (
-                          <span className="text-xs text-gray-500 ml-auto">{new Date(lastRequestData.timestamp).toLocaleTimeString()}</span>
+                        {debugRequest?.timestamp && (
+                          <span className="text-xs text-gray-500 ml-auto">{new Date(debugRequest.timestamp).toLocaleTimeString()}</span>
                         )}
                       </div>
 
-                      {lastRequestData && (
+                      {debugRequest && (
                         <div className="space-y-3">
                           {/* Endpoint */}
                           <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                             <div className="flex items-center gap-2">
                               <span className="px-2 py-1 text-xs font-bold bg-green-500 text-white rounded">POST</span>
-                              <span className="text-xs text-gray-500 truncate">{lastRequestData.endpoint}</span>
+                              <span className="text-xs text-gray-500 truncate">{debugRequest.endpoint}</span>
                             </div>
                           </div>
 
                           {/* Query */}
                           <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                             <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Query</h4>
-                            <p className="text-sm text-gray-800 dark:text-gray-200">{lastRequestData.payload?.query}</p>
+                            <p className="text-sm text-gray-800 dark:text-gray-200">{debugRequest.payload?.query}</p>
                           </div>
 
                           {/* Position & Mode */}
@@ -3202,35 +3279,35 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                               <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">Position</h4>
                               <span className={`inline-block px-2 py-1 text-xs font-bold rounded-full ${
-                                lastRequestData.payload?.position === "checkout"
+                                debugRequest.payload?.position === "checkout"
                                   ? "bg-orange-500 text-white"
-                                  : lastRequestData.payload?.position === "catalog"
+                                  : debugRequest.payload?.position === "catalog"
                                   ? "bg-blue-500 text-white"
                                   : "bg-green-500 text-white"
                               }`}>
-                                {lastRequestData.payload?.position || "landing"}
+                                {debugRequest.payload?.position || "landing"}
                               </span>
                             </div>
                             <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                               <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">Mode</h4>
                               <span className={`inline-block px-2 py-1 text-xs font-bold rounded-full ${
-                                lastRequestData.payload?.mode === "copilot"
+                                debugRequest.payload?.mode === "copilot"
                                   ? "bg-purple-500 text-white"
                                   : "bg-indigo-500 text-white"
                               }`}>
-                                {lastRequestData.payload?.mode || "navigator"}
+                                {debugRequest.payload?.mode || "navigator"}
                               </span>
                             </div>
                           </div>
 
                           {/* Attachments */}
-                          {lastRequestData.payload?.attachments && lastRequestData.payload.attachments.length > 0 && (
+                          {debugRequest.payload?.attachments && debugRequest.payload.attachments.length > 0 && (
                             <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                               <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">
-                                Attachments ({lastRequestData.payload.attachments.length})
+                                Attachments ({debugRequest.payload.attachments.length})
                               </h4>
                               <div className="space-y-1 max-h-32 overflow-auto">
-                                {lastRequestData.payload.attachments.map((att: any, idx: number) => (
+                                {debugRequest.payload.attachments.map((att: any, idx: number) => (
                                   <div key={idx} className="text-xs bg-white dark:bg-gray-700 rounded-lg p-2">
                                     <div className="flex items-center gap-2">
                                       <span className="px-1.5 py-0.5 bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 rounded text-[10px] font-medium">
@@ -3250,7 +3327,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                               Full Request Payload
                             </summary>
                             <pre className="px-3 pb-3 text-[10px] overflow-auto max-h-[400px] text-gray-700 dark:text-gray-300 font-mono">
-                              {JSON.stringify(lastRequestData.payload, null, 2)}
+                              {JSON.stringify(debugRequest.payload, null, 2)}
                             </pre>
                           </details>
                         </div>
@@ -3264,39 +3341,39 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           <CheckCircle2 className="h-4 w-4 text-green-600" />
                         </div>
                         <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">Response</h3>
-                        {lastResponseData?.timestamp && (
-                          <span className="text-xs text-gray-500 ml-auto">{new Date(lastResponseData.timestamp).toLocaleTimeString()}</span>
+                        {debugResponse?.timestamp && (
+                          <span className="text-xs text-gray-500 ml-auto">{new Date(debugResponse.timestamp).toLocaleTimeString()}</span>
                         )}
                       </div>
 
-                      {lastResponseData && (
+                      {debugResponse && (
                         <div className="space-y-3">
                           {/* Status & Type */}
                           <div className="grid grid-cols-2 gap-2">
                             <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                               <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">Status</h4>
                               <span className={`inline-block px-2 py-1 text-xs font-bold rounded-full ${
-                                lastResponseData.data?.success ? "bg-green-500 text-white" : "bg-red-500 text-white"
+                                debugResponse.data?.success ? "bg-green-500 text-white" : "bg-red-500 text-white"
                               }`}>
-                                {lastResponseData.data?.success ? "Success" : "Failed"}
+                                {debugResponse.data?.success ? "Success" : "Failed"}
                               </span>
                             </div>
                             <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                               <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">Result Type</h4>
                               <span className={`inline-block px-2 py-1 text-xs font-bold rounded-full ${
-                                lastResponseData.data?.result?.type === "ACTION_EXECUTED" ? "bg-green-500 text-white" :
-                                lastResponseData.data?.result?.type === "CONFIRMATION_REQUIRED" ? "bg-yellow-500 text-white" :
-                                lastResponseData.data?.result?.type === "INFORMATION_PROVIDED" ? "bg-blue-500 text-white" :
-                                lastResponseData.data?.result?.type === "ACTION_DENIED" ? "bg-red-500 text-white" :
+                                debugResponse.data?.result?.type === "ACTION_EXECUTED" ? "bg-green-500 text-white" :
+                                debugResponse.data?.result?.type === "CONFIRMATION_REQUIRED" ? "bg-yellow-500 text-white" :
+                                debugResponse.data?.result?.type === "INFORMATION_PROVIDED" ? "bg-blue-500 text-white" :
+                                debugResponse.data?.result?.type === "ACTION_DENIED" ? "bg-red-500 text-white" :
                                 "bg-gray-500 text-white"
                               }`}>
-                                {lastResponseData.data?.result?.type || "N/A"}
+                                {debugResponse.data?.result?.type || "N/A"}
                               </span>
                             </div>
                           </div>
 
                           {/* Orchestration Policy - Enhanced */}
-                          {lastResponseData.data?.result?.metadata?.orchestrationPolicy && (
+                          {debugResponse.data?.result?.metadata?.orchestrationPolicy && (
                             <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-xl p-3 border border-indigo-200 dark:border-indigo-800">
                               <h4 className="text-xs font-semibold text-indigo-700 dark:text-indigo-300 uppercase mb-2 flex items-center gap-1">
                                 <Sparkles className="h-3 w-3" /> Orchestration Policy
@@ -3305,26 +3382,26 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                 <div className="flex items-center justify-between bg-white/60 dark:bg-gray-800/60 rounded-lg px-3 py-2">
                                   <span className="text-xs text-gray-600 dark:text-gray-400">Profile</span>
                                   <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
-                                    {lastResponseData.data.result.metadata.orchestrationPolicy.profile}
+                                    {debugResponse.data.result.metadata.orchestrationPolicy.profile}
                                   </span>
                                 </div>
                                 <div className="flex items-center justify-between bg-white/60 dark:bg-gray-800/60 rounded-lg px-3 py-2">
                                   <span className="text-xs text-gray-600 dark:text-gray-400">Mode</span>
                                   <span className="text-xs font-bold text-purple-600 dark:text-purple-400">
-                                    {lastResponseData.data.result.metadata.orchestrationPolicy.mode}
+                                    {debugResponse.data.result.metadata.orchestrationPolicy.mode}
                                   </span>
                                 </div>
                                 <div className="flex items-center justify-between bg-white/60 dark:bg-gray-800/60 rounded-lg px-3 py-2">
                                   <span className="text-xs text-gray-600 dark:text-gray-400">Information Mode</span>
                                   <span className="text-xs font-bold text-cyan-600 dark:text-cyan-400">
-                                    {lastResponseData.data.result.metadata.orchestrationPolicy.informationModeEffective}
+                                    {debugResponse.data.result.metadata.orchestrationPolicy.informationModeEffective}
                                   </span>
                                 </div>
-                                {lastResponseData.data.result.metadata.orchestrationPolicy.modeSource && (
+                                {debugResponse.data.result.metadata.orchestrationPolicy.modeSource && (
                                   <div className="flex items-center justify-between bg-white/60 dark:bg-gray-800/60 rounded-lg px-3 py-2">
                                     <span className="text-xs text-gray-600 dark:text-gray-400">Mode Source</span>
                                     <span className="text-xs font-bold text-gray-600 dark:text-gray-400">
-                                      {lastResponseData.data.result.metadata.orchestrationPolicy.modeSource}
+                                      {debugResponse.data.result.metadata.orchestrationPolicy.modeSource}
                                     </span>
                                   </div>
                                 )}
@@ -3333,28 +3410,28 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           )}
 
                           {/* Key Metrics */}
-                          {(lastResponseData.data?.result?.data?.documents || lastResponseData.data?.result?.data?.confidenceScore || lastResponseData.data?.result?.data?.processingTimeMs) && (
+                          {(debugResponse.data?.result?.data?.documents || debugResponse.data?.result?.data?.confidenceScore || debugResponse.data?.result?.data?.processingTimeMs) && (
                             <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                               <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Key Metrics</h4>
                               <div className="grid grid-cols-3 gap-2">
-                                {lastResponseData.data?.result?.data?.documents && (
+                                {debugResponse.data?.result?.data?.documents && (
                                   <div className="text-center bg-white dark:bg-gray-700 rounded-lg p-2">
-                                    <div className="text-xl font-bold text-purple-600">{lastResponseData.data.result.data.documents.length}</div>
+                                    <div className="text-xl font-bold text-purple-600">{debugResponse.data.result.data.documents.length}</div>
                                     <div className="text-[10px] text-gray-500">Documents</div>
                                   </div>
                                 )}
-                                {lastResponseData.data?.result?.data?.confidenceScore && (
+                                {debugResponse.data?.result?.data?.confidenceScore && (
                                   <div className="text-center bg-white dark:bg-gray-700 rounded-lg p-2">
                                     <div className="text-xl font-bold text-green-600">
-                                      {(lastResponseData.data.result.data.confidenceScore * 100).toFixed(1)}%
+                                      {(debugResponse.data.result.data.confidenceScore * 100).toFixed(1)}%
                                     </div>
                                     <div className="text-[10px] text-gray-500">Confidence</div>
                                   </div>
                                 )}
-                                {lastResponseData.data?.result?.data?.processingTimeMs && (
+                                {debugResponse.data?.result?.data?.processingTimeMs && (
                                   <div className="text-center bg-white dark:bg-gray-700 rounded-lg p-2">
                                     <div className="text-xl font-bold text-blue-600">
-                                      {lastResponseData.data.result.data.processingTimeMs}ms
+                                      {debugResponse.data.result.data.processingTimeMs}ms
                                     </div>
                                     <div className="text-[10px] text-gray-500">Processing</div>
                                   </div>
@@ -3364,25 +3441,25 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           )}
 
                           {/* Extraction Diagnostics */}
-                          {lastResponseData.data?.result?.metadata?.extractionDiagnostics && (
+                          {debugResponse.data?.result?.metadata?.extractionDiagnostics && (
                             <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                               <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Extraction Diagnostics</h4>
                               <div className="grid grid-cols-3 gap-2 text-center">
                                 <div className="bg-white dark:bg-gray-700 rounded-lg p-2">
                                   <div className="text-sm font-bold text-gray-700 dark:text-gray-300">
-                                    {lastResponseData.data.result.metadata.extractionDiagnostics.extractionPath}
+                                    {debugResponse.data.result.metadata.extractionDiagnostics.extractionPath}
                                   </div>
                                   <div className="text-[10px] text-gray-500">Path</div>
                                 </div>
                                 <div className="bg-white dark:bg-gray-700 rounded-lg p-2">
                                   <div className="text-sm font-bold text-gray-700 dark:text-gray-300">
-                                    {lastResponseData.data.result.metadata.extractionDiagnostics.extractionAttempts}
+                                    {debugResponse.data.result.metadata.extractionDiagnostics.extractionAttempts}
                                   </div>
                                   <div className="text-[10px] text-gray-500">Attempts</div>
                                 </div>
                                 <div className="bg-white dark:bg-gray-700 rounded-lg p-2">
                                   <div className="text-sm font-bold text-gray-700 dark:text-gray-300">
-                                    {lastResponseData.data.result.metadata.extractionDiagnostics.llmCalls}
+                                    {debugResponse.data.result.metadata.extractionDiagnostics.llmCalls}
                                   </div>
                                   <div className="text-[10px] text-gray-500">LLM Calls</div>
                                 </div>
@@ -3391,36 +3468,36 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           )}
 
                           {/* Attachments Metadata */}
-                          {lastResponseData.data?.result?.metadata?.attachments && (
+                          {debugResponse.data?.result?.metadata?.attachments && (
                             <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                               <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Attachments Info</h4>
                               <div className="grid grid-cols-2 gap-2 text-xs">
                                 <div className="flex justify-between">
                                   <span className="text-gray-500">Provided:</span>
-                                  <span className="font-medium">{lastResponseData.data.result.metadata.attachments.providedCount}</span>
+                                  <span className="font-medium">{debugResponse.data.result.metadata.attachments.providedCount}</span>
                                 </div>
                                 <div className="flex justify-between">
                                   <span className="text-gray-500">Accepted:</span>
-                                  <span className="font-medium">{lastResponseData.data.result.metadata.attachments.acceptedCount}</span>
+                                  <span className="font-medium">{debugResponse.data.result.metadata.attachments.acceptedCount}</span>
                                 </div>
                                 <div className="flex justify-between">
                                   <span className="text-gray-500">Active Provided:</span>
-                                  <span className="font-medium">{lastResponseData.data.result.metadata.attachments.activeProvidedCount}</span>
+                                  <span className="font-medium">{debugResponse.data.result.metadata.attachments.activeProvidedCount}</span>
                                 </div>
                                 <div className="flex justify-between">
                                   <span className="text-gray-500">Active Resolved:</span>
-                                  <span className="font-medium">{lastResponseData.data.result.metadata.attachments.activeResolvedCount}</span>
+                                  <span className="font-medium">{debugResponse.data.result.metadata.attachments.activeResolvedCount}</span>
                                 </div>
                               </div>
                             </div>
                           )}
 
                           {/* Expanded Queries */}
-                          {lastResponseData.data?.result?.data?.expandedQueries && lastResponseData.data.result.data.expandedQueries.length > 0 && (
+                          {debugResponse.data?.result?.data?.expandedQueries && debugResponse.data.result.data.expandedQueries.length > 0 && (
                             <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                               <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Expanded Queries</h4>
                               <div className="space-y-1 max-h-24 overflow-auto">
-                                {lastResponseData.data.result.data.expandedQueries.map((q: string, idx: number) => (
+                                {debugResponse.data.result.data.expandedQueries.map((q: string, idx: number) => (
                                   <div key={idx} className="text-[10px] text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-700 rounded px-2 py-1 truncate">
                                     {q}
                                   </div>
@@ -3430,11 +3507,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           )}
 
                           {/* Action Result */}
-                          {lastResponseData.data?.result?.data?.actionResult && (
+                          {debugResponse.data?.result?.data?.actionResult && (
                             <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-3 border border-green-200 dark:border-green-800">
                               <h4 className="text-xs font-semibold text-green-700 dark:text-green-300 uppercase mb-2">Action Result</h4>
                               <pre className="text-[10px] overflow-auto max-h-32 text-gray-700 dark:text-gray-300 font-mono">
-                                {JSON.stringify(lastResponseData.data.result.data.actionResult, null, 2)}
+                                {JSON.stringify(debugResponse.data.result.data.actionResult, null, 2)}
                               </pre>
                             </div>
                           )}
@@ -3446,14 +3523,15 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                               <span className="text-[10px] text-gray-400 font-normal">Click to collapse</span>
                             </summary>
                             <pre className="px-3 pb-3 text-[10px] overflow-auto max-h-[500px] text-gray-700 dark:text-gray-300 font-mono whitespace-pre-wrap">
-                              {JSON.stringify(lastResponseData.data, null, 2)}
+                              {JSON.stringify(debugResponse.data, null, 2)}
                             </pre>
                           </details>
                         </div>
                       )}
                     </div>
                   </div>
-                )}
+                  );
+                })()}
               </div>
             </motion.div>
           </>
