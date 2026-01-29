@@ -3128,13 +3128,13 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
             />
 
-            {/* Modal */}
+            {/* Modal - Maximized */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed inset-4 md:inset-10 lg:inset-20 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl z-[101] overflow-hidden flex flex-col"
+              className="fixed inset-2 md:inset-4 lg:inset-6 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl z-[101] overflow-hidden flex flex-col"
             >
               {/* Modal Header */}
               <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-purple-600 to-pink-600">
@@ -3158,7 +3158,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               </div>
 
               {/* Modal Content */}
-              <div className="flex-1 overflow-auto p-6">
+              <div className="flex-1 overflow-auto p-4 md:p-6">
                 {!lastRequestData && !lastResponseData ? (
                   <div className="flex flex-col items-center justify-center h-full text-center py-12">
                     <div className="h-16 w-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
@@ -3168,9 +3168,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     <p className="text-sm text-gray-500 mt-2">Send a message to see request and response details here.</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
                     {/* Request Section */}
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                       <div className="flex items-center gap-2 mb-3">
                         <div className="h-8 w-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
                           <ArrowRight className="h-4 w-4 text-blue-600" />
@@ -3184,23 +3184,23 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                       {lastRequestData && (
                         <div className="space-y-3">
                           {/* Endpoint */}
-                          <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-                            <div className="flex items-center gap-2 mb-2">
+                          <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+                            <div className="flex items-center gap-2">
                               <span className="px-2 py-1 text-xs font-bold bg-green-500 text-white rounded">POST</span>
                               <span className="text-xs text-gray-500 truncate">{lastRequestData.endpoint}</span>
                             </div>
                           </div>
 
                           {/* Query */}
-                          <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                          <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                             <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Query</h4>
                             <p className="text-sm text-gray-800 dark:text-gray-200">{lastRequestData.payload?.query}</p>
                           </div>
 
                           {/* Position & Mode */}
-                          <div className="grid grid-cols-2 gap-3">
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Position</h4>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">Position</h4>
                               <span className={`inline-block px-2 py-1 text-xs font-bold rounded-full ${
                                 lastRequestData.payload?.position === "checkout"
                                   ? "bg-orange-500 text-white"
@@ -3211,8 +3211,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                 {lastRequestData.payload?.position || "landing"}
                               </span>
                             </div>
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Mode</h4>
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">Mode</h4>
                               <span className={`inline-block px-2 py-1 text-xs font-bold rounded-full ${
                                 lastRequestData.payload?.mode === "copilot"
                                   ? "bg-purple-500 text-white"
@@ -3225,11 +3225,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
                           {/* Attachments */}
                           {lastRequestData.payload?.attachments && lastRequestData.payload.attachments.length > 0 && (
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                               <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">
                                 Attachments ({lastRequestData.payload.attachments.length})
                               </h4>
-                              <div className="space-y-2 max-h-40 overflow-auto">
+                              <div className="space-y-1 max-h-32 overflow-auto">
                                 {lastRequestData.payload.attachments.map((att: any, idx: number) => (
                                   <div key={idx} className="text-xs bg-white dark:bg-gray-700 rounded-lg p-2">
                                     <div className="flex items-center gap-2">
@@ -3244,12 +3244,12 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             </div>
                           )}
 
-                          {/* Full Payload */}
-                          <details className="bg-gray-50 dark:bg-gray-800 rounded-xl">
-                            <summary className="px-4 py-3 cursor-pointer text-xs font-semibold text-gray-500 uppercase hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl">
+                          {/* Full Payload - Expandable */}
+                          <details className="bg-gray-50 dark:bg-gray-800 rounded-xl" open>
+                            <summary className="px-3 py-2 cursor-pointer text-xs font-semibold text-gray-500 uppercase hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl">
                               Full Request Payload
                             </summary>
-                            <pre className="px-4 pb-4 text-xs overflow-auto max-h-60 text-gray-700 dark:text-gray-300">
+                            <pre className="px-3 pb-3 text-[10px] overflow-auto max-h-[400px] text-gray-700 dark:text-gray-300 font-mono">
                               {JSON.stringify(lastRequestData.payload, null, 2)}
                             </pre>
                           </details>
@@ -3258,7 +3258,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     </div>
 
                     {/* Response Section */}
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                       <div className="flex items-center gap-2 mb-3">
                         <div className="h-8 w-8 rounded-lg bg-green-500/10 flex items-center justify-center">
                           <CheckCircle2 className="h-4 w-4 text-green-600" />
@@ -3272,21 +3272,22 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                       {lastResponseData && (
                         <div className="space-y-3">
                           {/* Status & Type */}
-                          <div className="grid grid-cols-2 gap-3">
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Status</h4>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">Status</h4>
                               <span className={`inline-block px-2 py-1 text-xs font-bold rounded-full ${
                                 lastResponseData.data?.success ? "bg-green-500 text-white" : "bg-red-500 text-white"
                               }`}>
                                 {lastResponseData.data?.success ? "Success" : "Failed"}
                               </span>
                             </div>
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Result Type</h4>
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">Result Type</h4>
                               <span className={`inline-block px-2 py-1 text-xs font-bold rounded-full ${
                                 lastResponseData.data?.result?.type === "ACTION_EXECUTED" ? "bg-green-500 text-white" :
                                 lastResponseData.data?.result?.type === "CONFIRMATION_REQUIRED" ? "bg-yellow-500 text-white" :
                                 lastResponseData.data?.result?.type === "INFORMATION_PROVIDED" ? "bg-blue-500 text-white" :
+                                lastResponseData.data?.result?.type === "ACTION_DENIED" ? "bg-red-500 text-white" :
                                 "bg-gray-500 text-white"
                               }`}>
                                 {lastResponseData.data?.result?.type || "N/A"}
@@ -3294,79 +3295,157 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             </div>
                           </div>
 
-                          {/* Message */}
-                          {lastResponseData.data?.result?.sanitizedPayload?.message && (
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Message</h4>
-                              <p className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap max-h-32 overflow-auto">
-                                {lastResponseData.data.result.sanitizedPayload.message}
-                              </p>
-                            </div>
-                          )}
-
-                          {/* Orchestration Policy */}
+                          {/* Orchestration Policy - Enhanced */}
                           {lastResponseData.data?.result?.metadata?.orchestrationPolicy && (
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Orchestration Policy</h4>
-                              <div className="flex flex-wrap gap-2">
-                                <span className="px-2 py-1 text-xs bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 rounded-full">
-                                  {lastResponseData.data.result.metadata.orchestrationPolicy.profile}
-                                </span>
-                                <span className="px-2 py-1 text-xs bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 rounded-full">
-                                  Mode: {lastResponseData.data.result.metadata.orchestrationPolicy.mode}
-                                </span>
-                                <span className="px-2 py-1 text-xs bg-cyan-100 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300 rounded-full">
-                                  {lastResponseData.data.result.metadata.orchestrationPolicy.informationModeEffective}
-                                </span>
+                            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-xl p-3 border border-indigo-200 dark:border-indigo-800">
+                              <h4 className="text-xs font-semibold text-indigo-700 dark:text-indigo-300 uppercase mb-2 flex items-center gap-1">
+                                <Sparkles className="h-3 w-3" /> Orchestration Policy
+                              </h4>
+                              <div className="grid grid-cols-1 gap-2">
+                                <div className="flex items-center justify-between bg-white/60 dark:bg-gray-800/60 rounded-lg px-3 py-2">
+                                  <span className="text-xs text-gray-600 dark:text-gray-400">Profile</span>
+                                  <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                                    {lastResponseData.data.result.metadata.orchestrationPolicy.profile}
+                                  </span>
+                                </div>
+                                <div className="flex items-center justify-between bg-white/60 dark:bg-gray-800/60 rounded-lg px-3 py-2">
+                                  <span className="text-xs text-gray-600 dark:text-gray-400">Mode</span>
+                                  <span className="text-xs font-bold text-purple-600 dark:text-purple-400">
+                                    {lastResponseData.data.result.metadata.orchestrationPolicy.mode}
+                                  </span>
+                                </div>
+                                <div className="flex items-center justify-between bg-white/60 dark:bg-gray-800/60 rounded-lg px-3 py-2">
+                                  <span className="text-xs text-gray-600 dark:text-gray-400">Information Mode</span>
+                                  <span className="text-xs font-bold text-cyan-600 dark:text-cyan-400">
+                                    {lastResponseData.data.result.metadata.orchestrationPolicy.informationModeEffective}
+                                  </span>
+                                </div>
+                                {lastResponseData.data.result.metadata.orchestrationPolicy.modeSource && (
+                                  <div className="flex items-center justify-between bg-white/60 dark:bg-gray-800/60 rounded-lg px-3 py-2">
+                                    <span className="text-xs text-gray-600 dark:text-gray-400">Mode Source</span>
+                                    <span className="text-xs font-bold text-gray-600 dark:text-gray-400">
+                                      {lastResponseData.data.result.metadata.orchestrationPolicy.modeSource}
+                                    </span>
+                                  </div>
+                                )}
                               </div>
                             </div>
                           )}
 
-                          {/* Documents Count */}
-                          {lastResponseData.data?.result?.data?.documents && (
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Retrieved Documents</h4>
-                              <div className="flex items-center gap-4">
-                                <div className="text-center">
-                                  <div className="text-2xl font-bold text-purple-600">{lastResponseData.data.result.data.documents.length}</div>
-                                  <div className="text-xs text-gray-500">Documents</div>
-                                </div>
-                                {lastResponseData.data.result.data.confidenceScore && (
-                                  <div className="text-center">
-                                    <div className="text-2xl font-bold text-green-600">
+                          {/* Key Metrics */}
+                          {(lastResponseData.data?.result?.data?.documents || lastResponseData.data?.result?.data?.confidenceScore || lastResponseData.data?.result?.data?.processingTimeMs) && (
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Key Metrics</h4>
+                              <div className="grid grid-cols-3 gap-2">
+                                {lastResponseData.data?.result?.data?.documents && (
+                                  <div className="text-center bg-white dark:bg-gray-700 rounded-lg p-2">
+                                    <div className="text-xl font-bold text-purple-600">{lastResponseData.data.result.data.documents.length}</div>
+                                    <div className="text-[10px] text-gray-500">Documents</div>
+                                  </div>
+                                )}
+                                {lastResponseData.data?.result?.data?.confidenceScore && (
+                                  <div className="text-center bg-white dark:bg-gray-700 rounded-lg p-2">
+                                    <div className="text-xl font-bold text-green-600">
                                       {(lastResponseData.data.result.data.confidenceScore * 100).toFixed(1)}%
                                     </div>
-                                    <div className="text-xs text-gray-500">Confidence</div>
+                                    <div className="text-[10px] text-gray-500">Confidence</div>
                                   </div>
                                 )}
-                                {lastResponseData.data.result.data.processingTimeMs && (
-                                  <div className="text-center">
-                                    <div className="text-2xl font-bold text-blue-600">
+                                {lastResponseData.data?.result?.data?.processingTimeMs && (
+                                  <div className="text-center bg-white dark:bg-gray-700 rounded-lg p-2">
+                                    <div className="text-xl font-bold text-blue-600">
                                       {lastResponseData.data.result.data.processingTimeMs}ms
                                     </div>
-                                    <div className="text-xs text-gray-500">Processing</div>
+                                    <div className="text-[10px] text-gray-500">Processing</div>
                                   </div>
                                 )}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Extraction Diagnostics */}
+                          {lastResponseData.data?.result?.metadata?.extractionDiagnostics && (
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Extraction Diagnostics</h4>
+                              <div className="grid grid-cols-3 gap-2 text-center">
+                                <div className="bg-white dark:bg-gray-700 rounded-lg p-2">
+                                  <div className="text-sm font-bold text-gray-700 dark:text-gray-300">
+                                    {lastResponseData.data.result.metadata.extractionDiagnostics.extractionPath}
+                                  </div>
+                                  <div className="text-[10px] text-gray-500">Path</div>
+                                </div>
+                                <div className="bg-white dark:bg-gray-700 rounded-lg p-2">
+                                  <div className="text-sm font-bold text-gray-700 dark:text-gray-300">
+                                    {lastResponseData.data.result.metadata.extractionDiagnostics.extractionAttempts}
+                                  </div>
+                                  <div className="text-[10px] text-gray-500">Attempts</div>
+                                </div>
+                                <div className="bg-white dark:bg-gray-700 rounded-lg p-2">
+                                  <div className="text-sm font-bold text-gray-700 dark:text-gray-300">
+                                    {lastResponseData.data.result.metadata.extractionDiagnostics.llmCalls}
+                                  </div>
+                                  <div className="text-[10px] text-gray-500">LLM Calls</div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Attachments Metadata */}
+                          {lastResponseData.data?.result?.metadata?.attachments && (
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Attachments Info</h4>
+                              <div className="grid grid-cols-2 gap-2 text-xs">
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500">Provided:</span>
+                                  <span className="font-medium">{lastResponseData.data.result.metadata.attachments.providedCount}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500">Accepted:</span>
+                                  <span className="font-medium">{lastResponseData.data.result.metadata.attachments.acceptedCount}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500">Active Provided:</span>
+                                  <span className="font-medium">{lastResponseData.data.result.metadata.attachments.activeProvidedCount}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500">Active Resolved:</span>
+                                  <span className="font-medium">{lastResponseData.data.result.metadata.attachments.activeResolvedCount}</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Expanded Queries */}
+                          {lastResponseData.data?.result?.data?.expandedQueries && lastResponseData.data.result.data.expandedQueries.length > 0 && (
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Expanded Queries</h4>
+                              <div className="space-y-1 max-h-24 overflow-auto">
+                                {lastResponseData.data.result.data.expandedQueries.map((q: string, idx: number) => (
+                                  <div key={idx} className="text-[10px] text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-700 rounded px-2 py-1 truncate">
+                                    {q}
+                                  </div>
+                                ))}
                               </div>
                             </div>
                           )}
 
                           {/* Action Result */}
                           {lastResponseData.data?.result?.data?.actionResult && (
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Action Result</h4>
-                              <pre className="text-xs overflow-auto max-h-40 text-gray-700 dark:text-gray-300">
+                            <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-3 border border-green-200 dark:border-green-800">
+                              <h4 className="text-xs font-semibold text-green-700 dark:text-green-300 uppercase mb-2">Action Result</h4>
+                              <pre className="text-[10px] overflow-auto max-h-32 text-gray-700 dark:text-gray-300 font-mono">
                                 {JSON.stringify(lastResponseData.data.result.data.actionResult, null, 2)}
                               </pre>
                             </div>
                           )}
 
-                          {/* Full Response */}
-                          <details className="bg-gray-50 dark:bg-gray-800 rounded-xl">
-                            <summary className="px-4 py-3 cursor-pointer text-xs font-semibold text-gray-500 uppercase hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl">
-                              Full Response Data
+                          {/* Full Response - Maximized */}
+                          <details className="bg-gray-50 dark:bg-gray-800 rounded-xl" open>
+                            <summary className="px-3 py-2 cursor-pointer text-xs font-semibold text-gray-500 uppercase hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl flex items-center justify-between">
+                              <span>Full Response Data</span>
+                              <span className="text-[10px] text-gray-400 font-normal">Click to collapse</span>
                             </summary>
-                            <pre className="px-4 pb-4 text-xs overflow-auto max-h-60 text-gray-700 dark:text-gray-300">
+                            <pre className="px-3 pb-3 text-[10px] overflow-auto max-h-[500px] text-gray-700 dark:text-gray-300 font-mono whitespace-pre-wrap">
                               {JSON.stringify(lastResponseData.data, null, 2)}
                             </pre>
                           </details>
