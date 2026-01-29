@@ -42,6 +42,8 @@ import {
   MessageSquare,
   List,
   ShoppingBag,
+  Maximize2,
+  Minimize2,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -95,6 +97,20 @@ interface ChatResult {
   sanitizedPayload: SanitizedPayload;
 }
 
+interface DebugData {
+  request: {
+    endpoint: string;
+    method: string;
+    timestamp: string;
+    payload: any;
+  };
+  response: {
+    timestamp: string;
+    status: number;
+    data: any;
+  };
+}
+
 interface ChatMessage {
   id: string;
   type: "user" | "ai";
@@ -104,6 +120,7 @@ interface ChatMessage {
   resultType?: ResultType;
   attachedItems?: Array<{ type: string; data: any }>;
   documents?: Document[];
+  debugData?: DebugData;
 }
 
 interface Document {
@@ -370,6 +387,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [isDebugModalOpen, setIsDebugModalOpen] = useState(false);
   const [lastRequestData, setLastRequestData] = useState<any>(null);
   const [lastResponseData, setLastResponseData] = useState<any>(null);
+  // Per-message debug data - when set, shows debug for specific message
+  const [selectedDebugMessage, setSelectedDebugMessage] = useState<ChatMessage | null>(null);
+  // Full JSON panel expansion state
+  const [isJsonPanelExpanded, setIsJsonPanelExpanded] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const latestMessageRef = useRef<HTMLDivElement>(null);
@@ -1252,6 +1273,21 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         }));
       }
 
+      // Build debug data for this message
+      const messageDebugData: DebugData = {
+        request: {
+          endpoint: `${API_BASE_URL}/chat/query`,
+          method: "POST",
+          timestamp: new Date().toISOString(),
+          payload: requestPayload,
+        },
+        response: {
+          timestamp: new Date().toISOString(),
+          status: response.status,
+          data: data,
+        },
+      };
+
       const aiMessage: ChatMessage = {
         id: messageId,
         type: "ai",
@@ -1260,6 +1296,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         result: result,
         resultType: resultType,
         documents: messageDocs,
+        debugData: messageDebugData,
       };
 
       setChatMessages((prev) => [...prev, aiMessage]);
@@ -1511,11 +1548,26 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                       }`}
                     >
                       {message.type === "ai" && Icon && !styles?.hideBadge && (
-                        <div className={`px-3 md:px-4 py-1.5 md:py-2 border-b ${styles?.border} flex items-center gap-2 bg-white/50 dark:bg-gray-800/50`}>
-                          <Icon className={`h-3.5 w-3.5 md:h-4 md:w-4 ${styles?.iconColor}`} />
-                          <span className={`text-[11px] md:text-xs font-semibold ${styles?.text}`}>
-                            {styles?.label}
-                          </span>
+                        <div className={`px-3 md:px-4 py-1.5 md:py-2 border-b ${styles?.border} flex items-center justify-between bg-white/50 dark:bg-gray-800/50`}>
+                          <div className="flex items-center gap-2">
+                            <Icon className={`h-3.5 w-3.5 md:h-4 md:w-4 ${styles?.iconColor}`} />
+                            <span className={`text-[11px] md:text-xs font-semibold ${styles?.text}`}>
+                              {styles?.label}
+                            </span>
+                          </div>
+                          {message.debugData && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedDebugMessage(message);
+                                setIsDebugModalOpen(true);
+                              }}
+                              className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                              title="View API Debug Data"
+                            >
+                              <Info className="h-3.5 w-3.5 text-gray-500 hover:text-purple-600" />
+                            </button>
+                          )}
                         </div>
                       )}
                       <div className="p-3 md:p-4">
@@ -1654,6 +1706,23 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                               }, 100);
                             }}
                           />
+                        )}
+                        {/* Debug button for messages without header badge */}
+                        {message.type === "ai" && message.debugData && styles?.hideBadge && (
+                          <div className="mt-3 flex justify-end">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedDebugMessage(message);
+                                setIsDebugModalOpen(true);
+                              }}
+                              className="flex items-center gap-1 text-[10px] text-gray-400 hover:text-purple-600 transition-colors"
+                              title="View API Debug Data"
+                            >
+                              <Info className="h-3 w-3" />
+                              <span>Debug</span>
+                            </button>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -3128,13 +3197,13 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
             />
 
-            {/* Modal */}
+            {/* Modal - Maximized */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed inset-4 md:inset-10 lg:inset-20 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl z-[101] overflow-hidden flex flex-col"
+              className="fixed inset-2 md:inset-4 lg:inset-6 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl z-[101] overflow-hidden flex flex-col"
             >
               {/* Modal Header */}
               <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-purple-600 to-pink-600">
@@ -3150,7 +3219,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 <Button
                   size="icon"
                   variant="ghost"
-                  onClick={() => setIsDebugModalOpen(false)}
+                  onClick={() => {
+                    setIsDebugModalOpen(false);
+                    setSelectedDebugMessage(null);
+                  }}
                   className="h-8 w-8 rounded-lg text-white hover:bg-white/20"
                 >
                   <X className="h-5 w-5" />
@@ -3158,79 +3230,88 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               </div>
 
               {/* Modal Content */}
-              <div className="flex-1 overflow-auto p-6">
-                {!lastRequestData && !lastResponseData ? (
-                  <div className="flex flex-col items-center justify-center h-full text-center py-12">
-                    <div className="h-16 w-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
-                      <Info className="h-8 w-8 text-gray-400" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-600 dark:text-gray-300">No API Calls Yet</h3>
-                    <p className="text-sm text-gray-500 mt-2">Send a message to see request and response details here.</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="flex-1 overflow-auto p-4 md:p-6">
+                {(() => {
+                  // Use selected message debug data or fall back to last request/response
+                  const debugRequest = selectedDebugMessage?.debugData?.request || lastRequestData;
+                  const debugResponse = selectedDebugMessage?.debugData?.response || lastResponseData;
+
+                  if (!debugRequest && !debugResponse) {
+                    return (
+                      <div className="flex flex-col items-center justify-center h-full text-center py-12">
+                        <div className="h-16 w-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-4">
+                          <Info className="h-8 w-8 text-gray-400" />
+                        </div>
+                        <h3 className="text-lg font-semibold text-gray-600 dark:text-gray-300">No API Calls Yet</h3>
+                        <p className="text-sm text-gray-500 mt-2">Send a message to see request and response details here.</p>
+                      </div>
+                    );
+                  }
+
+                  return (
+                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6">
                     {/* Request Section */}
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                       <div className="flex items-center gap-2 mb-3">
                         <div className="h-8 w-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
                           <ArrowRight className="h-4 w-4 text-blue-600" />
                         </div>
                         <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">Request</h3>
-                        {lastRequestData?.timestamp && (
-                          <span className="text-xs text-gray-500 ml-auto">{new Date(lastRequestData.timestamp).toLocaleTimeString()}</span>
+                        {debugRequest?.timestamp && (
+                          <span className="text-xs text-gray-500 ml-auto">{new Date(debugRequest.timestamp).toLocaleTimeString()}</span>
                         )}
                       </div>
 
-                      {lastRequestData && (
+                      {debugRequest && (
                         <div className="space-y-3">
                           {/* Endpoint */}
-                          <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-                            <div className="flex items-center gap-2 mb-2">
+                          <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+                            <div className="flex items-center gap-2">
                               <span className="px-2 py-1 text-xs font-bold bg-green-500 text-white rounded">POST</span>
-                              <span className="text-xs text-gray-500 truncate">{lastRequestData.endpoint}</span>
+                              <span className="text-xs text-gray-500 truncate">{debugRequest.endpoint}</span>
                             </div>
                           </div>
 
                           {/* Query */}
-                          <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                          <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                             <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Query</h4>
-                            <p className="text-sm text-gray-800 dark:text-gray-200">{lastRequestData.payload?.query}</p>
+                            <p className="text-sm text-gray-800 dark:text-gray-200">{debugRequest.payload?.query}</p>
                           </div>
 
                           {/* Position & Mode */}
-                          <div className="grid grid-cols-2 gap-3">
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Position</h4>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">Position</h4>
                               <span className={`inline-block px-2 py-1 text-xs font-bold rounded-full ${
-                                lastRequestData.payload?.position === "checkout"
+                                debugRequest.payload?.position === "checkout"
                                   ? "bg-orange-500 text-white"
-                                  : lastRequestData.payload?.position === "catalog"
+                                  : debugRequest.payload?.position === "catalog"
                                   ? "bg-blue-500 text-white"
                                   : "bg-green-500 text-white"
                               }`}>
-                                {lastRequestData.payload?.position || "landing"}
+                                {debugRequest.payload?.position || "landing"}
                               </span>
                             </div>
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Mode</h4>
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-1">Mode</h4>
                               <span className={`inline-block px-2 py-1 text-xs font-bold rounded-full ${
-                                lastRequestData.payload?.mode === "copilot"
+                                debugRequest.payload?.mode === "copilot"
                                   ? "bg-purple-500 text-white"
                                   : "bg-indigo-500 text-white"
                               }`}>
-                                {lastRequestData.payload?.mode || "navigator"}
+                                {debugRequest.payload?.mode || "navigator"}
                               </span>
                             </div>
                           </div>
 
                           {/* Attachments */}
-                          {lastRequestData.payload?.attachments && lastRequestData.payload.attachments.length > 0 && (
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
+                          {debugRequest.payload?.attachments && debugRequest.payload.attachments.length > 0 && (
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
                               <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">
-                                Attachments ({lastRequestData.payload.attachments.length})
+                                Attachments ({debugRequest.payload.attachments.length})
                               </h4>
-                              <div className="space-y-2 max-h-40 overflow-auto">
-                                {lastRequestData.payload.attachments.map((att: any, idx: number) => (
+                              <div className="space-y-1 max-h-32 overflow-auto">
+                                {debugRequest.payload.attachments.map((att: any, idx: number) => (
                                   <div key={idx} className="text-xs bg-white dark:bg-gray-700 rounded-lg p-2">
                                     <div className="flex items-center gap-2">
                                       <span className="px-1.5 py-0.5 bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 rounded text-[10px] font-medium">
@@ -3244,13 +3325,13 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             </div>
                           )}
 
-                          {/* Full Payload */}
-                          <details className="bg-gray-50 dark:bg-gray-800 rounded-xl">
-                            <summary className="px-4 py-3 cursor-pointer text-xs font-semibold text-gray-500 uppercase hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl">
+                          {/* Full Payload - Expandable */}
+                          <details className="bg-gray-50 dark:bg-gray-800 rounded-xl" open>
+                            <summary className="px-3 py-2 cursor-pointer text-xs font-semibold text-gray-500 uppercase hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl">
                               Full Request Payload
                             </summary>
-                            <pre className="px-4 pb-4 text-xs overflow-auto max-h-60 text-gray-700 dark:text-gray-300">
-                              {JSON.stringify(lastRequestData.payload, null, 2)}
+                            <pre className="px-3 pb-3 text-[10px] overflow-auto max-h-[400px] text-gray-700 dark:text-gray-300 font-mono">
+                              {JSON.stringify(debugRequest.payload, null, 2)}
                             </pre>
                           </details>
                         </div>
@@ -3258,123 +3339,373 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     </div>
 
                     {/* Response Section */}
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-2 mb-3">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 mb-2">
                         <div className="h-8 w-8 rounded-lg bg-green-500/10 flex items-center justify-center">
                           <CheckCircle2 className="h-4 w-4 text-green-600" />
                         </div>
                         <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">Response</h3>
-                        {lastResponseData?.timestamp && (
-                          <span className="text-xs text-gray-500 ml-auto">{new Date(lastResponseData.timestamp).toLocaleTimeString()}</span>
+                        {debugResponse?.timestamp && (
+                          <span className="text-xs text-gray-500 ml-auto">{new Date(debugResponse.timestamp).toLocaleTimeString()}</span>
                         )}
                       </div>
 
-                      {lastResponseData && (
-                        <div className="space-y-3">
-                          {/* Status & Type */}
-                          <div className="grid grid-cols-2 gap-3">
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Status</h4>
-                              <span className={`inline-block px-2 py-1 text-xs font-bold rounded-full ${
-                                lastResponseData.data?.success ? "bg-green-500 text-white" : "bg-red-500 text-white"
+                      {debugResponse && (() => {
+                        const result = debugResponse.data?.result;
+                        const resultData = result?.data;
+                        const metadata = result?.metadata;
+
+                        // RAG execution detection
+                        const requiresRetrieval = resultData?.requiresRetrieval === true;
+                        const retrievalSkipped = resultData?.metadata?.retrievalSkipped === true;
+                        const retrievalSkipReason = resultData?.metadata?.retrievalSkipReason;
+                        const hasRagResponse = resultData?.ragResponse != null;
+                        const hasDocuments = resultData?.documents && resultData.documents.length > 0;
+                        const ragExecuted = hasRagResponse || hasDocuments;
+
+                        return (
+                        <div className="space-y-2">
+                          {/* Core Status Row */}
+                          <div className="grid grid-cols-4 gap-1.5">
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2 text-center">
+                              <span className={`inline-block px-1.5 py-0.5 text-[10px] font-bold rounded ${
+                                result?.success ? "bg-green-500 text-white" : "bg-red-500 text-white"
                               }`}>
-                                {lastResponseData.data?.success ? "Success" : "Failed"}
+                                {result?.success ? "OK" : "ERR"}
                               </span>
+                              <div className="text-[9px] text-gray-500 mt-0.5">Status</div>
                             </div>
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Result Type</h4>
-                              <span className={`inline-block px-2 py-1 text-xs font-bold rounded-full ${
-                                lastResponseData.data?.result?.type === "ACTION_EXECUTED" ? "bg-green-500 text-white" :
-                                lastResponseData.data?.result?.type === "CONFIRMATION_REQUIRED" ? "bg-yellow-500 text-white" :
-                                lastResponseData.data?.result?.type === "INFORMATION_PROVIDED" ? "bg-blue-500 text-white" :
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2 text-center">
+                              <span className={`inline-block px-1.5 py-0.5 text-[10px] font-bold rounded ${
+                                result?.type === "ACTION_EXECUTED" ? "bg-green-500 text-white" :
+                                result?.type === "CONFIRMATION_REQUIRED" ? "bg-yellow-500 text-white" :
+                                result?.type === "INFORMATION_PROVIDED" ? "bg-blue-500 text-white" :
+                                result?.type === "ACTION_DENIED" ? "bg-red-500 text-white" :
                                 "bg-gray-500 text-white"
                               }`}>
-                                {lastResponseData.data?.result?.type || "N/A"}
+                                {result?.type?.replace(/_/g, ' ').substring(0, 12) || "N/A"}
                               </span>
+                              <div className="text-[9px] text-gray-500 mt-0.5">Type</div>
+                            </div>
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2 text-center">
+                              <span className="text-[10px] font-bold text-gray-700 dark:text-gray-300">{result?.errorCode || "—"}</span>
+                              <div className="text-[9px] text-gray-500 mt-0.5">Error</div>
+                            </div>
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2 text-center">
+                              <span className="text-[10px] font-bold text-gray-700 dark:text-gray-300 truncate block">{metadata?.requestId?.substring(0, 8) || "—"}</span>
+                              <div className="text-[9px] text-gray-500 mt-0.5">ReqID</div>
                             </div>
                           </div>
 
-                          {/* Message */}
-                          {lastResponseData.data?.result?.sanitizedPayload?.message && (
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Message</h4>
-                              <p className="text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap max-h-32 overflow-auto">
-                                {lastResponseData.data.result.sanitizedPayload.message}
-                              </p>
+                          {/* RAG Execution Status - Highlighted */}
+                          <div className={`rounded-lg p-2 border ${
+                            ragExecuted ? "bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border-emerald-300 dark:border-emerald-700" :
+                            retrievalSkipped ? "bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-amber-300 dark:border-amber-700" :
+                            requiresRetrieval ? "bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-300 dark:border-blue-700" :
+                            "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                          }`}>
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className={`text-[10px] font-bold uppercase ${
+                                  ragExecuted ? "text-emerald-700 dark:text-emerald-300" :
+                                  retrievalSkipped ? "text-amber-700 dark:text-amber-300" :
+                                  "text-gray-600 dark:text-gray-400"
+                                }`}>
+                                  🔍 RAG Status
+                                </span>
+                                <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${
+                                  ragExecuted ? "bg-emerald-500 text-white" :
+                                  retrievalSkipped ? "bg-amber-500 text-white" :
+                                  requiresRetrieval ? "bg-blue-500 text-white" :
+                                  "bg-gray-400 text-white"
+                                }`}>
+                                  {ragExecuted ? "EXECUTED" : retrievalSkipped ? "SKIPPED" : requiresRetrieval ? "INTENDED" : "NOT REQUIRED"}
+                                </span>
+                              </div>
+                              <div className="flex gap-2 text-[9px]">
+                                {requiresRetrieval && <span className="text-blue-600">retrieval:✓</span>}
+                                {resultData?.requiresGeneration && <span className="text-purple-600">generation:✓</span>}
+                                {retrievalSkipped && <span className="text-amber-600">skip:{retrievalSkipReason}</span>}
+                              </div>
                             </div>
-                          )}
+                            {hasRagResponse && (
+                              <div className="mt-1.5 grid grid-cols-4 gap-1 text-[9px]">
+                                <div><span className="text-gray-500">Query:</span> <span className="font-medium truncate block">{resultData.ragResponse.query?.substring(0, 20)}...</span></div>
+                                <div><span className="text-gray-500">Entity:</span> <span className="font-medium">{resultData.ragResponse.entityType}</span></div>
+                                <div><span className="text-gray-500">Docs:</span> <span className="font-medium">{resultData.ragResponse.usedDocuments || resultData.documents?.length || 0}</span></div>
+                                <div><span className="text-gray-500">Time:</span> <span className="font-medium">{resultData.ragResponse.processingTimeMs}ms</span></div>
+                              </div>
+                            )}
+                          </div>
 
                           {/* Orchestration Policy */}
-                          {lastResponseData.data?.result?.metadata?.orchestrationPolicy && (
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Orchestration Policy</h4>
-                              <div className="flex flex-wrap gap-2">
-                                <span className="px-2 py-1 text-xs bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 rounded-full">
-                                  {lastResponseData.data.result.metadata.orchestrationPolicy.profile}
-                                </span>
-                                <span className="px-2 py-1 text-xs bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 rounded-full">
-                                  Mode: {lastResponseData.data.result.metadata.orchestrationPolicy.mode}
-                                </span>
-                                <span className="px-2 py-1 text-xs bg-cyan-100 dark:bg-cyan-900 text-cyan-600 dark:text-cyan-300 rounded-full">
-                                  {lastResponseData.data.result.metadata.orchestrationPolicy.informationModeEffective}
-                                </span>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Documents Count */}
-                          {lastResponseData.data?.result?.data?.documents && (
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Retrieved Documents</h4>
-                              <div className="flex items-center gap-4">
-                                <div className="text-center">
-                                  <div className="text-2xl font-bold text-purple-600">{lastResponseData.data.result.data.documents.length}</div>
-                                  <div className="text-xs text-gray-500">Documents</div>
+                          {metadata?.orchestrationPolicy && (
+                            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-lg p-2 border border-indigo-200 dark:border-indigo-800">
+                              <h4 className="text-[10px] font-bold text-indigo-700 dark:text-indigo-300 uppercase mb-1 flex items-center gap-1">
+                                <Sparkles className="h-2.5 w-2.5" /> Orchestration
+                              </h4>
+                              <div className="grid grid-cols-3 gap-1 text-[9px]">
+                                <div className="flex justify-between bg-white/50 dark:bg-gray-800/50 rounded px-1.5 py-1">
+                                  <span className="text-gray-500">Profile</span>
+                                  <span className="font-bold text-indigo-600">{metadata.orchestrationPolicy.profile}</span>
                                 </div>
-                                {lastResponseData.data.result.data.confidenceScore && (
-                                  <div className="text-center">
-                                    <div className="text-2xl font-bold text-green-600">
-                                      {(lastResponseData.data.result.data.confidenceScore * 100).toFixed(1)}%
-                                    </div>
-                                    <div className="text-xs text-gray-500">Confidence</div>
-                                  </div>
-                                )}
-                                {lastResponseData.data.result.data.processingTimeMs && (
-                                  <div className="text-center">
-                                    <div className="text-2xl font-bold text-blue-600">
-                                      {lastResponseData.data.result.data.processingTimeMs}ms
-                                    </div>
-                                    <div className="text-xs text-gray-500">Processing</div>
+                                <div className="flex justify-between bg-white/50 dark:bg-gray-800/50 rounded px-1.5 py-1">
+                                  <span className="text-gray-500">Mode</span>
+                                  <span className="font-bold text-purple-600">{metadata.orchestrationPolicy.mode}</span>
+                                </div>
+                                <div className="flex justify-between bg-white/50 dark:bg-gray-800/50 rounded px-1.5 py-1">
+                                  <span className="text-gray-500">Position</span>
+                                  <span className="font-bold text-cyan-600">{metadata.orchestrationPolicy.position}</span>
+                                </div>
+                                <div className="flex justify-between bg-white/50 dark:bg-gray-800/50 rounded px-1.5 py-1">
+                                  <span className="text-gray-500">InfoMode</span>
+                                  <span className="font-bold text-teal-600">{metadata.orchestrationPolicy.informationModeEffective}</span>
+                                </div>
+                                <div className="flex justify-between bg-white/50 dark:bg-gray-800/50 rounded px-1.5 py-1">
+                                  <span className="text-gray-500">Source</span>
+                                  <span className="font-bold text-gray-600">{metadata.orchestrationPolicy.modeSource}</span>
+                                </div>
+                                {metadata.orchestrationPolicy.advancedRagOverride && (
+                                  <div className="flex justify-between bg-white/50 dark:bg-gray-800/50 rounded px-1.5 py-1">
+                                    <span className="text-gray-500">RAG Override</span>
+                                    <span className="font-bold text-orange-600">✓</span>
                                   </div>
                                 )}
                               </div>
                             </div>
                           )}
 
-                          {/* Action Result */}
-                          {lastResponseData.data?.result?.data?.actionResult && (
-                            <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-4">
-                              <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2">Action Result</h4>
-                              <pre className="text-xs overflow-auto max-h-40 text-gray-700 dark:text-gray-300">
-                                {JSON.stringify(lastResponseData.data.result.data.actionResult, null, 2)}
-                              </pre>
+                          {/* Extraction Diagnostics with Strategy */}
+                          {metadata?.extractionDiagnostics && (
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
+                              <h4 className="text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase mb-1">Extraction</h4>
+                              <div className="grid grid-cols-4 gap-1 text-[9px] mb-1">
+                                <div className="text-center bg-white dark:bg-gray-700 rounded p-1">
+                                  <div className="font-bold text-gray-700 dark:text-gray-300">{metadata.extractionDiagnostics.extractionPath}</div>
+                                  <div className="text-gray-500">Path</div>
+                                </div>
+                                <div className="text-center bg-white dark:bg-gray-700 rounded p-1">
+                                  <div className="font-bold text-gray-700 dark:text-gray-300">{metadata.extractionDiagnostics.extractionAttempts}</div>
+                                  <div className="text-gray-500">Attempts</div>
+                                </div>
+                                <div className="text-center bg-white dark:bg-gray-700 rounded p-1">
+                                  <div className="font-bold text-gray-700 dark:text-gray-300">{metadata.extractionDiagnostics.llmCalls}</div>
+                                  <div className="text-gray-500">LLM</div>
+                                </div>
+                                <div className="text-center bg-white dark:bg-gray-700 rounded p-1">
+                                  <div className="font-bold text-gray-700 dark:text-gray-300">{metadata.extractionDiagnostics.attempts?.length || 0}</div>
+                                  <div className="text-gray-500">Logged</div>
+                                </div>
+                              </div>
+                              {metadata.extractionDiagnostics.attempts && metadata.extractionDiagnostics.attempts.length > 0 && (
+                                <div className="space-y-0.5 max-h-16 overflow-auto">
+                                  {metadata.extractionDiagnostics.attempts.map((attempt: any, idx: number) => (
+                                    <div key={idx} className={`flex items-center gap-1 text-[8px] px-1.5 py-0.5 rounded ${
+                                      attempt.success ? "bg-green-100 dark:bg-green-900/30" : "bg-red-100 dark:bg-red-900/30"
+                                    }`}>
+                                      <span className={`font-bold ${attempt.success ? "text-green-700" : "text-red-700"}`}>
+                                        {attempt.success ? "✓" : "✗"}
+                                      </span>
+                                      <span className="font-medium text-indigo-600">{attempt.strategy}</span>
+                                      <span className="text-gray-500">llm:{attempt.llmCalls}</span>
+                                      {attempt.errorCategory && <span className="text-red-600">{attempt.errorCategory}</span>}
+                                      {attempt.issueCodes && <span className="text-orange-600">[{attempt.issueCodes.join(',')}]</span>}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
                             </div>
                           )}
 
-                          {/* Full Response */}
-                          <details className="bg-gray-50 dark:bg-gray-800 rounded-xl">
-                            <summary className="px-4 py-3 cursor-pointer text-xs font-semibold text-gray-500 uppercase hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl">
-                              Full Response Data
-                            </summary>
-                            <pre className="px-4 pb-4 text-xs overflow-auto max-h-60 text-gray-700 dark:text-gray-300">
-                              {JSON.stringify(lastResponseData.data, null, 2)}
+                          {/* Intent & Chat Metadata Row */}
+                          <div className="grid grid-cols-2 gap-1.5">
+                            {/* Intent Metadata */}
+                            {metadata?.intentMetadata && (
+                              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
+                                <h4 className="text-[10px] font-bold text-gray-600 uppercase mb-1">Intent</h4>
+                                <div className="text-[9px] space-y-0.5">
+                                  {metadata.intentMetadata.fallback && (
+                                    <div className="flex justify-between text-amber-600">
+                                      <span>Fallback:</span>
+                                      <span className="font-bold">✓</span>
+                                    </div>
+                                  )}
+                                  {metadata.intentMetadata.confidence && (
+                                    <div className="flex justify-between">
+                                      <span className="text-gray-500">Confidence:</span>
+                                      <span className="font-medium">{(metadata.intentMetadata.confidence * 100).toFixed(0)}%</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                            {/* Chat Metadata */}
+                            {metadata?.chat && (
+                              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
+                                <h4 className="text-[10px] font-bold text-gray-600 uppercase mb-1">Chat</h4>
+                                <div className="grid grid-cols-2 gap-0.5 text-[9px]">
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-500">History:</span>
+                                    <span className="font-medium">{metadata.chat.historyChars || 0}ch</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-500">Window:</span>
+                                    <span className="font-medium">{metadata.chat.windowSize || 0}</span>
+                                  </div>
+                                  <div className="flex justify-between col-span-2">
+                                    <span className="text-gray-500">Memory:</span>
+                                    <span className="font-medium">{metadata.chat.memoryStrategy || "—"}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Attachments & Target Resolution Row */}
+                          <div className="grid grid-cols-2 gap-1.5">
+                            {metadata?.attachments && (
+                              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
+                                <h4 className="text-[10px] font-bold text-gray-600 uppercase mb-1">Attachments</h4>
+                                <div className="grid grid-cols-2 gap-0.5 text-[9px]">
+                                  <div className="flex justify-between"><span className="text-gray-500">Prov:</span><span className="font-medium">{metadata.attachments.providedCount}</span></div>
+                                  <div className="flex justify-between"><span className="text-gray-500">Acc:</span><span className="font-medium">{metadata.attachments.acceptedCount}</span></div>
+                                  <div className="flex justify-between"><span className="text-gray-500">Active:</span><span className="font-medium">{metadata.attachments.activeResolvedCount}</span></div>
+                                  <div className="flex justify-between"><span className="text-gray-500">Invalid:</span><span className="font-medium">{metadata.attachments.invalidVectorSpacesCount || 0}</span></div>
+                                </div>
+                                {metadata.attachmentsPrompt && (
+                                  <div className="mt-1 pt-1 border-t border-gray-200 dark:border-gray-700 text-[9px]">
+                                    <span className="text-gray-500">Prompt: </span>
+                                    <span className={`font-medium ${metadata.attachmentsPrompt.injected ? "text-green-600" : "text-gray-400"}`}>
+                                      {metadata.attachmentsPrompt.injected ? `✓ ${metadata.attachmentsPrompt.attachmentsCount} att` : "—"}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                            {metadata?.targetResolution && (
+                              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
+                                <h4 className="text-[10px] font-bold text-gray-600 uppercase mb-1">Target Resolution</h4>
+                                <div className="text-[9px] space-y-0.5">
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-500">Source:</span>
+                                    <span className="font-medium">{metadata.targetResolution.source}</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span className="text-gray-500">Count:</span>
+                                    <span className="font-medium">{metadata.targetResolution.count}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Vector Space Routing */}
+                          {metadata?.vectorSpaceRouting && metadata.vectorSpaceRouting.length > 0 && (
+                            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-2">
+                              <h4 className="text-[10px] font-bold text-gray-600 uppercase mb-1">Vector Space Routing ({metadata.vectorSpaceRouting.length})</h4>
+                              <div className="space-y-0.5 max-h-20 overflow-auto">
+                                {metadata.vectorSpaceRouting.map((evt: any, idx: number) => (
+                                  <div key={idx} className="flex items-center gap-1 text-[8px] bg-white dark:bg-gray-700 rounded px-1.5 py-0.5">
+                                    <span className="text-purple-600 font-medium">{evt.strategy}</span>
+                                    <span className="text-gray-400">→</span>
+                                    <span className="text-blue-600 font-bold">{evt.vectorSpace}</span>
+                                    {evt.candidateSpaces && <span className="text-gray-500">[{evt.candidateSpaces.join(',')}]</span>}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Action Execution (for ACTION types) */}
+                          {(result?.type === "ACTION_EXECUTED" || result?.type === "CONFIRMATION_REQUIRED" || result?.type === "ACTION_DENIED") && (
+                            <div className={`rounded-lg p-2 border ${
+                              result?.type === "ACTION_EXECUTED" ? "bg-green-50 dark:bg-green-900/20 border-green-200" :
+                              result?.type === "CONFIRMATION_REQUIRED" ? "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200" :
+                              "bg-red-50 dark:bg-red-900/20 border-red-200"
+                            }`}>
+                              <h4 className="text-[10px] font-bold uppercase mb-1">Action</h4>
+                              <div className="grid grid-cols-3 gap-1 text-[9px]">
+                                <div><span className="text-gray-500">Name:</span> <span className="font-medium">{resultData?.action || "—"}</span></div>
+                                <div><span className="text-gray-500">Confirm:</span> <span className="font-medium">{resultData?.confirmationRequired ? "Yes" : "No"}</span></div>
+                                {resultData?.actionResult && (
+                                  <div><span className="text-gray-500">Result:</span> <span className={`font-medium ${resultData.actionResult.success ? "text-green-600" : "text-red-600"}`}>{resultData.actionResult.success ? "OK" : resultData.actionResult.errorCode}</span></div>
+                                )}
+                              </div>
+                              {resultData?.confirmationMessage && (
+                                <div className="mt-1 text-[9px] text-gray-600 italic truncate">{resultData.confirmationMessage}</div>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Compact Full Response with Expand */}
+                          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden">
+                            <div className="flex items-center justify-between px-2 py-1.5 border-b border-gray-200 dark:border-gray-700">
+                              <span className="text-[10px] font-bold text-gray-500 uppercase">Raw Result JSON</span>
+                              <button
+                                onClick={() => setIsJsonPanelExpanded(true)}
+                                className="flex items-center gap-1 text-[9px] text-purple-600 hover:text-purple-700 font-medium"
+                              >
+                                <Maximize2 className="h-3 w-3" />
+                                Expand
+                              </button>
+                            </div>
+                            <pre className="px-2 py-1.5 text-[8px] overflow-auto max-h-24 text-gray-600 dark:text-gray-400 font-mono">
+                              {JSON.stringify(result, null, 2)}
                             </pre>
-                          </details>
+                          </div>
                         </div>
-                      )}
+                        );
+                      })()}
                     </div>
                   </div>
-                )}
+                  );
+                })()}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Expanded JSON Panel Modal */}
+      <AnimatePresence>
+        {isJsonPanelExpanded && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsJsonPanelExpanded(false)}
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[110]"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="fixed inset-4 md:inset-8 lg:inset-12 bg-gray-900 rounded-xl shadow-2xl z-[111] overflow-hidden flex flex-col"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-700 bg-gray-800">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-purple-400" />
+                  <span className="text-sm font-bold text-white">Raw Result JSON</span>
+                  <span className="text-xs text-gray-400">Full Response Data</span>
+                </div>
+                <button
+                  onClick={() => setIsJsonPanelExpanded(false)}
+                  className="p-1.5 rounded-lg hover:bg-gray-700 text-gray-400 hover:text-white transition-colors"
+                >
+                  <Minimize2 className="h-4 w-4" />
+                </button>
+              </div>
+              {/* JSON Content */}
+              <div className="flex-1 overflow-auto p-4">
+                <pre className="text-xs text-green-400 font-mono whitespace-pre-wrap">
+                  {(() => {
+                    const debugResponse = selectedDebugMessage?.debugData?.response || lastResponseData;
+                    return JSON.stringify(debugResponse?.data?.result, null, 2);
+                  })()}
+                </pre>
               </div>
             </motion.div>
           </>
