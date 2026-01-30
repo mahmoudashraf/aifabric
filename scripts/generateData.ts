@@ -241,132 +241,413 @@ const ticketCategories = [
   'Payment', 'Technical Support', 'Product Information', 'Website Issue', 'Other'
 ];
 
-// Specific product types for migration (20 each = 100 total)
-// Using actual Unsplash photo IDs for reliable, relevant product images
-const productTypes = [
-  {
-    type: 'Laptop',
-    category: 'Electronics',
-    imageIds: [
-      '1496181133206-80ce9b88a853', '1525547719851-df4c4c21e37d', '1517336714731-489689fd1ca8', '1504707748692-419802cf939d', '1498050108023-c5249f4df085',
-      '1531297484001-80022131f5a1', '1593062096033-9a26b09da705', '1588872657578-7efd1f1555ed', '1541807084-5c52b6b92ae2', '1484788984921-03950022c9ef',
-      '1611186871348-b1ce696e52c9', '1496181133206-80ce9b88a853', '1515378791036-0648a3ef77b2', '1460925895917-afdab827c52f', '1499951360447-b19be8fe80f5',
-      '1516387938699-a93567ec168e', '1587614382346-4ec70e388b28', '1603302576837-37561b2e2302', '1544244015-0df4b3ffc6b0', '1629131726692-1accd0c53ce0'
-    ],
-    brands: ['Apple', 'Dell', 'HP', 'Lenovo', 'ASUS', 'Acer', 'Microsoft', 'Samsung', 'MSI', 'Razer'],
-    adjectives: ['Pro', 'Ultra', 'Air', 'Elite', 'Premium', 'Gaming', 'Business', 'Slim', 'Powerful', 'Lightweight'],
-    features: ['16GB RAM', '512GB SSD', '1TB Storage', 'Backlit Keyboard', 'Fingerprint Reader', 'Thunderbolt 4', 'Wi-Fi 6E', '4K Display'],
-  },
-  {
-    type: 'Smartphone',
-    category: 'Electronics',
-    imageIds: [
-      '1511707171634-5f897ff02aa9', '1510557880182-3d4d3cba35a5', '1592750475338-74b7b21085ab', '1565849904461-04a58ad377e0', '1574944985070-8f3ebc6b79d2',
-      '1605236453806-6ff36851218e', '1512941937669-90a1b58e7e9c', '1591337676887-a217a6970a8a', '1580910051074-3eb694886f2e', '1601784551446-20c9e07cdbdb',
-      '1585060544812-6b45742d762f', '1598327105666-5b89351aff97', '1533228100845-08145b01de14', '1523206489230-c012c64b2b48', '1556656793-08538906a9f8',
-      '1609692814858-f7cd2f0afa4f', '1567581935884-3349723552ca', '1570891836654-d4961a7b6929', '1604076913837-52ab5629fba9', '1611532736597-de2d4265fba3'
-    ],
-    brands: ['Apple', 'Samsung', 'Google', 'OnePlus', 'Xiaomi', 'Sony', 'Motorola', 'Nokia', 'OPPO', 'Huawei'],
-    adjectives: ['Pro', 'Ultra', 'Max', 'Plus', 'Lite', 'Mini', 'Elite', 'Premium', 'Advanced', 'Smart'],
-    features: ['5G Enabled', 'OLED Display', '128GB Storage', '256GB Storage', 'Triple Camera', 'Fast Charging', 'Water Resistant', 'Face ID'],
-  },
-  {
-    type: 'Headphones',
-    category: 'Electronics',
-    imageIds: [
-      '1505740420928-5e560c06d30e', '1583394838336-acd977736f90', '1484704849700-f032a568e944', '1546435770-a3e426bf472b', '1524678606370-a47ad25cb82a',
-      '1487215078519-e21cc028cb29', '1558756520-22cfe5d382ca', '1545127398-14699f92334b', '1572536147248-ac59a8abfa4b', '1599669454699-248893623440',
-      '1493225457124-a3eb161ffa5f', '1520170350707-b2da59970118', '1577174881658-0f30ed549adc', '1570993492881-25240ce854f4', '1613040809024-b4ef7ba99bc3',
-      '1606220588913-b3aacb4d2f46', '1614149162883-504ce4d13909', '1618366712010-f4ae9c647dcb', '1608043152269-423dbba4e7e1', '1590658268037-6bf12165a8df'
-    ],
-    brands: ['Sony', 'Bose', 'Apple', 'Sennheiser', 'JBL', 'Beats', 'Audio-Technica', 'Jabra', 'Bang & Olufsen', 'Skullcandy'],
-    adjectives: ['Wireless', 'Pro', 'Studio', 'Premium', 'Elite', 'Sport', 'Noise-Canceling', 'Hi-Fi', 'Professional', 'Comfort'],
-    features: ['Active Noise Cancellation', '40-Hour Battery', 'Bluetooth 5.2', 'Hi-Res Audio', 'Foldable Design', 'Touch Controls', 'Multi-Device Pairing', 'Voice Assistant'],
-  },
-  {
-    type: 'Camera',
-    category: 'Electronics',
-    imageIds: [
-      '1516035069371-29a1b244cc32', '1502920917128-1aa500764cbd', '1510127034890-ba27508e9f1c', '1495745966610-2a67f2297e5e', '1581591524425-c7e0978cca2e',
-      '1617005082133-548c4dd27f35', '1452780212940-6f5c0d14d848', '1500634245200-e5245c7574ef', '1512790182412-b19e6d62bc39', '1560518883-ce09059eeffa',
-      '1606986628492-c01a5686d9b4', '1519638399535-1b036603ac77', '1609952542840-df54cfddc3fb', '1510784722466-f2aa9c52fff6', '1516724562728-afc824a36e84',
-      '1471341971476-ae15ff5dd4ea', '1473091534298-04dcbce3278c', '1542567455-cd733f23fbb1', '1502982720700-bfff97f2ecac', '1607462109225-6b64ae2dd3cb'
-    ],
-    brands: ['Canon', 'Sony', 'Nikon', 'Fujifilm', 'Panasonic', 'Leica', 'Olympus', 'GoPro', 'DJI', 'Hasselblad'],
-    adjectives: ['Professional', 'Mirrorless', 'DSLR', 'Compact', 'Action', 'Cinema', 'Travel', 'Advanced', 'Premium', 'Ultra HD'],
-    features: ['4K Video', '8K Video', '45MP Sensor', 'Image Stabilization', 'Weather Sealed', 'Dual Card Slots', 'Fast Autofocus', 'Touchscreen LCD'],
-  },
-  {
-    type: 'Monitor',
-    category: 'Electronics',
-    imageIds: [
-      '1527443224154-c4a3942d3acf', '1585792180666-f7347c490ee2', '1593640408182-31c70c8268f5', '1616763355548-1b11f1a73290', '1558618666-fcd25c85cd64',
-      '1498049794561-7780e7231661', '1586210579191-33b45e38fa2c', '1609619385002-f40f1df827b7', '1547658719-da2b51169166', '1621259182978-fbf93132d53d',
-      '1559163499-413811fb2344', '1567603532449-e2b5c0f01943', '1612815154929-0dc2e8e8bdc5', '1550751827-4bd374c3f58b', '1618172193763-c511deb635ca',
-      '1563089145-599997674d42', '1603481588273-2f908a9a7a1b', '1541877944-ac82a091518a', '1625842268584-8f3e34f6f2e4', '1615573588078-23c3fb3c8a39'
-    ],
-    brands: ['LG', 'Samsung', 'Dell', 'ASUS', 'BenQ', 'Acer', 'ViewSonic', 'HP', 'MSI', 'AOC'],
-    adjectives: ['Gaming', 'Professional', 'UltraWide', 'Curved', '4K', 'HDR', 'Studio', 'Ergonomic', 'Premium', 'High-Refresh'],
-    features: ['4K Resolution', '144Hz Refresh', '240Hz Refresh', 'HDR10', 'USB-C Hub', 'Built-in Speakers', 'Adjustable Stand', 'Blue Light Filter'],
-  },
+// Real products with actual specs (20 each = 100 total)
+const realProducts = {
+  laptops: [
+    { name: 'MacBook Pro 14-inch M3 Pro', brand: 'Apple', price: 1999, specs: { processor: 'Apple M3 Pro (11-core CPU, 14-core GPU)', ram: '18GB Unified Memory', storage: '512GB SSD', display: '14.2" Liquid Retina XDR (3024x1964)', battery: 'Up to 17 hours', weight: '3.5 lbs' }},
+    { name: 'MacBook Air 15-inch M3', brand: 'Apple', price: 1299, specs: { processor: 'Apple M3 (8-core CPU, 10-core GPU)', ram: '8GB Unified Memory', storage: '256GB SSD', display: '15.3" Liquid Retina (2880x1864)', battery: 'Up to 18 hours', weight: '3.3 lbs' }},
+    { name: 'Dell XPS 15 9530', brand: 'Dell', price: 1849, specs: { processor: 'Intel Core i7-13700H', ram: '16GB DDR5', storage: '512GB NVMe SSD', display: '15.6" OLED 3.5K (3456x2160)', graphics: 'NVIDIA RTX 4060', weight: '4.23 lbs' }},
+    { name: 'Dell XPS 13 Plus', brand: 'Dell', price: 1399, specs: { processor: 'Intel Core i7-1360P', ram: '16GB LPDDR5', storage: '512GB SSD', display: '13.4" OLED 3.5K Touch', battery: 'Up to 13 hours', weight: '2.73 lbs' }},
+    { name: 'ThinkPad X1 Carbon Gen 11', brand: 'Lenovo', price: 1649, specs: { processor: 'Intel Core i7-1365U vPro', ram: '16GB LPDDR5', storage: '512GB SSD', display: '14" 2.8K OLED (2880x1800)', battery: 'Up to 15 hours', weight: '2.48 lbs' }},
+    { name: 'ThinkPad T14s Gen 4', brand: 'Lenovo', price: 1429, specs: { processor: 'AMD Ryzen 7 PRO 7840U', ram: '32GB LPDDR5X', storage: '512GB SSD', display: '14" 2.8K OLED', battery: 'Up to 12 hours', weight: '2.87 lbs' }},
+    { name: 'HP Spectre x360 16', brand: 'HP', price: 1649, specs: { processor: 'Intel Core i7-13700H', ram: '16GB DDR4', storage: '512GB SSD', display: '16" 3K+ OLED Touch (3072x1920)', graphics: 'Intel Arc A370M', weight: '4.45 lbs' }},
+    { name: 'HP EliteBook 840 G10', brand: 'HP', price: 1579, specs: { processor: 'Intel Core i7-1365U vPro', ram: '16GB DDR5', storage: '512GB SSD', display: '14" WUXGA IPS', battery: 'Up to 14 hours', weight: '3.06 lbs' }},
+    { name: 'ASUS ROG Zephyrus G14 (2024)', brand: 'ASUS', price: 1599, specs: { processor: 'AMD Ryzen 9 8945HS', ram: '16GB DDR5', storage: '1TB SSD', display: '14" ROG Nebula OLED (2880x1800) 120Hz', graphics: 'NVIDIA RTX 4060', weight: '3.31 lbs' }},
+    { name: 'ASUS ZenBook 14 OLED', brand: 'ASUS', price: 999, specs: { processor: 'Intel Core Ultra 7 155H', ram: '16GB LPDDR5X', storage: '512GB SSD', display: '14" 3K OLED (2880x1800)', battery: 'Up to 14 hours', weight: '2.87 lbs' }},
+    { name: 'Microsoft Surface Laptop 6', brand: 'Microsoft', price: 1299, specs: { processor: 'Intel Core Ultra 7 165H', ram: '16GB LPDDR5x', storage: '512GB SSD', display: '13.8" PixelSense (2304x1536)', battery: 'Up to 17 hours', weight: '2.96 lbs' }},
+    { name: 'Surface Pro 10', brand: 'Microsoft', price: 1499, specs: { processor: 'Intel Core Ultra 7 165U', ram: '16GB LPDDR5x', storage: '512GB SSD', display: '13" PixelSense Flow (2880x1920) 120Hz', battery: 'Up to 14 hours', weight: '1.97 lbs' }},
+    { name: 'Razer Blade 16 (2024)', brand: 'Razer', price: 2999, specs: { processor: 'Intel Core i9-14900HX', ram: '32GB DDR5', storage: '1TB SSD', display: '16" QHD+ 240Hz', graphics: 'NVIDIA RTX 4080', weight: '5.4 lbs' }},
+    { name: 'Razer Blade 14 (2024)', brand: 'Razer', price: 2199, specs: { processor: 'AMD Ryzen 9 8945HS', ram: '16GB DDR5', storage: '1TB SSD', display: '14" QHD+ 240Hz', graphics: 'NVIDIA RTX 4070', weight: '4.05 lbs' }},
+    { name: 'MSI Creator Z16 HX Studio', brand: 'MSI', price: 2799, specs: { processor: 'Intel Core i9-13950HX', ram: '64GB DDR5', storage: '2TB NVMe SSD', display: '16" QHD+ Mini LED 120Hz', graphics: 'NVIDIA RTX 4070', weight: '5.29 lbs' }},
+    { name: 'Acer Swift Go 14', brand: 'Acer', price: 849, specs: { processor: 'Intel Core Ultra 7 155H', ram: '16GB LPDDR5X', storage: '512GB SSD', display: '14" 2.8K OLED (2880x1800)', battery: 'Up to 12 hours', weight: '2.87 lbs' }},
+    { name: 'Samsung Galaxy Book4 Pro', brand: 'Samsung', price: 1449, specs: { processor: 'Intel Core Ultra 7 155H', ram: '16GB LPDDR5', storage: '512GB SSD', display: '14" 3K AMOLED (2880x1800)', battery: 'Up to 18 hours', weight: '2.71 lbs' }},
+    { name: 'LG Gram 17 (2024)', brand: 'LG', price: 1699, specs: { processor: 'Intel Core Ultra 7 155H', ram: '16GB LPDDR5X', storage: '1TB SSD', display: '17" WQXGA IPS (2560x1600)', battery: 'Up to 15.5 hours', weight: '3.2 lbs' }},
+    { name: 'Framework Laptop 16', brand: 'Framework', price: 1399, specs: { processor: 'AMD Ryzen 7 7840HS', ram: '16GB DDR5 (upgradeable)', storage: '512GB SSD (upgradeable)', display: '16" 2560x1600 165Hz', graphics: 'AMD Radeon 780M', weight: '4.63 lbs' }},
+    { name: 'Alienware m18 R2', brand: 'Alienware', price: 2499, specs: { processor: 'Intel Core i9-14900HX', ram: '32GB DDR5', storage: '1TB SSD', display: '18" QHD+ 165Hz', graphics: 'NVIDIA RTX 4080', weight: '8.99 lbs' }},
+  ],
+  smartphones: [
+    { name: 'iPhone 15 Pro Max', brand: 'Apple', price: 1199, specs: { display: '6.7" Super Retina XDR OLED (2796x1290) 120Hz', processor: 'A17 Pro chip', camera: '48MP Main + 12MP Ultra Wide + 12MP 5x Telephoto', storage: '256GB', battery: '4441mAh, USB-C', features: 'Titanium design, Action button' }},
+    { name: 'iPhone 15 Pro', brand: 'Apple', price: 999, specs: { display: '6.1" Super Retina XDR OLED (2556x1179) 120Hz', processor: 'A17 Pro chip', camera: '48MP Main + 12MP Ultra Wide + 12MP 3x Telephoto', storage: '128GB', battery: '3274mAh, USB-C', features: 'Titanium design, Action button' }},
+    { name: 'iPhone 15', brand: 'Apple', price: 799, specs: { display: '6.1" Super Retina XDR OLED (2556x1179)', processor: 'A16 Bionic chip', camera: '48MP Main + 12MP Ultra Wide', storage: '128GB', battery: '3349mAh, USB-C', features: 'Dynamic Island' }},
+    { name: 'Samsung Galaxy S24 Ultra', brand: 'Samsung', price: 1299, specs: { display: '6.8" Dynamic AMOLED 2X (3120x1440) 120Hz', processor: 'Snapdragon 8 Gen 3', camera: '200MP Main + 12MP Ultra Wide + 50MP 5x + 10MP 3x', storage: '256GB', battery: '5000mAh', features: 'S Pen, Titanium frame, Galaxy AI' }},
+    { name: 'Samsung Galaxy S24+', brand: 'Samsung', price: 999, specs: { display: '6.7" Dynamic AMOLED 2X (3120x1440) 120Hz', processor: 'Snapdragon 8 Gen 3', camera: '50MP Main + 12MP Ultra Wide + 10MP 3x Telephoto', storage: '256GB', battery: '4900mAh', features: 'Galaxy AI' }},
+    { name: 'Samsung Galaxy Z Fold 5', brand: 'Samsung', price: 1799, specs: { display: '7.6" QXGA+ Dynamic AMOLED (folding) + 6.2" cover', processor: 'Snapdragon 8 Gen 2', camera: '50MP Main + 12MP Ultra Wide + 10MP 3x Telephoto', storage: '256GB', battery: '4400mAh', features: 'Flex Mode, Multi-window' }},
+    { name: 'Google Pixel 8 Pro', brand: 'Google', price: 999, specs: { display: '6.7" LTPO OLED (2992x1344) 120Hz', processor: 'Google Tensor G3', camera: '50MP Main + 48MP Ultra Wide + 48MP 5x Telephoto', storage: '128GB', battery: '5050mAh', features: 'AI photo editing, 7 years of updates' }},
+    { name: 'Google Pixel 8', brand: 'Google', price: 699, specs: { display: '6.2" OLED (2400x1080) 120Hz', processor: 'Google Tensor G3', camera: '50MP Main + 12MP Ultra Wide', storage: '128GB', battery: '4575mAh', features: 'Magic Eraser, Best Take, 7 years updates' }},
+    { name: 'OnePlus 12', brand: 'OnePlus', price: 799, specs: { display: '6.82" LTPO AMOLED (3168x1440) 120Hz', processor: 'Snapdragon 8 Gen 3', camera: '50MP Main + 64MP 3x Periscope + 48MP Ultra Wide', storage: '256GB', battery: '5400mAh, 100W charging', features: 'Hasselblad camera tuning' }},
+    { name: 'OnePlus Open', brand: 'OnePlus', price: 1699, specs: { display: '7.82" LTPO AMOLED (folding) + 6.31" cover', processor: 'Snapdragon 8 Gen 2', camera: '48MP Main + 64MP 3x Periscope + 48MP Ultra Wide', storage: '512GB', battery: '4805mAh, 67W charging', features: 'Hasselblad cameras, Open Canvas' }},
+    { name: 'Sony Xperia 1 V', brand: 'Sony', price: 1399, specs: { display: '6.5" 4K HDR OLED (3840x1644) 120Hz', processor: 'Snapdragon 8 Gen 2', camera: '52MP Main + 12MP Ultra Wide + 12MP 3.5-5.2x Telephoto', storage: '256GB', battery: '5000mAh', features: 'Real-time Eye AF, S-Cinetone' }},
+    { name: 'Xiaomi 14 Ultra', brand: 'Xiaomi', price: 1299, specs: { display: '6.73" LTPO AMOLED (3200x1440) 120Hz', processor: 'Snapdragon 8 Gen 3', camera: '50MP Main + 50MP Ultra Wide + 50MP 3.2x + 50MP 5x', storage: '512GB', battery: '5000mAh, 90W charging', features: 'Leica Summilux lenses, 1" sensor' }},
+    { name: 'Nothing Phone (2)', brand: 'Nothing', price: 599, specs: { display: '6.7" LTPO OLED (2412x1080) 120Hz', processor: 'Snapdragon 8+ Gen 1', camera: '50MP Main + 50MP Ultra Wide', storage: '128GB', battery: '4700mAh, 45W charging', features: 'Glyph Interface with 33 LED zones' }},
+    { name: 'ASUS ROG Phone 8 Pro', brand: 'ASUS', price: 1199, specs: { display: '6.78" LTPO AMOLED (2400x1080) 165Hz', processor: 'Snapdragon 8 Gen 3', camera: '50MP Main + 13MP Ultra Wide + 32MP 3x Telephoto', storage: '512GB', battery: '5500mAh, 65W charging', features: 'AirTriggers, X Mode gaming' }},
+    { name: 'Motorola Edge+ (2023)', brand: 'Motorola', price: 799, specs: { display: '6.7" pOLED (2400x1080) 165Hz', processor: 'Snapdragon 8 Gen 2', camera: '50MP Main + 50MP Ultra Wide + 12MP 2x Telephoto', storage: '512GB', battery: '5100mAh, 68W TurboPower', features: 'Ready For desktop mode' }},
+    { name: 'OPPO Find X7 Ultra', brand: 'OPPO', price: 1199, specs: { display: '6.82" LTPO AMOLED (3168x1440) 120Hz', processor: 'Snapdragon 8 Gen 3', camera: '50MP Main + 50MP Ultra Wide + 50MP 3x + 50MP 6x', storage: '256GB', battery: '5000mAh, 100W charging', features: 'Hasselblad cameras, dual periscope' }},
+    { name: 'Huawei Pura 70 Ultra', brand: 'Huawei', price: 1299, specs: { display: '6.8" LTPO OLED (2844x1260) 120Hz', processor: 'Kirin 9010', camera: '50MP 1" Main + 40MP Ultra Wide + 50MP 3.5x Macro Telephoto', storage: '512GB', battery: '5200mAh, 100W charging', features: 'Retractable lens, XMAGE imaging' }},
+    { name: 'Google Pixel Fold', brand: 'Google', price: 1799, specs: { display: '7.6" OLED (2208x1840) + 5.8" cover (2092x1080)', processor: 'Google Tensor G2', camera: '48MP Main + 10.8MP Ultra Wide + 10.8MP 5x Telephoto', storage: '256GB', battery: '4821mAh', features: 'Tabletop mode, Real Tone' }},
+    { name: 'Samsung Galaxy A54 5G', brand: 'Samsung', price: 449, specs: { display: '6.4" Super AMOLED (2340x1080) 120Hz', processor: 'Exynos 1380', camera: '50MP Main + 12MP Ultra Wide + 5MP Macro', storage: '128GB', battery: '5000mAh', features: 'IP67, 4 years OS updates' }},
+    { name: 'iPhone SE (3rd Gen)', brand: 'Apple', price: 429, specs: { display: '4.7" Retina HD LCD (1334x750)', processor: 'A15 Bionic chip', camera: '12MP Main with Deep Fusion', storage: '64GB', battery: 'Up to 15hr video playback', features: 'Touch ID, 5G' }},
+  ],
+  headphones: [
+    { name: 'Sony WH-1000XM5', brand: 'Sony', price: 399, specs: { driver: '30mm', frequency: '4Hz-40kHz', anc: 'Adaptive ANC with 8 microphones', battery: '30 hours (ANC on)', connectivity: 'Bluetooth 5.2, LDAC, multipoint', weight: '250g' }},
+    { name: 'Sony WF-1000XM5', brand: 'Sony', price: 299, specs: { driver: '8.4mm Dynamic', frequency: '20Hz-40kHz', anc: 'Integrated Processor V2', battery: '8hrs (24hrs with case)', connectivity: 'Bluetooth 5.3, LDAC, LE Audio', weight: '5.9g per earbud' }},
+    { name: 'Apple AirPods Max', brand: 'Apple', price: 549, specs: { driver: '40mm Apple-designed', frequency: '20Hz-20kHz', anc: 'Active Noise Cancellation with Transparency', battery: '20 hours', connectivity: 'Bluetooth 5.0, H1 chip', weight: '384.8g' }},
+    { name: 'Apple AirPods Pro (2nd Gen)', brand: 'Apple', price: 249, specs: { driver: 'Apple-designed H2 chip', frequency: '20Hz-20kHz', anc: 'Adaptive Transparency, Conversation Awareness', battery: '6hrs (30hrs with case)', connectivity: 'Bluetooth 5.3', weight: '5.3g per earbud' }},
+    { name: 'Bose QuietComfort Ultra Headphones', brand: 'Bose', price: 429, specs: { driver: 'Proprietary Bose', frequency: '20Hz-20kHz', anc: 'CustomTune ANC', battery: '24 hours', connectivity: 'Bluetooth 5.3, Snapdragon Sound', weight: '250g' }},
+    { name: 'Bose QuietComfort Ultra Earbuds', brand: 'Bose', price: 299, specs: { driver: '9.3mm', frequency: '20Hz-20kHz', anc: 'CustomTune ANC', battery: '6hrs (24hrs with case)', connectivity: 'Bluetooth 5.3', weight: '6.24g per earbud' }},
+    { name: 'Sennheiser Momentum 4 Wireless', brand: 'Sennheiser', price: 379, specs: { driver: '42mm', frequency: '6Hz-22kHz', anc: 'Adaptive Noise Cancellation', battery: '60 hours', connectivity: 'Bluetooth 5.2, aptX Adaptive', weight: '293g' }},
+    { name: 'Sennheiser HD 660S2', brand: 'Sennheiser', price: 599, specs: { driver: '38mm', frequency: '8Hz-41.5kHz', impedance: '300 ohms', type: 'Open-back audiophile', connectivity: 'Wired (6.35mm & 4.4mm)', weight: '260g' }},
+    { name: 'Audio-Technica ATH-M50xBT2', brand: 'Audio-Technica', price: 199, specs: { driver: '45mm', frequency: '15Hz-28kHz', type: 'Closed-back studio', battery: '50 hours', connectivity: 'Bluetooth 5.0, LDAC', weight: '307g' }},
+    { name: 'Beyerdynamic DT 900 Pro X', brand: 'Beyerdynamic', price: 299, specs: { driver: '45mm STELLAR.45', frequency: '5Hz-40kHz', impedance: '48 ohms', type: 'Open-back studio', connectivity: 'Wired with Mini-XLR', weight: '345g' }},
+    { name: 'JBL Tour One M2', brand: 'JBL', price: 349, specs: { driver: '40mm', frequency: '10Hz-40kHz', anc: 'True Adaptive ANC', battery: '50 hours', connectivity: 'Bluetooth 5.3, LE Audio', weight: '268g' }},
+    { name: 'Bang & Olufsen Beoplay H95', brand: 'Bang & Olufsen', price: 899, specs: { driver: '40mm titanium', frequency: '20Hz-22kHz', anc: 'Adaptive ANC with 4 mics', battery: '38 hours', connectivity: 'Bluetooth 5.1, aptX Adaptive', weight: '323g' }},
+    { name: 'Jabra Elite 85t', brand: 'Jabra', price: 229, specs: { driver: '12mm', frequency: '20Hz-20kHz', anc: 'Advanced ANC with HearThrough', battery: '5.5hrs (25hrs with case)', connectivity: 'Bluetooth 5.1', weight: '7g per earbud' }},
+    { name: 'Samsung Galaxy Buds2 Pro', brand: 'Samsung', price: 229, specs: { driver: '10mm woofer + 5.3mm tweeter', frequency: '20Hz-20kHz', anc: 'Intelligent ANC', battery: '5hrs (18hrs with case)', connectivity: 'Bluetooth 5.3, 360 Audio', weight: '5.5g per earbud' }},
+    { name: 'Shure AONIC 50 Gen 2', brand: 'Shure', price: 349, specs: { driver: '50mm', frequency: '20Hz-22kHz', anc: 'Adjustable ANC', battery: '45 hours', connectivity: 'Bluetooth 5.0, LDAC, aptX HD', weight: '334g' }},
+    { name: 'Focal Bathys', brand: 'Focal', price: 699, specs: { driver: '40mm aluminum/magnesium', frequency: '15Hz-22kHz', anc: 'Active Noise Cancellation', battery: '30 hours (35 passive)', connectivity: 'Bluetooth 5.1, aptX Adaptive', weight: '350g' }},
+    { name: 'Beats Studio Pro', brand: 'Beats', price: 349, specs: { driver: '40mm', frequency: '20Hz-20kHz', anc: 'Active Noise Cancelling', battery: '40 hours', connectivity: 'Bluetooth 5.3, USB-C audio', weight: '260g' }},
+    { name: 'Master & Dynamic MW75', brand: 'Master & Dynamic', price: 599, specs: { driver: '40mm beryllium', frequency: '5Hz-44kHz', anc: 'Adaptive ANC', battery: '32 hours', connectivity: 'Bluetooth 5.1, aptX Adaptive', weight: '330g' }},
+    { name: 'Denon PerL Pro', brand: 'Denon', price: 349, specs: { driver: '10mm', frequency: '20Hz-40kHz', anc: 'Adaptive Noise Cancelling', battery: '8hrs (32hrs with case)', connectivity: 'Bluetooth 5.3, Dirac Virtuo', weight: '8g per earbud' }},
+    { name: 'Technics EAH-A800', brand: 'Technics', price: 349, specs: { driver: '40mm', frequency: '4Hz-40kHz', anc: 'Dual Hybrid ANC', battery: '50 hours', connectivity: 'Bluetooth 5.2, LDAC, multipoint', weight: '298g' }},
+  ],
+  cameras: [
+    { name: 'Canon EOS R5', brand: 'Canon', price: 3899, specs: { sensor: '45MP Full-Frame CMOS', iso: '100-51200 (exp. 50-102400)', video: '8K RAW, 4K 120fps', autofocus: 'Dual Pixel CMOS AF II, 1053 zones', stabilization: '8-stop IBIS', screen: '3.2" 2.1M-dot vari-angle touch' }},
+    { name: 'Canon EOS R6 Mark II', brand: 'Canon', price: 2499, specs: { sensor: '24.2MP Full-Frame CMOS', iso: '100-102400 (exp. 204800)', video: '4K 60fps, 6K oversampled', autofocus: 'Dual Pixel CMOS AF II, 4897 zones', stabilization: '8-stop IBIS', screen: '3" 1.62M-dot vari-angle' }},
+    { name: 'Sony Alpha 7R V', brand: 'Sony', price: 3899, specs: { sensor: '61MP Full-Frame Exmor R BSI', iso: '100-32000 (exp. 50-102400)', video: '8K 24fps, 4K 60fps', autofocus: 'AI-based Real-time Recognition AF', stabilization: '8-stop IBIS', screen: '3.2" 2.1M-dot 4-axis tilting' }},
+    { name: 'Sony Alpha 7 IV', brand: 'Sony', price: 2499, specs: { sensor: '33MP Full-Frame Exmor R BSI', iso: '100-51200 (exp. 50-204800)', video: '4K 60fps 10-bit', autofocus: '759-point phase-detect', stabilization: '5.5-stop IBIS', screen: '3" 1.04M-dot vari-angle' }},
+    { name: 'Sony Alpha 1', brand: 'Sony', price: 6499, specs: { sensor: '50.1MP Full-Frame Stacked CMOS', iso: '100-32000 (exp. 50-102400)', video: '8K 30fps, 4K 120fps', autofocus: '759 phase-detect, 30fps', stabilization: '5.5-stop IBIS', screen: '3" 1.44M-dot touch' }},
+    { name: 'Nikon Z8', brand: 'Nikon', price: 3999, specs: { sensor: '45.7MP Full-Frame Stacked CMOS', iso: '64-25600 (exp. 32-102400)', video: '8K 30fps, 4K 120fps', autofocus: '493 points, 3D tracking', stabilization: '6-stop IBIS', screen: '3.2" 2.1M-dot tilting touch' }},
+    { name: 'Nikon Z6 III', brand: 'Nikon', price: 2499, specs: { sensor: '24.5MP Full-Frame Stacked CMOS', iso: '100-64000 (exp. 204800)', video: '6K 60fps, 4K 120fps', autofocus: '299 phase-detect points', stabilization: '8-stop IBIS', screen: '3.2" 2.1M-dot vari-angle' }},
+    { name: 'Fujifilm X-T5', brand: 'Fujifilm', price: 1699, specs: { sensor: '40.2MP APS-C X-Trans CMOS 5 HR', iso: '125-12800 (exp. 64-51200)', video: '6.2K 30fps, 4K 60fps', autofocus: '425 points phase-detect', stabilization: '7-stop IBIS', screen: '3" 1.84M-dot 3-way tilting' }},
+    { name: 'Fujifilm X100VI', brand: 'Fujifilm', price: 1599, specs: { sensor: '40.2MP APS-C X-Trans CMOS 5 HR', iso: '125-12800 (exp. 64-51200)', video: '6.2K 30fps', lens: '23mm f/2 (35mm equiv)', stabilization: '6-stop IBIS', screen: '3" 1.62M-dot tilting LCD' }},
+    { name: 'Panasonic Lumix S5 IIX', brand: 'Panasonic', price: 2199, specs: { sensor: '24.2MP Full-Frame CMOS', iso: '100-51200 (exp. 204800)', video: '6K 30fps, 4K 60fps, ProRes', autofocus: '779 phase-detect points', stabilization: '6.5-stop IBIS', screen: '3" 1.84M-dot vari-angle' }},
+    { name: 'Leica Q3', brand: 'Leica', price: 5995, specs: { sensor: '60.3MP Full-Frame BSI CMOS', iso: '50-100000', video: '8K 30fps, 4K 60fps', lens: '28mm f/1.7 Summilux', stabilization: 'Optical IS', screen: '3" 1.84M-dot tilting touch' }},
+    { name: 'Leica M11-P', brand: 'Leica', price: 9195, specs: { sensor: '60MP Full-Frame BSI CMOS', iso: '64-50000', type: 'Digital Rangefinder', mount: 'Leica M-mount', features: 'Content Authenticity Initiative', screen: '2.95" 2.3M-dot touch' }},
+    { name: 'GoPro HERO12 Black', brand: 'GoPro', price: 399, specs: { sensor: '1/1.9" CMOS', video: '5.3K 60fps, 4K 120fps', stabilization: 'HyperSmooth 6.0', waterproof: '33ft (10m) without housing', battery: '1720mAh', features: 'HDR Video, GP-Log' }},
+    { name: 'DJI Osmo Action 4', brand: 'DJI', price: 399, specs: { sensor: '1/1.3" CMOS', video: '4K 120fps, 4K HDR', stabilization: 'RockSteady 3.0+ & HorizonSteady', waterproof: '60ft (18m) without housing', battery: '1770mAh', features: '360° HorizonSteady' }},
+    { name: 'DJI Pocket 3', brand: 'DJI', price: 519, specs: { sensor: '1" CMOS', video: '4K 120fps, 10-bit D-Log M', stabilization: '3-axis mechanical gimbal', screen: '2" rotatable OLED touchscreen', battery: '166 minutes', features: 'Full-pixel fast focus, 2" screen' }},
+    { name: 'Hasselblad X2D 100C', brand: 'Hasselblad', price: 8199, specs: { sensor: '100MP Medium Format BSI CMOS', iso: '64-25600', autofocus: 'Phase-detect AF', stabilization: '7-stop IBIS', shutter: '90-min long exposure', screen: '3.6" 2.36M-dot tilting' }},
+    { name: 'Phase One XT', brand: 'Phase One', price: 52000, specs: { sensor: '150MP Full-Frame Medium Format', iso: '50-12800', type: 'Technical field camera', movements: 'Tilt/shift/rise/fall', mount: 'Rodenstock HR lenses', features: 'Capture One tethering' }},
+    { name: 'OM System OM-1 Mark II', brand: 'OM System', price: 2199, specs: { sensor: '20.4MP Micro Four Thirds Stacked', iso: '200-102400', video: '4K 120fps', autofocus: '1053 cross-type points', stabilization: '8.5-stop IBIS', screen: '3" 1.62M-dot vari-angle' }},
+    { name: 'Blackmagic Pocket Cinema Camera 6K Pro', brand: 'Blackmagic', price: 2495, specs: { sensor: '6K Super 35', iso: 'Dual ISO 400/3200', video: '6K 50fps, 4K 120fps', recording: 'Blackmagic RAW, ProRes', mount: 'EF mount', screen: '5" HDR touchscreen' }},
+    { name: 'RED Komodo-X 6K', brand: 'RED', price: 9995, specs: { sensor: '19.9MP Super 35 Global Shutter', iso: '250-16000', video: '6K 80fps, 4K 120fps', recording: 'REDCODE RAW', mount: 'RF mount', features: 'Global shutter, compact body' }},
+  ],
+  monitors: [
+    { name: 'LG UltraGear 27GR95QE-B', brand: 'LG', price: 999, specs: { size: '27"', resolution: '2560x1440 QHD', panel: 'OLED', refresh: '240Hz', response: '0.03ms GtG', hdr: 'DisplayHDR True Black 400', features: 'Anti-Glare Low Reflection' }},
+    { name: 'LG UltraFine 32UQ85R-W', brand: 'LG', price: 799, specs: { size: '32"', resolution: '3840x2160 4K', panel: 'Nano IPS Black', refresh: '60Hz', response: '5ms GtG', hdr: 'VESA DisplayHDR 400', features: 'USB-C 96W PD, DCI-P3 98%' }},
+    { name: 'Samsung Odyssey OLED G9 G95SC', brand: 'Samsung', price: 1799, specs: { size: '49" (32:9 Super Ultrawide)', resolution: '5120x1440 DQHD', panel: 'QD-OLED', refresh: '240Hz', response: '0.03ms', hdr: 'DisplayHDR True Black 400', features: 'Samsung Gaming Hub, 1800R curve' }},
+    { name: 'Samsung ViewFinity S9 S90PC', brand: 'Samsung', price: 1299, specs: { size: '27"', resolution: '5120x2880 5K', panel: 'IPS', refresh: '60Hz', response: '5ms', hdr: 'DisplayHDR 600', features: 'Matte display, 4K SlimFit Camera, Thunderbolt 4' }},
+    { name: 'Dell UltraSharp U3224KB', brand: 'Dell', price: 3199, specs: { size: '32"', resolution: '6144x3456 6K', panel: 'IPS Black', refresh: '60Hz', response: '5ms', hdr: 'DisplayHDR 600', features: '6K resolution, Thunderbolt 4 hub, 4K webcam' }},
+    { name: 'Dell Alienware AW3423DWF', brand: 'Dell', price: 1099, specs: { size: '34" (21:9 Ultrawide)', resolution: '3440x1440 WQHD', panel: 'QD-OLED', refresh: '165Hz', response: '0.1ms', hdr: 'DisplayHDR True Black 400', features: 'AMD FreeSync Premium Pro, 1800R curve' }},
+    { name: 'ASUS ProArt PA32UCG-K', brand: 'ASUS', price: 4999, specs: { size: '32"', resolution: '3840x2160 4K', panel: 'Mini LED IPS', refresh: '120Hz', response: '5ms', hdr: 'DisplayHDR 1400', features: '1152 local dimming zones, Dolby Vision, hardware calibration' }},
+    { name: 'ASUS ROG Swift OLED PG27AQDM', brand: 'ASUS', price: 999, specs: { size: '27"', resolution: '2560x1440 QHD', panel: 'OLED', refresh: '240Hz', response: '0.03ms GtG', hdr: 'DisplayHDR True Black 400', features: 'G-SYNC Compatible, custom heatsink' }},
+    { name: 'BenQ PD3225U', brand: 'BenQ', price: 1199, specs: { size: '32"', resolution: '3840x2160 4K', panel: 'IPS', refresh: '60Hz', response: '5ms', hdr: 'VESA DisplayHDR 400', features: 'Thunderbolt 3, AQCOLOR calibrated, Hotkey Puck G3' }},
+    { name: 'BenQ MOBIUZ EX3210U', brand: 'BenQ', price: 799, specs: { size: '32"', resolution: '3840x2160 4K', panel: 'IPS', refresh: '144Hz', response: '1ms MPRT', hdr: 'DisplayHDR 600', features: 'treVolo speakers, FreeSync Premium Pro' }},
+    { name: 'ViewSonic VP3481a', brand: 'ViewSonic', price: 799, specs: { size: '34" (21:9 Ultrawide)', resolution: '3440x1440 WQHD', panel: 'VA', refresh: '100Hz', response: '5ms', curve: '1800R', features: 'Delta E<2 factory calibrated, USB-C 90W PD' }},
+    { name: 'Acer Predator X27U', brand: 'Acer', price: 1099, specs: { size: '27"', resolution: '2560x1440 QHD', panel: 'OLED', refresh: '240Hz', response: '0.03ms', hdr: 'DisplayHDR True Black 400', features: 'G-SYNC Compatible, AgileVision' }},
+    { name: 'MSI MEG 342C QD-OLED', brand: 'MSI', price: 1199, specs: { size: '34" (21:9 Ultrawide)', resolution: '3440x1440 WQHD', panel: 'QD-OLED', refresh: '175Hz', response: '0.03ms', hdr: 'DisplayHDR True Black 400', features: 'G-SYNC Compatible, 1800R curve' }},
+    { name: 'HP Z27k G3 4K USB-C Display', brand: 'HP', price: 649, specs: { size: '27"', resolution: '3840x2160 4K', panel: 'IPS', refresh: '60Hz', response: '5ms', color: 'sRGB 99%, DCI-P3 98%', features: 'USB-C 100W PD, daisy chain, factory calibrated' }},
+    { name: 'Gigabyte M32U', brand: 'Gigabyte', price: 699, specs: { size: '32"', resolution: '3840x2160 4K', panel: 'IPS', refresh: '144Hz', response: '1ms MPRT', hdr: 'VESA DisplayHDR 400', features: 'KVM switch, FreeSync Premium Pro' }},
+    { name: 'AOC AGON PRO AG274QZM', brand: 'AOC', price: 999, specs: { size: '27"', resolution: '2560x1440 QHD', panel: 'Mini LED IPS', refresh: '240Hz', response: '1ms GtG', hdr: 'DisplayHDR 1000', features: '576 local dimming zones, G-SYNC Compatible' }},
+    { name: 'Corsair Xeneon 32QHD165', brand: 'Corsair', price: 699, specs: { size: '32"', resolution: '2560x1440 QHD', panel: 'IPS', refresh: '165Hz', response: '1ms', hdr: 'DisplayHDR 400', features: 'iCUE integration, USB-C 65W, KVM' }},
+    { name: 'Apple Studio Display', brand: 'Apple', price: 1599, specs: { size: '27"', resolution: '5120x2880 5K', panel: 'IPS', refresh: '60Hz', brightness: '600 nits', color: 'P3 wide color gamut', features: '12MP Ultra Wide camera, 6-speaker system, A13 Bionic' }},
+    { name: 'Apple Pro Display XDR', brand: 'Apple', price: 4999, specs: { size: '32"', resolution: '6016x3384 6K', panel: 'IPS with 576 LED zones', brightness: '1600 nits peak, 1000 sustained', hdr: 'Extreme Dynamic Range', color: 'P3 wide color gamut', features: 'Reference modes, nano-texture glass option' }},
+    { name: 'Eizo ColorEdge CG2700S', brand: 'Eizo', price: 2499, specs: { size: '27"', resolution: '2560x1440 QHD', panel: 'IPS', refresh: '60Hz', color: 'Adobe RGB 99%, DCI-P3 98%', features: 'Built-in calibration sensor, 10-bit, 24/7 operation' }},
+  ],
+};
+
+// Real unique review owners with review dates
+const reviewOwners = [
+  { name: 'Marcus Chen', date: '2025-01-15' },
+  { name: 'Sarah Mitchell', date: '2025-01-12' },
+  { name: 'David Park', date: '2025-01-08' },
+  { name: 'Emily Rodriguez', date: '2025-01-05' },
+  { name: 'James Wilson', date: '2024-12-28' },
+  { name: 'Olivia Thompson', date: '2024-12-22' },
+  { name: 'Michael Brown', date: '2024-12-18' },
+  { name: 'Jessica Lee', date: '2024-12-15' },
+  { name: 'Christopher Davis', date: '2024-12-10' },
+  { name: 'Amanda Garcia', date: '2024-12-05' },
+  { name: 'Daniel Martinez', date: '2024-11-30' },
+  { name: 'Rachel Kim', date: '2024-11-25' },
+  { name: 'Andrew Johnson', date: '2024-11-20' },
+  { name: 'Lauren White', date: '2024-11-15' },
+  { name: 'Kevin Taylor', date: '2024-11-10' },
+  { name: 'Stephanie Anderson', date: '2024-11-05' },
+  { name: 'Brandon Moore', date: '2024-10-30' },
+  { name: 'Megan Jackson', date: '2024-10-25' },
+  { name: 'Tyler Harris', date: '2024-10-20' },
+  { name: 'Nicole Clark', date: '2024-10-15' },
+  { name: 'Ryan Lewis', date: '2024-10-10' },
+  { name: 'Ashley Walker', date: '2024-10-05' },
+  { name: 'Justin Hall', date: '2024-09-30' },
+  { name: 'Samantha Young', date: '2024-09-25' },
+  { name: 'Matthew Allen', date: '2024-09-20' },
+  { name: 'Rebecca King', date: '2024-09-15' },
+  { name: 'Jonathan Wright', date: '2024-09-10' },
+  { name: 'Victoria Scott', date: '2024-09-05' },
+  { name: 'Nicholas Green', date: '2024-08-30' },
+  { name: 'Christina Baker', date: '2024-08-25' },
+  { name: 'Robert Adams', date: '2024-08-20' },
+  { name: 'Jennifer Nelson', date: '2024-08-15' },
+  { name: 'William Hill', date: '2024-08-10' },
+  { name: 'Elizabeth Rivera', date: '2024-08-05' },
+  { name: 'Alexander Campbell', date: '2024-07-30' },
+  { name: 'Catherine Mitchell', date: '2024-07-25' },
+  { name: 'Benjamin Roberts', date: '2024-07-20' },
+  { name: 'Hannah Turner', date: '2024-07-15' },
+  { name: 'Samuel Phillips', date: '2024-07-10' },
+  { name: 'Natalie Evans', date: '2024-07-05' },
+  { name: 'Joseph Collins', date: '2024-06-30' },
+  { name: 'Grace Stewart', date: '2024-06-25' },
+  { name: 'Patrick Sanchez', date: '2024-06-20' },
+  { name: 'Abigail Morris', date: '2024-06-15' },
+  { name: 'Ethan Rogers', date: '2024-06-10' },
+  { name: 'Madison Reed', date: '2024-06-05' },
+  { name: 'Thomas Cook', date: '2024-05-30' },
+  { name: 'Kayla Morgan', date: '2024-05-25' },
+  { name: 'Brian Bell', date: '2024-05-20' },
+  { name: 'Alexis Murphy', date: '2024-05-15' },
+  { name: 'Nathan Bailey', date: '2024-05-10' },
+  { name: 'Julia Rivera', date: '2024-05-05' },
+  { name: 'Aaron Cooper', date: '2024-04-30' },
+  { name: 'Vanessa Richardson', date: '2024-04-25' },
+  { name: 'Sean Cox', date: '2024-04-20' },
+  { name: 'Morgan Howard', date: '2024-04-15' },
+  { name: 'Derek Ward', date: '2024-04-10' },
+  { name: 'Brittany Torres', date: '2024-04-05' },
+  { name: 'Jeremy Peterson', date: '2024-03-30' },
+  { name: 'Lindsey Gray', date: '2024-03-25' },
+  { name: 'Travis Ramirez', date: '2024-03-20' },
+  { name: 'Chelsea James', date: '2024-03-15' },
+  { name: 'Kyle Watson', date: '2024-03-10' },
+  { name: 'Diana Brooks', date: '2024-03-05' },
+  { name: 'Eric Kelly', date: '2024-02-28' },
+  { name: 'Monica Sanders', date: '2024-02-23' },
+  { name: 'Corey Price', date: '2024-02-18' },
+  { name: 'Melissa Bennett', date: '2024-02-13' },
+  { name: 'Dustin Wood', date: '2024-02-08' },
+  { name: 'Amy Barnes', date: '2024-02-03' },
+  { name: 'Jordan Ross', date: '2024-01-29' },
+  { name: 'Heather Henderson', date: '2024-01-24' },
+  { name: 'Blake Coleman', date: '2024-01-19' },
+  { name: 'Kristen Jenkins', date: '2024-01-14' },
+  { name: 'Cody Perry', date: '2024-01-09' },
+  { name: 'Courtney Powell', date: '2024-01-04' },
+  { name: 'Jared Long', date: '2023-12-30' },
+  { name: 'Danielle Patterson', date: '2023-12-25' },
+  { name: 'Ian Hughes', date: '2023-12-20' },
+  { name: 'Kimberly Flores', date: '2023-12-15' },
+  { name: 'Trevor Washington', date: '2023-12-10' },
+  { name: 'Andrea Butler', date: '2023-12-05' },
+  { name: 'Lucas Simmons', date: '2023-11-30' },
+  { name: 'Brooke Foster', date: '2023-11-25' },
+  { name: 'Shane Gonzales', date: '2023-11-20' },
+  { name: 'Tiffany Bryant', date: '2023-11-15' },
+  { name: 'Garrett Alexander', date: '2023-11-10' },
+  { name: 'Jasmine Russell', date: '2023-11-05' },
+  { name: 'Mitchell Griffin', date: '2023-10-30' },
+  { name: 'Paige Diaz', date: '2023-10-25' },
+  { name: 'Wesley Hayes', date: '2023-10-20' },
+  { name: 'Amber Myers', date: '2023-10-15' },
+  { name: 'Caleb Ford', date: '2023-10-10' },
+  { name: 'Erica Hamilton', date: '2023-10-05' },
+  { name: 'Dakota Graham', date: '2023-09-30' },
+  { name: 'Taylor Sullivan', date: '2023-09-25' },
+  { name: 'Chase Wallace', date: '2023-09-20' },
+  { name: 'Destiny Woods', date: '2023-09-15' },
+  { name: 'Spencer West', date: '2023-09-10' },
+  { name: 'Haley Cole', date: '2023-09-05' },
+  { name: 'Carson Jordan', date: '2023-08-30' },
+  { name: 'Shelby Owens', date: '2023-08-25' },
+  { name: 'Preston Reynolds', date: '2023-08-20' },
+  { name: 'Savannah Fisher', date: '2023-08-15' },
+  { name: 'Grant Ellis', date: '2023-08-10' },
+  { name: 'Hayley Harrison', date: '2023-08-05' },
+  { name: 'Clayton Gibson', date: '2023-07-30' },
+  { name: 'Faith McDonald', date: '2023-07-25' },
+  { name: 'Omar Cruz', date: '2023-07-20' },
+  { name: 'Gabrielle Marshall', date: '2023-07-15' },
+  { name: 'Xavier Ortiz', date: '2023-07-10' },
+  { name: 'Jade Gomez', date: '2023-07-05' },
+  { name: 'Roman Murray', date: '2023-06-30' },
+  { name: 'Chloe Freeman', date: '2023-06-25' },
+  { name: 'Maxwell Wells', date: '2023-06-20' },
+  { name: 'Skylar Webb', date: '2023-06-15' },
+  { name: 'Cameron Simpson', date: '2023-06-10' },
+  { name: 'Allison Stevens', date: '2023-06-05' },
+  { name: 'Dominic Tucker', date: '2023-05-30' },
+  { name: 'Kennedy Porter', date: '2023-05-25' },
+  { name: 'Adrian Hunter', date: '2023-05-20' },
+  { name: 'Sierra Hicks', date: '2023-05-15' },
+  { name: 'Colin Crawford', date: '2023-05-10' },
+  { name: 'Bailey Boyd', date: '2023-05-05' },
+  { name: 'Andre Mason', date: '2023-04-30' },
+  { name: 'Leah Dixon', date: '2023-04-25' },
+  { name: 'Felix Hunt', date: '2023-04-20' },
+  { name: 'Aubrey Dunn', date: '2023-04-15' },
+  { name: 'Ivan Carr', date: '2023-04-10' },
+  { name: 'Kylie Stephens', date: '2023-04-05' },
+  { name: 'Hugo Fernandez', date: '2023-03-30' },
+  { name: 'Molly Garza', date: '2023-03-25' },
+  { name: 'Wyatt Harvey', date: '2023-03-20' },
+  { name: 'Zoe Lynch', date: '2023-03-15' },
+  { name: 'Leo Webb', date: '2023-03-10' },
+  { name: 'Gianna Burns', date: '2023-03-05' },
+  { name: 'Oscar Stone', date: '2023-02-28' },
+  { name: 'Arianna Kelley', date: '2023-02-23' },
+  { name: 'Vincent Soto', date: '2023-02-18' },
+  { name: 'Ellie Mendoza', date: '2023-02-13' },
+  { name: 'Marco Ruiz', date: '2023-02-08' },
+  { name: 'Claire Medina', date: '2023-02-03' },
+  { name: 'Nolan Aguilar', date: '2023-01-29' },
+  { name: 'Makayla Reyes', date: '2023-01-24' },
+  { name: 'Tristan Shaw', date: '2023-01-19' },
+  { name: 'Briana Herrera', date: '2023-01-14' },
+  { name: 'Ezra Newman', date: '2023-01-09' },
+  { name: 'Jocelyn Walsh', date: '2023-01-04' },
+  { name: 'Miles Chapman', date: '2022-12-30' },
+  { name: 'Naomi Snyder', date: '2022-12-25' },
+  { name: 'Owen Lloyd', date: '2022-12-20' },
+  { name: 'Summer Parks', date: '2022-12-15' },
+  { name: 'Asher Carpenter', date: '2022-12-10' },
+  { name: 'Willow Bates', date: '2022-12-05' },
+  { name: 'Micah Greene', date: '2022-11-30' },
+  { name: 'Peyton Jensen', date: '2022-11-25' },
+  { name: 'Carter Nichols', date: '2022-11-20' },
+  { name: 'Reagan Vargas', date: '2022-11-15' },
+  { name: 'Eli Patel', date: '2022-11-10' },
+  { name: 'Brooke Sharma', date: '2022-11-05' },
+  { name: 'Finn Grant', date: '2022-10-30' },
+  { name: 'Scarlett Lane', date: '2022-10-25' },
+  { name: 'Axel Ray', date: '2022-10-20' },
+  { name: 'Luna Dawson', date: '2022-10-15' },
+  { name: 'Emmett Powers', date: '2022-10-10' },
+  { name: 'Stella Malone', date: '2022-10-05' },
+  { name: 'Aiden Wheeler', date: '2022-09-30' },
+  { name: 'Aurora Francis', date: '2022-09-25' },
+  { name: 'Colton Andrews', date: '2022-09-20' },
+  { name: 'Isla Dean', date: '2022-09-15' },
+  { name: 'Ryker Moss', date: '2022-09-10' },
+  { name: 'Layla Jimenez', date: '2022-09-05' },
+  { name: 'Sawyer Howell', date: '2022-08-30' },
+  { name: 'Nora Lambert', date: '2022-08-25' },
+  { name: 'Everett Knight', date: '2022-08-20' },
+  { name: 'Maya Kim', date: '2022-08-15' },
+  { name: 'Hudson Welch', date: '2022-08-10' },
+  { name: 'Violet Bishop', date: '2022-08-05' },
+  { name: 'Jasper Burton', date: '2022-07-30' },
+  { name: 'Ivy Hansen', date: '2022-07-25' },
+  { name: 'Ryder Carroll', date: '2022-07-20' },
+  { name: 'Eliana Lawson', date: '2022-07-15' },
+  { name: 'Beckett Casey', date: '2022-07-10' },
+  { name: 'Piper Franklin', date: '2022-07-05' },
+  { name: 'Maddox Chambers', date: '2022-06-30' },
+  { name: 'Emery Ramos', date: '2022-06-25' },
+  { name: 'Harrison Schultz', date: '2022-06-20' },
+  { name: 'Adalyn McIntyre', date: '2022-06-15' },
+  { name: 'Brooks Goodwin', date: '2022-06-10' },
+  { name: 'Vivian Le', date: '2022-06-05' },
 ];
 
-// Generate Products with specific types
+// Unsplash image IDs for each category
+const imageIds = {
+  laptops: [
+    '1496181133206-80ce9b88a853', '1525547719851-df4c4c21e37d', '1517336714731-489689fd1ca8', '1504707748692-419802cf939d', '1498050108023-c5249f4df085',
+    '1531297484001-80022131f5a1', '1593062096033-9a26b09da705', '1588872657578-7efd1f1555ed', '1541807084-5c52b6b92ae2', '1484788984921-03950022c9ef',
+    '1611186871348-b1ce696e52c9', '1515378791036-0648a3ef77b2', '1460925895917-afdab827c52f', '1499951360447-b19be8fe80f5', '1516387938699-a93567ec168e',
+    '1587614382346-4ec70e388b28', '1603302576837-37561b2e2302', '1544244015-0df4b3ffc6b0', '1629131726692-1accd0c53ce0', '1496181133206-80ce9b88a853'
+  ],
+  smartphones: [
+    '1511707171634-5f897ff02aa9', '1510557880182-3d4d3cba35a5', '1592750475338-74b7b21085ab', '1565849904461-04a58ad377e0', '1574944985070-8f3ebc6b79d2',
+    '1605236453806-6ff36851218e', '1512941937669-90a1b58e7e9c', '1591337676887-a217a6970a8a', '1580910051074-3eb694886f2e', '1601784551446-20c9e07cdbdb',
+    '1585060544812-6b45742d762f', '1598327105666-5b89351aff97', '1533228100845-08145b01de14', '1523206489230-c012c64b2b48', '1556656793-08538906a9f8',
+    '1609692814858-f7cd2f0afa4f', '1567581935884-3349723552ca', '1570891836654-d4961a7b6929', '1604076913837-52ab5629fba9', '1611532736597-de2d4265fba3'
+  ],
+  headphones: [
+    '1505740420928-5e560c06d30e', '1583394838336-acd977736f90', '1484704849700-f032a568e944', '1546435770-a3e426bf472b', '1524678606370-a47ad25cb82a',
+    '1487215078519-e21cc028cb29', '1558756520-22cfe5d382ca', '1545127398-14699f92334b', '1572536147248-ac59a8abfa4b', '1599669454699-248893623440',
+    '1493225457124-a3eb161ffa5f', '1520170350707-b2da59970118', '1577174881658-0f30ed549adc', '1570993492881-25240ce854f4', '1613040809024-b4ef7ba99bc3',
+    '1606220588913-b3aacb4d2f46', '1614149162883-504ce4d13909', '1618366712010-f4ae9c647dcb', '1608043152269-423dbba4e7e1', '1590658268037-6bf12165a8df'
+  ],
+  cameras: [
+    '1516035069371-29a1b244cc32', '1502920917128-1aa500764cbd', '1510127034890-ba27508e9f1c', '1495745966610-2a67f2297e5e', '1581591524425-c7e0978cca2e',
+    '1617005082133-548c4dd27f35', '1452780212940-6f5c0d14d848', '1500634245200-e5245c7574ef', '1512790182412-b19e6d62bc39', '1560518883-ce09059eeffa',
+    '1606986628492-c01a5686d9b4', '1519638399535-1b036603ac77', '1609952542840-df54cfddc3fb', '1510784722466-f2aa9c52fff6', '1516724562728-afc824a36e84',
+    '1471341971476-ae15ff5dd4ea', '1473091534298-04dcbce3278c', '1542567455-cd733f23fbb1', '1502982720700-bfff97f2ecac', '1607462109225-6b64ae2dd3cb'
+  ],
+  monitors: [
+    '1527443224154-c4a3942d3acf', '1585792180666-f7347c490ee2', '1593640408182-31c70c8268f5', '1616763355548-1b11f1a73290', '1558618666-fcd25c85cd64',
+    '1498049794561-7780e7231661', '1586210579191-33b45e38fa2c', '1609619385002-f40f1df827b7', '1547658719-da2b51169166', '1621259182978-fbf93132d53d',
+    '1559163499-413811fb2344', '1567603532449-e2b5c0f01943', '1612815154929-0dc2e8e8bdc5', '1550751827-4bd374c3f58b', '1618172193763-c511deb635ca',
+    '1563089145-599997674d42', '1603481588273-2f908a9a7a1b', '1541877944-ac82a091518a', '1625842268584-8f3e34f6f2e4', '1615573588078-23c3fb3c8a39'
+  ]
+};
+
+// Generate Products with real data
 function generateProducts(count: number): Product[] {
   const products: Product[] = [];
-  const productsPerType = count / productTypes.length; // 20 each
-
   let productIndex = 0;
 
-  for (const productType of productTypes) {
-    for (let i = 0; i < productsPerType; i++) {
-      productIndex++;
-      const brand = productType.brands[i % productType.brands.length];
-      const adjective = productType.adjectives[i % productType.adjectives.length];
+  const categories = [
+    { key: 'laptops' as const, type: 'Laptop', subcategory: 'Laptops' },
+    { key: 'smartphones' as const, type: 'Smartphone', subcategory: 'Smartphones' },
+    { key: 'headphones' as const, type: 'Headphones', subcategory: 'Headphones' },
+    { key: 'cameras' as const, type: 'Camera', subcategory: 'Cameras' },
+    { key: 'monitors' as const, type: 'Monitor', subcategory: 'Monitors' },
+  ];
 
-      const basePrice = productType.type === 'Laptop' ? randomFloat(599, 2499) :
-                        productType.type === 'Smartphone' ? randomFloat(299, 1499) :
-                        productType.type === 'Headphones' ? randomFloat(49, 549) :
-                        productType.type === 'Camera' ? randomFloat(499, 3999) :
-                        randomFloat(199, 1299); // Monitor
+  for (const category of categories) {
+    const realProductList = realProducts[category.key];
+    const categoryImageIds = imageIds[category.key];
+
+    for (let i = 0; i < realProductList.length; i++) {
+      productIndex++;
+      const realProduct = realProductList[i];
 
       const hasDiscount = Math.random() > 0.7;
-      const compareAtPrice = hasDiscount ? basePrice * randomFloat(1.1, 1.3) : undefined;
+      const compareAtPrice = hasDiscount ? Math.round(realProduct.price * randomFloat(1.1, 1.25)) : undefined;
 
       const productId = `prod_${String(productIndex).padStart(4, '0')}`;
 
-      // Use curated Unsplash images for reliable product-specific images
-      const imageId = productType.imageIds[i % productType.imageIds.length];
+      const imageId = categoryImageIds[i % categoryImageIds.length];
       const imageUrl = `https://images.unsplash.com/photo-${imageId}?w=800&h=600&fit=crop&auto=format`;
-      const images = Array(randomInt(3, 5)).fill(0).map((_, idx) => {
-        const altImageId = productType.imageIds[(i + idx + 1) % productType.imageIds.length];
+      const images = Array(4).fill(0).map((_, idx) => {
+        const altImageId = categoryImageIds[(i + idx + 1) % categoryImageIds.length];
         return `https://images.unsplash.com/photo-${altImageId}?w=800&h=600&fit=crop&auto=format`;
       });
 
+      // Build features from real specs
+      const features = Object.entries(realProduct.specs).slice(0, 6).map(([key, value]) => `${key}: ${value}`);
+
       const product: Product = {
         id: productId,
-        sku: `SKU-${brand.substring(0, 3).toUpperCase()}-${randomInt(10000, 99999)}`,
-        title: `${brand} ${adjective} ${productType.type}`,
-        description: generateProductDescription(productType.type, brand, adjective),
-        longDescription: generateLongProductDescription(productType.type, brand, adjective),
-        category: productType.category,
-        subcategory: productType.type + 's',
-        brand,
-        price: basePrice,
+        sku: `SKU-${realProduct.brand.substring(0, 3).toUpperCase()}-${randomInt(10000, 99999)}`,
+        title: realProduct.name,
+        description: generateRealProductDescription(realProduct.name, realProduct.brand, category.type, realProduct.specs),
+        longDescription: generateRealLongDescription(realProduct.name, realProduct.brand, category.type, realProduct.specs),
+        category: 'Electronics',
+        subcategory: category.subcategory,
+        brand: realProduct.brand,
+        price: realProduct.price,
         compareAtPrice,
         inStock: Math.random() > 0.1,
-        stockQuantity: randomInt(0, 500),
+        stockQuantity: randomInt(5, 200),
         imageUrl,
         images,
-        rating: randomFloat(3.8, 5.0, 1),
-        reviewCount: 0,
-        features: getRandomElements(productType.features, randomInt(4, 6)),
-        specifications: generateProductSpecs(productType.type, brand),
-        tags: [productType.type.toLowerCase(), brand.toLowerCase(), adjective.toLowerCase(), 'electronics', 'tech'],
-        weight: `${randomFloat(0.2, 5, 2)} lbs`,
-        dimensions: `${randomInt(5, 20)}"L x ${randomInt(5, 15)}"W x ${randomInt(1, 10)}"H`,
-        colors: getRandomElements(['Black', 'Silver', 'Space Gray', 'White', 'Blue', 'Rose Gold'], randomInt(1, 3)),
-        warranty: getRandomElement(['1-year warranty', '2-year warranty', '3-year warranty']),
+        rating: randomFloat(4.0, 4.9, 1),
+        reviewCount: 2,
+        features,
+        specifications: realProduct.specs as Record<string, string>,
+        tags: [category.type.toLowerCase(), realProduct.brand.toLowerCase(), 'electronics', 'tech', ...realProduct.name.toLowerCase().split(' ').slice(0, 3)],
+        weight: category.type === 'Laptop' ? `${randomFloat(2.5, 6, 2)} lbs` :
+                category.type === 'Smartphone' ? `${randomFloat(0.3, 0.5, 2)} lbs` :
+                category.type === 'Headphones' ? `${randomFloat(0.4, 0.9, 2)} lbs` :
+                category.type === 'Camera' ? `${randomFloat(1, 4, 2)} lbs` :
+                `${randomFloat(8, 25, 1)} lbs`,
+        dimensions: category.type === 'Monitor' ? `${randomInt(24, 50)}"W x ${randomInt(15, 30)}"H x ${randomInt(2, 8)}"D` :
+                    `${randomInt(5, 15)}"L x ${randomInt(3, 12)}"W x ${randomInt(1, 6)}"H`,
+        colors: getRandomElements(['Black', 'Silver', 'Space Gray', 'White', 'Midnight', 'Starlight'], randomInt(1, 3)),
+        warranty: getRandomElement(['1-year manufacturer warranty', '2-year extended warranty', '3-year comprehensive warranty']),
         createdAt: generatePastDate(365),
         updatedAt: generatePastDate(30)
       };
@@ -376,6 +657,21 @@ function generateProducts(count: number): Product[] {
   }
 
   return products;
+}
+
+// Generate real product description based on actual specs
+function generateRealProductDescription(name: string, brand: string, type: string, specs: any): string {
+  const specHighlights = Object.entries(specs).slice(0, 3).map(([k, v]) => `${v}`).join(', ');
+
+  const descriptions: Record<string, string> = {
+    'Laptop': `The ${name} delivers exceptional performance with ${specHighlights}. Engineered by ${brand} for professionals and creators who demand the best in portable computing.`,
+    'Smartphone': `Experience the ${name} featuring ${specHighlights}. ${brand}'s latest flagship combines cutting-edge technology with stunning design for the ultimate mobile experience.`,
+    'Headphones': `Immerse yourself in superior audio with the ${name}. Featuring ${specHighlights}, these ${brand} headphones deliver studio-quality sound wherever you go.`,
+    'Camera': `Capture stunning imagery with the ${name}. With ${specHighlights}, this ${brand} camera empowers photographers and videographers to achieve their creative vision.`,
+    'Monitor': `Transform your workspace with the ${name}. Featuring ${specHighlights}, this ${brand} display delivers exceptional visual clarity for work and play.`,
+  };
+
+  return descriptions[type] || `The ${name} by ${brand} offers premium quality and performance.`;
 }
 
 function generateProductDescription(type: string, brand: string, adjective: string): string {
@@ -408,6 +704,39 @@ function generateProductDescription(type: string, brand: string, adjective: stri
   };
 
   return getRandomElement(descriptions[type] || descriptions['Laptop']);
+}
+
+// Generate detailed long description with real specs
+function generateRealLongDescription(name: string, brand: string, type: string, specs: any): string {
+  const specsList = Object.entries(specs).map(([key, value]) => `- **${key}:** ${value}`).join('\n');
+
+  return `
+# ${name}
+
+Introducing the ${name} - ${brand}'s premium ${type.toLowerCase()} engineered for excellence.
+
+## Key Specifications
+${specsList}
+
+## Why Choose the ${name}?
+
+**Exceptional Performance**
+The ${name} delivers outstanding performance for demanding tasks. Whether you're working, creating, or enjoying entertainment, experience smooth and responsive operation powered by industry-leading technology.
+
+**Premium Build Quality**
+Crafted with premium materials and meticulous attention to detail, the ${name} combines beauty with functionality. ${brand}'s commitment to quality is evident in every aspect of the design.
+
+**Advanced Features**
+Packed with innovative features that enhance your experience. From intuitive controls to smart connectivity options, everything is designed with the user in mind.
+
+**What's in the Box**
+- ${name}
+- Power adapter and charging cables
+- Quick start guide
+- Warranty documentation
+
+Experience the ${brand} difference today with the ${name}.
+  `.trim();
 }
 
 function generateLongProductDescription(type: string, brand: string, adjective: string): string {
@@ -504,77 +833,132 @@ function generatePastDate(maxDaysAgo: number): string {
 }
 
 // Generate Reviews
+// Generate unique product-specific reviews (1 positive, 1 negative per product)
 function generateReviews(products: Product[]): Review[] {
   const reviews: Review[] = [];
   let reviewId = 1;
+  let ownerIndex = 0;
 
-  products.forEach(product => {
-    const numReviews = 2; // 2 reviews per product as requested
+  products.forEach((product, productIndex) => {
+    // Get unique owners for this product's reviews
+    const positiveOwner = reviewOwners[ownerIndex % reviewOwners.length];
+    const negativeOwner = reviewOwners[(ownerIndex + 1) % reviewOwners.length];
+    ownerIndex += 2;
 
-    for (let i = 0; i < numReviews; i++) {
-      const rating = generateWeightedRating();
-      const userName = getRandomElement(userNames);
+    // Generate positive review (rating 4-5)
+    const positiveRating = Math.random() > 0.5 ? 5 : 4;
+    const positiveReview = generateUniquePositiveReview(product, productIndex);
 
-      const review: Review = {
-        id: `rev_${String(reviewId++).padStart(4, '0')}`,
-        productId: product.id,
-        userId: `user_${randomInt(1000, 9999)}`,
-        userName,
-        rating,
-        title: getRandomElement(reviewTitles[rating as keyof typeof reviewTitles]),
-        text: generateReviewText(rating, product.title, product.category),
-        helpful: randomInt(0, 50),
-        verified: Math.random() > 0.2, // 80% verified purchases
-        createdAt: generatePastDate(90),
-        updatedAt: generatePastDate(90)
-      };
+    reviews.push({
+      id: `rev_${String(reviewId++).padStart(4, '0')}`,
+      productId: product.id,
+      userId: `user_${randomInt(1000, 9999)}`,
+      userName: positiveOwner.name,
+      rating: positiveRating,
+      title: positiveReview.title,
+      text: positiveReview.text,
+      helpful: randomInt(5, 85),
+      verified: true,
+      createdAt: new Date(positiveOwner.date).toISOString(),
+      updatedAt: new Date(positiveOwner.date).toISOString()
+    });
 
-      reviews.push(review);
-    }
+    // Generate negative review (rating 1-2)
+    const negativeRating = Math.random() > 0.5 ? 2 : 1;
+    const negativeReview = generateUniqueNegativeReview(product, productIndex);
 
-    // Update product review count and rating
-    product.reviewCount = numReviews;
+    reviews.push({
+      id: `rev_${String(reviewId++).padStart(4, '0')}`,
+      productId: product.id,
+      userId: `user_${randomInt(1000, 9999)}`,
+      userName: negativeOwner.name,
+      rating: negativeRating,
+      title: negativeReview.title,
+      text: negativeReview.text,
+      helpful: randomInt(2, 45),
+      verified: Math.random() > 0.3,
+      createdAt: new Date(negativeOwner.date).toISOString(),
+      updatedAt: new Date(negativeOwner.date).toISOString()
+    });
+
+    product.reviewCount = 2;
   });
 
   return reviews;
 }
 
-function generateWeightedRating(): number {
-  // Weight towards higher ratings (more realistic)
-  const rand = Math.random();
-  if (rand < 0.5) return 5;
-  if (rand < 0.75) return 4;
-  if (rand < 0.9) return 3;
-  if (rand < 0.97) return 2;
-  return 1;
-}
+// Generate unique positive review mentioning product name and specs
+function generateUniquePositiveReview(product: Product, index: number): { title: string; text: string } {
+  const specs = Object.entries(product.specifications).slice(0, 2);
+  const specMention = specs.length > 0 ? specs.map(([k, v]) => v).join(' and ') : 'features';
 
-function generateReviewText(rating: number, productName: string, category: string): string {
-  const positiveTemplates = [
-    `I've been using this ${productName} for a few weeks now and I'm extremely impressed. The quality is outstanding and it performs exactly as described. Highly recommend!`,
-    `This is exactly what I was looking for! The ${category.toLowerCase()} product exceeded my expectations in every way. Great value for money.`,
-    `Absolutely love this purchase! The build quality is excellent and it looks even better in person. Worth every penny.`,
-    `Best ${category.toLowerCase()} product I've purchased in a long time. It's well-made, functional, and stylish. Very satisfied with my purchase.`,
-    `I did a lot of research before buying and I'm so glad I chose this one. It's perfect for my needs and the quality is top-notch.`
+  const positiveTitles = [
+    `Excellent ${product.title}!`,
+    `${product.brand} delivers again with the ${product.title}`,
+    `Thrilled with my ${product.title}`,
+    `${product.title} exceeds expectations`,
+    `Best purchase - ${product.title}`,
+    `${product.title} is a game-changer`,
+    `Highly recommend the ${product.title}`,
+    `${product.title} - Worth every dollar`,
+    `Amazing ${product.title} from ${product.brand}`,
+    `Five stars for ${product.title}`,
   ];
 
-  const neutralTemplates = [
-    `The ${productName} is decent for the price. It does what it's supposed to do, though there are a few minor issues. Overall, it's acceptable.`,
-    `It's an okay product. Nothing spectacular but gets the job done. Would recommend if you're on a budget.`,
-    `Mixed feelings about this one. Some features are great, others could use improvement. It's good enough for everyday use.`,
-    `The product is functional and serves its purpose. Build quality is average. For the price, it's a fair deal.`
+  const positiveTemplates = [
+    `After weeks of research, I purchased the ${product.title} and couldn't be happier. The ${specMention} is exactly what I needed. ${product.brand} really outdid themselves with this one. Build quality is exceptional and performance is rock solid.`,
+    `The ${product.title} has exceeded all my expectations. As someone who uses ${product.subcategory.toLowerCase()} daily, I can confidently say this is the best I've owned. The ${specMention} makes a real difference in day-to-day use.`,
+    `I've been using the ${product.title} for about a month now and it's fantastic. The ${specMention} works flawlessly. ${product.brand} quality is evident from the moment you unbox it. Highly recommend!`,
+    `Upgraded to the ${product.title} from an older model and the difference is night and day. The ${specMention} is impressive. Worth the investment if you want premium quality from ${product.brand}.`,
+    `The ${product.title} is exactly what I was looking for. Great ${specMention}, excellent build quality, and ${product.brand}'s attention to detail shows. Perfect for both work and personal use.`,
+    `Purchased the ${product.title} after reading many positive reviews and I agree with all of them. The ${specMention} performs beautifully. This ${product.brand} product is a keeper.`,
+    `I'm impressed with the ${product.title}. The ${specMention} is top-notch and the overall experience has been smooth. ${product.brand} really knows what they're doing.`,
+    `Five stars for the ${product.title}! The ${specMention} works great and the product feels premium. Very happy with this ${product.brand} purchase.`,
+    `The ${product.title} is a solid choice. Love the ${specMention} and the ${product.brand} ecosystem integration. Everything just works seamlessly together.`,
+    `Amazing ${product.title} from ${product.brand}! The ${specMention} is excellent and the product has been reliable since day one. Would buy again.`,
+  ];
+
+  return {
+    title: positiveTitles[index % positiveTitles.length],
+    text: positiveTemplates[index % positiveTemplates.length]
+  };
+}
+
+// Generate unique negative review mentioning product name and specific issues
+function generateUniqueNegativeReview(product: Product, index: number): { title: string; text: string } {
+  const specs = Object.entries(product.specifications).slice(0, 1);
+  const specMention = specs.length > 0 ? specs[0][1] : 'main feature';
+
+  const negativeTitles = [
+    `Disappointed with ${product.title}`,
+    `${product.title} has issues`,
+    `Expected more from ${product.brand}`,
+    `${product.title} not worth the price`,
+    `Problems with my ${product.title}`,
+    `${product.title} fell short`,
+    `Returning my ${product.title}`,
+    `${product.brand} ${product.title} letdown`,
+    `${product.title} quality concerns`,
+    `Would not recommend ${product.title}`,
   ];
 
   const negativeTemplates = [
-    `Unfortunately, this didn't meet my expectations. The quality isn't as good as advertised and I've had some issues with it.`,
-    `Disappointed with this purchase. It looks good but the performance is lacking. Expected more for the price.`,
-    `Not impressed. The ${productName} feels cheaply made and doesn't work as well as I hoped. Would not buy again.`,
-    `Had high hopes but this product fell short. Several quality issues and it stopped working properly after a short time.`
+    `I had high hopes for the ${product.title} but it fell short. The ${specMention} isn't as good as ${product.brand} advertises. For the price of $${product.price}, I expected much better quality and performance.`,
+    `Disappointed with my ${product.title} purchase. Within the first week, I noticed issues with the ${specMention}. ${product.brand}'s quality control seems to have slipped. Considering a return.`,
+    `The ${product.title} looks nice but doesn't perform well. The ${specMention} is underwhelming compared to competitors at this price point. ${product.brand} needs to do better.`,
+    `Bought the ${product.title} based on reviews but my experience has been poor. The ${specMention} doesn't work as expected and customer support was unhelpful. Not impressed with ${product.brand}.`,
+    `Returned my ${product.title} after two weeks. The ${specMention} was inconsistent and I had multiple issues. For $${product.price}, this ${product.brand} product should be flawless.`,
+    `The ${product.title} is overpriced for what you get. The ${specMention} is decent but not $${product.price} decent. ${product.brand} is riding on brand name alone here.`,
+    `Had issues with the ${product.title} from day one. The ${specMention} didn't meet specifications. Disappointed in ${product.brand}'s quality on this product.`,
+    `The ${product.title} seemed great at first but problems emerged quickly. The ${specMention} degrades over time. Not what I expected from ${product.brand} at this price.`,
+    `Regret buying the ${product.title}. The ${specMention} is mediocre and ${product.brand} support was no help. There are better options for less money.`,
+    `Would not recommend the ${product.title}. For a ${product.brand} product costing $${product.price}, the ${specMention} should be much better. Going back to my old device.`,
   ];
 
-  if (rating >= 4) return getRandomElement(positiveTemplates);
-  if (rating === 3) return getRandomElement(neutralTemplates);
-  return getRandomElement(negativeTemplates);
+  return {
+    title: negativeTitles[index % negativeTitles.length],
+    text: negativeTemplates[index % negativeTemplates.length]
+  };
 }
 
 // Generate Policies
