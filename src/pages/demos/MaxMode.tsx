@@ -53,6 +53,7 @@ import {
   History,
   Trash2,
   Lock,
+  Tablet,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -534,6 +535,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [isJsonPanelExpanded, setIsJsonPanelExpanded] = useState(false);
   // Search category submenu state
   const [isSearchCategoryOpen, setIsSearchCategoryOpen] = useState(false);
+  const [isBrowseProductsOpen, setIsBrowseProductsOpen] = useState(false);
   const [searchCategory, setSearchCategory] = useState<string | null>(null);
 
   // Conversations history state
@@ -724,6 +726,58 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     ...c,
     query: `Search products in category ${c.label} and show top results with prices and stock`,
   }));
+
+  // Browse Products categories with specific ready-to-send queries
+  const browseProductCategories = [
+    {
+      id: "apple-laptops",
+      icon: Laptop,
+      label: "Apple Laptops",
+      query: "Action: List product: Apple laptops",
+      color: "from-blue-500 to-cyan-500",
+      description: "MacBook Pro & Air",
+    },
+    {
+      id: "sony-headphones",
+      icon: Headphones,
+      label: "Sony Headphones",
+      query: "Action: List product: Sony headphones",
+      color: "from-purple-500 to-pink-500",
+      description: "Premium noise-cancelling",
+    },
+    {
+      id: "samsung-tablets",
+      icon: Tablet,
+      label: "Samsung Tablets",
+      query: "Action: List product: Samsung tablets",
+      color: "from-green-500 to-emerald-500",
+      description: "Galaxy Tab series",
+    },
+    {
+      id: "sony-cameras",
+      icon: Camera,
+      label: "Sony Cameras",
+      query: "Action: List product: Sony cameras",
+      color: "from-orange-500 to-red-500",
+      description: "Professional photography",
+    },
+    {
+      id: "gaming-laptops",
+      icon: Laptop,
+      label: "Gaming Laptops",
+      query: "Action: List product: gaming laptops high performance",
+      color: "from-red-500 to-pink-500",
+      description: "High-performance gaming",
+    },
+    {
+      id: "wireless-headphones",
+      icon: Headphones,
+      label: "Wireless Headphones",
+      query: "Action: List product: wireless headphones Bluetooth",
+      color: "from-indigo-500 to-purple-500",
+      description: "Bluetooth connectivity",
+    },
+  ];
 
   // Auto-scroll to latest message - show it at the top of viewport
   useEffect(() => {
@@ -1907,6 +1961,17 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   <action.icon className={`h-5 w-5 ${action.color}`} />
                   <span className="text-[10px] font-medium text-foreground whitespace-nowrap">{action.label}</span>
                 </motion.button>
+              ) : action.label === "Browse Products" ? (
+                <motion.button
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  onClick={() => setIsBrowseProductsOpen(!isBrowseProductsOpen)}
+                  className={`flex flex-col items-center gap-1 p-3 rounded-xl ${action.bg} border ${action.border} hover:scale-105 transition-all min-w-[80px] ${isBrowseProductsOpen ? 'ring-2 ring-purple-500' : ''}`}
+                >
+                  <action.icon className={`h-5 w-5 ${action.color}`} />
+                  <span className="text-[10px] font-medium text-foreground whitespace-nowrap">{action.label}</span>
+                </motion.button>
               ) : (
                 <motion.button
                   initial={{ opacity: 0, y: -10 }}
@@ -1958,6 +2023,63 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     <span className={`text-sm font-semibold ${cat.color}`}>{cat.label}</span>
                   </motion.button>
                 ))}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Floating Browse Products Menu - Desktop Only */}
+      <AnimatePresence>
+        {isBrowseProductsOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="hidden md:block fixed inset-0 z-40"
+              onClick={() => setIsBrowseProductsOpen(false)}
+            />
+            {/* Floating Menu */}
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              className="hidden md:block fixed top-[140px] left-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-purple-200 dark:border-purple-700 p-6 z-50 max-w-[600px]"
+            >
+              <div className="flex items-center gap-2 mb-4">
+                <Package className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                <div className="text-sm font-bold text-purple-600 dark:text-purple-400">Browse Products</div>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                {browseProductCategories.map((category, idx) => {
+                  const Icon = category.icon;
+                  return (
+                    <motion.div
+                      key={category.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.05 }}
+                      onClick={() => {
+                        handleQuickAction(category.query, "catalog", "navigator");
+                        setIsBrowseProductsOpen(false);
+                      }}
+                      className="cursor-pointer group"
+                    >
+                      <div className="overflow-hidden rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-purple-500 transition-all hover:shadow-lg">
+                        <div className={`h-20 bg-gradient-to-br ${category.color} flex items-center justify-center relative overflow-hidden`}>
+                          <Icon className="h-10 w-10 text-white/90 group-hover:scale-110 transition-transform" />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all" />
+                        </div>
+                        <div className="p-3 bg-white dark:bg-gray-800">
+                          <h3 className="font-semibold text-sm mb-0.5">{category.label}</h3>
+                          <p className="text-xs text-muted-foreground">{category.description}</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
             </motion.div>
           </>
@@ -2047,7 +2169,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               {/* Actions Grid or Category Selection */}
               <div className="p-6 overflow-y-auto max-h-[calc(70vh-120px)]">
                 {isSearchCategoryOpen ? (
-                  // Category Selection View
+                  // Search Category Selection View
                   <div>
                     <button
                       onClick={() => setIsSearchCategoryOpen(false)}
@@ -2073,6 +2195,51 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                       ))}
                     </div>
                   </div>
+                ) : isBrowseProductsOpen ? (
+                  // Browse Products Selection View
+                  <div>
+                    <button
+                      onClick={() => setIsBrowseProductsOpen(false)}
+                      className="flex items-center gap-2 text-purple-600 dark:text-purple-400 mb-4 text-sm font-medium"
+                    >
+                      <ChevronDown className="h-4 w-4 rotate-90" />
+                      Back to Actions
+                    </button>
+                    <div className="flex items-center gap-2 mb-3">
+                      <Package className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                      <h4 className="text-sm font-bold text-gray-700 dark:text-gray-300">Browse Products</h4>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      {browseProductCategories.map((category, idx) => {
+                        const Icon = category.icon;
+                        return (
+                          <motion.div
+                            key={category.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: idx * 0.05 }}
+                            onClick={() => {
+                              handleQuickAction(category.query, "catalog", "navigator");
+                              setIsBrowseProductsOpen(false);
+                              setIsQuickActionsOpen(false);
+                            }}
+                            className="cursor-pointer group"
+                          >
+                            <div className="overflow-hidden rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-purple-500 active:scale-95 transition-all">
+                              <div className={`h-16 bg-gradient-to-br ${category.color} flex items-center justify-center relative overflow-hidden`}>
+                                <Icon className="h-8 w-8 text-white/90 group-hover:scale-110 transition-transform" />
+                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all" />
+                              </div>
+                              <div className="p-2 bg-white dark:bg-gray-800">
+                                <h3 className="font-semibold text-xs mb-0.5">{category.label}</h3>
+                                <p className="text-[10px] text-muted-foreground">{category.description}</p>
+                              </div>
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  </div>
                 ) : (
                   // Normal Actions Grid
                   <div className="grid grid-cols-3 gap-3">
@@ -2085,6 +2252,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         onClick={() => {
                           if (action.label === "Search Products") {
                             setIsSearchCategoryOpen(true);
+                          } else if (action.label === "Browse Products") {
+                            setIsBrowseProductsOpen(true);
                           } else {
                             handleQuickAction(action.query, action.position, action.mode);
                             setIsQuickActionsOpen(false);
