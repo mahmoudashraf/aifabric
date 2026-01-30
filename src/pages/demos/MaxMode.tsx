@@ -1608,7 +1608,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     setIsLoading(true);
 
     // Keep attachments for next query, only clear suggestions
-    const currentAttachments = [...attachedItems];
+    // Filter out ai-search attachments - they only prepend text, not sent to API
+    const currentAttachments = attachedItems.filter(item => item.type !== 'ai-search');
     setSuggestions([]);
 
     // Determine position and mode
