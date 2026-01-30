@@ -277,13 +277,13 @@ const ActionResultRenderer = ({
     const brand = item.brand || item.Brand;
 
     return (
-      <div key={idx} className="relative group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border-2 border-purple-200 dark:border-purple-700 hover:border-purple-400 dark:hover:border-purple-500 transition-all hover:shadow-xl overflow-hidden">
+      <div key={idx} className="relative group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 transition-all hover:shadow-xl overflow-hidden">
         {/* Attach Button */}
         {onAttach && (
           <Button
             size="icon"
             variant="ghost"
-            className="absolute top-2 right-2 h-8 w-8 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg border border-white/30 hover:scale-110 transition-all"
+            className="absolute top-2 right-2 h-8 w-8 bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-lg border border-white/30 hover:scale-110 transition-all"
             onClick={(e) => {
               e.stopPropagation();
               onAttach(item);
@@ -313,7 +313,7 @@ const ActionResultRenderer = ({
           {/* Brand & Category */}
           <div className="flex items-center gap-2 mb-1">
             {brand && (
-              <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wide">{brand}</span>
+              <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wide">{brand}</span>
             )}
             {category && (
               <span className="text-[10px] text-gray-500 dark:text-gray-400">{category}</span>
@@ -360,12 +360,12 @@ const ActionResultRenderer = ({
 
   // Render generic item card (non-product)
   const renderGenericCard = (item: any, idx: number) => (
-    <Card key={idx} className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200 hover:border-purple-400 transition-colors relative group" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+    <Card key={idx} className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-colors relative group" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
       {onAttach && typeof item === "object" && item !== null && (
         <Button
           size="icon"
           variant="ghost"
-          className="absolute top-2 right-2 h-8 w-8 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg border border-white/30 hover:scale-110 transition-all z-10"
+          className="absolute top-2 right-2 h-8 w-8 bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-lg border border-white/30 hover:scale-110 transition-all z-10"
           onClick={(e) => {
             e.stopPropagation();
             onAttach(item);
@@ -432,7 +432,7 @@ const ActionResultRenderer = ({
           <Button
             size="sm"
             variant="ghost"
-            className="w-full mt-3 text-xs bg-gradient-to-r from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 border border-purple-300"
+            className="w-full mt-3 text-xs bg-gradient-to-r from-blue-500/10 to-blue-400/10 hover:from-blue-500/20 hover:to-blue-400/20 border border-blue-300"
             onClick={() => onExpand((expandedCount || 6) + 6)}
           >
             Show {Math.min(6, remaining)} more
@@ -458,7 +458,7 @@ const ActionResultRenderer = ({
 
             return (
               <div key={arrayKey}>
-                <h4 className="text-sm font-bold mb-2 text-purple-700 dark:text-purple-300">
+                <h4 className="text-sm font-bold mb-2 text-blue-700 dark:text-blue-300">
                   {formatFieldName(arrayKey)}
                 </h4>
                 {hasProducts ? (
@@ -478,7 +478,7 @@ const ActionResultRenderer = ({
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="w-full mt-3 text-xs bg-gradient-to-r from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 border border-purple-300"
+                    className="w-full mt-3 text-xs bg-gradient-to-r from-blue-500/10 to-blue-400/10 hover:from-blue-500/20 hover:to-blue-400/20 border border-blue-300"
                     onClick={() => onExpand((expandedCount || 6) + 6)}
                   >
                     Show {Math.min(6, remaining)} more
@@ -502,7 +502,7 @@ const ActionResultRenderer = ({
     // Render simple object
     return (
       <div className="mt-3">
-        <Card className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+        <Card className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-blue-200" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
           <CardContent className="p-3">
             <div className="space-y-2">
               {Object.entries(data).map(([key, value]) => (
@@ -728,7 +728,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   // Position: "catalog" for browsing/discovery, "checkout" for cart/order actions
   const quickActions = [
     { icon: Search, label: "Search Products", query: "Search for wireless headphones with good ratings and show me the prices, features, and availability", color: "text-blue-600", bg: "bg-blue-500/10", border: "border-blue-500/30", position: "catalog" as const, mode: "navigator" as const },
-    { icon: List, label: "Browse Products", query: "List all available products with their SKU, name, price, category, stock quantity, and ratings", color: "text-purple-600", bg: "bg-purple-500/10", border: "border-purple-500/30", position: "catalog" as const, mode: "navigator" as const },
+    { icon: List, label: "Browse Products", query: "List all available products with their SKU, name, price, category, stock quantity, and ratings", color: "text-blue-600", bg: "bg-blue-500/10", border: "border-blue-500/30", position: "catalog" as const, mode: "navigator" as const },
     { icon: ShoppingCart, label: "My Cart", query: "View my cart", color: "text-green-600", bg: "bg-green-500/10", border: "border-green-500/30", position: "checkout" as const, mode: "copilot" as const },
     { icon: ShoppingBag, label: "Checkout", query: "Checkout my cart", color: "text-orange-600", bg: "bg-orange-500/10", border: "border-orange-500/30", position: "checkout" as const, mode: "copilot" as const },
     { icon: Receipt, label: "My Orders", query: "List my orders", color: "text-indigo-600", bg: "bg-indigo-500/10", border: "border-indigo-500/30", position: "checkout" as const, mode: "copilot" as const },
@@ -746,8 +746,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   // Product search categories matching our actual data
   const searchCategories = [
     { icon: Laptop, label: "Laptops", emoji: "💻", color: "text-blue-600", bg: "bg-blue-500/10", border: "border-blue-500/30" },
-    { icon: Smartphone, label: "Smartphones", emoji: "📱", color: "text-purple-600", bg: "bg-purple-500/10", border: "border-purple-500/30" },
-    { icon: Headphones, label: "Headphones", emoji: "🎧", color: "text-pink-600", bg: "bg-pink-500/10", border: "border-pink-500/30" },
+    { icon: Smartphone, label: "Smartphones", emoji: "📱", color: "text-indigo-600", bg: "bg-indigo-500/10", border: "border-indigo-500/30" },
+    { icon: Headphones, label: "Headphones", emoji: "🎧", color: "text-rose-600", bg: "bg-rose-500/10", border: "border-rose-500/30" },
     { icon: Camera, label: "Cameras", emoji: "📷", color: "text-green-600", bg: "bg-green-500/10", border: "border-green-500/30" },
     { icon: Monitor, label: "Monitors", emoji: "🖥️", color: "text-orange-600", bg: "bg-orange-500/10", border: "border-orange-500/30" },
   ];
@@ -1948,10 +1948,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-gray-900 dark:via-purple-900/20 dark:to-blue-900/20"
+      className="fixed inset-0 z-[100] bg-gradient-to-br from-blue-50 via-blue-50/50 to-white dark:from-gray-900 dark:via-blue-900/20 dark:to-gray-900/90"
     >
       {/* Header - Compact on Mobile */}
-      <div className="absolute top-0 left-0 right-0 h-12 md:h-16 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 flex items-center justify-between px-3 md:px-6 shadow-lg z-10">
+      <div className="absolute top-0 left-0 right-0 h-12 md:h-16 bg-gradient-to-r from-blue-600 to-blue-500 flex items-center justify-between px-3 md:px-6 shadow-lg z-10">
         <div className="flex items-center gap-2 md:gap-3">
           <motion.div
             animate={{ rotate: [0, 360] }}
@@ -2007,7 +2007,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.05 }}
                   onClick={() => setIsBrowseProductsOpen(!isBrowseProductsOpen)}
-                  className={`flex flex-col items-center gap-1 p-3 rounded-xl ${action.bg} border ${action.border} hover:scale-105 transition-all min-w-[80px] ${isBrowseProductsOpen ? 'ring-2 ring-purple-500' : ''}`}
+                  className={`flex flex-col items-center gap-1 p-3 rounded-xl ${action.bg} border ${action.border} hover:scale-105 transition-all min-w-[80px] ${isBrowseProductsOpen ? 'ring-2 ring-blue-500' : ''}`}
                 >
                   <action.icon className={`h-5 w-5 ${action.color}`} />
                   <span className="text-[10px] font-medium text-foreground whitespace-nowrap">{action.label}</span>
@@ -2046,9 +2046,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className="hidden md:block fixed top-[140px] left-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-purple-200 dark:border-purple-700 p-4 z-50 min-w-[320px]"
+              className="hidden md:block fixed top-[140px] left-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-blue-200 dark:border-blue-700 p-4 z-50 min-w-[320px]"
             >
-              <div className="text-sm font-bold text-purple-600 dark:text-purple-400 mb-3 px-1">Select Category to Search</div>
+              <div className="text-sm font-bold text-blue-600 dark:text-blue-400 mb-3 px-1">Select Category to Search</div>
               <div className="flex flex-wrap gap-2">
                 {searchCategories.map((cat, catIdx) => (
                   <motion.button
@@ -2086,11 +2086,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className="hidden md:block fixed top-[140px] left-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-purple-200 dark:border-purple-700 p-6 z-50 max-w-[600px]"
+              className="hidden md:block fixed top-[140px] left-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-blue-200 dark:border-blue-700 p-6 z-50 max-w-[600px]"
             >
               <div className="flex items-center gap-2 mb-4">
-                <Package className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                <div className="text-sm font-bold text-purple-600 dark:text-purple-400">Browse Products</div>
+                <Package className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                <div className="text-sm font-bold text-blue-600 dark:text-blue-400">Browse Products</div>
               </div>
               <div className="grid grid-cols-3 gap-3">
                 {browseProductCategories.map((category, idx) => {
@@ -2107,7 +2107,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                       }}
                       className="cursor-pointer group"
                     >
-                      <div className="overflow-hidden rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-purple-500 transition-all hover:shadow-lg">
+                      <div className="overflow-hidden rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-blue-500 transition-all hover:shadow-lg">
                         <div className={`h-20 bg-gradient-to-br ${category.color} flex items-center justify-center relative overflow-hidden`}>
                           <Icon className="h-10 w-10 text-white/90 group-hover:scale-110 transition-transform" />
                           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all" />
@@ -2155,7 +2155,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
               {/* Header */}
               <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
-                <h3 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Quick Actions</h3>
+                <h3 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">Quick Actions</h3>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -2173,7 +2173,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   <div>
                     <button
                       onClick={() => setIsSearchCategoryOpen(false)}
-                      className="flex items-center gap-2 text-purple-600 dark:text-purple-400 mb-4 text-sm font-medium"
+                      className="flex items-center gap-2 text-blue-600 dark:text-blue-400 mb-4 text-sm font-medium"
                     >
                       <ChevronDown className="h-4 w-4 rotate-90" />
                       Back to Actions
@@ -2200,13 +2200,13 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   <div>
                     <button
                       onClick={() => setIsBrowseProductsOpen(false)}
-                      className="flex items-center gap-2 text-purple-600 dark:text-purple-400 mb-4 text-sm font-medium"
+                      className="flex items-center gap-2 text-blue-600 dark:text-blue-400 mb-4 text-sm font-medium"
                     >
                       <ChevronDown className="h-4 w-4 rotate-90" />
                       Back to Actions
                     </button>
                     <div className="flex items-center gap-2 mb-3">
-                      <Package className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                      <Package className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                       <h4 className="text-sm font-bold text-gray-700 dark:text-gray-300">Browse Products</h4>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
@@ -2298,7 +2298,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     <div
                       className={`max-w-[92%] md:max-w-[85%] rounded-2xl md:rounded-3xl overflow-hidden ${
                         message.type === "user"
-                          ? "bg-gradient-to-br from-purple-600 via-pink-600 to-purple-700 text-white shadow-xl"
+                          ? "bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-xl"
                           : `${styles?.bg} shadow-xl relative`
                       }`}
                     >
@@ -2381,7 +2381,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                       className={`p-1 rounded transition-colors ${
                                         isAlreadyAttached
                                           ? 'text-green-500 cursor-default'
-                                          : 'text-gray-400 hover:text-purple-600 hover:bg-purple-100/20'
+                                          : 'text-gray-400 hover:text-blue-600 hover:bg-blue-100/20'
                                       }`}
                                       title={isAlreadyAttached ? "Already attached" : "Re-attach to chat"}
                                     >
@@ -2413,20 +2413,20 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                   }}
                                   size="icon"
                                   variant="ghost"
-                                  className="absolute -left-3 -top-3 h-9 w-9 rounded-full bg-purple-600 hover:bg-purple-700 text-white transition-all hover:scale-110 shadow-xl z-10 border-2 border-white dark:border-gray-900"
+                                  className="absolute -left-3 -top-3 h-9 w-9 rounded-full bg-blue-600 hover:bg-blue-700 text-white transition-all hover:scale-110 shadow-xl z-10 border-2 border-white dark:border-gray-900"
                                   title="Resend action"
                                 >
                                   <RotateCcw className="h-4 w-4" />
                                 </Button>
 
-                                <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500 via-pink-500 to-purple-600 p-[2px] shadow-lg">
+                                <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 p-[2px] shadow-lg">
                                   <div className="relative bg-white dark:bg-gray-900 rounded-2xl p-4">
                                     <div className="flex items-center gap-3 mb-3">
-                                      <div className="p-2.5 bg-gradient-to-br from-purple-500 via-pink-500 to-purple-600 rounded-xl shadow-md">
+                                      <div className="p-2.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-md">
                                         <ActionIcon className="h-5 w-5 text-white" />
                                       </div>
                                       <div className="flex-1">
-                                        <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">
+                                        <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
                                           {parsedAction.actionType}
                                         </span>
                                       </div>
@@ -2436,7 +2436,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                     </p>
 
                                     {/* Decorative shine effect */}
-                                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-200/20 to-transparent rounded-full blur-2xl -z-10" />
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-200/20 to-transparent rounded-full blur-2xl -z-10" />
                                   </div>
                                 </div>
                               </div>
@@ -2622,7 +2622,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                 setSelectedDebugMessage(message);
                                 setIsDebugModalOpen(true);
                               }}
-                              className="flex items-center gap-1 text-[10px] text-gray-400 hover:text-purple-600 transition-colors"
+                              className="flex items-center gap-1 text-[10px] text-gray-400 hover:text-blue-600 transition-colors"
                               title="View API Debug Data"
                             >
                               <Info className="h-3 w-3" />
@@ -2648,7 +2648,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     <motion.div
                       animate={{ scale: [1, 1.2, 1] }}
                       transition={{ repeat: Infinity, duration: 1, delay: 0 }}
-                      className="w-2 h-2 bg-purple-600 rounded-full"
+                      className="w-2 h-2 bg-blue-600 rounded-full"
                     />
                     <motion.div
                       animate={{ scale: [1, 1.2, 1] }}
@@ -2677,10 +2677,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 420 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className={`hidden md:flex absolute top-[165px] right-0 bottom-0 mr-2 ${selectedProduct || isCartView ? 'w-[700px] max-w-[700px]' : 'w-[420px] max-w-[420px]'} border-l-2 border-purple-500/30 bg-gradient-to-b from-purple-50/95 via-pink-50/95 to-blue-50/95 dark:from-gray-900/95 dark:via-purple-900/95 dark:to-blue-900/95 backdrop-blur-xl p-6 shadow-2xl z-10 flex-col transition-all duration-300`}
+              className={`hidden md:flex absolute top-[165px] right-0 bottom-0 mr-2 ${selectedProduct || isCartView ? 'w-[700px] max-w-[700px]' : 'w-[420px] max-w-[420px]'} border-l-2 border-blue-500/30 bg-gradient-to-b from-blue-50/95 to-white/95 dark:from-gray-900/95 dark:via-blue-900/20 dark:to-gray-900/95 backdrop-blur-xl p-6 shadow-2xl z-10 flex-col transition-all duration-300`}
             >
               {/* Header */}
-              <div className="bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 backdrop-blur-md p-5 rounded-2xl mb-6 shadow-2xl border-2 border-white/20">
+              <div className="bg-gradient-to-br from-blue-600 to-blue-500 backdrop-blur-md p-5 rounded-2xl mb-6 shadow-2xl border-2 border-white/20">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <motion.div
@@ -2742,14 +2742,14 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                       {/* Cart Items */}
                       <div className="space-y-3">
                         {cartData.items.map((item: any, idx: number) => (
-                          <Card key={idx} className="border-2 border-purple-200 bg-white/60">
+                          <Card key={idx} className="border-2 border-blue-200 bg-white/60">
                             <CardContent className="p-4">
                               <div className="flex items-start gap-3">
                                 <div className="flex-1">
                                   <h4 className="font-semibold text-gray-900 mb-1">{item.productName || item.sku}</h4>
                                   <p className="text-sm text-gray-600 mb-2">SKU: {item.sku}</p>
                                   <div className="flex items-center justify-between">
-                                    <span className="text-lg font-bold text-purple-600">${item.price}</span>
+                                    <span className="text-lg font-bold text-gray-900">${item.price}</span>
                                     <span className="text-sm text-gray-500">Qty: {item.quantity}</span>
                                   </div>
                                   <div className="mt-2 text-sm font-semibold text-gray-900">
@@ -2771,7 +2771,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                       </div>
 
                       {/* Cart Summary */}
-                      <Card className="border-2 border-purple-300 bg-gradient-to-br from-purple-50 to-pink-50">
+                      <Card className="border-2 border-blue-300 bg-gradient-to-br from-blue-50 to-white">
                         <CardContent className="p-4 space-y-2">
                           <div className="flex justify-between text-sm">
                             <span className="text-gray-600">Subtotal:</span>
@@ -2783,9 +2783,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                               <span className="font-semibold text-green-600">-${cartData.discount?.toFixed(2)}</span>
                             </div>
                           )}
-                          <div className="border-t border-purple-200 pt-2 flex justify-between">
+                          <div className="border-t border-blue-200 pt-2 flex justify-between">
                             <span className="text-lg font-bold text-gray-900">Total:</span>
-                            <span className="text-lg font-bold text-purple-600">${cartData.total?.toFixed(2) || '0.00'}</span>
+                            <span className="text-lg font-bold text-gray-900">${cartData.total?.toFixed(2) || '0.00'}</span>
                           </div>
                           {cartData.couponCode && (
                             <div className="text-xs text-gray-500 flex items-center gap-1">
@@ -2835,7 +2835,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             });
                           }}
                           variant="outline"
-                          className="w-full border-purple-300 text-purple-600 hover:bg-purple-50"
+                          className="w-full border-blue-300 text-blue-600 hover:bg-blue-50"
                           size="lg"
                         >
                           <BrainCircuit className="h-5 w-5 mr-2" />
@@ -2854,7 +2854,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           setChatQuery("Show me available products");
                           handleChatQuery("Show me available products");
                         }}
-                        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                        className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white"
                       >
                         Browse Products
                       </Button>
@@ -2868,7 +2868,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   scrollbarColor: 'rgba(168, 85, 247, 0.5) rgba(243, 232, 255, 0.2)'
                 }}>
                   {selectedProduct.metadata?.imageUrl && (
-                    <div className="relative h-80 overflow-hidden rounded-2xl bg-gradient-to-br from-purple-100 to-pink-100">
+                    <div className="relative h-80 overflow-hidden rounded-2xl bg-gradient-to-br from-blue-100 to-white">
                       <img
                         src={selectedProduct.metadata.imageUrl}
                         alt={selectedProduct.title}
@@ -2880,10 +2880,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
                   <div className="space-y-4">
                     <div>
-                      <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                      <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent mb-2">
                         {selectedProduct.title}
                       </h3>
-                      <Badge variant="outline" className="text-xs bg-purple-100 border-purple-300 text-purple-700">
+                      <Badge variant="outline" className="text-xs bg-blue-100 border-blue-300 text-blue-700">
                         {selectedProduct.type}
                       </Badge>
                     </div>
@@ -2912,7 +2912,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     )}
 
                     {/* Action Buttons */}
-                    <div className="sticky bottom-0 bg-gradient-to-t from-purple-50 via-purple-50 to-transparent pt-6 pb-2 space-y-3">
+                    <div className="sticky bottom-0 bg-gradient-to-t from-blue-50 via-blue-50/50 to-transparent pt-6 pb-2 space-y-3">
                       <Button
                         onClick={() => addToCart(selectedProduct)}
                         className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg"
@@ -2927,7 +2927,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           closeProductDetails();
                         }}
                         variant="outline"
-                        className="w-full border-purple-300 text-purple-600 hover:bg-purple-50"
+                        className="w-full border-blue-300 text-blue-600 hover:bg-blue-50"
                         size="lg"
                       >
                         <BrainCircuit className="h-5 w-5 mr-2" />
@@ -2944,7 +2944,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   variant="ghost"
                   size="icon"
                   onClick={handleScrollUp}
-                  className="hidden lg:flex absolute top-4 left-1/2 -translate-x-1/2 z-20 h-10 w-10 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-xl border-2 border-white/30 hover:scale-110 transition-all"
+                  className="hidden lg:flex absolute top-4 left-1/2 -translate-x-1/2 z-20 h-10 w-10 rounded-full bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-xl border-2 border-white/30 hover:scale-110 transition-all"
                   title="Scroll Up"
                 >
                   <ChevronUp className="h-5 w-5" />
@@ -2978,13 +2978,13 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             onClick={() => openProductDetails(doc)}
                             className={`relative group hover:shadow-2xl transition-all duration-300 border-2 cursor-pointer ${
                             isNewDoc
-                              ? 'border-yellow-400 shadow-lg shadow-yellow-200/50 bg-gradient-to-br from-yellow-50/90 via-purple-50/40 to-pink-50/40'
+                              ? 'border-yellow-400 shadow-lg shadow-yellow-200/50 bg-gradient-to-br from-yellow-50/90 via-blue-50/40 to-white/40'
                               : isFocused
-                                ? 'border-yellow-400 shadow-lg shadow-yellow-200/50 bg-gradient-to-br from-yellow-50 via-purple-50/50 to-pink-50/50'
-                                : 'border-purple-300 hover:border-purple-500 bg-gradient-to-br from-white via-purple-50/50 to-pink-50/50'
-                          } dark:from-gray-800 dark:to-purple-900/20 overflow-hidden`}>
+                                ? 'border-yellow-400 shadow-lg shadow-yellow-200/50 bg-gradient-to-br from-yellow-50 via-blue-50/50 to-white/50'
+                                : 'border-blue-300 hover:border-blue-500 bg-gradient-to-br from-white via-blue-50/50 to-white'
+                          } dark:from-gray-800 dark:to-blue-900/20 overflow-hidden`}>
                             {doc.metadata?.imageUrl && (
-                              <div className="relative h-48 overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
+                              <div className="relative h-48 overflow-hidden bg-gradient-to-br from-blue-100 to-white">
                                 <img
                                   src={doc.metadata.imageUrl}
                                   alt={doc.title}
@@ -3039,7 +3039,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                       {doc.title}
                                     </CardTitle>
                                     <div className="flex items-center gap-1.5 mt-1.5">
-                                      <Badge variant="outline" className="text-[10px] bg-purple-100 border-purple-300 text-purple-700">
+                                      <Badge variant="outline" className="text-[10px] bg-blue-100 border-blue-300 text-blue-700">
                                         {doc.type}
                                       </Badge>
                                       {isNewDoc && (
@@ -3102,7 +3102,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   variant="ghost"
                   size="icon"
                   onClick={handleScrollDown}
-                  className="hidden lg:flex absolute bottom-4 left-1/2 -translate-x-1/2 z-20 h-10 w-10 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-xl border-2 border-white/30 hover:scale-110 transition-all"
+                  className="hidden lg:flex absolute bottom-4 left-1/2 -translate-x-1/2 z-20 h-10 w-10 rounded-full bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-xl border-2 border-white/30 hover:scale-110 transition-all"
                   title="Scroll Down"
                 >
                   <ChevronDown className="h-5 w-5" />
@@ -3126,7 +3126,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               <Button
                 onClick={() => setIsPanelVisible(true)}
                 size="lg"
-                className="bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white shadow-2xl border-2 border-white/30 rounded-full px-6"
+                className="bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-2xl border-2 border-white/30 rounded-full px-6"
               >
                 <Eye className="h-5 w-5 mr-2" />
                 Show Panel
@@ -3147,7 +3147,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             <Button
               onClick={() => setIsAISearchOpen(!isAISearchOpen)}
               size="lg"
-              className="h-12 w-12 rounded-full bg-gradient-to-br from-cyan-500 via-blue-500 to-indigo-500 hover:from-cyan-600 hover:via-blue-600 hover:to-indigo-600 text-white shadow-2xl border-2 border-white/30"
+              className="h-12 w-12 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-2xl border-2 border-white/30"
             >
               <Search className="h-5 w-5" />
             </Button>
@@ -3166,7 +3166,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             <Button
               onClick={() => setIsBrowseProductsOpen(!isBrowseProductsOpen)}
               size="lg"
-              className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-rose-500 hover:from-purple-600 hover:via-pink-600 hover:to-rose-600 text-white shadow-2xl border-2 border-white/30"
+              className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-2xl border-2 border-white/30"
             >
               <List className="h-5 w-5" />
             </Button>
@@ -3234,7 +3234,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 <Button
                   onClick={() => setIsQuickActionsOpen(true)}
                   size="lg"
-                  className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white shadow-2xl border-2 border-white/30"
+                  className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-2xl border-2 border-white/30"
                 >
                   <BrainCircuit className="h-5 w-5" />
                 </Button>
@@ -3287,7 +3287,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     variant="ghost"
                     size="icon"
                     onClick={() => setIsBrowseProductsOpen(false)}
-                    className="h-9 w-9 hover:bg-purple-100 dark:hover:bg-purple-900/50 rounded-xl"
+                    className="h-9 w-9 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-xl"
                   >
                     <X className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                   </Button>
@@ -3362,16 +3362,16 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 animate={{ x: 0, opacity: 1 }}
                 exit={{ x: 300, opacity: 0 }}
                 transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                className="md:hidden fixed top-20 bottom-20 right-0 w-[280px] bg-gradient-to-b from-purple-50 via-pink-50 to-white dark:from-gray-900 dark:via-purple-900/50 dark:to-gray-900 shadow-2xl z-[40] flex flex-col rounded-l-3xl border-l-2 border-purple-300"
+                className="md:hidden fixed top-20 bottom-20 right-0 w-[280px] bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:via-blue-900/20 dark:to-gray-900 shadow-2xl z-[40] flex flex-col rounded-l-3xl border-l-2 border-blue-300"
               >
                 {/* Header */}
-                <div className="px-4 py-3 border-b border-purple-200 dark:border-purple-800 flex items-center justify-between">
+                <div className="px-4 py-3 border-b border-blue-200 dark:border-blue-800 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="p-2 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg">
+                    <div className="p-2 bg-gradient-to-br from-blue-600 to-blue-500 rounded-lg">
                       <Sparkles className="h-4 w-4 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                      <h3 className="text-sm font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
                         New Products
                       </h3>
                       <p className="text-[10px] text-muted-foreground">
@@ -3496,7 +3496,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     setIsBottomSheetOpen(false);
                   }
                 }}
-                className="md:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-b from-purple-50 via-pink-50 to-white dark:from-gray-900 dark:via-purple-900/50 dark:to-gray-900 rounded-t-3xl shadow-2xl z-[70] max-h-[80vh] flex flex-col"
+                className="md:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:via-blue-900/20 dark:to-gray-900 rounded-t-3xl shadow-2xl z-[70] max-h-[80vh] flex flex-col"
               >
                 {/* Handle */}
                 <div className="flex justify-center pt-3 pb-2">
@@ -3504,7 +3504,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 </div>
 
                 {/* Header */}
-                <div className="px-4 py-3 border-b border-purple-200 dark:border-purple-800 flex items-center justify-between">
+                <div className="px-4 py-3 border-b border-blue-200 dark:border-blue-800 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     {selectedProduct && (
                       <Button
@@ -3649,7 +3649,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                 });
                               }}
                               variant="outline"
-                              className="w-full border-purple-300 text-purple-600 hover:bg-purple-50"
+                              className="w-full border-blue-300 text-blue-600 hover:bg-blue-50"
                             >
                               <BrainCircuit className="h-5 w-5 mr-2" />
                               Attach Cart to Chat
@@ -3693,7 +3693,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         <h3 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
                           {selectedProduct.title}
                         </h3>
-                        <Badge variant="outline" className="text-xs bg-purple-100 border-purple-300 text-purple-700">
+                        <Badge variant="outline" className="text-xs bg-blue-100 border-blue-300 text-blue-700">
                           {selectedProduct.type}
                         </Badge>
                       </div>
@@ -3742,7 +3742,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             setSelectedProduct(null);
                           }}
                           variant="outline"
-                          className="w-full border-purple-300 text-purple-600 hover:bg-purple-50"
+                          className="w-full border-blue-300 text-blue-600 hover:bg-blue-50"
                         >
                           <BrainCircuit className="h-5 w-5 mr-2" />
                           Attach to Chat
@@ -3798,7 +3798,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                     {doc.title}
                                   </CardTitle>
                                   <div className="flex items-center gap-1 mt-1">
-                                    <Badge variant="outline" className="text-[9px] bg-purple-100 border-purple-300 text-purple-700">
+                                    <Badge variant="outline" className="text-[9px] bg-blue-100 border-blue-300 text-blue-700">
                                       {doc.type}
                                     </Badge>
                                     {isNewDoc && (
@@ -3869,7 +3869,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               className="relative w-full max-w-[350px]"
             >
               {/* Main Card */}
-              <Card className="border-4 border-purple-400 bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 shadow-2xl w-full">
+              <Card className="border-4 border-blue-400 bg-gradient-to-br from-blue-50 to-white shadow-2xl w-full">
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
                     {/* Animated AI Icon */}
@@ -3967,8 +3967,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   >
                     <Card className={`border-2 shadow-lg hover:shadow-xl transition-all ${
                       isAISearch
-                        ? 'border-cyan-400/50 bg-gradient-to-br from-cyan-500/20 via-blue-500/20 to-purple-500/20'
-                        : 'border-purple-400/50 bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-blue-500/20'
+                        ? 'border-indigo-400/50 bg-gradient-to-br from-indigo-500/20 to-purple-500/20'
+                        : 'border-blue-400/50 bg-gradient-to-br from-blue-500/20 to-blue-400/20'
                     }`}>
                       <CardContent className="p-2 md:p-3 flex items-center gap-2 md:gap-3">
                         <motion.div
@@ -3976,8 +3976,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           transition={{ duration: 0.5 }}
                           className={`p-1.5 md:p-2 rounded-lg flex-shrink-0 ${
                             isAISearch
-                              ? 'bg-gradient-to-br from-cyan-600 to-blue-600'
-                              : 'bg-gradient-to-br from-purple-600 to-pink-600'
+                              ? 'bg-gradient-to-br from-indigo-600 to-purple-600'
+                              : 'bg-gradient-to-br from-blue-600 to-blue-500'
                           }`}
                         >
                           {isAISearch ? (
@@ -4024,12 +4024,12 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               exit={{ opacity: 0, y: -10 }}
               className="mb-3"
             >
-              <div className="p-4 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 rounded-xl border-2 border-purple-300/50 shadow-lg">
+              <div className="p-4 bg-gradient-to-r from-blue-500/10 to-blue-400/10 rounded-xl border-2 border-blue-300/50 shadow-lg">
                 <div className="flex items-center gap-3 mb-3">
                   <Button
                     size="icon"
                     variant="ghost"
-                    className="h-7 w-7 rounded-lg bg-purple-100 hover:bg-purple-200 dark:bg-purple-900/30 dark:hover:bg-purple-900/50 text-purple-600 hover:text-purple-900"
+                    className="h-7 w-7 rounded-lg bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 text-blue-600 hover:text-blue-900"
                     onClick={() => {
                       setShowSuggestions(false);
                       // Mark all current suggestions as shown
@@ -4272,7 +4272,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 size="icon"
                 onClick={() => handleChatQuery()}
                 disabled={isLoading || !chatQuery.trim() || oldConversationLocked}
-                className="absolute right-2 bottom-2 h-10 w-10 md:h-11 md:w-11 rounded-xl bg-gradient-to-br from-purple-600 via-pink-600 to-purple-700 hover:from-purple-700 hover:via-pink-700 hover:to-purple-800 shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 border border-white/20"
+                className="absolute right-2 bottom-2 h-10 w-10 md:h-11 md:w-11 rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 border border-white/20"
               >
                 {isLoading ? (
                   <Loader2 className="h-5 w-5 md:h-5.5 md:w-5.5 animate-spin text-white" />
