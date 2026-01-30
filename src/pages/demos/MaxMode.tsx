@@ -2270,36 +2270,42 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[92%] md:max-w-[85%] rounded-2xl md:rounded-2xl overflow-hidden shadow-lg ${
+                      className={`max-w-[92%] md:max-w-[85%] rounded-2xl md:rounded-3xl overflow-hidden ${
                         message.type === "user"
-                          ? "bg-gradient-to-br from-purple-600 to-pink-600 text-white"
-                          : `${styles?.bg} border-2 ${styles?.border}`
+                          ? "bg-gradient-to-br from-purple-600 via-pink-600 to-purple-700 text-white shadow-xl"
+                          : `${styles?.bg} shadow-xl relative`
                       }`}
                     >
                       {message.type === "ai" && Icon && !styles?.hideBadge && (
-                        <div className={`px-3 md:px-4 py-1.5 md:py-2 border-b ${styles?.border} flex items-center justify-between bg-white/50 dark:bg-gray-800/50`}>
-                          <div className="flex items-center gap-2">
-                            <Icon className={`h-3.5 w-3.5 md:h-4 md:w-4 ${styles?.iconColor}`} />
-                            <span className={`text-[11px] md:text-xs font-semibold ${styles?.text}`}>
-                              {styles?.label}
-                            </span>
+                        <div className="relative">
+                          <div className={`px-4 md:px-5 py-2.5 md:py-3 flex items-center justify-between bg-gradient-to-r ${styles?.bg} backdrop-blur-sm`}>
+                            <div className="flex items-center gap-2.5">
+                              <div className={`p-2 rounded-xl ${styles?.iconColor} bg-white/20 backdrop-blur-sm`}>
+                                <Icon className="h-4 w-4 md:h-4.5 md:w-4.5 text-white" />
+                              </div>
+                              <span className="text-xs md:text-sm font-bold text-white drop-shadow-sm">
+                                {styles?.label}
+                              </span>
+                            </div>
+                            {message.debugData && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedDebugMessage(message);
+                                  setIsDebugModalOpen(true);
+                                }}
+                                className="p-1.5 rounded-lg hover:bg-white/20 transition-colors backdrop-blur-sm"
+                                title="View API Debug Data"
+                              >
+                                <Info className="h-4 w-4 text-white/80 hover:text-white" />
+                              </button>
+                            )}
                           </div>
-                          {message.debugData && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedDebugMessage(message);
-                                setIsDebugModalOpen(true);
-                              }}
-                              className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                              title="View API Debug Data"
-                            >
-                              <Info className="h-3.5 w-3.5 text-gray-500 hover:text-purple-600" />
-                            </button>
-                          )}
+                          {/* Gradient separator */}
+                          <div className="h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
                         </div>
                       )}
-                      <div className="p-3 md:p-4">
+                      <div className={`p-4 md:p-5 ${message.type === "ai" ? "bg-white dark:bg-gray-900" : ""}`}>
                         {/* Search Category Tag for user messages */}
                         {message.type === "user" && message.searchCategory && (
                           <div className="mb-2">
@@ -2408,7 +2414,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           }
 
                           return (
-                            <p className={`text-sm md:text-base whitespace-pre-wrap leading-relaxed ${message.type === "ai" && styles ? styles.text : ""}`} style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+                            <p className={`text-base md:text-lg whitespace-pre-wrap leading-relaxed font-medium ${message.type === "ai" ? "text-gray-800 dark:text-gray-100" : ""}`} style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
                               {content}
                             </p>
                           );
