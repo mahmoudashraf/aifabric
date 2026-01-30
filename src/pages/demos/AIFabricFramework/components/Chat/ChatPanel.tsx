@@ -8,7 +8,7 @@ import type { ChatMessage as ChatMessageType } from "../../types";
 interface ChatPanelProps {
   isExpanded: boolean;
   onClose: () => void;
-  messages: ChatMessage[];
+  messages: ChatMessageType[];
   isLoading: boolean;
   onConfirmation: (action: "confirm" | "deny", data?: any) => void;
   messagesEndRef: RefObject<HTMLDivElement>;
