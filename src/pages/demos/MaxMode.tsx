@@ -3095,7 +3095,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         </AnimatePresence>
 
         {/* Mobile: Floating Action Buttons - Stacked with Labels */}
-        <div className="md:hidden fixed bottom-24 right-4 z-20 flex flex-col items-center gap-4">
+        <div className="md:hidden fixed bottom-24 right-4 z-20 flex flex-col items-center gap-6">
           {/* Cart Button */}
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
@@ -3815,15 +3815,15 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       {/* Input Area */}
       <div className="absolute bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t-2 border-purple-500/30 p-3 md:p-6">
         <div className="max-w-4xl mx-auto">
-          {/* Attached Items - Beautiful Cards */}
-          {attachedItems.length > 0 && (
+          {/* Attached Items - Beautiful Cards (exclude AI Search - shown in input tag) */}
+          {attachedItems.filter(item => item.type !== 'ai-search').length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="mb-2 md:mb-3 flex flex-wrap gap-1.5 md:gap-2 max-h-[120px] md:max-h-[200px] overflow-y-auto"
             >
               <AnimatePresence mode="popLayout">
-                {attachedItems.map((item, idx) => {
+                {attachedItems.filter(item => item.type !== 'ai-search').map((item, idx) => {
                   const isAISearch = item.type === 'ai-search';
                   return (
                   <motion.div
@@ -4022,7 +4022,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             {/* Input container */}
             <div className="relative flex-1">
               {/* Search Category Tag inside input - Compact & Creative */}
-              {searchCategory && (
+              {searchCategory && !attachedItems.find(item => item.type === 'ai-search') && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8, x: -10 }}
                   animate={{ opacity: 1, scale: 1, x: 0 }}
@@ -4044,15 +4044,39 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   </div>
                 </motion.div>
               )}
+
+              {/* AI Search Tag inside input - Compact & Creative */}
+              {attachedItems.find(item => item.type === 'ai-search') && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8, x: -10 }}
+                  animate={{ opacity: 1, scale: 1, x: 0 }}
+                  exit={{ opacity: 0, scale: 0.8, x: -10 }}
+                  className="absolute top-1.5 left-1.5 z-10"
+                >
+                  <div className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 rounded-md shadow-lg">
+                    <Search className="h-2.5 w-2.5 text-white flex-shrink-0" />
+                    <span className="text-[9px] font-bold text-white uppercase tracking-wide">
+                      {attachedItems.find(item => item.type === 'ai-search')?.data.category || 'AI Search'}
+                    </span>
+                    <button
+                      onClick={() => setAttachedItems(prev => prev.filter(item => item.type !== 'ai-search'))}
+                      className="h-3 w-3 rounded bg-white/25 hover:bg-white/40 flex items-center justify-center transition-all hover:scale-110 ml-0.5"
+                      title="Clear"
+                    >
+                      <X className="h-2 w-2 text-white stroke-[3]" />
+                    </button>
+                  </div>
+                </motion.div>
+              )}
               <Textarea
                 ref={chatInputRef}
                 placeholder={
                   oldConversationLocked
                     ? "This conversation is locked..."
-                    : searchCategory
+                    : searchCategory || attachedItems.find(item => item.type === 'ai-search')
                     ? "Type your search query..."
-                    : attachedItems.length > 0
-                    ? `Ask about ${attachedItems.length} item${attachedItems.length === 1 ? '' : 's'}...`
+                    : attachedItems.filter(item => item.type !== 'ai-search').length > 0
+                    ? `Ask about ${attachedItems.filter(item => item.type !== 'ai-search').length} item${attachedItems.filter(item => item.type !== 'ai-search').length === 1 ? '' : 's'}...`
                     : "Ask me anything..."
                 }
                 value={chatQuery}
@@ -4068,7 +4092,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 disabled={oldConversationLocked}
                 className={`${
                   isInputFocused ? 'min-h-[80px] sm:min-h-[100px] md:min-h-[80px]' : 'min-h-[44px] sm:min-h-[48px] md:min-h-[80px]'
-                } ${searchCategory ? 'pt-6 sm:pt-7' : ''} pr-12 sm:pr-14 md:pr-16 text-sm sm:text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed transition-all ${
+                } ${searchCategory || attachedItems.find(item => item.type === 'ai-search') ? 'pt-6 sm:pt-7' : ''} pr-12 sm:pr-14 md:pr-16 text-sm sm:text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed transition-all ${
                   oldConversationLocked ? 'bg-gray-100 dark:bg-gray-800 cursor-not-allowed opacity-60' : ''
                 }`}
                 style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', fontSize: '16px' }}
