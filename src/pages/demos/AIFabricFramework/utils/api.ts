@@ -212,25 +212,59 @@ export async function fetchSuggestions(
   if (!response.ok) throw new Error("Failed to fetch suggestions");
   const data = await response.json();
 
+  // Helper to extract string from suggestion (handles both string and object formats)
+  const extractSuggestionText = (suggestion: unknown): string | null => {
+    if (typeof suggestion === 'string') {
+      return suggestion;
+    }
+    if (suggestion && typeof suggestion === 'object') {
+      // API returns objects with {intent, query, rationale, confidence, sanitization}
+      const obj = suggestion as Record<string, unknown>;
+      if (typeof obj.query === 'string') {
+        return obj.query;
+      }
+      if (typeof obj.text === 'string') {
+        return obj.text;
+      }
+      if (typeof obj.suggestion === 'string') {
+        return obj.suggestion;
+      }
+    }
+    return null;
+  };
+
   // Extract suggestions from the response - they might be in the result payload
   if (data.result && data.result.sanitizedPayload && data.result.sanitizedPayload.suggestions) {
-    return data.result.sanitizedPayload.suggestions;
+    const rawSuggestions = data.result.sanitizedPayload.suggestions;
+    if (Array.isArray(rawSuggestions)) {
+      return rawSuggestions
+        .map(extractSuggestionText)
+        .filter((s): s is string => s !== null && s.length > 0);
+    }
   }
   // Fallback: try to parse suggestions from the message if it's an array
   if (data.result && data.result.sanitizedPayload && data.result.sanitizedPayload.message) {
     // Try to extract suggestions from the message if they're formatted as a list
     const message = data.result.sanitizedPayload.message;
-    // Check if message contains numbered list
-    const lines = message.split('\n').filter((line: string) => line.trim());
-    const suggestions = lines
-      .filter((line: string) => /^\d+[\.\)]\s*/.test(line.trim()))
-      .map((line: string) => line.replace(/^\d+[\.\)]\s*/, '').trim())
-      .filter((s: string) => s.length > 0);
-    if (suggestions.length > 0) {
-      return suggestions;
+    if (typeof message === 'string') {
+      // Check if message contains numbered list
+      const lines = message.split('\n').filter((line: string) => line.trim());
+      const suggestions = lines
+        .filter((line: string) => /^\d+[\.\)]\s*/.test(line.trim()))
+        .map((line: string) => line.replace(/^\d+[\.\)]\s*/, '').trim())
+        .filter((s: string) => s.length > 0);
+      if (suggestions.length > 0) {
+        return suggestions;
+      }
     }
   }
-  return data.suggestions || [];
+  // Also check for suggestions at the top level of data
+  if (data.suggestions && Array.isArray(data.suggestions)) {
+    return data.suggestions
+      .map(extractSuggestionText)
+      .filter((s): s is string => s !== null && s.length > 0);
+  }
+  return [];
 }
 
 // Policies API
