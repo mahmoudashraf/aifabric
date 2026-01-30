@@ -251,7 +251,7 @@ const ActionResultRenderer = ({
           <Button
             size="icon"
             variant="ghost"
-            className="absolute top-2 right-2 h-8 w-8 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg border border-white/30 hover:scale-110 transition-all z-10"
+            className="absolute top-2 right-2 h-8 w-8 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg border border-white/30 hover:scale-110 transition-all"
             onClick={(e) => {
               e.stopPropagation();
               onAttach(item);
