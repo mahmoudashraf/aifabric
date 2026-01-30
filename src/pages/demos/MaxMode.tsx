@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMaxModeContextOptional } from "@/contexts/MaxModeContext";
+import { AISearchDisplay } from "@/components/AISearchDisplay";
 import {
   X,
   Send,
@@ -2129,7 +2130,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0 }}
-            className="md:hidden fixed top-14 right-4 z-20"
+            className="md:hidden fixed bottom-60 right-4 z-20"
           >
             <div className="flex flex-col items-center gap-1">
               <Button
@@ -3011,31 +3012,33 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                     NEW
                                   </div>
                                 )}
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  className={`absolute top-2 right-2 h-10 w-10 ${
-                                    isItemAttached(doc.id)
-                                      ? 'bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
-                                      : 'bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
-                                  } text-white shadow-xl border-2 border-white/50 hover:scale-110 transition-all z-30`}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                    handleAttachDocument(doc);
-                                  }}
-                                  title={isItemAttached(doc.id) ? "Already in Chat" : "Attach to Chat"}
-                                >
-                                  {isItemAttached(doc.id) ? (
-                                    <CheckCircle2 className="h-5 w-5" />
-                                  ) : (
-                                    <BrainCircuit className="h-5 w-5" />
-                                  )}
-                                </Button>
                               </div>
                             )}
-                            <CardHeader className="pb-3">
-                              <div className="flex items-start justify-between gap-2">
+                            <CardHeader className="pb-3 relative">
+                              {/* Attach Button - Always Visible */}
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className={`absolute top-2 right-2 h-10 w-10 ${
+                                  isItemAttached(doc.id)
+                                    ? 'bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
+                                    : 'bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
+                                } text-white shadow-xl border-2 border-white/50 hover:scale-110 hover:border-white/50 transition-all z-50`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  e.preventDefault();
+                                  handleAttachDocument(doc);
+                                }}
+                                title={isItemAttached(doc.id) ? "Already in Chat" : "Attach to Chat"}
+                              >
+                                {isItemAttached(doc.id) ? (
+                                  <CheckCircle2 className="h-5 w-5" />
+                                ) : (
+                                  <BrainCircuit className="h-5 w-5" />
+                                )}
+                              </Button>
+
+                              <div className="flex items-start justify-between gap-2 pr-12">
                                 <div className="flex items-start gap-3 flex-1">
                                   {!doc.metadata?.imageUrl && (
                                     <motion.div
@@ -3062,29 +3065,6 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                     </div>
                                   </div>
                                 </div>
-                                {!doc.metadata?.imageUrl && (
-                                  <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    className={`h-10 w-10 ${
-                                      isItemAttached(doc.id)
-                                        ? 'bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
-                                        : 'bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
-                                    } text-white shadow-xl border-2 border-white/30 hover:scale-110 hover:border-white/50 transition-all z-30`}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      e.preventDefault();
-                                      handleAttachDocument(doc);
-                                    }}
-                                    title={isItemAttached(doc.id) ? "Already in Chat" : "Attach to Chat"}
-                                  >
-                                    {isItemAttached(doc.id) ? (
-                                      <CheckCircle2 className="h-5 w-5" />
-                                    ) : (
-                                      <BrainCircuit className="h-5 w-5" />
-                                    )}
-                                  </Button>
-                                )}
                               </div>
                             </CardHeader>
                             <CardContent>
@@ -3170,8 +3150,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           )}
         </AnimatePresence>
 
-        {/* Mobile: Cart Button - Top Position */}
-        <div className="md:hidden fixed top-32 right-4 z-20">
+        {/* Mobile: Cart Button - Above Products */}
+        <div className="md:hidden fixed bottom-44 right-4 z-20">
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -3310,82 +3290,6 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           )}
         </AnimatePresence>
 
-        {/* Mobile: AI Search Bottom Sheet */}
-        <AnimatePresence>
-          {isAISearchOpen && (
-            <>
-              {/* Backdrop */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-30"
-                onClick={() => setIsAISearchOpen(false)}
-              />
-
-              {/* Bottom Sheet */}
-              <motion.div
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
-                exit={{ y: "100%" }}
-                transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 rounded-t-3xl shadow-2xl z-40 max-h-[50vh] overflow-hidden"
-              >
-                {/* Handle */}
-                <div className="flex justify-center pt-3 pb-2">
-                  <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full" />
-                </div>
-
-                {/* Header */}
-                <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Search className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
-                    <h3 className="text-lg font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">AI Search</h3>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setIsAISearchOpen(false)}
-                    className="h-8 w-8"
-                  >
-                    <X className="h-5 w-5" />
-                  </Button>
-                </div>
-
-                {/* Categories in Rows */}
-                <div className="p-6 overflow-y-auto max-h-[calc(50vh-120px)]">
-                  <div className="space-y-2">
-                    {aiSearchCategories.map((category, idx) => {
-                      return (
-                        <motion.div
-                          key={category.label}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: idx * 0.05 }}
-                          onClick={() => {
-                            handleAISearchCategory(category);
-                            setIsAISearchOpen(false);
-                          }}
-                          className="cursor-pointer group"
-                        >
-                          <div className="flex items-center gap-3 p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-cyan-500 active:scale-98 transition-all shadow-sm hover:shadow-md bg-white dark:bg-gray-800">
-                            <div className="p-2 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-lg flex-shrink-0">
-                              <category.icon className="h-5 w-5 text-white" />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className={`font-bold text-sm ${category.color}`}>{category.label}</h3>
-                            </div>
-                            <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-cyan-600 group-hover:translate-x-1 transition-all" />
-                          </div>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
 
         {/* Mobile: New Documents Preview Panel */}
         <AnimatePresence>
@@ -4202,6 +4106,41 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             </motion.div>
           )}
 
+          {/* AI Search Categories Row - Mobile Only */}
+          <AnimatePresence>
+            {isAISearchOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="md:hidden mb-3 relative"
+              >
+                <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                  {aiSearchCategories.map((category, idx) => (
+                    <motion.button
+                      key={category.label}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: idx * 0.05 }}
+                      onClick={() => {
+                        handleAISearchCategory(category);
+                        setIsAISearchOpen(false);
+                      }}
+                      className="flex-shrink-0 flex flex-col items-center gap-1 group"
+                    >
+                      <div className="h-14 w-14 rounded-full bg-white hover:bg-gray-50 border-2 border-cyan-300 hover:border-cyan-500 shadow-lg hover:shadow-xl flex items-center justify-center transition-all active:scale-95">
+                        <category.icon className={`h-5 w-5 ${category.color}`} />
+                      </div>
+                      <span className={`text-[9px] font-semibold ${category.color} leading-tight text-center max-w-[56px]`}>
+                        {category.label}
+                      </span>
+                    </motion.button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <div className="flex items-end gap-2">
             {/* History button */}
             <Button
@@ -4240,28 +4179,12 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 </motion.div>
               )}
 
-              {/* AI Search Tag inside input - Compact & Creative */}
+              {/* AI Search Tag inside input - Beautiful Component */}
               {attachedItems.find(item => item.type === 'ai-search') && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8, x: -10 }}
-                  animate={{ opacity: 1, scale: 1, x: 0 }}
-                  exit={{ opacity: 0, scale: 0.8, x: -10 }}
-                  className="absolute top-1.5 left-1.5 z-10"
-                >
-                  <div className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 rounded-md shadow-lg">
-                    <Search className="h-2.5 w-2.5 text-white flex-shrink-0" />
-                    <span className="text-[9px] font-bold text-white uppercase tracking-wide">
-                      {attachedItems.find(item => item.type === 'ai-search')?.data.category || 'AI Search'}
-                    </span>
-                    <button
-                      onClick={() => setAttachedItems(prev => prev.filter(item => item.type !== 'ai-search'))}
-                      className="h-3 w-3 rounded bg-white/25 hover:bg-white/40 flex items-center justify-center transition-all hover:scale-110 ml-0.5"
-                      title="Clear"
-                    >
-                      <X className="h-2 w-2 text-white stroke-[3]" />
-                    </button>
-                  </div>
-                </motion.div>
+                <AISearchDisplay
+                  category={attachedItems.find(item => item.type === 'ai-search')?.data.category || 'All Categories'}
+                  onRemove={() => setAttachedItems(prev => prev.filter(item => item.type !== 'ai-search'))}
+                />
               )}
               <Textarea
                 ref={chatInputRef}
@@ -4287,7 +4210,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 disabled={oldConversationLocked}
                 className={`${
                   isInputFocused ? 'min-h-[80px] sm:min-h-[100px] md:min-h-[80px]' : 'min-h-[44px] sm:min-h-[48px] md:min-h-[80px]'
-                } ${searchCategory || attachedItems.find(item => item.type === 'ai-search') ? 'pt-6 sm:pt-7' : ''} pr-12 sm:pr-14 md:pr-16 text-sm sm:text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed transition-all ${
+                } ${searchCategory || attachedItems.find(item => item.type === 'ai-search') ? 'pt-7 sm:pt-8' : ''} pr-12 sm:pr-14 md:pr-16 text-sm sm:text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed transition-all ${
                   oldConversationLocked ? 'bg-gray-100 dark:bg-gray-800 cursor-not-allowed opacity-60' : ''
                 }`}
                 style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', fontSize: '16px' }}
