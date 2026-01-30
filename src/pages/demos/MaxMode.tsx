@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMaxModeContextOptional } from "@/contexts/MaxModeContext";
+import { AISearchDisplay } from "@/components/AISearchDisplay";
 import {
   X,
   Send,
@@ -3011,31 +3012,33 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                     NEW
                                   </div>
                                 )}
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  className={`absolute top-2 right-2 h-10 w-10 ${
-                                    isItemAttached(doc.id)
-                                      ? 'bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
-                                      : 'bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
-                                  } text-white shadow-xl border-2 border-white/50 hover:scale-110 transition-all z-30`}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                    handleAttachDocument(doc);
-                                  }}
-                                  title={isItemAttached(doc.id) ? "Already in Chat" : "Attach to Chat"}
-                                >
-                                  {isItemAttached(doc.id) ? (
-                                    <CheckCircle2 className="h-5 w-5" />
-                                  ) : (
-                                    <BrainCircuit className="h-5 w-5" />
-                                  )}
-                                </Button>
                               </div>
                             )}
-                            <CardHeader className="pb-3">
-                              <div className="flex items-start justify-between gap-2">
+                            <CardHeader className="pb-3 relative">
+                              {/* Attach Button - Always Visible */}
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className={`absolute top-2 right-2 h-10 w-10 ${
+                                  isItemAttached(doc.id)
+                                    ? 'bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
+                                    : 'bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
+                                } text-white shadow-xl border-2 border-white/50 hover:scale-110 hover:border-white/50 transition-all z-50`}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  e.preventDefault();
+                                  handleAttachDocument(doc);
+                                }}
+                                title={isItemAttached(doc.id) ? "Already in Chat" : "Attach to Chat"}
+                              >
+                                {isItemAttached(doc.id) ? (
+                                  <CheckCircle2 className="h-5 w-5" />
+                                ) : (
+                                  <BrainCircuit className="h-5 w-5" />
+                                )}
+                              </Button>
+
+                              <div className="flex items-start justify-between gap-2 pr-12">
                                 <div className="flex items-start gap-3 flex-1">
                                   {!doc.metadata?.imageUrl && (
                                     <motion.div
@@ -3062,29 +3065,6 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                     </div>
                                   </div>
                                 </div>
-                                {!doc.metadata?.imageUrl && (
-                                  <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    className={`h-10 w-10 ${
-                                      isItemAttached(doc.id)
-                                        ? 'bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
-                                        : 'bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
-                                    } text-white shadow-xl border-2 border-white/30 hover:scale-110 hover:border-white/50 transition-all z-30`}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      e.preventDefault();
-                                      handleAttachDocument(doc);
-                                    }}
-                                    title={isItemAttached(doc.id) ? "Already in Chat" : "Attach to Chat"}
-                                  >
-                                    {isItemAttached(doc.id) ? (
-                                      <CheckCircle2 className="h-5 w-5" />
-                                    ) : (
-                                      <BrainCircuit className="h-5 w-5" />
-                                    )}
-                                  </Button>
-                                )}
                               </div>
                             </CardHeader>
                             <CardContent>
@@ -4199,28 +4179,12 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 </motion.div>
               )}
 
-              {/* AI Search Tag inside input - Bigger & Creative */}
+              {/* AI Search Tag inside input - Beautiful Component */}
               {attachedItems.find(item => item.type === 'ai-search') && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8, x: -10 }}
-                  animate={{ opacity: 1, scale: 1, x: 0 }}
-                  exit={{ opacity: 0, scale: 0.8, x: -10 }}
-                  className="absolute top-2 left-2 z-10"
-                >
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 rounded-lg shadow-lg">
-                    <Search className="h-3.5 w-3.5 text-white flex-shrink-0" />
-                    <span className="text-[11px] font-bold text-white uppercase tracking-wide">
-                      {attachedItems.find(item => item.type === 'ai-search')?.data.category || 'AI Search'}
-                    </span>
-                    <button
-                      onClick={() => setAttachedItems(prev => prev.filter(item => item.type !== 'ai-search'))}
-                      className="h-4 w-4 rounded bg-white/25 hover:bg-white/40 flex items-center justify-center transition-all hover:scale-110 ml-0.5"
-                      title="Clear"
-                    >
-                      <X className="h-2.5 w-2.5 text-white stroke-[3]" />
-                    </button>
-                  </div>
-                </motion.div>
+                <AISearchDisplay
+                  category={attachedItems.find(item => item.type === 'ai-search')?.data.category || 'All Categories'}
+                  onRemove={() => setAttachedItems(prev => prev.filter(item => item.type !== 'ai-search'))}
+                />
               )}
               <Textarea
                 ref={chatInputRef}
