@@ -100,7 +100,6 @@ export function useChat() {
       if (products.length > 0 || reviews.length > 0 || coupons.length > 0) {
         setCurrentPosition("checkout");
         setCurrentMode("copilot");
-        setIsChatExpanded(true);
       }
     }
   }, [maxModeContext]);
@@ -431,7 +430,6 @@ export function useChat() {
 
     const newProducts = [...attachedProducts, product];
     setAttachedProducts(newProducts);
-    setIsChatExpanded(true);
 
     // Set position to checkout when product is attached
     setCurrentPosition("checkout");
@@ -472,7 +470,6 @@ export function useChat() {
 
     const newReviews = [...attachedReviews, review];
     setAttachedReviews(newReviews);
-    setIsChatExpanded(true);
     // Set position to checkout when review is attached
     setCurrentPosition("checkout");
     setCurrentMode("copilot");
@@ -512,7 +509,6 @@ export function useChat() {
 
     const newCoupons = [...attachedCoupons, coupon];
     setAttachedCoupons(newCoupons);
-    setIsChatExpanded(true);
     // Set position to checkout when coupon is attached
     setCurrentPosition("checkout");
     setCurrentMode("copilot");
