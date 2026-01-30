@@ -1317,8 +1317,12 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       }
     };
 
-    setAttachedItems(prev => [...prev, searchAttachment]);
+    // Replace existing AI search item instead of adding to the list
+    setAttachedItems(prev => [...prev.filter(item => item.type !== 'ai-search'), searchAttachment]);
     setIsAISearchOpen(false);
+
+    // Clear any existing search category tag (only one tag allowed)
+    setSearchCategory(null);
 
     // AI Search uses catalog position (discovery/browsing)
     setCurrentPosition("catalog");
@@ -1411,6 +1415,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     setSearchCategory(category);
     setIsSearchCategoryOpen(false);
     setIsQuickActionsOpen(false);
+    // Clear any existing AI Search items (only one tag allowed)
+    setAttachedItems(prev => prev.filter(item => item.type !== 'ai-search'));
     // Focus the input
     setTimeout(() => chatInputRef.current?.focus(), 100);
   };
