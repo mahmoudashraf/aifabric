@@ -12,6 +12,7 @@ interface ChatPanelProps {
   isLoading: boolean;
   onConfirmation: (action: "confirm" | "deny", data?: any) => void;
   messagesEndRef: RefObject<HTMLDivElement>;
+  onResendAction?: (query: string) => void;
 }
 
 export function ChatPanel({
@@ -21,6 +22,7 @@ export function ChatPanel({
   isLoading,
   onConfirmation,
   messagesEndRef,
+  onResendAction,
 }: ChatPanelProps) {
   // Scroll to bottom when new messages arrive
   useEffect(() => {
@@ -48,7 +50,7 @@ export function ChatPanel({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 100, scale: 0.95 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-24 left-4 right-4 max-w-2xl mx-auto bg-background border rounded-2xl shadow-2xl z-40 max-h-[60vh] flex flex-col"
+            className="fixed bottom-0 sm:bottom-24 left-0 sm:left-4 right-0 sm:right-4 max-w-full sm:max-w-2xl mx-auto bg-background border-0 sm:border rounded-none sm:rounded-2xl shadow-2xl z-40 max-h-[calc(100vh-80px)] sm:max-h-[60vh] flex flex-col"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b">
@@ -84,6 +86,7 @@ export function ChatPanel({
                           ? onConfirmation
                           : undefined
                       }
+                      onResendAction={onResendAction}
                     />
                   ))}
                   {isLoading && <LoadingMessage />}

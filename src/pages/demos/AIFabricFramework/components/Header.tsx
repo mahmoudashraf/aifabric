@@ -54,9 +54,9 @@ export function Header({
     isClearing;
 
   return (
-    <div className="mb-8">
+    <div className="mb-6 sm:mb-8">
       {/* Navigation */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
         <Link to="/">
           <Button variant="ghost" size="sm">
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -64,84 +64,90 @@ export function Header({
           </Button>
         </Link>
 
-        <div className="flex items-center gap-2 flex-wrap justify-end">
+        <div className="flex items-center gap-2 flex-wrap justify-start sm:justify-end w-full sm:w-auto">
           <Button
             variant="outline"
             size="sm"
             onClick={onFillStock}
             disabled={isAnyMigrationRunning}
+            className="text-xs sm:text-sm"
           >
             {stockFill.isRunning ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <Loader2 className="h-4 w-4 sm:mr-2 animate-spin" />
             ) : (
-              <PackagePlus className="h-4 w-4 mr-2" />
+              <PackagePlus className="h-4 w-4 sm:mr-2" />
             )}
-            Fill Stock
+            <span className="hidden sm:inline">Fill Stock</span>
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={onMigratePolicies}
             disabled={isAnyMigrationRunning}
+            className="text-xs sm:text-sm"
           >
             {policyMigration.isRunning ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <Loader2 className="h-4 w-4 sm:mr-2 animate-spin" />
             ) : (
-              <FileText className="h-4 w-4 mr-2" />
+              <FileText className="h-4 w-4 sm:mr-2" />
             )}
-            Migrate Policies
+            <span className="hidden sm:inline">Policies</span>
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={onMigrateReviews}
             disabled={isAnyMigrationRunning}
+            className="text-xs sm:text-sm"
           >
             {reviewMigration.isRunning ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <Loader2 className="h-4 w-4 sm:mr-2 animate-spin" />
             ) : (
-              <Star className="h-4 w-4 mr-2" />
+              <Star className="h-4 w-4 sm:mr-2" />
             )}
-            Migrate Reviews
+            <span className="hidden sm:inline">Reviews</span>
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={onMigrateCoupons}
             disabled={isAnyMigrationRunning}
+            className="text-xs sm:text-sm"
           >
             {couponMigration.isRunning ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <Loader2 className="h-4 w-4 sm:mr-2 animate-spin" />
             ) : (
-              <Tag className="h-4 w-4 mr-2" />
+              <Tag className="h-4 w-4 sm:mr-2" />
             )}
-            Migrate Coupons
+            <span className="hidden sm:inline">Coupons</span>
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={onMigrateTickets}
             disabled={isAnyMigrationRunning}
+            className="text-xs sm:text-sm"
           >
             {ticketMigration.isRunning ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <Loader2 className="h-4 w-4 sm:mr-2 animate-spin" />
             ) : (
-              <RefreshCw className="h-4 w-4 mr-2" />
+              <RefreshCw className="h-4 w-4 sm:mr-2" />
             )}
-            Migrate Tickets
+            <span className="hidden sm:inline">Tickets</span>
           </Button>
           <Button
             variant="destructive"
             size="sm"
             onClick={onClearData}
             disabled={isAnyMigrationRunning}
+            className="text-xs sm:text-sm"
           >
             {isClearing ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <Loader2 className="h-4 w-4 sm:mr-2 animate-spin" />
             ) : (
-              <Trash2 className="h-4 w-4 mr-2" />
+              <Trash2 className="h-4 w-4 sm:mr-2" />
             )}
-            Clear Data
+            <span className="hidden sm:inline">Clear</span>
           </Button>
         </div>
       </div>
@@ -184,17 +190,17 @@ export function Header({
       )}
 
       {/* Title */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-4 rounded-full bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-orange-500/10 border border-purple-500/20">
-          <Zap className="h-4 w-4 text-purple-500" />
-          <span className="text-sm font-medium bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent">
+      <div className="text-center mb-6 sm:mb-8 px-4 sm:px-0">
+        <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 mb-3 sm:mb-4 rounded-full bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-orange-500/10 border border-purple-500/20">
+          <Zap className="h-3 w-3 sm:h-4 sm:w-4 text-purple-500" />
+          <span className="text-xs sm:text-sm font-medium bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent">
             Next Generation AI Commerce
           </span>
         </div>
-        <h1 className="text-5xl font-black bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 bg-clip-text text-transparent mb-4 tracking-tight">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 bg-clip-text text-transparent mb-3 sm:mb-4 tracking-tight px-2">
           AI Shopping Experience
         </h1>
-        <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+        <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
           Welcome to the future of ecommerce. Chat with AI, discover products through natural conversations,
           and experience intelligent shopping like never before.
         </p>

@@ -67,6 +67,7 @@ export interface ChatMessage {
   resultType?: ResultType;
   attachedProduct?: Product;
   attachedProducts?: Product[];
+  actionTag?: ActionTag;
 }
 
 export interface Conversation {
@@ -147,4 +148,13 @@ export interface MigrationState {
   progress: number;
   currentItem: string;
   count: number;
+}
+
+export interface ActionTag {
+  id: string;
+  type: "search" | "cart" | "browse" | "action";
+  label: string;
+  query: string;
+  icon?: string;
+  timestamp?: string;
 }

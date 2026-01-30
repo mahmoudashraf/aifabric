@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Bot, Loader2 } from "lucide-react";
+import { Bot, Loader2, ShoppingCart, Package, Search, RotateCw } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getResultTypeStyles } from "../../utils/resultTypeStyles";
@@ -21,13 +21,30 @@ interface ChatMessageProps {
   message: ChatMessageType;
   isLoading?: boolean;
   onConfirmation?: (action: "confirm" | "deny", data?: any) => void;
+  onResendAction?: (query: string) => void;
 }
 
-export function ChatMessage({ message, isLoading, onConfirmation }: ChatMessageProps) {
+export function ChatMessage({ message, isLoading, onConfirmation, onResendAction }: ChatMessageProps) {
   const styles = getResultTypeStyles(message.resultType);
   const Icon = styles.icon;
 
+  // Helper to get icon for action tag
+  const getActionIcon = (type: string) => {
+    switch (type) {
+      case "cart":
+        return ShoppingCart;
+      case "browse":
+        return Package;
+      case "search":
+        return Search;
+      default:
+        return Package;
+    }
+  };
+
   if (message.type === "user") {
+    const ActionIcon = message.actionTag ? getActionIcon(message.actionTag.type) : null;
+
     return (
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -35,7 +52,30 @@ export function ChatMessage({ message, isLoading, onConfirmation }: ChatMessageP
         className="flex justify-end"
       >
         <div className="max-w-[85%] bg-primary text-primary-foreground rounded-2xl rounded-br-md px-4 py-2.5">
+          {/* Action Tag Badge */}
+          {message.actionTag && ActionIcon && (
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <Badge className="bg-primary-foreground/20 text-primary-foreground border-0 gap-1.5">
+                <ActionIcon className="h-3 w-3" />
+                <span className="text-xs">{message.actionTag.label}</span>
+              </Badge>
+              {onResendAction && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => onResendAction(message.actionTag!.query)}
+                  className="h-6 px-2 gap-1 hover:bg-primary-foreground/20 text-primary-foreground"
+                  title="Resend this action"
+                >
+                  <RotateCw className="h-3 w-3" />
+                  <span className="text-xs hidden sm:inline">Resend</span>
+                </Button>
+              )}
+            </div>
+          )}
+
           <p className="text-sm whitespace-pre-wrap">{normalizeContent(message.content)}</p>
+
           {message.attachedProducts && message.attachedProducts.length > 0 && (
             <div className="mt-2 pt-2 border-t border-primary-foreground/20">
               <p className="text-xs opacity-70 mb-1">Attached:</p>

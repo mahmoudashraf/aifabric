@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Search, Plus, Edit, Trash2, Loader2, Bot, Eye, Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Search, Plus, Edit, Trash2, Loader2, Bot, Eye, Sparkles, ExternalLink } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -169,6 +170,7 @@ function ProductCard({
   onDelete: () => void;
   onAttach: () => void;
 }) {
+  const navigate = useNavigate();
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
   return (
@@ -184,19 +186,33 @@ function ProductCard({
               />
             </div>
           )}
-          {/* Always visible Add to AI button */}
-          <Button
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              onAttach();
-            }}
-            className="absolute top-2 right-2 gap-1 bg-primary/90 hover:bg-primary shadow-lg"
-            title="Add to AI Chat"
-          >
-            <Sparkles className="h-3 w-3" />
-            <span className="text-xs">Add to AI</span>
-          </Button>
+          {/* Action buttons */}
+          <div className="absolute top-2 right-2 flex gap-2">
+            <Button
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/demos/ai-fabric-framework/product/${product.id}`);
+              }}
+              className="gap-1 bg-background/90 hover:bg-background border border-primary/30 shadow-lg"
+              title="View Details"
+            >
+              <ExternalLink className="h-3 w-3" />
+              <span className="text-xs hidden sm:inline">Details</span>
+            </Button>
+            <Button
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                onAttach();
+              }}
+              className="gap-1 bg-primary/90 hover:bg-primary shadow-lg"
+              title="Add to AI Chat"
+            >
+              <Sparkles className="h-3 w-3" />
+              <span className="text-xs hidden sm:inline">Add to AI</span>
+            </Button>
+          </div>
         </div>
         <CardContent className="p-4" onClick={() => setIsDetailsOpen(true)}>
           <div className="flex items-start justify-between gap-2 mb-2">
