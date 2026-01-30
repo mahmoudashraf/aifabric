@@ -73,8 +73,21 @@ export interface Conversation {
   id: string;
   ownerId: string;
   title?: string;
+  status?: string;
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
+  lastInteractionAt?: string;
+  turnsCount?: number;
+}
+
+export interface ConversationTurn {
+  timestamp: string;
+  userQuery: string;
+  aiResponse: string;
+}
+
+export interface ConversationDetail extends Conversation {
+  turns: ConversationTurn[];
 }
 
 export interface Policy {
