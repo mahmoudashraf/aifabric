@@ -281,7 +281,7 @@ const ActionResultRenderer = ({
     const isItemAlreadyAttached = isAttached && itemId ? isAttached(itemId) : false;
 
     return (
-      <div key={idx} className="relative group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 transition-all hover:shadow-xl overflow-hidden">
+      <div key={itemId || idx} className="relative group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 transition-all hover:shadow-xl overflow-hidden">
         {/* Attach Button */}
         {onAttach && (
           <Button
@@ -376,7 +376,7 @@ const ActionResultRenderer = ({
     const isItemAlreadyAttached = isAttached && itemId ? isAttached(itemId) : false;
 
     return (
-    <Card key={idx} className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-colors relative group" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+    <Card key={itemId || idx} className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-colors relative group" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
       {onAttach && typeof item === "object" && item !== null && (
         <Button
           size="icon"
