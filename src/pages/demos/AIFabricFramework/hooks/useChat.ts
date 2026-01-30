@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useMaxModeContextOptional } from "@/contexts/MaxModeContext";
 import * as api from "../utils/api";
@@ -63,6 +63,47 @@ export function useChat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLTextAreaElement>(null);
   const isUserFocusRef = useRef(false);
+  const hasLoadedFromMaxMode = useRef(false);
+
+  // Sync attachments from MaxMode state (when returning from MaxMode to demo page)
+  useEffect(() => {
+    if (!maxModeContext || hasLoadedFromMaxMode.current) return;
+    hasLoadedFromMaxMode.current = true;
+
+    const maxModeAttachments = maxModeContext.maxModeState.attachedItems;
+    if (maxModeAttachments && maxModeAttachments.length > 0) {
+      const products: Product[] = [];
+      const reviews: Review[] = [];
+      const coupons: Coupon[] = [];
+
+      maxModeAttachments.forEach(item => {
+        if (item.type === 'product') {
+          products.push(item.data as Product);
+        } else if (item.type === 'review') {
+          reviews.push(item.data as Review);
+        } else if (item.type === 'coupon') {
+          coupons.push(item.data as Coupon);
+        }
+      });
+
+      if (products.length > 0) {
+        setAttachedProducts(products);
+      }
+      if (reviews.length > 0) {
+        setAttachedReviews(reviews);
+      }
+      if (coupons.length > 0) {
+        setAttachedCoupons(coupons);
+      }
+
+      // Update position if we have attachments
+      if (products.length > 0 || reviews.length > 0 || coupons.length > 0) {
+        setCurrentPosition("checkout");
+        setCurrentMode("copilot");
+        setIsChatExpanded(true);
+      }
+    }
+  }, [maxModeContext]);
 
   // Load conversations
   const loadConversations = useCallback(async () => {
@@ -369,6 +410,19 @@ export function useChat() {
     }
   }, [attachedReviews, attachedCoupons]);
 
+  // Helper to build combined attachments for MaxMode sync
+  const buildMaxModeAttachments = useCallback((
+    products: Product[],
+    reviews: Review[],
+    coupons: Coupon[]
+  ) => {
+    return [
+      ...products.map(p => ({ type: 'product', data: p })),
+      ...reviews.map(r => ({ type: 'review', data: r })),
+      ...coupons.map(c => ({ type: 'coupon', data: c })),
+    ];
+  }, []);
+
   // Attachment handlers
   const handleAttachProduct = useCallback((product: Product) => {
     // Check if already attached and compute new list
@@ -383,12 +437,15 @@ export function useChat() {
     setCurrentPosition("checkout");
     setCurrentMode("copilot");
 
-    // Add to pending attachments for MaxMode
-    maxModeContext?.addPendingAttachment({ type: 'product', data: product });
+    // Sync with MaxMode state
+    if (maxModeContext) {
+      const allAttachments = buildMaxModeAttachments(newProducts, attachedReviews, attachedCoupons);
+      maxModeContext.updateMaxModeState({ attachedItems: allAttachments });
+    }
 
     // Fetch suggestions for all attachments
     fetchSuggestionsForAttachments(newProducts);
-  }, [attachedProducts, fetchSuggestionsForAttachments, maxModeContext]);
+  }, [attachedProducts, attachedReviews, attachedCoupons, fetchSuggestionsForAttachments, maxModeContext, buildMaxModeAttachments]);
 
   const handleRemoveAttachment = useCallback((productId: string) => {
     const newProducts = attachedProducts.filter((p) => p.id !== productId);
@@ -396,12 +453,18 @@ export function useChat() {
     // Update suggestions for remaining attachments
     fetchSuggestionsForAttachments(newProducts);
 
+    // Sync with MaxMode state
+    if (maxModeContext) {
+      const allAttachments = buildMaxModeAttachments(newProducts, attachedReviews, attachedCoupons);
+      maxModeContext.updateMaxModeState({ attachedItems: allAttachments });
+    }
+
     // Reset position to catalog if no more attachments
     if (newProducts.length === 0 && attachedReviews.length === 0 && attachedCoupons.length === 0) {
       setCurrentPosition("catalog");
       setCurrentMode("navigator");
     }
-  }, [attachedProducts, attachedReviews, attachedCoupons, fetchSuggestionsForAttachments]);
+  }, [attachedProducts, attachedReviews, attachedCoupons, fetchSuggestionsForAttachments, maxModeContext, buildMaxModeAttachments]);
 
   const handleAttachReview = useCallback((review: Review) => {
     const isAlreadyAttached = attachedReviews.find((r) => r.id === review.id);
@@ -413,23 +476,35 @@ export function useChat() {
     // Set position to checkout when review is attached
     setCurrentPosition("checkout");
     setCurrentMode("copilot");
-    // Add to pending attachments for MaxMode
-    maxModeContext?.addPendingAttachment({ type: 'review', data: review });
+
+    // Sync with MaxMode state
+    if (maxModeContext) {
+      const allAttachments = buildMaxModeAttachments(attachedProducts, newReviews, attachedCoupons);
+      maxModeContext.updateMaxModeState({ attachedItems: allAttachments });
+    }
+
     // Fetch suggestions with the new reviews
     fetchSuggestionsForAttachments(attachedProducts, newReviews);
-  }, [attachedProducts, attachedReviews, fetchSuggestionsForAttachments, maxModeContext]);
+  }, [attachedProducts, attachedReviews, attachedCoupons, fetchSuggestionsForAttachments, maxModeContext, buildMaxModeAttachments]);
 
   const handleRemoveAttachedReview = useCallback((reviewId: string) => {
     const newReviews = attachedReviews.filter((r) => r.id !== reviewId);
     setAttachedReviews(newReviews);
     // Update suggestions for remaining attachments
     fetchSuggestionsForAttachments(attachedProducts, newReviews);
+
+    // Sync with MaxMode state
+    if (maxModeContext) {
+      const allAttachments = buildMaxModeAttachments(attachedProducts, newReviews, attachedCoupons);
+      maxModeContext.updateMaxModeState({ attachedItems: allAttachments });
+    }
+
     // Reset position if no more attachments
     if (attachedProducts.length === 0 && newReviews.length === 0 && attachedCoupons.length === 0) {
       setCurrentPosition("catalog");
       setCurrentMode("navigator");
     }
-  }, [attachedProducts, attachedReviews, attachedCoupons, fetchSuggestionsForAttachments]);
+  }, [attachedProducts, attachedReviews, attachedCoupons, fetchSuggestionsForAttachments, maxModeContext, buildMaxModeAttachments]);
 
   const handleAttachCoupon = useCallback((coupon: Coupon) => {
     const isAlreadyAttached = attachedCoupons.find((c) => c.id === coupon.id);
@@ -441,23 +516,35 @@ export function useChat() {
     // Set position to checkout when coupon is attached
     setCurrentPosition("checkout");
     setCurrentMode("copilot");
-    // Add to pending attachments for MaxMode
-    maxModeContext?.addPendingAttachment({ type: 'coupon', data: coupon });
+
+    // Sync with MaxMode state
+    if (maxModeContext) {
+      const allAttachments = buildMaxModeAttachments(attachedProducts, attachedReviews, newCoupons);
+      maxModeContext.updateMaxModeState({ attachedItems: allAttachments });
+    }
+
     // Fetch suggestions with the new coupons
     fetchSuggestionsForAttachments(attachedProducts, attachedReviews, newCoupons);
-  }, [attachedProducts, attachedReviews, attachedCoupons, fetchSuggestionsForAttachments, maxModeContext]);
+  }, [attachedProducts, attachedReviews, attachedCoupons, fetchSuggestionsForAttachments, maxModeContext, buildMaxModeAttachments]);
 
   const handleRemoveAttachedCoupon = useCallback((couponId: string) => {
     const newCoupons = attachedCoupons.filter((c) => c.id !== couponId);
     setAttachedCoupons(newCoupons);
     // Update suggestions for remaining attachments
     fetchSuggestionsForAttachments(attachedProducts, attachedReviews, newCoupons);
+
+    // Sync with MaxMode state
+    if (maxModeContext) {
+      const allAttachments = buildMaxModeAttachments(attachedProducts, attachedReviews, newCoupons);
+      maxModeContext.updateMaxModeState({ attachedItems: allAttachments });
+    }
+
     // Reset position if no more attachments
     if (attachedProducts.length === 0 && attachedReviews.length === 0 && newCoupons.length === 0) {
       setCurrentPosition("catalog");
       setCurrentMode("navigator");
     }
-  }, [attachedProducts, attachedReviews, attachedCoupons, fetchSuggestionsForAttachments]);
+  }, [attachedProducts, attachedReviews, attachedCoupons, fetchSuggestionsForAttachments, maxModeContext, buildMaxModeAttachments]);
 
   // Scroll to bottom
   const scrollToBottom = useCallback(() => {
