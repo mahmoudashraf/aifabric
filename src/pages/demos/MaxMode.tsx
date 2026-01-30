@@ -955,21 +955,48 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           // Extract suggestions from the response
           let newSuggestions: string[] = [];
 
-          if (data.result?.sanitizedPayload?.suggestions) {
-            newSuggestions = data.result.sanitizedPayload.suggestions;
+          // Helper to extract string from suggestion (handles both string and object formats)
+          const extractSuggestionText = (suggestion: unknown): string | null => {
+            if (typeof suggestion === 'string') {
+              return suggestion;
+            }
+            if (suggestion && typeof suggestion === 'object') {
+              // API returns objects with {intent, query, rationale, confidence, sanitization}
+              const obj = suggestion as Record<string, unknown>;
+              if (typeof obj.query === 'string') {
+                return obj.query;
+              }
+              if (typeof obj.text === 'string') {
+                return obj.text;
+              }
+              if (typeof obj.suggestion === 'string') {
+                return obj.suggestion;
+              }
+            }
+            return null;
+          };
+
+          if (data.result?.sanitizedPayload?.suggestions && Array.isArray(data.result.sanitizedPayload.suggestions)) {
+            newSuggestions = data.result.sanitizedPayload.suggestions
+              .map(extractSuggestionText)
+              .filter((s: string | null): s is string => s !== null && s.length > 0);
           } else if (data.result?.sanitizedPayload?.message) {
             // Try to extract suggestions from numbered list in message
             const message = data.result.sanitizedPayload.message;
-            const lines = message.split('\n').filter((line: string) => line.trim());
-            const parsed = lines
-              .filter((line: string) => /^\d+[\.\)]\s*/.test(line.trim()))
-              .map((line: string) => line.replace(/^\d+[\.\)]\s*/, '').trim())
-              .filter((s: string) => s.length > 0);
-            if (parsed.length > 0) {
-              newSuggestions = parsed;
+            if (typeof message === 'string') {
+              const lines = message.split('\n').filter((line: string) => line.trim());
+              const parsed = lines
+                .filter((line: string) => /^\d+[\.\)]\s*/.test(line.trim()))
+                .map((line: string) => line.replace(/^\d+[\.\)]\s*/, '').trim())
+                .filter((s: string) => s.length > 0);
+              if (parsed.length > 0) {
+                newSuggestions = parsed;
+              }
             }
-          } else if (data.suggestions) {
-            newSuggestions = data.suggestions;
+          } else if (data.suggestions && Array.isArray(data.suggestions)) {
+            newSuggestions = data.suggestions
+              .map(extractSuggestionText)
+              .filter((s: string | null): s is string => s !== null && s.length > 0);
           }
 
           if (newSuggestions.length > 0) {
