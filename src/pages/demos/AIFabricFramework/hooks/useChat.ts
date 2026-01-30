@@ -72,17 +72,31 @@ export function useChat() {
     }
   }, []);
 
-  // Fetch suggestions based on attached products
-  const fetchSuggestions = useCallback(async (products?: Product[]) => {
+  // Fetch suggestions based on all attachments (products, reviews, coupons)
+  const fetchSuggestions = useCallback(async (
+    products?: Product[],
+    reviews?: Review[],
+    coupons?: Coupon[]
+  ) => {
     const productsToUse = products || attachedProducts;
-    if (productsToUse.length === 0) {
+    const reviewsToUse = reviews || attachedReviews;
+    const couponsToUse = coupons || attachedCoupons;
+
+    // Need at least one attachment to fetch suggestions
+    if (productsToUse.length === 0 && reviewsToUse.length === 0 && couponsToUse.length === 0) {
       setSuggestions([]);
       return;
     }
 
     setIsLoadingSuggestions(true);
     try {
-      const data = await api.fetchSuggestions(productsToUse);
+      const data = await api.fetchSuggestions(
+        DEFAULT_USER_ID,
+        DEFAULT_SESSION_ID,
+        productsToUse,
+        reviewsToUse,
+        couponsToUse
+      );
       setSuggestions(data);
     } catch (error) {
       console.error("Failed to fetch suggestions:", error);
@@ -90,7 +104,7 @@ export function useChat() {
     } finally {
       setIsLoadingSuggestions(false);
     }
-  }, [attachedProducts]);
+  }, [attachedProducts, attachedReviews, attachedCoupons]);
 
   // Handle chat query
   const handleChatQuery = useCallback(async (queryOverride?: string, fromSuggestion?: boolean) => {
@@ -321,15 +335,29 @@ export function useChat() {
     [attachedProducts, currentConversationId, toast]
   );
 
-  // Fetch suggestions for specific products
-  const fetchSuggestionsForProducts = useCallback(async (products: Product[]) => {
-    if (products.length === 0) {
+  // Fetch suggestions for specific attachments (products, reviews, coupons)
+  const fetchSuggestionsForAttachments = useCallback(async (
+    products: Product[],
+    reviews?: Review[],
+    coupons?: Coupon[]
+  ) => {
+    const reviewsToUse = reviews || attachedReviews;
+    const couponsToUse = coupons || attachedCoupons;
+
+    // Need at least one attachment to fetch suggestions
+    if (products.length === 0 && reviewsToUse.length === 0 && couponsToUse.length === 0) {
       setSuggestions([]);
       return;
     }
     setIsLoadingSuggestions(true);
     try {
-      const data = await api.fetchSuggestions(products);
+      const data = await api.fetchSuggestions(
+        DEFAULT_USER_ID,
+        DEFAULT_SESSION_ID,
+        products,
+        reviewsToUse,
+        couponsToUse
+      );
       setSuggestions(data);
     } catch (error) {
       console.error("Failed to fetch suggestions:", error);
@@ -337,7 +365,7 @@ export function useChat() {
     } finally {
       setIsLoadingSuggestions(false);
     }
-  }, []);
+  }, [attachedReviews, attachedCoupons]);
 
   // Attachment handlers
   const handleAttachProduct = useCallback((product: Product) => {
@@ -353,64 +381,74 @@ export function useChat() {
     setCurrentPosition("checkout");
     setCurrentMode("copilot");
 
-    // Fetch suggestions for the new products list
-    fetchSuggestionsForProducts(newProducts);
-  }, [attachedProducts, fetchSuggestionsForProducts]);
+    // Fetch suggestions for all attachments
+    fetchSuggestionsForAttachments(newProducts);
+  }, [attachedProducts, fetchSuggestionsForAttachments]);
 
   const handleRemoveAttachment = useCallback((productId: string) => {
     const newProducts = attachedProducts.filter((p) => p.id !== productId);
     setAttachedProducts(newProducts);
-    // Update suggestions for remaining products
-    fetchSuggestionsForProducts(newProducts);
+    // Update suggestions for remaining attachments
+    fetchSuggestionsForAttachments(newProducts);
 
     // Reset position to catalog if no more attachments
     if (newProducts.length === 0 && attachedReviews.length === 0 && attachedCoupons.length === 0) {
       setCurrentPosition("catalog");
       setCurrentMode("navigator");
     }
-  }, [attachedProducts, attachedReviews, attachedCoupons, fetchSuggestionsForProducts]);
+  }, [attachedProducts, attachedReviews, attachedCoupons, fetchSuggestionsForAttachments]);
 
   const handleAttachReview = useCallback((review: Review) => {
-    setAttachedReviews((prev) => {
-      if (prev.find((r) => r.id === review.id)) return prev;
-      return [...prev, review];
-    });
+    const isAlreadyAttached = attachedReviews.find((r) => r.id === review.id);
+    if (isAlreadyAttached) return;
+
+    const newReviews = [...attachedReviews, review];
+    setAttachedReviews(newReviews);
     setIsChatExpanded(true);
     // Set position to checkout when review is attached
     setCurrentPosition("checkout");
     setCurrentMode("copilot");
-  }, []);
+    // Fetch suggestions with the new reviews
+    fetchSuggestionsForAttachments(attachedProducts, newReviews);
+  }, [attachedProducts, attachedReviews, fetchSuggestionsForAttachments]);
 
   const handleRemoveAttachedReview = useCallback((reviewId: string) => {
     const newReviews = attachedReviews.filter((r) => r.id !== reviewId);
     setAttachedReviews(newReviews);
+    // Update suggestions for remaining attachments
+    fetchSuggestionsForAttachments(attachedProducts, newReviews);
     // Reset position if no more attachments
     if (attachedProducts.length === 0 && newReviews.length === 0 && attachedCoupons.length === 0) {
       setCurrentPosition("catalog");
       setCurrentMode("navigator");
     }
-  }, [attachedProducts, attachedReviews, attachedCoupons]);
+  }, [attachedProducts, attachedReviews, attachedCoupons, fetchSuggestionsForAttachments]);
 
   const handleAttachCoupon = useCallback((coupon: Coupon) => {
-    setAttachedCoupons((prev) => {
-      if (prev.find((c) => c.id === coupon.id)) return prev;
-      return [...prev, coupon];
-    });
+    const isAlreadyAttached = attachedCoupons.find((c) => c.id === coupon.id);
+    if (isAlreadyAttached) return;
+
+    const newCoupons = [...attachedCoupons, coupon];
+    setAttachedCoupons(newCoupons);
     setIsChatExpanded(true);
     // Set position to checkout when coupon is attached
     setCurrentPosition("checkout");
     setCurrentMode("copilot");
-  }, []);
+    // Fetch suggestions with the new coupons
+    fetchSuggestionsForAttachments(attachedProducts, attachedReviews, newCoupons);
+  }, [attachedProducts, attachedReviews, attachedCoupons, fetchSuggestionsForAttachments]);
 
   const handleRemoveAttachedCoupon = useCallback((couponId: string) => {
     const newCoupons = attachedCoupons.filter((c) => c.id !== couponId);
     setAttachedCoupons(newCoupons);
+    // Update suggestions for remaining attachments
+    fetchSuggestionsForAttachments(attachedProducts, attachedReviews, newCoupons);
     // Reset position if no more attachments
     if (attachedProducts.length === 0 && attachedReviews.length === 0 && newCoupons.length === 0) {
       setCurrentPosition("catalog");
       setCurrentMode("navigator");
     }
-  }, [attachedProducts, attachedReviews, attachedCoupons]);
+  }, [attachedProducts, attachedReviews, attachedCoupons, fetchSuggestionsForAttachments]);
 
   // Scroll to bottom
   const scrollToBottom = useCallback(() => {
