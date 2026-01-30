@@ -1147,13 +1147,14 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         activeAttachmentIds: activeAttachmentIds.length > 0 ? activeAttachmentIds : undefined,
       };
 
-      // Store request data for debug modal
+      // Store request data for debug modal and clear selected message to show latest
       setLastRequestData({
         endpoint: `${API_BASE_URL}/chat/query`,
         method: "POST",
         timestamp: new Date().toISOString(),
         payload: requestPayload,
       });
+      setSelectedDebugMessage(null);
 
       const response = await fetch(`${API_BASE_URL}/chat/query`, {
         method: "POST",
