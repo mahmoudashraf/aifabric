@@ -295,7 +295,7 @@ export async function createCoupon(coupon: Partial<Coupon>): Promise<Coupon> {
 
 // Support Tickets API
 export async function createTicket(ticket: { userId: string; issueType: string; description: string }): Promise<any> {
-  const response = await fetch(`${API_BASE_URL}/support-tickets`, {
+  const response = await fetch(`${API_BASE_URL}/tickets`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(ticket),
