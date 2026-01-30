@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMaxModeContextOptional } from "@/contexts/MaxModeContext";
+import { AISearchDisplay } from "@/components/AISearchDisplay";
 import {
   X,
   Send,
@@ -1337,19 +1338,35 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   };
 
   const handleAISearchCategory = (category: (typeof aiSearchCategories)[number]) => {
+    // Create search attachment
+    const searchAttachment = {
+      type: "ai-search",
+      data: {
+        category: category.label,
+        title: `AI Search: ${category.label}`
+      }
+    };
+
+    // Replace existing AI search item instead of adding to the list
+    setAttachedItems(prev => [...prev.filter(item => item.type !== 'ai-search'), searchAttachment]);
     setIsAISearchOpen(false);
+
+    // Clear any existing search category tag (only one tag allowed)
+    setSearchCategory(null);
 
     // AI Search uses catalog position (discovery/browsing)
     setCurrentPosition("catalog");
     setCurrentMode("navigator");
 
-    // Send the query directly
-    handleChatQuery(category.query, "catalog", "navigator");
-
     toast({
-      title: "🔍 AI Search Started",
-      description: `Searching for ${category.label}`,
+      title: "🔍 AI Search Attached",
+      description: `${category.label} search criteria added to chat`,
     });
+
+    // Focus on chat input
+    setTimeout(() => {
+      chatInputRef.current?.focus();
+    }, 100);
   };
 
   const handleOpenBottomSheet = () => {
@@ -1425,6 +1442,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     setSearchCategory(category);
     setIsSearchCategoryOpen(false);
     setIsQuickActionsOpen(false);
+    // Clear any existing AI Search items (only one tag allowed)
+    setAttachedItems(prev => prev.filter(item => item.type !== 'ai-search'));
     // Focus the input
     setTimeout(() => chatInputRef.current?.focus(), 100);
   };
@@ -1561,10 +1580,16 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     // Store the current search category for this message
     const currentSearchCategory = searchCategory;
 
+    // Check for AI Search attachment
+    const aiSearchAttachment = attachedItems.find(item => item.type === 'ai-search');
+
     // Build the API query - prepend category if set
     let apiQuery = query;
     if (currentSearchCategory) {
       apiQuery = `request retrieval and generation for product ${currentSearchCategory}: ${query}`;
+    } else if (aiSearchAttachment) {
+      // Prepend AI Search category text before user query
+      apiQuery = `request retrieval and generation for product ${aiSearchAttachment.data.category}: ${query}`;
     }
 
     // User message shows only the query text, category is stored separately as a tag
@@ -3913,16 +3938,16 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       {/* Input Area */}
       <div className="absolute bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t-2 border-purple-500/30 p-3 md:p-6">
         <div className="max-w-4xl mx-auto">
-          {/* Attached Items - Beautiful Cards */}
-          {attachedItems.length > 0 && (
+          {/* Attached Items - Beautiful Cards (exclude AI Search - shown in input tag) */}
+          {attachedItems.filter(item => item.type !== 'ai-search').length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="mb-2 md:mb-3 flex flex-wrap gap-1.5 md:gap-2 max-h-[120px] md:max-h-[200px] overflow-y-auto"
             >
               <AnimatePresence mode="popLayout">
-                {attachedItems.map((item, idx) => {
-                  const isAISearch = false;
+                {attachedItems.filter(item => item.type !== 'ai-search').map((item, idx) => {
+                  const isAISearch = item.type === 'ai-search';
                   return (
                   <motion.div
                     key={idx}
@@ -4178,15 +4203,23 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 </motion.div>
               )}
 
+              {/* AI Search Tag inside input - Beautiful Component */}
+              {attachedItems.find(item => item.type === 'ai-search') && (
+                <AISearchDisplay
+                  category={attachedItems.find(item => item.type === 'ai-search')?.data.category || 'All Categories'}
+                  onRemove={() => setAttachedItems(prev => prev.filter(item => item.type !== 'ai-search'))}
+                />
+              )}
+
               <Textarea
                 ref={chatInputRef}
                 placeholder={
                   oldConversationLocked
                     ? "This conversation is locked..."
-                    : searchCategory
+                    : searchCategory || attachedItems.find(item => item.type === 'ai-search')
                     ? "Type your search query..."
-                    : attachedItems.length > 0
-                    ? `Ask about ${attachedItems.length} item${attachedItems.length === 1 ? '' : 's'}...`
+                    : attachedItems.filter(item => item.type !== 'ai-search').length > 0
+                    ? `Ask about ${attachedItems.filter(item => item.type !== 'ai-search').length} item${attachedItems.filter(item => item.type !== 'ai-search').length === 1 ? '' : 's'}...`
                     : "Ask me anything..."
                 }
                 value={chatQuery}
@@ -4202,7 +4235,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 disabled={oldConversationLocked}
                 className={`${
                   isInputFocused ? 'min-h-[80px] sm:min-h-[100px] md:min-h-[80px]' : 'min-h-[56px] sm:min-h-[60px] md:min-h-[80px]'
-                } ${searchCategory ? 'pt-9 sm:pt-10' : 'pt-4'} pb-4 pr-14 pl-4 text-sm sm:text-base resize-none border-2 border-purple-400/40 focus:border-purple-500 focus:border-2 rounded-2xl shadow-lg focus:shadow-xl leading-relaxed transition-all bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm ${
+                } ${searchCategory || attachedItems.find(item => item.type === 'ai-search') ? 'pt-9 sm:pt-10' : 'pt-4'} pb-4 pr-14 pl-4 text-sm sm:text-base resize-none border-2 border-purple-400/40 focus:border-purple-500 focus:border-2 rounded-2xl shadow-lg focus:shadow-xl leading-relaxed transition-all bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm ${
                   oldConversationLocked ? 'bg-gray-100 dark:bg-gray-800 cursor-not-allowed opacity-60' : ''
                 }`}
                 style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', fontSize: '16px' }}
