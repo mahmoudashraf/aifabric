@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMaxModeContextOptional } from "@/contexts/MaxModeContext";
-import { AISearchDisplay } from "@/components/AISearchDisplay";
 import {
   X,
   Send,
@@ -1338,39 +1337,19 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   };
 
   const handleAISearchCategory = (category: (typeof aiSearchCategories)[number]) => {
-    // Create search attachment
-    const searchAttachment = {
-      type: "ai-search",
-      data: {
-        category: category.label,
-        query: category.query,
-        title: `AI Search: ${category.label}`
-      }
-    };
-
-    // Replace existing AI search item instead of adding to the list
-    setAttachedItems(prev => [...prev.filter(item => item.type !== 'ai-search'), searchAttachment]);
     setIsAISearchOpen(false);
-
-    // Clear any existing search category tag (only one tag allowed)
-    setSearchCategory(null);
 
     // AI Search uses catalog position (discovery/browsing)
     setCurrentPosition("catalog");
     setCurrentMode("navigator");
 
-    // Don't set the query in the input - let user type their own query
-    // setChatQuery(category.query);
+    // Send the query directly
+    handleChatQuery(category.query, "catalog", "navigator");
 
     toast({
-      title: "🔍 AI Search Attached",
-      description: `${category.label} search criteria added to chat`,
+      title: "🔍 AI Search Started",
+      description: `Searching for ${category.label}`,
     });
-
-    // Focus on chat input
-    setTimeout(() => {
-      chatInputRef.current?.focus();
-    }, 100);
   };
 
   const handleOpenBottomSheet = () => {
@@ -1446,8 +1425,6 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     setSearchCategory(category);
     setIsSearchCategoryOpen(false);
     setIsQuickActionsOpen(false);
-    // Clear any existing AI Search items (only one tag allowed)
-    setAttachedItems(prev => prev.filter(item => item.type !== 'ai-search'));
     // Focus the input
     setTimeout(() => chatInputRef.current?.focus(), 100);
   };
@@ -2293,36 +2270,42 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[92%] md:max-w-[85%] rounded-2xl md:rounded-2xl overflow-hidden shadow-lg ${
+                      className={`max-w-[92%] md:max-w-[85%] rounded-2xl md:rounded-3xl overflow-hidden ${
                         message.type === "user"
-                          ? "bg-gradient-to-br from-purple-600 to-pink-600 text-white"
-                          : `${styles?.bg} border-2 ${styles?.border}`
+                          ? "bg-gradient-to-br from-purple-600 via-pink-600 to-purple-700 text-white shadow-xl"
+                          : `${styles?.bg} shadow-xl relative`
                       }`}
                     >
                       {message.type === "ai" && Icon && !styles?.hideBadge && (
-                        <div className={`px-3 md:px-4 py-1.5 md:py-2 border-b ${styles?.border} flex items-center justify-between bg-white/50 dark:bg-gray-800/50`}>
-                          <div className="flex items-center gap-2">
-                            <Icon className={`h-3.5 w-3.5 md:h-4 md:w-4 ${styles?.iconColor}`} />
-                            <span className={`text-[11px] md:text-xs font-semibold ${styles?.text}`}>
-                              {styles?.label}
-                            </span>
+                        <div className="relative">
+                          <div className={`px-4 md:px-5 py-2.5 md:py-3 flex items-center justify-between bg-gradient-to-r ${styles?.bg} backdrop-blur-sm`}>
+                            <div className="flex items-center gap-2.5">
+                              <div className={`p-2 rounded-xl ${styles?.iconColor} bg-white/20 backdrop-blur-sm`}>
+                                <Icon className="h-4 w-4 md:h-4.5 md:w-4.5 text-white" />
+                              </div>
+                              <span className="text-xs md:text-sm font-bold text-white drop-shadow-sm">
+                                {styles?.label}
+                              </span>
+                            </div>
+                            {message.debugData && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedDebugMessage(message);
+                                  setIsDebugModalOpen(true);
+                                }}
+                                className="p-1.5 rounded-lg hover:bg-white/20 transition-colors backdrop-blur-sm"
+                                title="View API Debug Data"
+                              >
+                                <Info className="h-4 w-4 text-white/80 hover:text-white" />
+                              </button>
+                            )}
                           </div>
-                          {message.debugData && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedDebugMessage(message);
-                                setIsDebugModalOpen(true);
-                              }}
-                              className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                              title="View API Debug Data"
-                            >
-                              <Info className="h-3.5 w-3.5 text-gray-500 hover:text-purple-600" />
-                            </button>
-                          )}
+                          {/* Gradient separator */}
+                          <div className="h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
                         </div>
                       )}
-                      <div className="p-3 md:p-4">
+                      <div className={`p-4 md:p-5 ${message.type === "ai" ? "bg-white dark:bg-gray-900" : ""}`}>
                         {/* Search Category Tag for user messages */}
                         {message.type === "user" && message.searchCategory && (
                           <div className="mb-2">
@@ -2431,7 +2414,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           }
 
                           return (
-                            <p className={`text-sm md:text-base whitespace-pre-wrap leading-relaxed ${message.type === "ai" && styles ? styles.text : ""}`} style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+                            <p className={`text-base md:text-lg whitespace-pre-wrap leading-relaxed font-medium ${message.type === "ai" ? "text-gray-800 dark:text-gray-100" : ""}`} style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
                               {content}
                             </p>
                           );
@@ -3117,7 +3100,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         </AnimatePresence>
 
         {/* Mobile: All Floating Action Buttons - Single Column */}
-        <div className="md:hidden fixed bottom-24 right-3 z-20 flex flex-col-reverse items-center gap-3">
+        <div className="md:hidden fixed bottom-24 right-1 z-20 flex flex-col-reverse items-center gap-3">
           {/* AI Search Button */}
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
@@ -3928,16 +3911,16 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       {/* Input Area */}
       <div className="absolute bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t-2 border-purple-500/30 p-3 md:p-6">
         <div className="max-w-4xl mx-auto">
-          {/* Attached Items - Beautiful Cards (exclude AI Search - shown in input tag) */}
-          {attachedItems.filter(item => item.type !== 'ai-search').length > 0 && (
+          {/* Attached Items - Beautiful Cards */}
+          {attachedItems.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="mb-2 md:mb-3 flex flex-wrap gap-1.5 md:gap-2 max-h-[120px] md:max-h-[200px] overflow-y-auto"
             >
               <AnimatePresence mode="popLayout">
-                {attachedItems.filter(item => item.type !== 'ai-search').map((item, idx) => {
-                  const isAISearch = item.type === 'ai-search';
+                {attachedItems.map((item, idx) => {
+                  const isAISearch = false;
                   return (
                   <motion.div
                     key={idx}
@@ -4193,22 +4176,15 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 </motion.div>
               )}
 
-              {/* AI Search Tag inside input - Beautiful Component */}
-              {attachedItems.find(item => item.type === 'ai-search') && (
-                <AISearchDisplay
-                  category={attachedItems.find(item => item.type === 'ai-search')?.data.category || 'All Categories'}
-                  onRemove={() => setAttachedItems(prev => prev.filter(item => item.type !== 'ai-search'))}
-                />
-              )}
               <Textarea
                 ref={chatInputRef}
                 placeholder={
                   oldConversationLocked
                     ? "This conversation is locked..."
-                    : searchCategory || attachedItems.find(item => item.type === 'ai-search')
+                    : searchCategory
                     ? "Type your search query..."
-                    : attachedItems.filter(item => item.type !== 'ai-search').length > 0
-                    ? `Ask about ${attachedItems.filter(item => item.type !== 'ai-search').length} item${attachedItems.filter(item => item.type !== 'ai-search').length === 1 ? '' : 's'}...`
+                    : attachedItems.length > 0
+                    ? `Ask about ${attachedItems.length} item${attachedItems.length === 1 ? '' : 's'}...`
                     : "Ask me anything..."
                 }
                 value={chatQuery}
@@ -4224,7 +4200,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 disabled={oldConversationLocked}
                 className={`${
                   isInputFocused ? 'min-h-[80px] sm:min-h-[100px] md:min-h-[80px]' : 'min-h-[56px] sm:min-h-[60px] md:min-h-[80px]'
-                } ${searchCategory || attachedItems.find(item => item.type === 'ai-search') ? 'pt-9 sm:pt-10' : 'pt-4'} pb-4 pr-14 pl-4 text-sm sm:text-base resize-none border-2 border-purple-400/40 focus:border-purple-500 focus:border-2 rounded-2xl shadow-lg focus:shadow-xl leading-relaxed transition-all bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm ${
+                } ${searchCategory ? 'pt-9 sm:pt-10' : 'pt-4'} pb-4 pr-14 pl-4 text-sm sm:text-base resize-none border-2 border-purple-400/40 focus:border-purple-500 focus:border-2 rounded-2xl shadow-lg focus:shadow-xl leading-relaxed transition-all bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm ${
                   oldConversationLocked ? 'bg-gray-100 dark:bg-gray-800 cursor-not-allowed opacity-60' : ''
                 }`}
                 style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', fontSize: '16px' }}
