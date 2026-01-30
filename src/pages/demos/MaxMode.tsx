@@ -44,6 +44,11 @@ import {
   ShoppingBag,
   Maximize2,
   Minimize2,
+  Laptop,
+  Smartphone,
+  Headphones,
+  Camera,
+  Monitor,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -178,68 +183,189 @@ const ActionResultRenderer = ({
 }) => {
   if (!data) return null;
 
-  // Handle arrays
-  if (Array.isArray(data)) {
-    const visibleItems = data.slice(0, expandedCount || 3);
-    const remaining = data.length - visibleItems.length;
+  // Check if item looks like a product (has name/title and price or imageUrl) - handle different casing
+  const isProductLike = (item: any) => {
+    if (typeof item !== 'object' || item === null) return false;
+    const hasName = item.name || item.Name || item.title || item.Title;
+    const hasPrice = item.price !== undefined || item.Price !== undefined;
+    const hasImage = item.imageUrl || item.ImageUrl || item.image || item.Image;
+    const hasSku = item.sku || item.Sku;
+    return hasName && (hasPrice || hasImage || hasSku);
+  };
+
+  // Render a product card with image
+  const renderProductCard = (item: any, idx: number) => {
+    // Handle different field casing from API (Name vs name, ImageUrl vs imageUrl, etc.)
+    const name = item.name || item.Name || item.title || item.Title || 'Product';
+    const price = item.price ?? item.Price;
+    const imageUrl = item.imageUrl || item.ImageUrl || item.image || item.Image;
+    const category = item.category || item.Category;
+    const sku = item.sku || item.Sku;
+    const inStock = item.inStock !== undefined ? item.inStock : (item.InStock !== undefined ? item.InStock : (item.inStockQty > 0 || item.InStockQty > 0));
+    const stockQty = item.inStockQty ?? item.InStockQty ?? item.stockQuantity ?? item.StockQuantity;
+    const rating = item.rating ?? item.Rating;
+    const brand = item.brand || item.Brand;
 
     return (
-      <div className="mt-3 space-y-2">
-        {visibleItems.map((item: any, idx: number) => (
-          <Card key={idx} className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200 hover:border-purple-400 transition-colors relative group" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
-            {onAttach && typeof item === "object" && item !== null && (
-              <Button
-                size="icon"
-                variant="ghost"
-                className="absolute top-2 right-2 h-8 w-8 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg border border-white/30 hover:scale-110 transition-all z-10"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onAttach(item);
-                }}
-                title="Attach to Chat"
-              >
-                <Paperclip className="h-4 w-4" />
-              </Button>
+      <div key={idx} className="relative group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border-2 border-purple-200 dark:border-purple-700 hover:border-purple-400 dark:hover:border-purple-500 transition-all hover:shadow-xl overflow-hidden">
+        {/* Attach Button */}
+        {onAttach && (
+          <Button
+            size="icon"
+            variant="ghost"
+            className="absolute top-2 right-2 h-8 w-8 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg border border-white/30 hover:scale-110 transition-all z-10"
+            onClick={(e) => {
+              e.stopPropagation();
+              onAttach(item);
+            }}
+            title="Attach to Chat"
+          >
+            <Paperclip className="h-4 w-4" />
+          </Button>
+        )}
+
+        {/* Product Image */}
+        {imageUrl && (
+          <div className="aspect-[4/3] w-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800">
+            <img
+              src={imageUrl}
+              alt={name}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
+              }}
+            />
+          </div>
+        )}
+
+        {/* Product Info */}
+        <div className="p-3">
+          {/* Brand & Category */}
+          <div className="flex items-center gap-2 mb-1">
+            {brand && (
+              <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wide">{brand}</span>
             )}
-            <CardContent className="p-3 pr-12">
-              {typeof item === "object" && item !== null ? (
-                <div className="space-y-2">
-                  {Object.entries(item).map(([key, value]) => (
-                    <div key={key} className="flex items-start justify-between gap-2">
-                      <span className="text-muted-foreground font-semibold min-w-[100px]">
-                        {formatFieldName(key)}:
-                      </span>
-                      <span className="text-foreground text-right flex-1 font-medium">
-                        {typeof value === "object" && value !== null && !Array.isArray(value) ? (
-                          <div className="space-y-1">
-                            {Object.entries(value).map(([nestedKey, nestedValue]) => (
-                              <div key={nestedKey} className="text-[10px]">
-                                <span className="text-muted-foreground">{formatFieldName(nestedKey)}: </span>
-                                <span>{formatFieldValue(nestedValue)}</span>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          formatFieldValue(value)
-                        )}
-                      </span>
+            {category && (
+              <span className="text-[10px] text-gray-500 dark:text-gray-400">{category}</span>
+            )}
+          </div>
+
+          {/* Name */}
+          <h4 className="font-bold text-sm text-gray-800 dark:text-gray-100 line-clamp-2 mb-2">{name}</h4>
+
+          {/* Price & Stock */}
+          <div className="flex items-center justify-between">
+            {price !== undefined && (
+              <span className="text-lg font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                ${typeof price === 'number' ? price.toLocaleString() : price}
+              </span>
+            )}
+            {stockQty !== undefined && (
+              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                stockQty > 50 ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                stockQty > 0 ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+              }`}>
+                {stockQty > 0 ? `${stockQty} in stock` : 'Out of stock'}
+              </span>
+            )}
+          </div>
+
+          {/* Rating & SKU */}
+          <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+            {rating !== undefined && (
+              <div className="flex items-center gap-1">
+                <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{rating}</span>
+              </div>
+            )}
+            {sku && (
+              <span className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">{sku}</span>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Render generic item card (non-product)
+  const renderGenericCard = (item: any, idx: number) => (
+    <Card key={idx} className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200 hover:border-purple-400 transition-colors relative group" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+      {onAttach && typeof item === "object" && item !== null && (
+        <Button
+          size="icon"
+          variant="ghost"
+          className="absolute top-2 right-2 h-8 w-8 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg border border-white/30 hover:scale-110 transition-all z-10"
+          onClick={(e) => {
+            e.stopPropagation();
+            onAttach(item);
+          }}
+          title="Attach to Chat"
+        >
+          <Paperclip className="h-4 w-4" />
+        </Button>
+      )}
+      <CardContent className="p-3 pr-12">
+        {typeof item === "object" && item !== null ? (
+          <div className="space-y-2">
+            {Object.entries(item).filter(([key]) => !['imageUrl', 'image', 'images'].includes(key)).map(([key, value]) => (
+              <div key={key} className="flex items-start justify-between gap-2">
+                <span className="text-muted-foreground font-semibold min-w-[100px]">
+                  {formatFieldName(key)}:
+                </span>
+                <span className="text-foreground text-right flex-1 font-medium">
+                  {typeof value === "object" && value !== null && !Array.isArray(value) ? (
+                    <div className="space-y-1">
+                      {Object.entries(value).map(([nestedKey, nestedValue]) => (
+                        <div key={nestedKey} className="text-[10px]">
+                          <span className="text-muted-foreground">{formatFieldName(nestedKey)}: </span>
+                          <span>{formatFieldValue(nestedValue)}</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-foreground">{formatFieldValue(item)}</p>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+                  ) : (
+                    formatFieldValue(value)
+                  )}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-foreground">{formatFieldValue(item)}</p>
+        )}
+      </CardContent>
+    </Card>
+  );
+
+  // Handle arrays
+  if (Array.isArray(data)) {
+    const visibleItems = data.slice(0, expandedCount || 6);
+    const remaining = data.length - visibleItems.length;
+    const hasProducts = visibleItems.some(isProductLike);
+
+    return (
+      <div className="mt-3">
+        {hasProducts ? (
+          // Product grid layout - horizontal cards
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {visibleItems.map((item: any, idx: number) =>
+              isProductLike(item) ? renderProductCard(item, idx) : renderGenericCard(item, idx)
+            )}
+          </div>
+        ) : (
+          // Standard vertical list for non-products
+          <div className="space-y-2">
+            {visibleItems.map((item: any, idx: number) => renderGenericCard(item, idx))}
+          </div>
+        )}
         {remaining > 0 && (
           <Button
             size="sm"
             variant="ghost"
-            className="w-full text-xs bg-gradient-to-r from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 border border-purple-300"
-            onClick={() => onExpand((expandedCount || 3) + 3)}
+            className="w-full mt-3 text-xs bg-gradient-to-r from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 border border-purple-300"
+            onClick={() => onExpand((expandedCount || 6) + 6)}
           >
-            Show {Math.min(3, remaining)} more
+            Show {Math.min(6, remaining)} more
           </Button>
         )}
       </div>
@@ -256,62 +382,38 @@ const ActionResultRenderer = ({
         <div className="mt-3 space-y-3">
           {arrayKeys.map((arrayKey) => {
             const arrayData = data[arrayKey];
-            const visibleItems = arrayData.slice(0, expandedCount || 3);
+            const visibleItems = arrayData.slice(0, expandedCount || 6);
             const remaining = arrayData.length - visibleItems.length;
+            const hasProducts = visibleItems.some(isProductLike);
 
             return (
               <div key={arrayKey}>
                 <h4 className="text-sm font-bold mb-2 text-purple-700 dark:text-purple-300">
                   {formatFieldName(arrayKey)}
                 </h4>
-                <div className="space-y-2">
-                  {visibleItems.map((item: any, idx: number) => (
-                    <Card key={idx} className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-purple-200 hover:border-purple-400 transition-colors relative group" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
-                      {onAttach && typeof item === "object" && item !== null && (
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          className="absolute top-2 right-2 h-8 w-8 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg border border-white/30 hover:scale-110 transition-all z-10"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onAttach(item);
-                          }}
-                          title="Attach to Chat"
-                        >
-                          <Paperclip className="h-4 w-4" />
-                        </Button>
-                      )}
-                      <CardContent className="p-3 pr-12">
-                        {typeof item === "object" && item !== null ? (
-                          <div className="space-y-2">
-                            {Object.entries(item).map(([key, value]) => (
-                              <div key={key} className="flex items-start justify-between gap-2">
-                                <span className="text-muted-foreground font-semibold min-w-[100px]">
-                                  {formatFieldName(key)}:
-                                </span>
-                                <span className="text-foreground text-right flex-1 font-medium">
-                                  {formatFieldValue(value)}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <p className="text-foreground">{formatFieldValue(item)}</p>
-                        )}
-                      </CardContent>
-                    </Card>
-                  ))}
-                  {remaining > 0 && (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="w-full text-xs bg-gradient-to-r from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 border border-purple-300"
-                      onClick={() => onExpand((expandedCount || 3) + 3)}
-                    >
-                      Show {Math.min(3, remaining)} more
-                    </Button>
-                  )}
-                </div>
+                {hasProducts ? (
+                  // Product grid layout
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {visibleItems.map((item: any, idx: number) =>
+                      isProductLike(item) ? renderProductCard(item, idx) : renderGenericCard(item, idx)
+                    )}
+                  </div>
+                ) : (
+                  // Standard vertical list
+                  <div className="space-y-2">
+                    {visibleItems.map((item: any, idx: number) => renderGenericCard(item, idx))}
+                  </div>
+                )}
+                {remaining > 0 && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="w-full mt-3 text-xs bg-gradient-to-r from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 border border-purple-300"
+                    onClick={() => onExpand((expandedCount || 6) + 6)}
+                  >
+                    Show {Math.min(6, remaining)} more
+                  </Button>
+                )}
               </div>
             );
           })}
@@ -392,6 +494,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [selectedDebugMessage, setSelectedDebugMessage] = useState<ChatMessage | null>(null);
   // Full JSON panel expansion state
   const [isJsonPanelExpanded, setIsJsonPanelExpanded] = useState(false);
+  // Search category submenu state
+  const [isSearchCategoryOpen, setIsSearchCategoryOpen] = useState(false);
+  const [searchCategory, setSearchCategory] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const latestMessageRef = useRef<HTMLDivElement>(null);
@@ -419,14 +524,13 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     { icon: TrendingUp, label: "Trending", query: "What's trending?", color: "text-rose-600", bg: "bg-rose-500/10", border: "border-rose-500/30", position: "catalog" as const, mode: "navigator" as const },
   ];
 
-  // AI Search Categories for guided product search
-  const aiSearchCategories = [
-    { icon: Package, label: "Laptops", query: "Use RAG service with vector space to retrieve laptops matching these specifications (requireGeneration=true):", color: "text-blue-600", bg: "bg-blue-500/10" },
-    { icon: ShoppingBag, label: "Smartphones", query: "Use RAG service with vector space to retrieve smartphones matching these criteria (requireGeneration=true):", color: "text-purple-600", bg: "bg-purple-500/10" },
-    { icon: Package, label: "Headphones", query: "Use RAG service with vector space to retrieve headphones with these features (requireGeneration=true):", color: "text-pink-600", bg: "bg-pink-500/10" },
-    { icon: Package, label: "Cameras", query: "Use RAG service with vector space to retrieve cameras with these specifications (requireGeneration=true):", color: "text-green-600", bg: "bg-green-500/10" },
-    { icon: Package, label: "Watches", query: "Use RAG service with vector space to retrieve watches matching these criteria (requireGeneration=true):", color: "text-orange-600", bg: "bg-orange-500/10" },
-    { icon: Package, label: "Accessories", query: "Use RAG service with vector space to retrieve accessories matching these criteria (requireGeneration=true):", color: "text-cyan-600", bg: "bg-cyan-500/10" },
+  // Product search categories matching our actual data
+  const searchCategories = [
+    { icon: Laptop, label: "Laptops", emoji: "💻", color: "text-blue-600", bg: "bg-blue-500/10", border: "border-blue-500/30" },
+    { icon: Smartphone, label: "Smartphones", emoji: "📱", color: "text-purple-600", bg: "bg-purple-500/10", border: "border-purple-500/30" },
+    { icon: Headphones, label: "Headphones", emoji: "🎧", color: "text-pink-600", bg: "bg-pink-500/10", border: "border-pink-500/30" },
+    { icon: Camera, label: "Cameras", emoji: "📷", color: "text-green-600", bg: "bg-green-500/10", border: "border-green-500/30" },
+    { icon: Monitor, label: "Monitors", emoji: "🖥️", color: "text-orange-600", bg: "bg-orange-500/10", border: "border-orange-500/30" },
   ];
 
   // Auto-scroll to latest message - show it at the top of viewport
@@ -1031,9 +1135,37 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     });
   };
 
+  // Handle selecting a search category - adds tag to input
+  const handleSelectSearchCategory = (category: string) => {
+    setSearchCategory(category);
+    setChatQuery(`🔍 ${category}: `);
+    setIsSearchCategoryOpen(false);
+    setIsQuickActionsOpen(false);
+    // Focus the input
+    setTimeout(() => chatInputRef.current?.focus(), 100);
+  };
+
+  // Clear search category tag
+  const clearSearchCategory = () => {
+    setSearchCategory(null);
+    setChatQuery("");
+  };
+
   const handleChatQuery = async (presetQuery?: string, actionPosition?: "landing" | "catalog" | "checkout", actionMode?: "navigator" | "copilot") => {
-    const query = presetQuery || chatQuery;
+    let query = presetQuery || chatQuery;
     if (!query.trim()) return;
+
+    // If there's a search category, format the query properly
+    const categoryMatch = query.match(/^🔍\s*(\w+):\s*/);
+    if (categoryMatch) {
+      const category = categoryMatch[1];
+      const userQuery = query.replace(/^🔍\s*\w+:\s*/, '').trim();
+      if (!userQuery) return; // Don't send if only category tag
+      query = `Search ${category}: ${userQuery}`;
+    }
+
+    // Clear the search category after sending
+    setSearchCategory(null);
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -1428,20 +1560,72 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       <div className="hidden md:block absolute top-16 left-0 right-0 px-6 py-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b z-10">
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
           {quickActions.slice(0, 8).map((action, idx) => (
-            <motion.button
-              key={idx}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.05 }}
-              onClick={() => handleQuickAction(action.query, action.position, action.mode)}
-              className={`flex flex-col items-center gap-1 p-3 rounded-xl ${action.bg} border ${action.border} hover:scale-105 transition-all min-w-[80px]`}
-            >
-              <action.icon className={`h-5 w-5 ${action.color}`} />
-              <span className="text-[10px] font-medium text-foreground whitespace-nowrap">{action.label}</span>
-            </motion.button>
+            <div key={idx} className="relative">
+              {action.label === "Search Products" ? (
+                <>
+                  <motion.button
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    onClick={() => setIsSearchCategoryOpen(!isSearchCategoryOpen)}
+                    className={`flex flex-col items-center gap-1 p-3 rounded-xl ${action.bg} border ${action.border} hover:scale-105 transition-all min-w-[80px] ${isSearchCategoryOpen ? 'ring-2 ring-blue-500' : ''}`}
+                  >
+                    <action.icon className={`h-5 w-5 ${action.color}`} />
+                    <span className="text-[10px] font-medium text-foreground whitespace-nowrap">{action.label}</span>
+                  </motion.button>
+                  {/* Category Submenu */}
+                  <AnimatePresence>
+                    {isSearchCategoryOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                        className="absolute top-full left-0 mt-2 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-purple-200 dark:border-purple-700 p-3 z-50 min-w-[280px]"
+                      >
+                        <div className="text-xs font-bold text-purple-600 dark:text-purple-400 mb-2 px-2">Select Category</div>
+                        <div className="grid grid-cols-2 gap-2">
+                          {searchCategories.map((cat, catIdx) => (
+                            <motion.button
+                              key={catIdx}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: catIdx * 0.05 }}
+                              onClick={() => handleSelectSearchCategory(cat.label)}
+                              className={`flex items-center gap-2 p-2.5 rounded-xl ${cat.bg} border ${cat.border} hover:scale-105 transition-all text-left`}
+                            >
+                              <span className="text-lg">{cat.emoji}</span>
+                              <span className={`text-xs font-semibold ${cat.color}`}>{cat.label}</span>
+                            </motion.button>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </>
+              ) : (
+                <motion.button
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  onClick={() => handleQuickAction(action.query, action.position, action.mode)}
+                  className={`flex flex-col items-center gap-1 p-3 rounded-xl ${action.bg} border ${action.border} hover:scale-105 transition-all min-w-[80px]`}
+                >
+                  <action.icon className={`h-5 w-5 ${action.color}`} />
+                  <span className="text-[10px] font-medium text-foreground whitespace-nowrap">{action.label}</span>
+                </motion.button>
+              )}
+            </div>
           ))}
         </div>
       </div>
+
+      {/* Click outside to close search category menu */}
+      {isSearchCategoryOpen && (
+        <div
+          className="hidden md:block fixed inset-0 z-[9]"
+          onClick={() => setIsSearchCategoryOpen(false)}
+        />
+      )}
 
       {/* Floating Quick Actions Button - Mobile Only */}
       <AnimatePresence>
@@ -1523,26 +1707,60 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 </Button>
               </div>
 
-              {/* Actions Grid */}
+              {/* Actions Grid or Category Selection */}
               <div className="p-6 overflow-y-auto max-h-[calc(70vh-120px)]">
-                <div className="grid grid-cols-3 gap-3">
-                  {quickActions.map((action, idx) => (
-                    <motion.button
-                      key={idx}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: idx * 0.03 }}
-                      onClick={() => {
-                        handleQuickAction(action.query, action.position, action.mode);
-                        setIsQuickActionsOpen(false);
-                      }}
-                      className={`flex flex-col items-center gap-2 p-4 rounded-2xl ${action.bg} border-2 ${action.border} active:scale-95 transition-all`}
+                {isSearchCategoryOpen ? (
+                  // Category Selection View
+                  <div>
+                    <button
+                      onClick={() => setIsSearchCategoryOpen(false)}
+                      className="flex items-center gap-2 text-purple-600 dark:text-purple-400 mb-4 text-sm font-medium"
                     >
-                      <action.icon className={`h-7 w-7 ${action.color}`} />
-                      <span className="text-[11px] font-semibold text-foreground text-center leading-tight">{action.label}</span>
-                    </motion.button>
-                  ))}
-                </div>
+                      <ChevronDown className="h-4 w-4 rotate-90" />
+                      Back to Actions
+                    </button>
+                    <h4 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Search by Category</h4>
+                    <div className="grid grid-cols-2 gap-3">
+                      {searchCategories.map((cat, catIdx) => (
+                        <motion.button
+                          key={catIdx}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: catIdx * 0.05 }}
+                          onClick={() => handleSelectSearchCategory(cat.label)}
+                          className={`flex items-center gap-3 p-4 rounded-2xl ${cat.bg} border-2 ${cat.border} active:scale-95 transition-all`}
+                        >
+                          <span className="text-2xl">{cat.emoji}</span>
+                          <span className={`text-sm font-bold ${cat.color}`}>{cat.label}</span>
+                        </motion.button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  // Normal Actions Grid
+                  <div className="grid grid-cols-3 gap-3">
+                    {quickActions.map((action, idx) => (
+                      <motion.button
+                        key={idx}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: idx * 0.03 }}
+                        onClick={() => {
+                          if (action.label === "Search Products") {
+                            setIsSearchCategoryOpen(true);
+                          } else {
+                            handleQuickAction(action.query, action.position, action.mode);
+                            setIsQuickActionsOpen(false);
+                          }
+                        }}
+                        className={`flex flex-col items-center gap-2 p-4 rounded-2xl ${action.bg} border-2 ${action.border} active:scale-95 transition-all`}
+                      >
+                        <action.icon className={`h-7 w-7 ${action.color}`} />
+                        <span className="text-[11px] font-semibold text-foreground text-center leading-tight">{action.label}</span>
+                      </motion.button>
+                    ))}
+                  </div>
+                )}
               </div>
             </motion.div>
           </>
