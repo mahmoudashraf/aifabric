@@ -4153,7 +4153,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   initial={{ opacity: 0, scale: 0.8, x: -10 }}
                   animate={{ opacity: 1, scale: 1, x: 0 }}
                   exit={{ opacity: 0, scale: 0.8, x: -10 }}
-                  className="absolute top-1.5 left-1.5 z-10"
+                  className="absolute top-0 left-2 -translate-y-1/2 z-10"
                 >
                   <div className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-md shadow-lg">
                     <Search className="h-2.5 w-2.5 text-white flex-shrink-0" />
@@ -4202,7 +4202,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 disabled={oldConversationLocked}
                 className={`${
                   isInputFocused ? 'min-h-[80px] sm:min-h-[100px] md:min-h-[80px]' : 'min-h-[44px] sm:min-h-[48px] md:min-h-[80px]'
-                } ${searchCategory || attachedItems.find(item => item.type === 'ai-search') ? 'pt-8 sm:pt-9' : ''} pr-12 sm:pr-14 md:pr-16 text-sm sm:text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed transition-all ${
+                } ${searchCategory || attachedItems.find(item => item.type === 'ai-search') ? 'pt-5 sm:pt-6' : ''} pr-12 sm:pr-14 md:pr-16 text-sm sm:text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed transition-all ${
                   oldConversationLocked ? 'bg-gray-100 dark:bg-gray-800 cursor-not-allowed opacity-60' : ''
                 }`}
                 style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', fontSize: '16px' }}

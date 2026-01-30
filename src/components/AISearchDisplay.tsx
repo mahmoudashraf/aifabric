@@ -12,7 +12,7 @@ export const AISearchDisplay = ({ category, onRemove }: AISearchDisplayProps) =>
       initial={{ opacity: 0, scale: 0.95, y: -10 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95, y: -10 }}
-      className="absolute top-1 left-2 z-10"
+      className="absolute top-0 left-2 -translate-y-1/2 z-10"
     >
       <div className="inline-flex items-center gap-2 px-4 py-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 rounded-full shadow-xl backdrop-blur-sm border border-white/20">
         <div className="flex items-center justify-center h-5 w-5 rounded-full bg-white/20">
