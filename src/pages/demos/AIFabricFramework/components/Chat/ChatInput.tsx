@@ -108,37 +108,6 @@ export function ChatInput({
           {/* Quick Tools */}
           <QuickTools activeTag={activeTag || null} onToolClick={handleToolClick} />
 
-          {/* Active Tag Display */}
-          <AnimatePresence>
-            {activeTag && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                className="mb-2"
-              >
-                <Badge
-                  variant="secondary"
-                  className="pr-1 flex items-center gap-2 w-fit"
-                >
-                  {activeTag.type === "search" && <span>🔍 Search Mode</span>}
-                  {activeTag.type === "cart" && (
-                    <>
-                      <ShoppingCart className="h-3 w-3" />
-                      <span>My Cart</span>
-                    </>
-                  )}
-                  <button
-                    onClick={() => onTagChange && onTagChange(null)}
-                    className="ml-1 hover:bg-muted rounded-full p-0.5"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </Badge>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
           {/* Attachments display */}
         <AnimatePresence>
           {hasAttachments && (
@@ -227,10 +196,31 @@ export function ChatInput({
         </AnimatePresence>
 
         {/* Input area */}
-        <div className="flex gap-2 sm:gap-3 items-end bg-background/95 backdrop-blur-md rounded-2xl border-2 border-primary/20 shadow-xl shadow-primary/5 p-2 sm:p-3">
+        <div className="flex gap-2 sm:gap-3 items-end bg-background/95 backdrop-blur-md rounded-2xl border-2 border-primary/20 shadow-xl shadow-primary/5 p-2 sm:p-3 relative">
           <div className="hidden sm:flex items-center text-primary/60 pl-1">
             <Bot className="h-5 w-5" />
           </div>
+
+          {/* Search Tag inside input - only for search type */}
+          {activeTag && activeTag.type === "search" && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="absolute top-2 left-2 sm:left-14 z-10"
+            >
+              <div className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1 bg-gradient-to-r from-blue-500/90 to-purple-500/90 border border-blue-400/50 rounded-full shadow-md backdrop-blur-sm">
+                <Search className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-white" />
+                <button
+                  onClick={() => onTagChange && onTagChange(null)}
+                  className="h-4 w-4 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
+                  title="Clear search mode"
+                >
+                  <X className="h-2.5 w-2.5 text-white" />
+                </button>
+              </div>
+            </motion.div>
+          )}
+
           <Textarea
             ref={inputRef}
             value={query}
@@ -238,11 +228,15 @@ export function ChatInput({
             onKeyDown={handleKeyDown}
             onFocus={onFocus}
             placeholder={
-              hasAttachments
+              activeTag?.type === "search"
+                ? "Type your search query..."
+                : hasAttachments
                 ? "Ask about attached items..."
                 : "Ask about products, orders, or get help..."
             }
-            className="flex-1 min-h-[44px] sm:min-h-[52px] max-h-[120px] sm:max-h-[140px] resize-none border-0 focus-visible:ring-0 bg-transparent text-sm sm:text-base"
+            className={`flex-1 min-h-[44px] sm:min-h-[52px] max-h-[120px] sm:max-h-[140px] resize-none border-0 focus-visible:ring-0 bg-transparent text-sm sm:text-base ${
+              activeTag?.type === "search" ? "pt-8 sm:pt-8" : ""
+            }`}
             rows={1}
           />
           <div className="flex gap-1.5 sm:gap-2 items-center">

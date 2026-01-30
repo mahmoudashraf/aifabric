@@ -16,36 +16,52 @@ export function BrowseProductsDialog({
 }: BrowseProductsDialogProps) {
   const categories = [
     {
-      id: "laptops",
+      id: "apple-laptops",
       icon: Laptop,
-      label: "High-Performance Laptops",
-      query: "Action: List product: Laptops for high performance",
+      label: "Apple Laptops",
+      query: "Action: List product: Apple laptops",
       color: "from-blue-500 to-cyan-500",
-      description: "Powerful machines for work & gaming",
+      description: "MacBook Pro & Air",
     },
     {
-      id: "headphones",
+      id: "sony-headphones",
       icon: Headphones,
-      label: "iPhone-Compatible Headphones",
-      query: "Action: List product: headphones compatible with iPhone",
+      label: "Sony Headphones",
+      query: "Action: List product: Sony headphones",
       color: "from-purple-500 to-pink-500",
-      description: "Premium audio for your Apple devices",
+      description: "Premium noise-cancelling",
     },
     {
-      id: "tablets",
+      id: "samsung-tablets",
       icon: Tablet,
       label: "Samsung Tablets",
-      query: "Action: List product: tablet from Samsung",
+      query: "Action: List product: Samsung tablets",
       color: "from-green-500 to-emerald-500",
-      description: "Versatile tablets for productivity",
+      description: "Galaxy Tab series",
     },
     {
-      id: "cameras",
+      id: "sony-cameras",
       icon: Camera,
       label: "Sony Cameras",
       query: "Action: List product: Sony cameras",
       color: "from-orange-500 to-red-500",
-      description: "Professional photography equipment",
+      description: "Professional photography",
+    },
+    {
+      id: "gaming-laptops",
+      icon: Laptop,
+      label: "Gaming Laptops",
+      query: "Action: List product: gaming laptops high performance",
+      color: "from-red-500 to-pink-500",
+      description: "High-performance gaming",
+    },
+    {
+      id: "wireless-headphones",
+      icon: Headphones,
+      label: "Wireless Headphones",
+      query: "Action: List product: wireless headphones Bluetooth",
+      color: "from-indigo-500 to-purple-500",
+      description: "Bluetooth connectivity",
     },
   ];
 
@@ -64,17 +80,17 @@ export function BrowseProductsDialog({
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: "100%", opacity: 0 }}
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        className="bg-background rounded-t-3xl sm:rounded-3xl w-full sm:max-w-2xl max-h-[80vh] overflow-hidden shadow-2xl border-2 border-primary/20"
+        className="bg-background rounded-t-3xl sm:rounded-3xl w-full sm:max-w-2xl lg:max-w-3xl max-h-[80vh] overflow-hidden shadow-2xl border-2 border-primary/20"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-primary/10 to-purple-500/10 p-6 border-b flex items-center justify-between">
+        <div className="bg-gradient-to-r from-primary/10 to-purple-500/10 p-4 sm:p-6 border-b flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold flex items-center gap-3">
-              <Package className="h-6 w-6" />
+            <h2 className="text-lg sm:text-2xl font-bold flex items-center gap-2 sm:gap-3">
+              <Package className="h-5 w-5 sm:h-6 sm:w-6" />
               Browse Products
             </h2>
-            <p className="text-sm text-muted-foreground mt-1">
+            <p className="text-xs sm:text-sm text-muted-foreground mt-1">
               Explore our curated collections
             </p>
           </div>
@@ -82,15 +98,15 @@ export function BrowseProductsDialog({
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="rounded-full"
+            className="rounded-full h-8 w-8 sm:h-10 sm:w-10"
           >
-            <X className="h-5 w-5" />
+            <X className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[calc(80vh-120px)]">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="p-4 sm:p-6 overflow-y-auto max-h-[calc(80vh-120px)]">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {categories.map((category, index) => {
               const Icon = category.icon;
               return (
@@ -109,16 +125,16 @@ export function BrowseProductsDialog({
                   >
                     <CardContent className="p-0">
                       <div
-                        className={`h-24 bg-gradient-to-br ${category.color} flex items-center justify-center relative overflow-hidden`}
+                        className={`h-16 sm:h-20 bg-gradient-to-br ${category.color} flex items-center justify-center relative overflow-hidden`}
                       >
-                        <Icon className="h-12 w-12 text-white/90 group-hover:scale-110 transition-transform" />
+                        <Icon className="h-8 w-8 sm:h-10 sm:w-10 text-white/90 group-hover:scale-110 transition-transform" />
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all" />
                       </div>
-                      <div className="p-4">
-                        <h3 className="font-semibold text-base mb-1">
+                      <div className="p-2 sm:p-3">
+                        <h3 className="font-semibold text-xs sm:text-sm mb-0.5">
                           {category.label}
                         </h3>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-[10px] sm:text-xs text-muted-foreground">
                           {category.description}
                         </p>
                       </div>
