@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { MaxModeProvider } from "@/contexts/MaxModeContext";
 import Index from "./pages/Index";
 import Landing2 from "./pages/Landing2";
 import NotFound from "./pages/NotFound";
@@ -103,11 +104,12 @@ const PageTracker = ({ children }: { children: React.ReactNode }) => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <PageTracker>
+    <MaxModeProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <PageTracker>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/landing2" element={<Landing2 />} />
@@ -209,9 +211,10 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </PageTracker>
-      </BrowserRouter>
-    </TooltipProvider>
+          </PageTracker>
+        </BrowserRouter>
+      </TooltipProvider>
+    </MaxModeProvider>
   </QueryClientProvider>
 );
 
