@@ -243,13 +243,15 @@ const ActionResultRenderer = ({
   messageId,
   expandedCount,
   onExpand,
-  onAttach
+  onAttach,
+  isAttached
 }: {
   data: any;
   messageId: string;
   expandedCount: number;
   onExpand: (count: number) => void;
   onAttach?: (item: any) => void;
+  isAttached?: (itemId: string) => boolean;
 }) => {
   if (!data) return null;
 
@@ -275,6 +277,8 @@ const ActionResultRenderer = ({
     const stockQty = item.inStockQty ?? item.InStockQty ?? item.stockQuantity ?? item.StockQuantity;
     const rating = item.rating ?? item.Rating;
     const brand = item.brand || item.Brand;
+    const itemId = item.id || item.Id || sku;
+    const isItemAlreadyAttached = isAttached && itemId ? isAttached(itemId) : false;
 
     return (
       <div key={idx} className="relative group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 transition-all hover:shadow-xl overflow-hidden">
@@ -283,14 +287,22 @@ const ActionResultRenderer = ({
           <Button
             size="icon"
             variant="ghost"
-            className="absolute top-2 right-2 h-8 w-8 bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-lg border border-white/30 hover:scale-110 transition-all"
+            className={`absolute top-2 right-2 h-8 w-8 ${
+              isItemAlreadyAttached
+                ? 'bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
+                : 'bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600'
+            } text-white shadow-lg border border-white/30 hover:scale-110 transition-all`}
             onClick={(e) => {
               e.stopPropagation();
               onAttach(item);
             }}
-            title="Attach to Chat"
+            title={isItemAlreadyAttached ? "Already in Chat" : "Attach to Chat"}
           >
-            <Paperclip className="h-4 w-4" />
+            {isItemAlreadyAttached ? (
+              <CheckCircle2 className="h-4 w-4" />
+            ) : (
+              <Paperclip className="h-4 w-4" />
+            )}
           </Button>
         )}
 
@@ -359,20 +371,32 @@ const ActionResultRenderer = ({
   };
 
   // Render generic item card (non-product)
-  const renderGenericCard = (item: any, idx: number) => (
+  const renderGenericCard = (item: any, idx: number) => {
+    const itemId = item.id || item.Id || item.sku || item.Sku;
+    const isItemAlreadyAttached = isAttached && itemId ? isAttached(itemId) : false;
+
+    return (
     <Card key={idx} className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-colors relative group" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
       {onAttach && typeof item === "object" && item !== null && (
         <Button
           size="icon"
           variant="ghost"
-          className="absolute top-2 right-2 h-8 w-8 bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-lg border border-white/30 hover:scale-110 transition-all z-10"
+          className={`absolute top-2 right-2 h-8 w-8 ${
+            isItemAlreadyAttached
+              ? 'bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
+              : 'bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600'
+          } text-white shadow-lg border border-white/30 hover:scale-110 transition-all z-10`}
           onClick={(e) => {
             e.stopPropagation();
             onAttach(item);
           }}
-          title="Attach to Chat"
+          title={isItemAlreadyAttached ? "Already in Chat" : "Attach to Chat"}
         >
-          <Paperclip className="h-4 w-4" />
+          {isItemAlreadyAttached ? (
+            <CheckCircle2 className="h-4 w-4" />
+          ) : (
+            <Paperclip className="h-4 w-4" />
+          )}
         </Button>
       )}
       <CardContent className="p-3 pr-12">
@@ -405,7 +429,8 @@ const ActionResultRenderer = ({
         )}
       </CardContent>
     </Card>
-  );
+    );
+  };
 
   // Handle arrays
   if (Array.isArray(data)) {
@@ -2530,6 +2555,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                 [message.id]: count
                               }));
                             }}
+                            isAttached={isItemAttached}
                             onAttach={(item) => {
                               // Normalize field names (handle different casing from API)
                               const normalizedItem: any = {};
