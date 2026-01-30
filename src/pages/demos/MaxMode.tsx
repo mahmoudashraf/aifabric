@@ -1496,7 +1496,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     // Build the API query - prepend category if set
     let apiQuery = query;
     if (currentSearchCategory) {
-      apiQuery = `list products: ${currentSearchCategory} ${query}`;
+      apiQuery = `search products for ${currentSearchCategory}: ${query}`;
     }
 
     // User message shows only the query text, category is stored separately as a tag
@@ -1511,6 +1511,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
     setChatMessages((prev) => [...prev, userMessage]);
     setChatQuery("");
+    setSearchCategory(null); // Clear search category after sending
     setIsLoading(true);
 
     // Keep attachments for next query, only clear suggestions
@@ -2159,9 +2160,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         {/* Search Category Tag for user messages */}
                         {message.type === "user" && message.searchCategory && (
                           <div className="mb-2">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/20 border border-white/30 rounded-full text-xs font-semibold">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 bg-white/20 border border-white/30 rounded-full text-[10px] sm:text-xs font-semibold">
                               <Search className="h-3 w-3" />
-                              list products: {message.searchCategory}
+                              {message.searchCategory}
                             </span>
                           </div>
                         )}
@@ -3809,13 +3810,15 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               animate={{ opacity: 1, y: 0 }}
               className="mb-2"
             >
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 border-2 border-blue-300 dark:border-blue-700 rounded-full">
-                <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
-                  list products: {searchCategory}
+              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-2 border-blue-500/30 rounded-full shadow-sm">
+                <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-blue-600 dark:text-blue-400" />
+                <span className="text-xs sm:text-sm font-semibold text-blue-700 dark:text-blue-300">
+                  {searchCategory}
                 </span>
                 <button
                   onClick={clearSearchCategory}
-                  className="h-5 w-5 rounded-full bg-blue-200 dark:bg-blue-800 hover:bg-blue-300 dark:hover:bg-blue-700 flex items-center justify-center transition-colors"
+                  className="h-5 w-5 rounded-full bg-blue-200/50 dark:bg-blue-800/50 hover:bg-blue-300 dark:hover:bg-blue-700 flex items-center justify-center transition-colors ml-1"
+                  title="Clear search category"
                 >
                   <X className="h-3 w-3 text-blue-700 dark:text-blue-300" />
                 </button>
@@ -3864,7 +3867,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   oldConversationLocked
                     ? "This conversation is locked..."
                     : searchCategory
-                    ? `Search ${searchCategory}...`
+                    ? `Type your search query for ${searchCategory}...`
                     : attachedItems.length > 0
                     ? `Ask about ${attachedItems.length} item${attachedItems.length === 1 ? '' : 's'}...`
                     : "Ask me anything..."
@@ -3881,8 +3884,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 }}
                 disabled={oldConversationLocked}
                 className={`${
-                  isInputFocused ? 'min-h-[100px] md:min-h-[80px]' : 'min-h-[48px] md:min-h-[80px]'
-                } pr-14 md:pr-16 text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed transition-all ${
+                  isInputFocused ? 'min-h-[80px] sm:min-h-[100px] md:min-h-[80px]' : 'min-h-[44px] sm:min-h-[48px] md:min-h-[80px]'
+                } pr-12 sm:pr-14 md:pr-16 text-sm sm:text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed transition-all ${
                   oldConversationLocked ? 'bg-gray-100 dark:bg-gray-800 cursor-not-allowed opacity-60' : ''
                 }`}
                 style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', fontSize: '16px' }}
@@ -3910,12 +3913,12 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 size="icon"
                 onClick={() => handleChatQuery()}
                 disabled={isLoading || !chatQuery.trim() || oldConversationLocked}
-                className="absolute right-2 md:right-3 bottom-2 md:bottom-3 h-10 w-10 md:h-12 md:w-12 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg disabled:opacity-50"
+                className="absolute right-1.5 sm:right-2 md:right-3 bottom-1.5 sm:bottom-2 md:bottom-3 h-9 w-9 sm:h-10 sm:w-10 md:h-12 md:w-12 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg disabled:opacity-50"
               >
                 {isLoading ? (
-                  <Loader2 className="h-4 w-4 md:h-5 md:w-5 animate-spin" />
+                  <Loader2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 animate-spin" />
                 ) : (
-                  <Send className="h-4 w-4 md:h-5 md:w-5" />
+                  <Send className="h-3.5 w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5" />
                 )}
               </Button>
             </div>
