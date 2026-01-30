@@ -4236,7 +4236,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 disabled={oldConversationLocked}
                 className={`${
                   isInputFocused ? 'min-h-[80px] sm:min-h-[100px] md:min-h-[80px]' : 'min-h-[56px] sm:min-h-[60px] md:min-h-[80px]'
-                } ${searchCategory || attachedItems.find(item => item.type === 'ai-search') ? 'pt-9 sm:pt-10' : 'pt-4'} pb-4 pr-14 pl-4 text-sm sm:text-base resize-none border-2 border-purple-400/40 focus:border-purple-500 focus:border-2 rounded-2xl shadow-lg focus:shadow-xl leading-relaxed transition-all bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm ${
+                } ${searchCategory || attachedItems.find(item => item.type === 'ai-search') ? 'pt-9 sm:pt-10' : 'pt-4'} pb-4 pr-14 pl-4 text-sm sm:text-base resize-none border-0 rounded-2xl shadow-lg focus:shadow-xl leading-relaxed transition-all bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm ${
                   oldConversationLocked ? 'bg-gray-100 dark:bg-gray-800 cursor-not-allowed opacity-60' : ''
                 }`}
                 style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', fontSize: '16px' }}
