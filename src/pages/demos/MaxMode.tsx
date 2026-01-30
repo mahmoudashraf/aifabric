@@ -747,40 +747,119 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     const timeoutId = setTimeout(async () => {
       setIsLoadingSuggestions(true);
       try {
-        // Build context string for the API
-        const contextParts = attachedItems.map(item => {
-          if (item.type === "document") {
-            return `${item.data.title}: ${item.data.content}`;
+        // Build attachments with vector space format - same as demo page
+        const attachmentsWithMetadata = attachedItems.map(item => {
+          // Build comprehensive content text with key details for RAG
+          const contentParts: string[] = [];
+          if (item.data.sku) contentParts.push(`SKU: ${item.data.sku}`);
+          if (item.data.name) contentParts.push(item.data.name);
+          if (item.data.title) contentParts.push(item.data.title);
+          if (item.data.description) contentParts.push(item.data.description);
+          if (item.data.content) contentParts.push(item.data.content);
+          if (item.data.price) contentParts.push(`Price: ${item.data.price} ${item.data.currency || 'USD'}`);
+          if (item.data.category) contentParts.push(`Category: ${item.data.category}`);
+          if (item.data.status) contentParts.push(`Status: ${item.data.status}`);
+          const contentText = contentParts.join(' | ');
+
+          // Map item type to correct vectorSpace
+          let vectorSpace = "product";
+          if (item.type === "order") {
+            vectorSpace = "order";
+          } else if (item.type === "review") {
+            vectorSpace = "review";
+          } else if (item.type === "coupon") {
+            vectorSpace = "coupon";
+          } else if (item.type === "document") {
+            const docCategory = item.data.metadata?.category?.toLowerCase();
+            vectorSpace = docCategory === "order" ? "order" : "product";
           }
-          return JSON.stringify(item.data);
+
+          // Build metadata
+          const fullMetadata = {
+            ...(item.data.metadata || {}),
+            id: item.data.id,
+            sku: item.data.sku,
+            name: item.data.name,
+            title: item.data.title,
+            description: item.data.description,
+            price: item.data.price,
+            category: item.data.category || item.data.type,
+            inStockQty: item.data.inStockQty,
+            imageUrl: item.data.imageUrl,
+            rating: item.data.rating,
+            reviewCount: item.data.reviewCount,
+            status: item.data.status,
+            code: item.data.code,
+            discountType: item.data.discountType,
+            discountValue: item.data.discountValue,
+          };
+
+          // Remove undefined values
+          Object.keys(fullMetadata).forEach(key => {
+            if (fullMetadata[key] === undefined) {
+              delete fullMetadata[key];
+            }
+          });
+
+          const rawId = item.data.id || item.data.sku || Date.now().toString();
+          const cleanId = String(rawId).replace(/[\[\]\(\)"'`]/g, '').trim();
+
+          return {
+            id: cleanId,
+            vectorSpace,
+            contentSnippet: contentText,
+            metadata: fullMetadata,
+            source: item.type,
+            url: String(item.data.url || "").replace(/[\[\]\(\)"'`]/g, '').trim(),
+            imageUrl: String(item.data.imageUrl || item.data.metadata?.imageUrl || "").replace(/[\[\]\(\)"'`]/g, '').trim(),
+          };
         });
 
-        const contextString = contextParts.join("\n\n");
+        const activeAttachmentIds = attachmentsWithMetadata.map(a => a.id);
 
-        const response = await fetch(`${API_BASE_URL}/chat/suggestions`, {
+        // Use /chat/query endpoint - same as demo page
+        const response = await fetch(`${API_BASE_URL}/chat/query`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            content: contextString,
+            query: "Give me most suitable 5 suggestion (questions/actions) based on available actions and attached items",
             userId: "demo-user",
-            attachments: attachedItems,
+            sessionId: "demo-session-max",
+            position: "checkout",
+            mode: "copilot",
+            attachments: attachmentsWithMetadata.length > 0 ? attachmentsWithMetadata : undefined,
+            activeAttachmentIds: activeAttachmentIds.length > 0 ? activeAttachmentIds : undefined,
           }),
         });
 
         if (response.ok) {
           const data = await response.json();
-          if (data.suggestions && Array.isArray(data.suggestions)) {
-            const newSuggestions = data.suggestions.slice(0, 4);
-            if (newSuggestions.length > 0) {
-              setSuggestions(newSuggestions);
-              setShowSuggestions(true);
-              // Auto-dismiss after 5 seconds
-              setTimeout(() => {
-                setShowSuggestions(false);
-              }, 5000); // 5 seconds = 5000ms
+          // Extract suggestions from the response
+          let newSuggestions: string[] = [];
+
+          if (data.result?.sanitizedPayload?.suggestions) {
+            newSuggestions = data.result.sanitizedPayload.suggestions;
+          } else if (data.result?.sanitizedPayload?.message) {
+            // Try to extract suggestions from numbered list in message
+            const message = data.result.sanitizedPayload.message;
+            const lines = message.split('\n').filter((line: string) => line.trim());
+            const parsed = lines
+              .filter((line: string) => /^\d+[\.\)]\s*/.test(line.trim()))
+              .map((line: string) => line.replace(/^\d+[\.\)]\s*/, '').trim())
+              .filter((s: string) => s.length > 0);
+            if (parsed.length > 0) {
+              newSuggestions = parsed;
             }
+          } else if (data.suggestions) {
+            newSuggestions = data.suggestions;
+          }
+
+          if (newSuggestions.length > 0) {
+            setSuggestions(newSuggestions.slice(0, 4));
+            setShowSuggestions(true);
+            setTimeout(() => setShowSuggestions(false), 5000);
           }
         } else {
           // Fallback to generic suggestions on error
@@ -1636,48 +1715,18 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       <div className="hidden md:block absolute top-16 left-0 right-0 px-6 py-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b z-10">
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
           {quickActions.slice(0, 8).map((action, idx) => (
-            <div key={idx} className="relative">
+            <div key={idx}>
               {action.label === "Search Products" ? (
-                <>
-                  <motion.button
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.05 }}
-                    onClick={() => setIsSearchCategoryOpen(!isSearchCategoryOpen)}
-                    className={`flex flex-col items-center gap-1 p-3 rounded-xl ${action.bg} border ${action.border} hover:scale-105 transition-all min-w-[80px] ${isSearchCategoryOpen ? 'ring-2 ring-blue-500' : ''}`}
-                  >
-                    <action.icon className={`h-5 w-5 ${action.color}`} />
-                    <span className="text-[10px] font-medium text-foreground whitespace-nowrap">{action.label}</span>
-                  </motion.button>
-                  {/* Category Submenu */}
-                  <AnimatePresence>
-                    {isSearchCategoryOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                        className="absolute top-full left-0 mt-2 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-purple-200 dark:border-purple-700 p-3 z-50 min-w-[280px]"
-                      >
-                        <div className="text-xs font-bold text-purple-600 dark:text-purple-400 mb-2 px-2">Select Category</div>
-                        <div className="grid grid-cols-2 gap-2">
-                          {searchCategories.map((cat, catIdx) => (
-                            <motion.button
-                              key={catIdx}
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: catIdx * 0.05 }}
-                              onClick={() => handleSelectSearchCategory(cat.label)}
-                              className={`flex items-center gap-2 p-2.5 rounded-xl ${cat.bg} border ${cat.border} hover:scale-105 transition-all text-left`}
-                            >
-                              <span className="text-lg">{cat.emoji}</span>
-                              <span className={`text-xs font-semibold ${cat.color}`}>{cat.label}</span>
-                            </motion.button>
-                          ))}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </>
+                <motion.button
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  onClick={() => setIsSearchCategoryOpen(!isSearchCategoryOpen)}
+                  className={`flex flex-col items-center gap-1 p-3 rounded-xl ${action.bg} border ${action.border} hover:scale-105 transition-all min-w-[80px] ${isSearchCategoryOpen ? 'ring-2 ring-blue-500' : ''}`}
+                >
+                  <action.icon className={`h-5 w-5 ${action.color}`} />
+                  <span className="text-[10px] font-medium text-foreground whitespace-nowrap">{action.label}</span>
+                </motion.button>
               ) : (
                 <motion.button
                   initial={{ opacity: 0, y: -10 }}
@@ -1695,13 +1744,45 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         </div>
       </div>
 
-      {/* Click outside to close search category menu */}
-      {isSearchCategoryOpen && (
-        <div
-          className="hidden md:block fixed inset-0 z-[9]"
-          onClick={() => setIsSearchCategoryOpen(false)}
-        />
-      )}
+      {/* Floating Search Category Menu - Desktop Only */}
+      <AnimatePresence>
+        {isSearchCategoryOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="hidden md:block fixed inset-0 z-40"
+              onClick={() => setIsSearchCategoryOpen(false)}
+            />
+            {/* Floating Menu */}
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              className="hidden md:block fixed top-[140px] left-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-purple-200 dark:border-purple-700 p-4 z-50 min-w-[320px]"
+            >
+              <div className="text-sm font-bold text-purple-600 dark:text-purple-400 mb-3 px-1">Select Category to Search</div>
+              <div className="flex flex-wrap gap-2">
+                {searchCategories.map((cat, catIdx) => (
+                  <motion.button
+                    key={catIdx}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: catIdx * 0.03 }}
+                    onClick={() => handleSelectSearchCategory(cat.label)}
+                    className={`flex items-center gap-2 px-4 py-2.5 rounded-full ${cat.bg} border-2 ${cat.border} hover:scale-105 transition-all text-left shadow-sm`}
+                  >
+                    <span className="text-base">{cat.emoji}</span>
+                    <span className={`text-sm font-semibold ${cat.color}`}>{cat.label}</span>
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Floating Quick Actions Button - Mobile Only */}
       <AnimatePresence>
