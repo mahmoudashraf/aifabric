@@ -2123,46 +2123,6 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         )}
       </AnimatePresence>
 
-      {/* Floating Quick Actions Button - Mobile Only */}
-      <AnimatePresence>
-        {!isQuickActionsOpen && (
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            exit={{ scale: 0 }}
-            className="md:hidden fixed bottom-60 right-4 z-20"
-          >
-            <div className="flex flex-col items-center gap-1">
-              <Button
-                onClick={() => setIsQuickActionsOpen(true)}
-                size="lg"
-                className="h-14 w-14 rounded-full bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white shadow-2xl border-2 border-white/30"
-              >
-                <BrainCircuit className="h-6 w-6" />
-              </Button>
-              {/* Position indicator and Debug button - Mobile */}
-              <div className="flex items-center gap-1">
-                <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm ${
-                  currentPosition === "checkout"
-                    ? "bg-orange-500 text-white"
-                    : currentPosition === "catalog"
-                    ? "bg-blue-500 text-white"
-                    : "bg-green-500 text-white"
-                }`}>
-                  {currentPosition}
-                </span>
-                <button
-                  onClick={() => setIsDebugModalOpen(true)}
-                  className="h-5 w-5 rounded-full bg-gray-800/80 text-white flex items-center justify-center hover:bg-gray-700 transition-colors"
-                  title="View API Debug Info"
-                >
-                  <Info className="h-3 w-3" />
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Mobile Quick Actions Bottom Sheet */}
       <AnimatePresence>
@@ -3150,28 +3110,27 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           )}
         </AnimatePresence>
 
-        {/* Mobile: Cart Button - Above Products */}
-        <div className="md:hidden fixed bottom-44 right-4 z-20">
+        {/* Mobile: All Floating Action Buttons - Single Column */}
+        <div className="md:hidden fixed bottom-24 right-4 z-20 flex flex-col-reverse items-center gap-3">
+          {/* AI Search Button */}
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0 }}
             className="flex flex-col items-center gap-1"
           >
             <Button
-              onClick={openCart}
+              onClick={() => setIsAISearchOpen(!isAISearchOpen)}
               size="lg"
-              className="h-12 w-12 rounded-full bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white shadow-2xl border-2 border-white/30"
+              className="h-12 w-12 rounded-full bg-gradient-to-br from-cyan-500 via-blue-500 to-indigo-500 hover:from-cyan-600 hover:via-blue-600 hover:to-indigo-600 text-white shadow-2xl border-2 border-white/30"
             >
-              <ShoppingCart className="h-5 w-5" />
+              <Search className="h-5 w-5" />
             </Button>
-            <span className="text-[9px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm">
-              Cart
+            <span className="text-[9px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
+              AI Search
             </span>
           </motion.div>
-        </div>
 
-        {/* Mobile: Floating Action Buttons - Bottom Position */}
-        <div className="md:hidden fixed bottom-24 right-4 z-20 flex flex-col items-center gap-4">
           {/* Browse Products Button */}
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
@@ -3191,24 +3150,75 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             </span>
           </motion.div>
 
-          {/* AI Search Button */}
+          {/* Documents Button - Conditional */}
+          <AnimatePresence>
+            {contextDocuments.length > 0 && (
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{ delay: 0.1 }}
+                className="flex flex-col items-center gap-1"
+              >
+                <Button
+                  onClick={handleOpenBottomSheet}
+                  size="lg"
+                  className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white shadow-2xl border-2 border-white/30 relative"
+                >
+                  <FileText className="h-5 w-5" />
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center p-0">
+                    {contextDocuments.length}
+                  </Badge>
+                </Button>
+                <span className="text-[9px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
+                  Docs
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Cart Button */}
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.1 }}
+            transition={{ delay: 0.15 }}
             className="flex flex-col items-center gap-1"
           >
             <Button
-              onClick={() => setIsAISearchOpen(!isAISearchOpen)}
+              onClick={openCart}
               size="lg"
-              className="h-12 w-12 rounded-full bg-gradient-to-br from-cyan-500 via-blue-500 to-indigo-500 hover:from-cyan-600 hover:via-blue-600 hover:to-indigo-600 text-white shadow-2xl border-2 border-white/30"
+              className="h-12 w-12 rounded-full bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white shadow-2xl border-2 border-white/30"
             >
-              <Search className="h-5 w-5" />
+              <ShoppingCart className="h-5 w-5" />
             </Button>
-            <span className="text-[9px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
-              AI Search
+            <span className="text-[9px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm">
+              Cart
             </span>
           </motion.div>
+
+          {/* Quick Actions Button */}
+          <AnimatePresence>
+            {!isQuickActionsOpen && (
+              <motion.div
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                transition={{ delay: 0.2 }}
+                className="flex flex-col items-center gap-1"
+              >
+                <Button
+                  onClick={() => setIsQuickActionsOpen(true)}
+                  size="lg"
+                  className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white shadow-2xl border-2 border-white/30"
+                >
+                  <BrainCircuit className="h-5 w-5" />
+                </Button>
+                <span className="text-[9px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
+                  Actions
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Mobile: Browse Products Bottom Sheet */}
@@ -3416,28 +3426,6 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           )}
         </AnimatePresence>
 
-        {/* Mobile: Floating Documents Button */}
-        <AnimatePresence>
-          {contextDocuments.length > 0 && (
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
-              className="md:hidden fixed bottom-40 right-4 z-20"
-            >
-              <Button
-                onClick={handleOpenBottomSheet}
-                size="lg"
-                className="h-14 w-14 rounded-full bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white shadow-2xl border-2 border-white/30 relative"
-              >
-                <FileText className="h-6 w-6" />
-                <Badge className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center p-0">
-                  {contextDocuments.length}
-                </Badge>
-              </Button>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         {/* Mobile: Documents Bottom Sheet */}
         <AnimatePresence>
@@ -4210,7 +4198,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 disabled={oldConversationLocked}
                 className={`${
                   isInputFocused ? 'min-h-[80px] sm:min-h-[100px] md:min-h-[80px]' : 'min-h-[44px] sm:min-h-[48px] md:min-h-[80px]'
-                } ${searchCategory || attachedItems.find(item => item.type === 'ai-search') ? 'pt-7 sm:pt-8' : ''} pr-12 sm:pr-14 md:pr-16 text-sm sm:text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed transition-all ${
+                } ${searchCategory || attachedItems.find(item => item.type === 'ai-search') ? 'pt-8 sm:pt-9' : ''} pr-12 sm:pr-14 md:pr-16 text-sm sm:text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed transition-all ${
                   oldConversationLocked ? 'bg-gray-100 dark:bg-gray-800 cursor-not-allowed opacity-60' : ''
                 }`}
                 style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', fontSize: '16px' }}
