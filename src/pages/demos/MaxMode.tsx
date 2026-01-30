@@ -108,6 +108,7 @@ interface DebugData {
     timestamp: string;
     status: number;
     data: any;
+    durationMs?: number;
   };
 }
 
@@ -1046,9 +1047,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     setChatQuery("");
     setIsLoading(true);
 
-    // Clear attachments and suggestions after sending
+    // Keep attachments for next query, only clear suggestions
     const currentAttachments = [...attachedItems];
-    setAttachedItems([]);
     setSuggestions([]);
 
     // Determine position and mode
@@ -1174,6 +1174,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       };
 
       // Store request data for debug modal and clear selected message to show latest
+      const requestStartTime = Date.now();
       setLastRequestData({
         endpoint: `${API_BASE_URL}/chat/query`,
         method: "POST",
@@ -1193,12 +1194,14 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       if (!response.ok) throw new Error("Failed to process query");
 
       const data = await response.json();
+      const requestDurationMs = Date.now() - requestStartTime;
 
       // Store response data for debug modal
       setLastResponseData({
         timestamp: new Date().toISOString(),
         status: response.status,
         data: data,
+        durationMs: requestDurationMs,
       });
 
       console.log("API Response:", data); // Debug log
@@ -1312,6 +1315,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           timestamp: new Date().toISOString(),
           status: response.status,
           data: data,
+          durationMs: requestDurationMs,
         },
       };
 
@@ -3372,9 +3376,22 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           <CheckCircle2 className="h-3 w-3 text-green-600" />
                         </div>
                         <h3 className="text-sm font-bold text-gray-800 dark:text-gray-200">Response</h3>
-                        {debugResponse?.timestamp && (
-                          <span className="text-[10px] text-gray-500 ml-auto">{new Date(debugResponse.timestamp).toLocaleTimeString()}</span>
-                        )}
+                        <div className="flex items-center gap-2 ml-auto">
+                          {debugResponse?.durationMs != null && (
+                            <span className={`px-1.5 py-0.5 text-[10px] font-bold rounded ${
+                              debugResponse.durationMs < 1000 ? "bg-green-500/20 text-green-700 dark:text-green-300" :
+                              debugResponse.durationMs < 3000 ? "bg-yellow-500/20 text-yellow-700 dark:text-yellow-300" :
+                              "bg-red-500/20 text-red-700 dark:text-red-300"
+                            }`}>
+                              {debugResponse.durationMs < 1000
+                                ? `${debugResponse.durationMs}ms`
+                                : `${(debugResponse.durationMs / 1000).toFixed(2)}s`}
+                            </span>
+                          )}
+                          {debugResponse?.timestamp && (
+                            <span className="text-[10px] text-gray-500">{new Date(debugResponse.timestamp).toLocaleTimeString()}</span>
+                          )}
+                        </div>
                       </div>
 
                       {debugResponse && (() => {
