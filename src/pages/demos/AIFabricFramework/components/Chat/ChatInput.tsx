@@ -272,6 +272,7 @@ export function ChatInput({
           </div>
         </div>
       </div>
+      </div>
     </>
   );
 }
