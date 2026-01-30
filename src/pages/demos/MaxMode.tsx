@@ -1084,8 +1084,30 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     try {
       // Build attachments with vector space format - include FULL data
       const attachmentsWithMetadata = currentAttachments.map(item => {
-        // Get the full content from the item
-        const content = item.data.content || item.data.description || item.data.name || "";
+        // Build comprehensive content text with key details for RAG
+        const contentParts: string[] = [];
+        if (item.data.sku) contentParts.push(`SKU: ${item.data.sku}`);
+        if (item.data.name) contentParts.push(item.data.name);
+        if (item.data.title) contentParts.push(item.data.title);
+        if (item.data.description) contentParts.push(item.data.description);
+        if (item.data.content) contentParts.push(item.data.content);
+        if (item.data.price) contentParts.push(`Price: ${item.data.price} ${item.data.currency || 'USD'}`);
+        if (item.data.category) contentParts.push(`Category: ${item.data.category}`);
+        if (item.data.status) contentParts.push(`Status: ${item.data.status}`);
+        if (item.data.orderId) contentParts.push(`Order ID: ${item.data.orderId}`);
+        if (item.data.orderNumber) contentParts.push(`Order #${item.data.orderNumber}`);
+        const contentText = contentParts.join(' | ');
+
+        // Map item type to correct vectorSpace
+        // Products and documents about products use "product"
+        // Orders use "order"
+        let vectorSpace = "product"; // default
+        if (item.type === "order") {
+          vectorSpace = "order";
+        } else if (item.type === "document") {
+          const docCategory = item.data.metadata?.category?.toLowerCase();
+          vectorSpace = docCategory === "order" ? "order" : "product";
+        }
 
         // Build comprehensive metadata including all item fields
         const fullMetadata = {
@@ -1121,18 +1143,22 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           }
         });
 
+        // Clean ID - remove any markdown formatting, ensure plain string
+        const rawId = item.data.id || item.data.orderId?.toString() || item.data.sku || Date.now().toString();
+        const cleanId = String(rawId).replace(/[\[\]\(\)"'`]/g, '').trim();
+
         return {
-          id: item.data.id || item.data.orderId?.toString() || item.data.sku || Date.now().toString(),
-          vectorSpace: item.type === "document" ? (item.data.metadata?.category?.toLowerCase() || "product") : item.type,
-          contentSnippet: content,
+          id: cleanId,
+          vectorSpace,
+          contentText, // Changed from contentSnippet to contentText
           metadata: fullMetadata,
           source: item.type,
-          url: item.data.url || "",
-          imageUrl: item.data.imageUrl || item.data.metadata?.imageUrl || "",
+          url: String(item.data.url || "").replace(/[\[\]\(\)"'`]/g, '').trim(),
+          imageUrl: String(item.data.imageUrl || item.data.metadata?.imageUrl || "").replace(/[\[\]\(\)"'`]/g, '').trim(),
         };
       });
 
-      // Get active attachment IDs
+      // Get active attachment IDs (cleaned)
       const activeAttachmentIds = attachmentsWithMetadata.map(a => a.id);
 
       // Build request payload
@@ -1147,13 +1173,14 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         activeAttachmentIds: activeAttachmentIds.length > 0 ? activeAttachmentIds : undefined,
       };
 
-      // Store request data for debug modal
+      // Store request data for debug modal and clear selected message to show latest
       setLastRequestData({
         endpoint: `${API_BASE_URL}/chat/query`,
         method: "POST",
         timestamp: new Date().toISOString(),
         payload: requestPayload,
       });
+      setSelectedDebugMessage(null);
 
       const response = await fetch(`${API_BASE_URL}/chat/query`, {
         method: "POST",
