@@ -6,6 +6,17 @@ import { getResultTypeStyles } from "../../utils/resultTypeStyles";
 import { ActionResultRenderer } from "./ActionResultRenderer";
 import type { ChatMessage as ChatMessageType } from "../../types";
 
+// Normalize content to ensure it's always a string (prevents React error #31)
+const normalizeContent = (value: unknown): string => {
+  if (typeof value === "string") return value;
+  if (value === null || value === undefined) return "";
+  try {
+    return JSON.stringify(value, null, 2);
+  } catch {
+    return String(value);
+  }
+};
+
 interface ChatMessageProps {
   message: ChatMessageType;
   isLoading?: boolean;
@@ -24,7 +35,7 @@ export function ChatMessage({ message, isLoading, onConfirmation }: ChatMessageP
         className="flex justify-end"
       >
         <div className="max-w-[85%] bg-primary text-primary-foreground rounded-2xl rounded-br-md px-4 py-2.5">
-          <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+          <p className="text-sm whitespace-pre-wrap">{normalizeContent(message.content)}</p>
           {message.attachedProducts && message.attachedProducts.length > 0 && (
             <div className="mt-2 pt-2 border-t border-primary-foreground/20">
               <p className="text-xs opacity-70 mb-1">Attached:</p>
@@ -66,7 +77,7 @@ export function ChatMessage({ message, isLoading, onConfirmation }: ChatMessageP
 
             {/* Message content */}
             <p className={`text-sm whitespace-pre-wrap ${styles.textColor}`}>
-              {message.content}
+              {normalizeContent(message.content)}
             </p>
 
             {/* Orchestration info */}
