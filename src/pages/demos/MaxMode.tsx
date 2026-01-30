@@ -1290,10 +1290,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     });
   };
 
-  // Handle selecting a search category - adds tag to input
+  // Handle selecting a search category - shows tag badge, doesn't modify input
   const handleSelectSearchCategory = (category: string) => {
     setSearchCategory(category);
-    setChatQuery(`🔍 ${category}: `);
     setIsSearchCategoryOpen(false);
     setIsQuickActionsOpen(false);
     // Focus the input
@@ -1303,20 +1302,18 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   // Clear search category tag
   const clearSearchCategory = () => {
     setSearchCategory(null);
-    setChatQuery("");
   };
 
   const handleChatQuery = async (presetQuery?: string, actionPosition?: "landing" | "catalog" | "checkout", actionMode?: "navigator" | "copilot") => {
     let query = presetQuery || chatQuery;
     if (!query.trim()) return;
 
-    // If there's a search category, format the query properly
-    const categoryMatch = query.match(/^🔍\s*(\w+):\s*/);
-    if (categoryMatch) {
-      const category = categoryMatch[1];
-      const userQuery = query.replace(/^🔍\s*\w+:\s*/, '').trim();
-      if (!userQuery) return; // Don't send if only category tag
-      query = `Search ${category}: ${userQuery}`;
+    // Store the original user query for display
+    const displayQuery = query;
+
+    // If there's a search category, prepend "list products: [category]" to the query
+    if (searchCategory) {
+      query = `list products: ${searchCategory} ${query}`;
     }
 
     // Clear the search category after sending
@@ -1325,7 +1322,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       type: "user",
-      content: query,
+      content: searchCategory ? `list products: ${searchCategory} ${displayQuery}` : displayQuery,
       timestamp: new Date().toISOString(),
       attachedItems: attachedItems.length > 0 ? [...attachedItems] : undefined,
     };
@@ -3613,11 +3610,35 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               </div>
             </motion.div>
           )}
+
+          {/* Search Category Tag */}
+          {searchCategory && (
+            <motion.div
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-2"
+            >
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 border-2 border-blue-300 dark:border-blue-700 rounded-full">
+                <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
+                  list products: {searchCategory}
+                </span>
+                <button
+                  onClick={clearSearchCategory}
+                  className="h-5 w-5 rounded-full bg-blue-200 dark:bg-blue-800 hover:bg-blue-300 dark:hover:bg-blue-700 flex items-center justify-center transition-colors"
+                >
+                  <X className="h-3 w-3 text-blue-700 dark:text-blue-300" />
+                </button>
+              </div>
+            </motion.div>
+          )}
+
           <div className="relative">
             <Textarea
               ref={chatInputRef}
               placeholder={
-                attachedItems.length > 0
+                searchCategory
+                  ? `Search ${searchCategory}...`
+                  : attachedItems.length > 0
                   ? `Ask about ${attachedItems.length} item${attachedItems.length === 1 ? '' : 's'}...`
                   : "Ask me anything..."
               }
