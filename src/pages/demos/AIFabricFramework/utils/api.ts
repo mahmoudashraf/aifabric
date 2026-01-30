@@ -106,21 +106,111 @@ export async function sendChatQuery(
   return response.json();
 }
 
-export async function fetchSuggestions(products: Product[]): Promise<string[]> {
-  const response = await fetch(`${API_BASE_URL}/chat/suggestions`, {
+export async function fetchSuggestions(
+  userId: string,
+  sessionId: string,
+  products: Product[],
+  reviews?: Review[],
+  coupons?: Coupon[]
+): Promise<string[]> {
+  // Build attachments with vector space format - same as sendChatQuery
+  const attachmentsWithMetadata = [
+    ...products.map((p) => ({
+      id: p.id,
+      vectorSpace: "product",
+      contentSnippet: p.description || p.name || "",
+      metadata: {
+        id: p.id,
+        sku: p.sku,
+        name: p.name,
+        description: p.description,
+        price: p.price,
+        category: p.category,
+        inStockQty: p.inStockQty,
+        imageUrl: p.imageUrl,
+        rating: p.rating,
+        reviewCount: p.reviewCount,
+      },
+      source: "product",
+      url: "",
+      imageUrl: p.imageUrl || "",
+    })),
+    ...(reviews || []).map((r) => ({
+      id: r.id,
+      vectorSpace: "review",
+      contentSnippet: r.comment || "",
+      metadata: {
+        id: r.id,
+        productId: r.productId,
+        userId: r.userId,
+        rating: r.rating,
+        comment: r.comment,
+        createdAt: r.createdAt,
+      },
+      source: "review",
+      url: "",
+      imageUrl: "",
+    })),
+    ...(coupons || []).map((c) => ({
+      id: c.id,
+      vectorSpace: "coupon",
+      contentSnippet: c.description || c.code || "",
+      metadata: {
+        id: c.id,
+        code: c.code,
+        description: c.description,
+        discountType: c.discountType,
+        discountValue: c.discountValue,
+        minPurchase: c.minPurchase,
+        maxDiscount: c.maxDiscount,
+        validFrom: c.validFrom,
+        validUntil: c.validUntil,
+        usageLimit: c.usageLimit,
+        usedCount: c.usedCount,
+      },
+      source: "coupon",
+      url: "",
+      imageUrl: "",
+    })),
+  ];
+
+  const activeAttachmentIds = attachmentsWithMetadata.map(a => a.id);
+
+  const response = await fetch(`${API_BASE_URL}/chat/query`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      attachedProducts: products.map((p) => ({
-        id: p.id,
-        name: p.name,
-        price: p.price,
-        category: p.category,
-      })),
+      query: "Give me most suitable 5 suggestion (questions/actions) based on available actions and attached items",
+      userId,
+      sessionId,
+      position: "checkout",
+      mode: "copilot",
+      attachments: attachmentsWithMetadata.length > 0 ? attachmentsWithMetadata : undefined,
+      activeAttachmentIds: activeAttachmentIds.length > 0 ? activeAttachmentIds : undefined,
     }),
   });
+
   if (!response.ok) throw new Error("Failed to fetch suggestions");
   const data = await response.json();
+
+  // Extract suggestions from the response - they might be in the result payload
+  if (data.result && data.result.sanitizedPayload && data.result.sanitizedPayload.suggestions) {
+    return data.result.sanitizedPayload.suggestions;
+  }
+  // Fallback: try to parse suggestions from the message if it's an array
+  if (data.result && data.result.sanitizedPayload && data.result.sanitizedPayload.message) {
+    // Try to extract suggestions from the message if they're formatted as a list
+    const message = data.result.sanitizedPayload.message;
+    // Check if message contains numbered list
+    const lines = message.split('\n').filter((line: string) => line.trim());
+    const suggestions = lines
+      .filter((line: string) => /^\d+[\.\)]\s*/.test(line.trim()))
+      .map((line: string) => line.replace(/^\d+[\.\)]\s*/, '').trim())
+      .filter((s: string) => s.length > 0);
+    if (suggestions.length > 0) {
+      return suggestions;
+    }
+  }
   return data.suggestions || [];
 }
 
