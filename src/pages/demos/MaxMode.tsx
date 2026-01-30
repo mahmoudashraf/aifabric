@@ -128,6 +128,7 @@ interface ChatMessage {
   attachedItems?: Array<{ type: string; data: any }>;
   documents?: Document[];
   debugData?: DebugData;
+  searchCategory?: string;
 }
 
 interface Document {
@@ -1308,23 +1309,23 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     let query = presetQuery || chatQuery;
     if (!query.trim()) return;
 
-    // Store the original user query for display
-    const displayQuery = query;
+    // Store the current search category for this message
+    const currentSearchCategory = searchCategory;
 
-    // If there's a search category, prepend "list products: [category]" to the query
-    if (searchCategory) {
-      query = `list products: ${searchCategory} ${query}`;
+    // Build the API query - prepend category if set
+    let apiQuery = query;
+    if (currentSearchCategory) {
+      apiQuery = `list products: ${currentSearchCategory} ${query}`;
     }
 
-    // Clear the search category after sending
-    setSearchCategory(null);
-
+    // User message shows only the query text, category is stored separately as a tag
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       type: "user",
-      content: searchCategory ? `list products: ${searchCategory} ${displayQuery}` : displayQuery,
+      content: query,
       timestamp: new Date().toISOString(),
       attachedItems: attachedItems.length > 0 ? [...attachedItems] : undefined,
+      searchCategory: currentSearchCategory || undefined,
     };
 
     setChatMessages((prev) => [...prev, userMessage]);
@@ -1445,9 +1446,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       // Get active attachment IDs (cleaned)
       const activeAttachmentIds = attachmentsWithMetadata.map(a => a.id);
 
-      // Build request payload
+      // Build request payload - use apiQuery which includes category prefix
       const requestPayload = {
-        query,
+        query: apiQuery,
         userId: "demo-user",
         sessionId: "demo-session-max",
         conversationId: currentConversationId || undefined,
@@ -1974,6 +1975,15 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         </div>
                       )}
                       <div className="p-3 md:p-4">
+                        {/* Search Category Tag for user messages */}
+                        {message.type === "user" && message.searchCategory && (
+                          <div className="mb-2">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/20 border border-white/30 rounded-full text-xs font-semibold">
+                              <Search className="h-3 w-3" />
+                              list products: {message.searchCategory}
+                            </span>
+                          </div>
+                        )}
                         {message.attachedItems && message.attachedItems.length > 0 && (
                           <div className="mb-3 space-y-2">
                             {message.attachedItems.map((item, idx) => {
