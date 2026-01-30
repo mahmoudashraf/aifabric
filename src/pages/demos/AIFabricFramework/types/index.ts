@@ -8,6 +8,9 @@ export interface Product {
   inStockQty?: number;
   relevanceScore?: number;
   imageUrl?: string;
+  // Optional fields returned by some API responses
+  rating?: number;
+  reviewCount?: number;
 }
 
 export interface Order {
@@ -90,6 +93,8 @@ export interface Review {
   rating: number;
   title: string;
   text: string;
+  // Some endpoints use `comment` naming
+  comment?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -106,6 +111,10 @@ export interface Coupon {
   validUntil: string;
   usageLimit?: number | null;
   isActive: boolean;
+  // Some endpoints use shorter naming
+  minPurchase?: number;
+  maxDiscount?: number | null;
+  usedCount?: number | null;
   createdAt?: string;
   updatedAt?: string;
 }

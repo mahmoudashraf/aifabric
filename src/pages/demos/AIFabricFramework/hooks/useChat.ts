@@ -270,7 +270,7 @@ export function useChat() {
       }
 
       // Extract message from sanitizedPayload if available
-      let messageContent = "";
+      let messageContent: unknown = "";
       let result = undefined;
       let resultType = undefined;
 
@@ -282,10 +282,13 @@ export function useChat() {
         messageContent = data.response || data.message || "I processed your query successfully.";
       }
 
+      const normalizedContent =
+        typeof messageContent === "string" ? messageContent : JSON.stringify(messageContent, null, 2);
+
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: "ai",
-        content: messageContent,
+        content: normalizedContent,
         timestamp: new Date().toISOString(),
         orchestration: data.orchestration
           ? {
@@ -342,7 +345,7 @@ export function useChat() {
             : undefined
         );
 
-        let messageContent = "";
+        let messageContent: unknown = "";
         let result = undefined;
         let resultType = undefined;
 
@@ -354,10 +357,13 @@ export function useChat() {
           messageContent = data.response || data.message || "Action processed.";
         }
 
+        const normalizedContent =
+          typeof messageContent === "string" ? messageContent : JSON.stringify(messageContent, null, 2);
+
         const aiMessage: ChatMessage = {
           id: (Date.now() + 1).toString(),
           type: "ai",
-          content: messageContent,
+          content: normalizedContent,
           timestamp: new Date().toISOString(),
           result: result,
           resultType: resultType,

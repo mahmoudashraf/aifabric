@@ -59,6 +59,19 @@ import { useToast } from "@/hooks/use-toast";
 
 const API_BASE_URL = "https://ai-fabric-framework-production.up.railway.app/api";
 
+// React cannot render plain objects as children. The backend occasionally returns
+// structured objects in places we expect strings (e.g. intent metadata), so we
+// normalize everything to a safe string for display.
+const normalizeMessageContent = (value: unknown): string => {
+  if (typeof value === "string") return value;
+  if (value === null || value === undefined) return "";
+  try {
+    return JSON.stringify(value, null, 2);
+  } catch {
+    return String(value);
+  }
+};
+
 interface MaxModeProps {
   isOpen: boolean;
   onClose: () => void;
@@ -610,6 +623,12 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     { icon: Monitor, label: "Monitors", emoji: "🖥️", color: "text-orange-600", bg: "bg-orange-500/10", border: "border-orange-500/30" },
   ];
 
+  // AI Search menu categories (includes an actual query to populate the input)
+  const aiSearchCategories = searchCategories.map((c) => ({
+    ...c,
+    query: `Search products in category ${c.label} and show top results with prices and stock`,
+  }));
+
   // Auto-scroll to latest message - show it at the top of viewport
   useEffect(() => {
     if (latestMessageRef.current && chatMessages.length > 0) {
@@ -996,7 +1015,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         setCurrentConversationId(data.conversationId);
       }
 
-      let messageContent = "";
+      let messageContent: unknown = "";
       let result: ChatResult | undefined;
       let resultType: ResultType | undefined;
 
@@ -1011,7 +1030,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: "ai",
-        content: messageContent,
+        content: normalizeMessageContent(messageContent),
         timestamp: new Date().toISOString(),
         result: result,
         resultType: resultType,
@@ -1191,7 +1210,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     setSelectedProduct(null);
   };
 
-  const handleAISearchCategory = (category: typeof aiSearchCategories[0]) => {
+  const handleAISearchCategory = (category: (typeof aiSearchCategories)[number]) => {
     // Create search attachment
     const searchAttachment = {
       type: "ai-search",
@@ -1210,7 +1229,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     setCurrentMode("navigator");
 
     // Set the query in the input
-    setInput(category.query);
+    setChatQuery(category.query);
 
     toast({
       title: "🔍 AI Search Attached",
@@ -1495,13 +1514,13 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         setCurrentConversationId(data.conversationId);
       }
 
-      let messageContent = "";
+        let messageContent: unknown = "";
       let result: ChatResult | undefined;
       let resultType: ResultType | undefined;
       let messageDocs: Document[] | undefined;
 
       if (data.result && data.result.sanitizedPayload) {
-        messageContent = data.result.sanitizedPayload.message || "I processed your query successfully.";
+          messageContent = data.result.sanitizedPayload.message || "I processed your query successfully.";
         result = data.result;
         resultType = data.result.type;
 
@@ -1575,7 +1594,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           }
         }
       } else {
-        messageContent = data.response || data.message || "I processed your query successfully.";
+          messageContent = data.response || data.message || "I processed your query successfully.";
       }
 
       const messageId = (Date.now() + 1).toString();
@@ -1607,7 +1626,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       const aiMessage: ChatMessage = {
         id: messageId,
         type: "ai",
-        content: messageContent,
+          content: normalizeMessageContent(messageContent),
         timestamp: new Date().toISOString(),
         result: result,
         resultType: resultType,
@@ -2041,7 +2060,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           </div>
                         )}
                         <p className={`text-sm md:text-base whitespace-pre-wrap leading-relaxed ${message.type === "ai" && styles ? styles.text : ""}`} style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
-                          {message.content}
+                          {normalizeMessageContent(message.content)}
                         </p>
                         {message.resultType === "CONFIRMATION_REQUIRED" && confirmationStatus[message.id] !== 'confirmed' && confirmationStatus[message.id] !== 'rejected' && (
                           <div className="mt-4 flex gap-2">
