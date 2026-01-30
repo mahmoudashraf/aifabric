@@ -3249,47 +3249,64 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 </div>
 
                 {/* Header */}
-                <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Package className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                    <h3 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Products</h3>
+                <div className="px-5 py-4 border-b border-purple-200/50 dark:border-purple-800/50 flex items-center justify-between bg-gradient-to-r from-purple-50 to-pink-50 dark:from-gray-800 dark:to-purple-900/30">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl shadow-lg">
+                      <Package className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Browse Products</h3>
+                      <p className="text-[10px] text-gray-600 dark:text-gray-400 font-medium">Quick category search</p>
+                    </div>
                   </div>
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => setIsBrowseProductsOpen(false)}
-                    className="h-8 w-8"
+                    className="h-9 w-9 hover:bg-purple-100 dark:hover:bg-purple-900/50 rounded-xl"
                   >
-                    <X className="h-5 w-5" />
+                    <X className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                   </Button>
                 </div>
 
                 {/* Products List in Rows */}
-                <div className="p-6 overflow-y-auto max-h-[calc(65vh-120px)]">
-                  <div className="space-y-2">
+                <div className="p-4 overflow-y-auto max-h-[calc(65vh-120px)]">
+                  <div className="space-y-2.5">
                     {browseProductCategories.map((category, idx) => {
                       const Icon = category.icon;
                       return (
                         <motion.div
                           key={category.id}
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: idx * 0.05 }}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: idx * 0.03 }}
                           onClick={() => {
                             handleQuickAction(category.query, "catalog", "navigator");
                             setIsBrowseProductsOpen(false);
                           }}
                           className="cursor-pointer group"
                         >
-                          <div className="flex items-center gap-3 p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-purple-500 active:scale-98 transition-all shadow-sm hover:shadow-md bg-white dark:bg-gray-800">
-                            <div className={`p-2 bg-gradient-to-br ${category.color} rounded-lg flex-shrink-0`}>
-                              <Icon className="h-5 w-5 text-white" />
+                          <div className={`relative overflow-hidden flex items-center gap-3.5 p-4 rounded-2xl border border-transparent bg-gradient-to-br ${category.color} hover:shadow-xl active:scale-[0.98] transition-all shadow-md`}>
+                            {/* Icon Circle */}
+                            <div className="relative z-10 p-3 bg-white/25 backdrop-blur-sm rounded-xl flex-shrink-0 group-hover:scale-110 transition-transform">
+                              <Icon className="h-6 w-6 text-white drop-shadow-md" />
                             </div>
-                            <div className="flex-1">
-                              <h3 className="font-bold text-sm mb-0.5">{category.label}</h3>
-                              <p className="text-xs text-muted-foreground">{category.description}</p>
+
+                            {/* Text Content */}
+                            <div className="relative z-10 flex-1 min-w-0">
+                              <h3 className="font-bold text-base text-white mb-0.5 drop-shadow-sm">{category.label}</h3>
+                              <p className="text-xs text-white/90 font-medium">{category.description}</p>
                             </div>
-                            <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all" />
+
+                            {/* Arrow Icon */}
+                            <div className="relative z-10 flex-shrink-0">
+                              <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg group-hover:bg-white/30 transition-all">
+                                <ArrowRight className="h-4 w-4 text-white group-hover:translate-x-0.5 transition-transform" />
+                              </div>
+                            </div>
+
+                            {/* Shine Effect Overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                           </div>
                         </motion.div>
                       );
