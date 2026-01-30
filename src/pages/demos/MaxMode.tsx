@@ -145,6 +145,7 @@ interface ChatMessage {
   documents?: Document[];
   debugData?: DebugData;
   searchCategory?: string;
+  actionTag?: { action: string; label: string; icon: string; apiQuery: string };
 }
 
 interface Document {
@@ -535,6 +536,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   // Search category submenu state
   const [isSearchCategoryOpen, setIsSearchCategoryOpen] = useState(false);
   const [searchCategory, setSearchCategory] = useState<string | null>(null);
+  // Action tag state (for quick actions like "My Cart", "Browse Products")
+  const [actionTag, setActionTag] = useState<{ action: string; label: string; icon: string; apiQuery: string } | null>(null);
 
   // Conversations history state
   const [isConversationsOpen, setIsConversationsOpen] = useState(false);
@@ -1366,6 +1369,95 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     setSearchCategory(null);
   };
 
+  // Handle action tag click (like "My Cart", "Browse Products") - sends immediately
+  const handleActionTagClick = (action: string, label: string, icon: string, apiQuery: string) => {
+    setActionTag({ action, label, icon, apiQuery });
+    setSearchCategory(null); // Clear search category when clicking action
+    setIsQuickActionsOpen(false);
+
+    // Create and send the message immediately
+    const userMessage: ChatMessage = {
+      id: Date.now().toString(),
+      type: "user",
+      content: "",
+      timestamp: new Date().toISOString(),
+      attachedItems: attachedItems.length > 0 ? [...attachedItems] : undefined,
+      actionTag: { action, label, icon, apiQuery },
+    };
+
+    setChatMessages((prev) => [...prev, userMessage]);
+    setIsLoading(true);
+
+    // Send the API query
+    sendActionQuery(apiQuery, userMessage.id);
+  };
+
+  // Send action query to API
+  const sendActionQuery = async (apiQuery: string, messageId: string) => {
+    try {
+      const position = "checkout";
+      const mode = "copilot";
+      setCurrentPosition(position);
+      setCurrentMode(mode);
+
+      const payload = {
+        query: apiQuery,
+        position,
+        mode,
+        attachments: attachedItems.map((item) => item.data),
+        conversationId,
+        ownerId: "demo-user",
+      };
+
+      setLastApiPayload(payload);
+
+      const response = await fetch(`${API_BASE_URL}/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) throw new Error("API request failed");
+
+      const result = await response.json();
+      setLastApiResponse(result);
+
+      if (result.conversationId && !conversationId) {
+        setConversationId(result.conversationId);
+      }
+
+      const aiMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        type: "ai",
+        content: result.message || result.response || "Action completed",
+        timestamp: new Date().toISOString(),
+        result: result.result,
+        resultType: result.resultType || "UNKNOWN",
+        documents: result.documents,
+        debugData: {
+          request: payload,
+          response: result,
+        },
+      };
+
+      setChatMessages((prev) => [...prev, aiMessage]);
+      setAttachedItems([]);
+      setActionTag(null);
+    } catch (error) {
+      console.error("Action query error:", error);
+      const errorMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        type: "ai",
+        content: "Sorry, there was an error processing your request.",
+        timestamp: new Date().toISOString(),
+        resultType: "ERROR",
+      };
+      setChatMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Load conversations list
   const loadConversations = async () => {
     setIsLoadingConversations(true);
@@ -1493,10 +1585,12 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     // Store the current search category for this message
     const currentSearchCategory = searchCategory;
 
-    // Build the API query - prepend category if set
-    let apiQuery = query;
+    // Build the API query - prepend Action format for search category
+    let apiQuery = query.trim();
     if (currentSearchCategory) {
-      apiQuery = `list products: ${currentSearchCategory} ${query}`;
+      apiQuery = query.trim()
+        ? `Action : List product : ${currentSearchCategory} : ${query.trim()}`
+        : `Action : List product : ${currentSearchCategory}`;
     }
 
     // User message shows only the query text, category is stored separately as a tag
@@ -1906,12 +2000,37 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   <action.icon className={`h-5 w-5 ${action.color}`} />
                   <span className="text-[10px] font-medium text-foreground whitespace-nowrap">{action.label}</span>
                 </motion.button>
+              ) : action.label === "My Cart" ? (
+                <motion.button
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  onClick={() => handleActionTagClick("view_cart", "My Cart", "cart", "Action: view_cart")}
+                  className={`flex flex-col items-center gap-1 p-3 rounded-xl ${action.bg} border ${action.border} hover:scale-105 transition-all min-w-[80px]`}
+                >
+                  <action.icon className={`h-5 w-5 ${action.color}`} />
+                  <span className="text-[10px] font-medium text-foreground whitespace-nowrap">{action.label}</span>
+                </motion.button>
+              ) : action.label === "Browse Products" ? (
+                <motion.button
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  onClick={() => handleActionTagClick("browse_products", "Discover Products", "browse", "Action: Browse Products - Show me: gaming laptops for high performance, premium headphones compatible with iPhone, Samsung tablets for productivity, Sony cameras with great lenses")}
+                  className={`flex flex-col items-center gap-1 p-3 rounded-xl ${action.bg} border ${action.border} hover:scale-105 transition-all min-w-[80px]`}
+                >
+                  <action.icon className={`h-5 w-5 ${action.color}`} />
+                  <span className="text-[10px] font-medium text-foreground whitespace-nowrap">{action.label}</span>
+                </motion.button>
               ) : (
                 <motion.button
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.05 }}
-                  onClick={() => handleQuickAction(action.query, action.position, action.mode)}
+                  onClick={() => {
+                    setSearchCategory(null);
+                    handleQuickAction(action.query, action.position, action.mode);
+                  }}
                   className={`flex flex-col items-center gap-1 p-3 rounded-xl ${action.bg} border ${action.border} hover:scale-105 transition-all min-w-[80px]`}
                 >
                   <action.icon className={`h-5 w-5 ${action.color}`} />
@@ -2084,7 +2203,12 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         onClick={() => {
                           if (action.label === "Search Products") {
                             setIsSearchCategoryOpen(true);
+                          } else if (action.label === "My Cart") {
+                            handleActionTagClick("view_cart", "My Cart", "cart", "Action: view_cart");
+                          } else if (action.label === "Browse Products") {
+                            handleActionTagClick("browse_products", "Discover Products", "browse", "Action: Browse Products - Show me: gaming laptops for high performance, premium headphones compatible with iPhone, Samsung tablets for productivity, Sony cameras with great lenses");
                           } else {
+                            setSearchCategory(null);
                             handleQuickAction(action.query, action.position, action.mode);
                             setIsQuickActionsOpen(false);
                           }
@@ -2156,13 +2280,104 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         </div>
                       )}
                       <div className="p-3 md:p-4">
-                        {/* Search Category Tag for user messages */}
+                        {/* Search Category Tag for user messages with resend option */}
                         {message.type === "user" && message.searchCategory && (
                           <div className="mb-2">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/20 border border-white/30 rounded-full text-xs font-semibold">
-                              <Search className="h-3 w-3" />
-                              list products: {message.searchCategory}
+                            <span className="inline-flex items-center gap-1 md:gap-1.5 px-2 md:px-2.5 py-0.5 md:py-1 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-400/50 rounded-full text-[10px] md:text-xs font-semibold group">
+                              <Zap className="h-2.5 md:h-3 w-2.5 md:w-3" />
+                              <span className="hidden sm:inline">Action : List product : </span>
+                              <span className="sm:hidden">🔍 </span>
+                              {message.searchCategory}
+                              <button
+                                onClick={() => {
+                                  setSearchCategory(message.searchCategory!);
+                                  setChatQuery(message.content);
+                                  toast({
+                                    title: "Action Loaded",
+                                    description: "Edit or resend the query",
+                                  });
+                                }}
+                                className="h-3.5 md:h-4 w-3.5 md:w-4 rounded-full bg-white/20 hover:bg-white/40 flex items-center justify-center transition-all opacity-60 group-hover:opacity-100"
+                                title="Resend this action"
+                              >
+                                <RotateCcw className="h-2 md:h-2.5 w-2 md:w-2.5" />
+                              </button>
                             </span>
+                          </div>
+                        )}
+                        {/* Action Tag for user messages (e.g., My Cart, Discover Products) with resend option */}
+                        {message.type === "user" && message.actionTag && (
+                          <div className="mb-2">
+                            {message.actionTag.icon === "browse" ? (
+                              // Creative Discover Products display - Mobile optimized
+                              <div className="space-y-1.5 md:space-y-2">
+                                <span className="inline-flex items-center gap-1 md:gap-1.5 px-2 md:px-3 py-1 md:py-1.5 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-orange-500/20 border border-purple-400/50 rounded-full text-[10px] md:text-xs font-bold group">
+                                  <Sparkles className="h-3 md:h-3.5 w-3 md:w-3.5 text-purple-500" />
+                                  <span className="hidden sm:inline">{message.actionTag.label}</span>
+                                  <span className="sm:hidden">Discover</span>
+                                  <button
+                                    onClick={() => {
+                                      handleActionTagClick(
+                                        message.actionTag!.action,
+                                        message.actionTag!.label,
+                                        message.actionTag!.icon,
+                                        message.actionTag!.apiQuery
+                                      );
+                                      toast({
+                                        title: "Discovering Again",
+                                        description: "Searching for trending products...",
+                                      });
+                                    }}
+                                    className="h-3.5 md:h-4 w-3.5 md:w-4 rounded-full bg-white/20 hover:bg-white/40 flex items-center justify-center transition-all opacity-60 group-hover:opacity-100"
+                                    title="Discover again"
+                                  >
+                                    <RotateCcw className="h-2 md:h-2.5 w-2 md:w-2.5" />
+                                  </button>
+                                </span>
+                                <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-1 md:gap-1.5 ml-0.5 md:ml-1">
+                                  <span className="inline-flex items-center justify-center sm:justify-start gap-1 px-1.5 md:px-2 py-0.5 bg-blue-500/10 border border-blue-400/30 rounded-full text-[9px] md:text-[10px]" title="Gaming Laptops">
+                                    <Laptop className="h-2.5 w-2.5 text-blue-500 flex-shrink-0" />
+                                    <span className="truncate">Laptops</span>
+                                  </span>
+                                  <span className="inline-flex items-center justify-center sm:justify-start gap-1 px-1.5 md:px-2 py-0.5 bg-pink-500/10 border border-pink-400/30 rounded-full text-[9px] md:text-[10px]" title="iPhone Headphones">
+                                    <Headphones className="h-2.5 w-2.5 text-pink-500 flex-shrink-0" />
+                                    <span className="truncate">Headphones</span>
+                                  </span>
+                                  <span className="inline-flex items-center justify-center sm:justify-start gap-1 px-1.5 md:px-2 py-0.5 bg-green-500/10 border border-green-400/30 rounded-full text-[9px] md:text-[10px]" title="Samsung Tablets">
+                                    <Monitor className="h-2.5 w-2.5 text-green-500 flex-shrink-0" />
+                                    <span className="truncate">Tablets</span>
+                                  </span>
+                                  <span className="inline-flex items-center justify-center sm:justify-start gap-1 px-1.5 md:px-2 py-0.5 bg-amber-500/10 border border-amber-400/30 rounded-full text-[9px] md:text-[10px]" title="Sony Cameras">
+                                    <Camera className="h-2.5 w-2.5 text-amber-500 flex-shrink-0" />
+                                    <span className="truncate">Cameras</span>
+                                  </span>
+                                </div>
+                              </div>
+                            ) : (
+                              // Standard action tag (My Cart, etc.) - Mobile optimized
+                              <span className="inline-flex items-center gap-1 md:gap-1.5 px-2 md:px-2.5 py-0.5 md:py-1 bg-gradient-to-r from-orange-500/20 to-amber-500/20 border border-orange-400/50 rounded-full text-[10px] md:text-xs font-semibold group">
+                                {message.actionTag.icon === "cart" && <ShoppingCart className="h-2.5 md:h-3 w-2.5 md:w-3" />}
+                                {message.actionTag.label}
+                                <button
+                                  onClick={() => {
+                                    handleActionTagClick(
+                                      message.actionTag!.action,
+                                      message.actionTag!.label,
+                                      message.actionTag!.icon,
+                                      message.actionTag!.apiQuery
+                                    );
+                                    toast({
+                                      title: "Action Resent",
+                                      description: `Running ${message.actionTag!.label} again`,
+                                    });
+                                  }}
+                                  className="h-3.5 md:h-4 w-3.5 md:w-4 rounded-full bg-white/20 hover:bg-white/40 flex items-center justify-center transition-all opacity-60 group-hover:opacity-100"
+                                  title="Run this action again"
+                                >
+                                  <RotateCcw className="h-2 md:h-2.5 w-2 md:w-2.5" />
+                                </button>
+                              </span>
+                            )}
                           </div>
                         )}
                         {message.attachedItems && message.attachedItems.length > 0 && (
@@ -3802,22 +4017,25 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             </motion.div>
           )}
 
-          {/* Search Category Tag */}
+          {/* Search Category Tag - Mobile optimized */}
           {searchCategory && (
             <motion.div
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
               className="mb-2"
             >
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 border-2 border-blue-300 dark:border-blue-700 rounded-full">
-                <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
-                  list products: {searchCategory}
+              <div className="inline-flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 md:py-1.5 bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 border md:border-2 border-indigo-300 dark:border-indigo-700 rounded-full shadow-sm">
+                <Zap className="h-3 md:h-4 w-3 md:w-4 text-indigo-600 dark:text-indigo-400" />
+                <span className="text-xs md:text-sm font-semibold text-indigo-700 dark:text-indigo-300">
+                  <span className="hidden sm:inline">Action : List product : </span>
+                  <span className="sm:hidden">🔍 </span>
+                  {searchCategory}
                 </span>
                 <button
                   onClick={clearSearchCategory}
-                  className="h-5 w-5 rounded-full bg-blue-200 dark:bg-blue-800 hover:bg-blue-300 dark:hover:bg-blue-700 flex items-center justify-center transition-colors"
+                  className="h-4 md:h-5 w-4 md:w-5 rounded-full bg-indigo-200 dark:bg-indigo-800 hover:bg-indigo-300 dark:hover:bg-indigo-700 flex items-center justify-center transition-colors"
                 >
-                  <X className="h-3 w-3 text-blue-700 dark:text-blue-300" />
+                  <X className="h-2.5 md:h-3 w-2.5 md:w-3 text-indigo-700 dark:text-indigo-300" />
                 </button>
               </div>
             </motion.div>
