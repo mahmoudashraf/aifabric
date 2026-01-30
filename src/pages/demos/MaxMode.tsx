@@ -243,13 +243,15 @@ const ActionResultRenderer = ({
   messageId,
   expandedCount,
   onExpand,
-  onAttach
+  onAttach,
+  isAttached
 }: {
   data: any;
   messageId: string;
   expandedCount: number;
   onExpand: (count: number) => void;
   onAttach?: (item: any) => void;
+  isAttached?: (itemId: string) => boolean;
 }) => {
   if (!data) return null;
 
@@ -275,6 +277,8 @@ const ActionResultRenderer = ({
     const stockQty = item.inStockQty ?? item.InStockQty ?? item.stockQuantity ?? item.StockQuantity;
     const rating = item.rating ?? item.Rating;
     const brand = item.brand || item.Brand;
+    const itemId = item.id || item.Id || sku;
+    const isItemAlreadyAttached = isAttached && itemId ? isAttached(itemId) : false;
 
     return (
       <div key={idx} className="relative group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 transition-all hover:shadow-xl overflow-hidden">
@@ -283,14 +287,22 @@ const ActionResultRenderer = ({
           <Button
             size="icon"
             variant="ghost"
-            className="absolute top-2 right-2 h-8 w-8 bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-lg border border-white/30 hover:scale-110 transition-all"
+            className={`absolute top-2 right-2 h-8 w-8 ${
+              isItemAlreadyAttached
+                ? 'bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
+                : 'bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600'
+            } text-white shadow-lg border border-white/30 hover:scale-110 transition-all`}
             onClick={(e) => {
               e.stopPropagation();
               onAttach(item);
             }}
-            title="Attach to Chat"
+            title={isItemAlreadyAttached ? "Already in Chat" : "Attach to Chat"}
           >
-            <Paperclip className="h-4 w-4" />
+            {isItemAlreadyAttached ? (
+              <CheckCircle2 className="h-4 w-4" />
+            ) : (
+              <Paperclip className="h-4 w-4" />
+            )}
           </Button>
         )}
 
@@ -359,20 +371,32 @@ const ActionResultRenderer = ({
   };
 
   // Render generic item card (non-product)
-  const renderGenericCard = (item: any, idx: number) => (
+  const renderGenericCard = (item: any, idx: number) => {
+    const itemId = item.id || item.Id || item.sku || item.Sku;
+    const isItemAlreadyAttached = isAttached && itemId ? isAttached(itemId) : false;
+
+    return (
     <Card key={idx} className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-colors relative group" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
       {onAttach && typeof item === "object" && item !== null && (
         <Button
           size="icon"
           variant="ghost"
-          className="absolute top-2 right-2 h-8 w-8 bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-lg border border-white/30 hover:scale-110 transition-all z-10"
+          className={`absolute top-2 right-2 h-8 w-8 ${
+            isItemAlreadyAttached
+              ? 'bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
+              : 'bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600'
+          } text-white shadow-lg border border-white/30 hover:scale-110 transition-all z-10`}
           onClick={(e) => {
             e.stopPropagation();
             onAttach(item);
           }}
-          title="Attach to Chat"
+          title={isItemAlreadyAttached ? "Already in Chat" : "Attach to Chat"}
         >
-          <Paperclip className="h-4 w-4" />
+          {isItemAlreadyAttached ? (
+            <CheckCircle2 className="h-4 w-4" />
+          ) : (
+            <Paperclip className="h-4 w-4" />
+          )}
         </Button>
       )}
       <CardContent className="p-3 pr-12">
@@ -405,7 +429,8 @@ const ActionResultRenderer = ({
         )}
       </CardContent>
     </Card>
-  );
+    );
+  };
 
   // Handle arrays
   if (Array.isArray(data)) {
@@ -2530,6 +2555,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                 [message.id]: count
                               }));
                             }}
+                            isAttached={isItemAttached}
                             onAttach={(item) => {
                               // Normalize field names (handle different casing from API)
                               const normalizedItem: any = {};
@@ -3005,7 +3031,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                               className={`absolute top-2 right-2 h-10 w-10 ${
                                 isItemAttached(doc.id)
                                   ? 'bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
-                                  : 'bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
+                                  : 'bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600'
                               } text-white shadow-xl border-2 border-white/50 hover:scale-110 hover:border-white/50 transition-all z-50 pointer-events-auto cursor-pointer`}
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -3029,13 +3055,13 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                     <motion.div
                                       whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
                                       transition={{ duration: 0.5 }}
-                                      className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl shadow-lg"
+                                      className="p-3 bg-gradient-to-br from-blue-600 to-blue-500 rounded-xl shadow-lg"
                                     >
                                       <DocIcon className="h-5 w-5 text-white" />
                                     </motion.div>
                                   )}
                                   <div className="flex-1 min-w-0">
-                                    <CardTitle className="text-base font-bold line-clamp-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                                    <CardTitle className="text-base font-bold line-clamp-2 bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
                                       {doc.title}
                                     </CardTitle>
                                     <div className="flex items-center gap-1.5 mt-1.5">
@@ -3067,7 +3093,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                 </div>
                               )}
                               {doc.metadata && (
-                                <div className="mt-3 pt-3 border-t border-gradient-to-r from-purple-200 via-pink-200 to-blue-200">
+                                <div className="mt-3 pt-3 border-t border-blue-200">
                                   <div className="flex flex-wrap gap-1.5">
                                     {Object.entries(doc.metadata)
                                       .filter(([key]) => !key.startsWith('_') && !key.includes('indexedCreatedAt') && key !== 'imageUrl' && key !== 'vectorSpace')
@@ -3273,13 +3299,13 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 </div>
 
                 {/* Header */}
-                <div className="px-5 py-4 border-b border-purple-200/50 dark:border-purple-800/50 flex items-center justify-between bg-gradient-to-r from-purple-50 to-pink-50 dark:from-gray-800 dark:to-purple-900/30">
+                <div className="px-5 py-4 border-b border-blue-200/50 dark:border-blue-800/50 flex items-center justify-between bg-gradient-to-r from-blue-50 to-white dark:from-gray-800 dark:to-blue-900/30">
                   <div className="flex items-center gap-3">
-                    <div className="p-2.5 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl shadow-lg">
+                    <div className="p-2.5 bg-gradient-to-br from-blue-600 to-blue-500 rounded-xl shadow-lg">
                       <Package className="h-5 w-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Browse Products</h3>
+                      <h3 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">Browse Products</h3>
                       <p className="text-[10px] text-gray-600 dark:text-gray-400 font-medium">Quick category search</p>
                     </div>
                   </div>
@@ -3406,10 +3432,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             handleCloseNewDocsPreview();
                             setIsBottomSheetOpen(true);
                           }}
-                          className="relative group active:scale-98 transition-all border-2 border-yellow-300 bg-gradient-to-br from-yellow-50/80 via-purple-50/30 to-pink-50/30 cursor-pointer shadow-lg"
+                          className="relative group active:scale-98 transition-all border-2 border-yellow-300 bg-gradient-to-br from-yellow-50/80 via-blue-50/30 to-white/30 cursor-pointer shadow-lg"
                         >
                           {doc.metadata?.imageUrl && (
-                            <div className="relative h-24 overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100 rounded-t-lg">
+                            <div className="relative h-24 overflow-hidden bg-gradient-to-br from-blue-100 to-white rounded-t-lg">
                               <img
                                 src={doc.metadata.imageUrl}
                                 alt={doc.title}
@@ -3424,7 +3450,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             <div className="flex items-start gap-2">
                               {!doc.metadata?.imageUrl && (
                                 <>
-                                  <div className="p-1.5 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex-shrink-0">
+                                  <div className="p-1.5 bg-gradient-to-br from-blue-600 to-blue-500 rounded-lg flex-shrink-0">
                                     <DocIcon className="h-3 w-3 text-white" />
                                   </div>
                                   <div className="absolute top-1 right-1 bg-yellow-400 text-yellow-900 text-[8px] font-bold px-1.5 py-0.5 rounded-full">
@@ -3437,7 +3463,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                   {doc.title}
                                 </CardTitle>
                                 {doc.metadata?.price && (
-                                  <p className="text-xs font-semibold text-purple-600 mt-1">
+                                  <p className="text-xs font-semibold text-gray-900 mt-1">
                                     {doc.metadata.price}
                                   </p>
                                 )}
@@ -3451,13 +3477,13 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 </div>
 
                 {/* View All Button */}
-                <div className="p-3 border-t border-purple-200">
+                <div className="p-3 border-t border-blue-200">
                   <Button
                     onClick={() => {
                       handleCloseNewDocsPreview();
                       handleOpenBottomSheet();
                     }}
-                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg"
+                    className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-lg"
                     size="sm"
                   >
                     View All Documents
@@ -3516,11 +3542,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         <ArrowRight className="h-5 w-5 rotate-180" />
                       </Button>
                     )}
-                    <div className="p-2 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg">
+                    <div className="p-2 bg-gradient-to-br from-blue-600 to-blue-500 rounded-lg">
                       <Sparkles className="h-4 w-4 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                      <h3 className="text-sm font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
                         {isCartView ? 'Shopping Cart' : selectedProduct ? 'Product Details' : 'Context Documents'}
                       </h3>
                       <p className="text-[10px] text-muted-foreground">
@@ -3584,7 +3610,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           ))}
 
                           {/* Cart Summary */}
-                          <Card className="border-2 border-purple-300 bg-gradient-to-br from-purple-50 to-pink-50">
+                          <Card className="border-2 border-blue-300 bg-gradient-to-br from-blue-50 to-white">
                             <CardContent className="p-3 space-y-2">
                               <div className="flex justify-between text-xs">
                                 <span className="text-gray-600">Subtotal:</span>
@@ -3596,9 +3622,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                   <span className="font-semibold text-green-600">-${cartData.discount?.toFixed(2)}</span>
                                 </div>
                               )}
-                              <div className="border-t border-purple-200 pt-2 flex justify-between">
+                              <div className="border-t border-blue-200 pt-2 flex justify-between">
                                 <span className="text-base font-bold text-gray-900">Total:</span>
-                                <span className="text-base font-bold text-purple-600">${cartData.total?.toFixed(2) || '0.00'}</span>
+                                <span className="text-base font-bold text-gray-900">${cartData.total?.toFixed(2) || '0.00'}</span>
                               </div>
                               {cartData.couponCode && (
                                 <div className="text-[10px] text-gray-500 flex items-center gap-1">
@@ -3668,7 +3694,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                               setChatQuery("Show me available products");
                               handleChatQuery("Show me available products");
                             }}
-                            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                            className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white"
                             size="sm"
                           >
                             Browse Products
@@ -3680,7 +3706,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     /* Mobile Product Details */
                     <div className="space-y-4">
                       {selectedProduct.metadata?.imageUrl && (
-                        <div className="relative h-64 overflow-hidden rounded-xl bg-gradient-to-br from-purple-100 to-pink-100 -mx-4">
+                        <div className="relative h-64 overflow-hidden rounded-xl bg-gradient-to-br from-blue-100 to-white -mx-4">
                           <img
                             src={selectedProduct.metadata.imageUrl}
                             alt={selectedProduct.title}
@@ -3690,7 +3716,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                       )}
 
                       <div>
-                        <h3 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                        <h3 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent mb-2">
                           {selectedProduct.title}
                         </h3>
                         <Badge variant="outline" className="text-xs bg-blue-100 border-blue-300 text-blue-700">
@@ -3698,7 +3724,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                         </Badge>
                       </div>
 
-                      <div className="p-3 bg-white/80 rounded-lg border-2 border-purple-200">
+                      <div className="p-3 bg-white/80 rounded-lg border-2 border-blue-200">
                         <p className="text-sm text-gray-700 leading-relaxed">
                           {selectedProduct.content}
                         </p>
@@ -3711,7 +3737,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             {Object.entries(selectedProduct.metadata).map(([key, value]) => {
                               if (key === 'imageUrl') return null;
                               return (
-                                <div key={key} className="p-3 bg-white/80 rounded-lg border border-purple-200">
+                                <div key={key} className="p-3 bg-white/80 rounded-lg border border-blue-200">
                                   <p className="text-xs text-gray-500 mb-0.5">{formatFieldName(key)}</p>
                                   <p className="text-sm font-semibold text-gray-900">{formatFieldValue(value)}</p>
                                 </div>
@@ -3768,11 +3794,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             onClick={() => openProductDetails(doc)}
                             className={`relative group active:scale-98 transition-all border-2 cursor-pointer ${
                               isNewDoc
-                                ? 'border-yellow-400 bg-gradient-to-br from-yellow-50/90 via-purple-50/40 to-pink-50/40 shadow-lg'
-                                : 'border-purple-200 hover:border-purple-400 bg-gradient-to-br from-white via-purple-50/30 to-pink-50/30'
+                                ? 'border-yellow-400 bg-gradient-to-br from-yellow-50/90 via-blue-50/40 to-white/40 shadow-lg'
+                                : 'border-blue-200 hover:border-blue-400 bg-gradient-to-br from-white via-blue-50/30 to-white'
                             }`}>
                             {doc.metadata?.imageUrl && (
-                              <div className="relative h-32 overflow-hidden bg-gradient-to-br from-purple-100 to-pink-100">
+                              <div className="relative h-32 overflow-hidden bg-gradient-to-br from-blue-100 to-white">
                                 <img
                                   src={doc.metadata.imageUrl}
                                   alt={doc.title}
@@ -3789,12 +3815,12 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             <CardHeader className="pb-2 pt-3 px-3">
                               <div className="flex items-start gap-2">
                                 {!doc.metadata?.imageUrl && (
-                                  <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex-shrink-0">
+                                  <div className="p-2 bg-gradient-to-br from-blue-600 to-blue-500 rounded-lg flex-shrink-0">
                                     <DocIcon className="h-4 w-4 text-white" />
                                   </div>
                                 )}
                                 <div className="flex-1 min-w-0">
-                                  <CardTitle className="text-sm font-bold line-clamp-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                                  <CardTitle className="text-sm font-bold line-clamp-2 bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
                                     {doc.title}
                                   </CardTitle>
                                   <div className="flex items-center gap-1 mt-1">
@@ -3814,7 +3840,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                   className={`h-9 w-9 flex-shrink-0 ${
                                     isItemAttached(doc.id)
                                       ? 'bg-gradient-to-br from-green-500 to-emerald-500'
-                                      : 'bg-gradient-to-br from-purple-600 to-pink-600'
+                                      : 'bg-gradient-to-br from-blue-600 to-blue-500'
                                   } text-white shadow-lg border border-white/30 hover:scale-110 transition-all z-50 pointer-events-auto cursor-pointer`}
                                   onClick={(e) => {
                                     e.stopPropagation();
@@ -4848,7 +4874,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               className="fixed inset-y-2 left-2 w-[320px] md:w-[380px] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl z-[101] overflow-hidden flex flex-col"
             >
               {/* Header */}
-              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-purple-600 to-pink-600">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-600 to-blue-500">
                 <div className="flex items-center gap-2">
                   <div className="h-8 w-8 rounded-lg bg-white/20 flex items-center justify-center">
                     <History className="h-4 w-4 text-white" />
