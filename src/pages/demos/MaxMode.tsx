@@ -3112,7 +3112,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         </AnimatePresence>
 
         {/* Mobile: All Floating Action Buttons - Single Column */}
-        <div className="md:hidden fixed bottom-24 right-4 z-20 flex flex-col-reverse items-center gap-3">
+        <div className="md:hidden fixed bottom-24 right-3 z-20 flex flex-col-reverse items-center gap-3">
           {/* AI Search Button */}
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
