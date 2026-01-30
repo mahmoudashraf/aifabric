@@ -2404,8 +2404,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             const ActionIcon = getActionIcon(parsedAction.actionType);
                             return (
                               <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500 via-pink-500 to-purple-600 p-[2px] shadow-lg">
-                                <div className="relative bg-white dark:bg-gray-900 rounded-2xl p-4 pl-16">
-                                  {/* Resend Button - Left Side, Vertically Centered */}
+                                <div className="relative bg-white dark:bg-gray-900 rounded-2xl p-4 pt-12">
+                                  {/* Resend Button - Top Left Tag Style */}
                                   <Button
                                     onClick={() => {
                                       setChatQuery(parsedAction.fullMessage);
@@ -2413,10 +2413,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                     }}
                                     size="icon"
                                     variant="ghost"
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-xl bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/30 dark:hover:bg-purple-900/50 text-purple-600 dark:text-purple-400 transition-all hover:scale-105 shadow-md"
+                                    className="absolute left-3 top-3 h-8 w-8 rounded-lg bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/30 dark:hover:bg-purple-900/50 text-purple-600 dark:text-purple-400 transition-all hover:scale-105 shadow-md"
                                     title="Resend action"
                                   >
-                                    <RotateCcw className="h-5 w-5" />
+                                    <RotateCcw className="h-4 w-4" />
                                   </Button>
 
                                   <div className="flex items-center gap-3 mb-3">
