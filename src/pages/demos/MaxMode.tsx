@@ -2467,7 +2467,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           <ActionResultRenderer
                             data={message.result.sanitizedPayload.data.actionResult.data}
                             messageId={message.id}
-                            expandedCount={expandedActions[message.id] || 3}
+                            expandedCount={expandedActions[message.id] || 4}
                             onExpand={(count) => {
                               setExpandedActions(prev => ({
                                 ...prev,
