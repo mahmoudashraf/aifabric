@@ -2404,38 +2404,40 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           if (message.type === "user" && parsedAction.isAction) {
                             const ActionIcon = getActionIcon(parsedAction.actionType);
                             return (
-                              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500 via-pink-500 to-purple-600 p-[2px] shadow-lg">
-                                <div className="relative bg-white dark:bg-gray-900 rounded-2xl p-4 pt-12">
-                                  {/* Resend Button - Top Left Tag Style */}
-                                  <Button
-                                    onClick={() => {
-                                      setChatQuery(parsedAction.fullMessage);
-                                      handleChatQuery(parsedAction.fullMessage);
-                                    }}
-                                    size="icon"
-                                    variant="ghost"
-                                    className="absolute left-3 top-3 h-8 w-8 rounded-lg bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/30 dark:hover:bg-purple-900/50 text-purple-600 dark:text-purple-400 transition-all hover:scale-105 shadow-md"
-                                    title="Resend action"
-                                  >
-                                    <RotateCcw className="h-4 w-4" />
-                                  </Button>
+                              <div className="relative">
+                                {/* Resend Button - Floating Outside Top-Left */}
+                                <Button
+                                  onClick={() => {
+                                    setChatQuery(parsedAction.fullMessage);
+                                    handleChatQuery(parsedAction.fullMessage);
+                                  }}
+                                  size="icon"
+                                  variant="ghost"
+                                  className="absolute -left-3 -top-3 h-9 w-9 rounded-full bg-purple-600 hover:bg-purple-700 text-white transition-all hover:scale-110 shadow-xl z-10 border-2 border-white dark:border-gray-900"
+                                  title="Resend action"
+                                >
+                                  <RotateCcw className="h-4 w-4" />
+                                </Button>
 
-                                  <div className="flex items-center gap-3 mb-3">
-                                    <div className="p-2.5 bg-gradient-to-br from-purple-500 via-pink-500 to-purple-600 rounded-xl shadow-md">
-                                      <ActionIcon className="h-5 w-5 text-white" />
+                                <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500 via-pink-500 to-purple-600 p-[2px] shadow-lg">
+                                  <div className="relative bg-white dark:bg-gray-900 rounded-2xl p-4">
+                                    <div className="flex items-center gap-3 mb-3">
+                                      <div className="p-2.5 bg-gradient-to-br from-purple-500 via-pink-500 to-purple-600 rounded-xl shadow-md">
+                                        <ActionIcon className="h-5 w-5 text-white" />
+                                      </div>
+                                      <div className="flex-1">
+                                        <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">
+                                          {parsedAction.actionType}
+                                        </span>
+                                      </div>
                                     </div>
-                                    <div className="flex-1">
-                                      <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">
-                                        {parsedAction.actionType}
-                                      </span>
-                                    </div>
+                                    <p className="text-base md:text-lg font-semibold text-gray-900 dark:text-gray-100 leading-relaxed">
+                                      {parsedAction.query}
+                                    </p>
+
+                                    {/* Decorative shine effect */}
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-200/20 to-transparent rounded-full blur-2xl -z-10" />
                                   </div>
-                                  <p className="text-base md:text-lg font-semibold text-gray-900 dark:text-gray-100 leading-relaxed">
-                                    {parsedAction.query}
-                                  </p>
-
-                                  {/* Decorative shine effect */}
-                                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-200/20 to-transparent rounded-full blur-2xl -z-10" />
                                 </div>
                               </div>
                             );
