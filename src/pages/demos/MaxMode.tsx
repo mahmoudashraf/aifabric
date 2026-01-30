@@ -24,7 +24,6 @@ import {
   Info,
   Ban,
   AlertTriangle,
-  Zap,
   FileText,
   Image as ImageIcon,
   Paperclip,
@@ -2107,7 +2106,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 size="lg"
                 className="h-14 w-14 rounded-full bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white shadow-2xl border-2 border-white/30"
               >
-                <Zap className="h-6 w-6" />
+                <BrainCircuit className="h-6 w-6" />
               </Button>
               {/* Position indicator and Debug button - Mobile */}
               <div className="flex items-center gap-1">
