@@ -2112,15 +2112,61 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                               }));
                             }}
                             onAttach={(item) => {
+                              // Normalize field names (handle different casing from API)
+                              const normalizedItem: any = {};
+
+                              // Detect item type based on fields
+                              const hasProductFields = item.sku || item.Sku || item.price !== undefined || item.Price !== undefined;
+                              const hasOrderFields = item.orderId || item.OrderId || item.orderNumber || item.OrderNumber;
+                              const hasReviewFields = item.rating !== undefined && (item.comment || item.Comment);
+                              const hasCouponFields = item.code || item.Code || item.discountType || item.DiscountType;
+
+                              let itemType = 'item';
+                              if (hasProductFields && !hasOrderFields) {
+                                itemType = 'product';
+                              } else if (hasOrderFields) {
+                                itemType = 'order';
+                              } else if (hasReviewFields) {
+                                itemType = 'review';
+                              } else if (hasCouponFields) {
+                                itemType = 'coupon';
+                              }
+
+                              // Normalize all fields to lowercase keys and include everything
+                              if (itemType === 'product') {
+                                normalizedItem.id = item.id || item.Id || item.ID;
+                                normalizedItem.sku = item.sku || item.Sku || item.SKU;
+                                normalizedItem.name = item.name || item.Name || item.title || item.Title;
+                                normalizedItem.description = item.description || item.Description || '';
+                                normalizedItem.price = item.price ?? item.Price;
+                                normalizedItem.category = item.category || item.Category;
+                                normalizedItem.brand = item.brand || item.Brand;
+                                normalizedItem.inStockQty = item.inStockQty ?? item.InStockQty ?? item.stockQuantity ?? item.StockQuantity;
+                                normalizedItem.imageUrl = item.imageUrl || item.ImageUrl || item.image || item.Image;
+                                normalizedItem.rating = item.rating ?? item.Rating;
+                                normalizedItem.reviewCount = item.reviewCount ?? item.ReviewCount;
+                                // Include any other fields from original item
+                                Object.keys(item).forEach(key => {
+                                  const lowerKey = key.toLowerCase();
+                                  if (normalizedItem[lowerKey] === undefined && item[key] !== undefined) {
+                                    normalizedItem[lowerKey] = item[key];
+                                  }
+                                });
+                              } else {
+                                // For non-products, copy all fields with lowercase keys
+                                Object.keys(item).forEach(key => {
+                                  const lowerKey = key.charAt(0).toLowerCase() + key.slice(1);
+                                  normalizedItem[lowerKey] = item[key];
+                                });
+                              }
+
                               // Create a title from the item data
-                              const title = item.productName || item.name || item.title || `Item ${item.id || ''}`;
-                              const itemType = item.type || 'item';
+                              const title = normalizedItem.name || normalizedItem.productName || normalizedItem.title || `Item ${normalizedItem.id || ''}`;
 
                               // Check if already attached
-                              const itemId = item.id || JSON.stringify(item);
                               if (attachedItems.some(attached =>
                                 attached.type === itemType &&
-                                (attached.data.id === item.id || JSON.stringify(attached.data) === JSON.stringify(item))
+                                (attached.data.id === normalizedItem.id || attached.data.sku === normalizedItem.sku)
                               )) {
                                 toast({
                                   title: "Already Attached",
@@ -2130,7 +2176,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                 return;
                               }
 
-                              setAttachedItems(prev => [...prev, { type: itemType, data: item }]);
+                              setAttachedItems(prev => [...prev, { type: itemType, data: normalizedItem }]);
 
                               // Set position to checkout when attaching items
                               setCurrentPosition("checkout");
