@@ -75,6 +75,37 @@ const normalizeMessageContent = (value: unknown): string => {
   }
 };
 
+const parseActionMessage = (content: string): { isAction: boolean; actionType: string; query: string; fullMessage: string } => {
+  const actionMatch = content.match(/^Action:\s*([^:]+):\s*(.+)$/i);
+  if (actionMatch) {
+    return {
+      isAction: true,
+      actionType: actionMatch[1].trim(),
+      query: actionMatch[2].trim(),
+      fullMessage: content
+    };
+  }
+  return { isAction: false, actionType: '', query: content, fullMessage: content };
+};
+
+const getActionIcon = (actionType: string) => {
+  const type = actionType.toLowerCase();
+  if (type.includes('list') || type.includes('search') || type.includes('find')) {
+    return Search;
+  } else if (type.includes('add to cart') || type.includes('cart')) {
+    return ShoppingCart;
+  } else if (type.includes('checkout') || type.includes('order')) {
+    return Receipt;
+  } else if (type.includes('product') || type.includes('details')) {
+    return Package;
+  } else if (type.includes('compare')) {
+    return TrendingUp;
+  } else if (type.includes('recommend')) {
+    return Sparkles;
+  }
+  return Wand2; // Default action icon
+};
+
 interface MaxModeProps {
   isOpen: boolean;
   onClose: () => void;
@@ -2396,9 +2427,49 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             })}
                           </div>
                         )}
-                        <p className={`text-sm md:text-base whitespace-pre-wrap leading-relaxed ${message.type === "ai" && styles ? styles.text : ""}`} style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
-                          {normalizeMessageContent(message.content)}
-                        </p>
+                        {(() => {
+                          const content = normalizeMessageContent(message.content);
+                          const parsedAction = parseActionMessage(content);
+
+                          if (message.type === "user" && parsedAction.isAction) {
+                            const ActionIcon = getActionIcon(parsedAction.actionType);
+                            return (
+                              <div className="flex items-start gap-2">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <div className="p-1.5 bg-gradient-to-br from-purple-500 to-pink-500 rounded-md">
+                                      <ActionIcon className="h-3.5 w-3.5 text-white" />
+                                    </div>
+                                    <span className="text-xs font-semibold text-purple-600 dark:text-purple-400">
+                                      {parsedAction.actionType}
+                                    </span>
+                                  </div>
+                                  <p className="text-sm md:text-base whitespace-pre-wrap leading-relaxed ml-8">
+                                    {parsedAction.query}
+                                  </p>
+                                </div>
+                                <Button
+                                  onClick={() => {
+                                    setChatQuery(parsedAction.fullMessage);
+                                    handleChatQuery(parsedAction.fullMessage);
+                                  }}
+                                  size="icon"
+                                  variant="ghost"
+                                  className="h-7 w-7 text-purple-600 hover:text-purple-700 hover:bg-purple-100 dark:text-purple-400 dark:hover:bg-purple-900/30"
+                                  title="Resend action"
+                                >
+                                  <RotateCcw className="h-3.5 w-3.5" />
+                                </Button>
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <p className={`text-sm md:text-base whitespace-pre-wrap leading-relaxed ${message.type === "ai" && styles ? styles.text : ""}`} style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+                              {content}
+                            </p>
+                          );
+                        })()}
                         {message.resultType === "CONFIRMATION_REQUIRED" && confirmationStatus[message.id] !== 'confirmed' && confirmationStatus[message.id] !== 'rejected' && (
                           <div className="mt-4 flex gap-2">
                             <Button
@@ -2947,7 +3018,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                     isItemAttached(doc.id)
                                       ? 'bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
                                       : 'bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
-                                  } text-white shadow-xl border-2 border-white/50 hover:scale-110 transition-all z-20`}
+                                  } text-white shadow-xl border-2 border-white/50 hover:scale-110 transition-all z-30`}
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     e.preventDefault();
@@ -2999,7 +3070,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                       isItemAttached(doc.id)
                                         ? 'bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
                                         : 'bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
-                                    } text-white shadow-xl border-2 border-white/30 hover:scale-110 hover:border-white/50 transition-all z-20`}
+                                    } text-white shadow-xl border-2 border-white/30 hover:scale-110 hover:border-white/50 transition-all z-30`}
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       e.preventDefault();
@@ -3099,9 +3170,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           )}
         </AnimatePresence>
 
-        {/* Mobile: Floating Action Buttons - Stacked with Labels */}
-        <div className="md:hidden fixed bottom-24 right-4 z-20 flex flex-col items-center gap-4">
-          {/* Cart Button */}
+        {/* Mobile: Cart Button - Top Position */}
+        <div className="md:hidden fixed top-32 right-4 z-20">
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -3118,7 +3188,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               Cart
             </span>
           </motion.div>
+        </div>
 
+        {/* Mobile: Floating Action Buttons - Bottom Position */}
+        <div className="md:hidden fixed bottom-24 right-4 z-20 flex flex-col items-center gap-4">
           {/* Browse Products Button */}
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
@@ -3200,16 +3273,16 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   </Button>
                 </div>
 
-                {/* Products Grid */}
+                {/* Products List in Rows */}
                 <div className="p-6 overflow-y-auto max-h-[calc(65vh-120px)]">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
                     {browseProductCategories.map((category, idx) => {
                       const Icon = category.icon;
                       return (
                         <motion.div
                           key={category.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: idx * 0.05 }}
                           onClick={() => {
                             handleQuickAction(category.query, "catalog", "navigator");
@@ -3217,15 +3290,15 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           }}
                           className="cursor-pointer group"
                         >
-                          <div className="overflow-hidden rounded-2xl border-2 border-gray-200 dark:border-gray-700 hover:border-purple-500 active:scale-95 transition-all shadow-md hover:shadow-xl">
-                            <div className={`h-24 bg-gradient-to-br ${category.color} flex items-center justify-center relative overflow-hidden`}>
-                              <Icon className="h-12 w-12 text-white/90 group-hover:scale-110 transition-transform" />
-                              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all" />
+                          <div className="flex items-center gap-3 p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-purple-500 active:scale-98 transition-all shadow-sm hover:shadow-md bg-white dark:bg-gray-800">
+                            <div className={`p-2 bg-gradient-to-br ${category.color} rounded-lg flex-shrink-0`}>
+                              <Icon className="h-5 w-5 text-white" />
                             </div>
-                            <div className="p-3 bg-white dark:bg-gray-800">
-                              <h3 className="font-bold text-sm mb-1">{category.label}</h3>
+                            <div className="flex-1">
+                              <h3 className="font-bold text-sm mb-0.5">{category.label}</h3>
                               <p className="text-xs text-muted-foreground">{category.description}</p>
                             </div>
+                            <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all" />
                           </div>
                         </motion.div>
                       );
@@ -3237,7 +3310,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           )}
         </AnimatePresence>
 
-        {/* Mobile: AI Search Circular Menu */}
+        {/* Mobile: AI Search Bottom Sheet */}
         <AnimatePresence>
           {isAISearchOpen && (
             <>
@@ -3246,49 +3319,68 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="md:hidden fixed inset-0 bg-black/50 z-30"
+                className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-30"
                 onClick={() => setIsAISearchOpen(false)}
               />
 
-              {/* Circular Menu */}
+              {/* Bottom Sheet */}
               <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                className="md:hidden fixed bottom-24 right-4 z-40"
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 rounded-t-3xl shadow-2xl z-40 max-h-[50vh] overflow-hidden"
               >
-                <div className="relative">
-                  {aiSearchCategories.map((category, idx) => {
-                    // Fan layout spreading upward in an arc
-                    const totalItems = aiSearchCategories.length;
-                    const angle = -135 + (idx * (100 / (totalItems - 1))); // Spread from upper-left to upper-right (wider arc)
-                    const radius = 130; // Increased radius to prevent overlap
-                    const x = Math.cos((angle * Math.PI) / 180) * radius;
-                    const y = Math.sin((angle * Math.PI) / 180) * radius;
+                {/* Handle */}
+                <div className="flex justify-center pt-3 pb-2">
+                  <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full" />
+                </div>
 
-                    return (
-                      <motion.div
-                        key={category.label}
-                        initial={{ scale: 0, x: 0, y: 0 }}
-                        animate={{ scale: 1, x, y }}
-                        exit={{ scale: 0, x: 0, y: 0 }}
-                        transition={{ delay: idx * 0.05 }}
-                        className="absolute"
-                        style={{ bottom: 0, right: 0 }}
-                      >
-                        <Button
-                          onClick={() => handleAISearchCategory(category)}
-                          size="sm"
-                          className="h-14 w-14 rounded-full bg-white hover:bg-gray-50 border-2 border-purple-200 shadow-xl flex flex-col items-center justify-center p-1"
+                {/* Header */}
+                <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Search className="h-5 w-5 text-cyan-600 dark:text-cyan-400" />
+                    <h3 className="text-lg font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">AI Search</h3>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsAISearchOpen(false)}
+                    className="h-8 w-8"
+                  >
+                    <X className="h-5 w-5" />
+                  </Button>
+                </div>
+
+                {/* Categories in Rows */}
+                <div className="p-6 overflow-y-auto max-h-[calc(50vh-120px)]">
+                  <div className="space-y-2">
+                    {aiSearchCategories.map((category, idx) => {
+                      return (
+                        <motion.div
+                          key={category.label}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: idx * 0.05 }}
+                          onClick={() => {
+                            handleAISearchCategory(category);
+                            setIsAISearchOpen(false);
+                          }}
+                          className="cursor-pointer group"
                         >
-                          <category.icon className={`h-4 w-4 ${category.color} mb-0.5`} />
-                          <span className={`text-[8px] font-semibold ${category.color} leading-none`}>
-                            {category.label}
-                          </span>
-                        </Button>
-                      </motion.div>
-                    );
-                  })}
+                          <div className="flex items-center gap-3 p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-cyan-500 active:scale-98 transition-all shadow-sm hover:shadow-md bg-white dark:bg-gray-800">
+                            <div className="p-2 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-lg flex-shrink-0">
+                              <category.icon className="h-5 w-5 text-white" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className={`font-bold text-sm ${category.color}`}>{category.label}</h3>
+                            </div>
+                            <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-cyan-600 group-hover:translate-x-1 transition-all" />
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
                 </div>
               </motion.div>
             </>
@@ -3789,7 +3881,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                     isItemAttached(doc.id)
                                       ? 'bg-gradient-to-br from-green-500 to-emerald-500'
                                       : 'bg-gradient-to-br from-purple-600 to-pink-600'
-                                  } text-white shadow-lg border border-white/30`}
+                                  } text-white shadow-lg border border-white/30 hover:scale-110 transition-all z-30`}
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     handleAttachDocument(doc);
