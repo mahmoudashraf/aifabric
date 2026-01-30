@@ -2974,30 +2974,31 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                 )}
                               </div>
                             )}
-                            <CardHeader className="pb-3 relative">
-                              {/* Attach Button - Always Visible */}
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                className={`absolute top-2 right-2 h-10 w-10 ${
-                                  isItemAttached(doc.id)
-                                    ? 'bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
-                                    : 'bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
-                                } text-white shadow-xl border-2 border-white/50 hover:scale-110 hover:border-white/50 transition-all z-50`}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  e.preventDefault();
-                                  handleAttachDocument(doc);
-                                }}
-                                title={isItemAttached(doc.id) ? "Already in Chat" : "Attach to Chat"}
-                              >
-                                {isItemAttached(doc.id) ? (
-                                  <CheckCircle2 className="h-5 w-5" />
-                                ) : (
-                                  <BrainCircuit className="h-5 w-5" />
-                                )}
-                              </Button>
+                            {/* Attach Button - Always Visible - Outside CardHeader for better access */}
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className={`absolute top-2 right-2 h-10 w-10 ${
+                                isItemAttached(doc.id)
+                                  ? 'bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
+                                  : 'bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
+                              } text-white shadow-xl border-2 border-white/50 hover:scale-110 hover:border-white/50 transition-all z-50 pointer-events-auto cursor-pointer`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                console.log('Attaching document:', doc.title, doc.id);
+                                handleAttachDocument(doc);
+                              }}
+                              title={isItemAttached(doc.id) ? "Already in Chat" : "Attach to Chat"}
+                            >
+                              {isItemAttached(doc.id) ? (
+                                <CheckCircle2 className="h-5 w-5" />
+                              ) : (
+                                <BrainCircuit className="h-5 w-5" />
+                              )}
+                            </Button>
 
+                            <CardHeader className="pb-3 relative pt-2">
                               <div className="flex items-start justify-between gap-2 pr-12">
                                 <div className="flex items-start gap-3 flex-1">
                                   {!doc.metadata?.imageUrl && (
@@ -3773,11 +3774,14 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                     isItemAttached(doc.id)
                                       ? 'bg-gradient-to-br from-green-500 to-emerald-500'
                                       : 'bg-gradient-to-br from-purple-600 to-pink-600'
-                                  } text-white shadow-lg border border-white/30 hover:scale-110 transition-all z-30`}
+                                  } text-white shadow-lg border border-white/30 hover:scale-110 transition-all z-50 pointer-events-auto cursor-pointer`}
                                   onClick={(e) => {
                                     e.stopPropagation();
+                                    e.preventDefault();
+                                    console.log('Mobile - Attaching document:', doc.title, doc.id);
                                     handleAttachDocument(doc);
                                   }}
+                                  title={isItemAttached(doc.id) ? "Already in Chat" : "Attach to Chat"}
                                 >
                                   {isItemAttached(doc.id) ? (
                                     <CheckCircle2 className="h-4 w-4" />
