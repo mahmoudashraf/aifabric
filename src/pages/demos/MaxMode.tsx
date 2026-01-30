@@ -1511,7 +1511,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
     setChatMessages((prev) => [...prev, userMessage]);
     setChatQuery("");
-    setSearchCategory(null); // Clear search category after sending
+    // Keep search category persistent - user can manually clear it
     setIsLoading(true);
 
     // Keep attachments for next query, only clear suggestions
@@ -3803,29 +3803,6 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             </motion.div>
           )}
 
-          {/* Search Category Tag */}
-          {searchCategory && (
-            <motion.div
-              initial={{ opacity: 0, y: 5 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-2"
-            >
-              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-2 border-blue-500/30 rounded-full shadow-sm">
-                <Search className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-blue-600 dark:text-blue-400" />
-                <span className="text-xs sm:text-sm font-semibold text-blue-700 dark:text-blue-300">
-                  {searchCategory}
-                </span>
-                <button
-                  onClick={clearSearchCategory}
-                  className="h-5 w-5 rounded-full bg-blue-200/50 dark:bg-blue-800/50 hover:bg-blue-300 dark:hover:bg-blue-700 flex items-center justify-center transition-colors ml-1"
-                  title="Clear search category"
-                >
-                  <X className="h-3 w-3 text-blue-700 dark:text-blue-300" />
-                </button>
-              </div>
-            </motion.div>
-          )}
-
           {/* Locked conversation banner */}
           {oldConversationLocked && (
             <motion.div
@@ -3861,6 +3838,28 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
             {/* Input container */}
             <div className="relative flex-1">
+              {/* Search Category Tag inside input */}
+              {searchCategory && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="absolute top-2 left-2 z-10"
+                >
+                  <div className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1 bg-gradient-to-r from-blue-500/90 to-purple-500/90 border border-blue-400/50 rounded-full shadow-md backdrop-blur-sm">
+                    <Search className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-white" />
+                    <span className="text-[10px] sm:text-xs font-semibold text-white">
+                      {searchCategory}
+                    </span>
+                    <button
+                      onClick={clearSearchCategory}
+                      className="h-4 w-4 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
+                      title="Clear search category"
+                    >
+                      <X className="h-2.5 w-2.5 text-white" />
+                    </button>
+                  </div>
+                </motion.div>
+              )}
               <Textarea
                 ref={chatInputRef}
                 placeholder={
@@ -3885,7 +3884,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 disabled={oldConversationLocked}
                 className={`${
                   isInputFocused ? 'min-h-[80px] sm:min-h-[100px] md:min-h-[80px]' : 'min-h-[44px] sm:min-h-[48px] md:min-h-[80px]'
-                } pr-12 sm:pr-14 md:pr-16 text-sm sm:text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed transition-all ${
+                } ${searchCategory ? 'pt-10 sm:pt-10' : ''} pr-12 sm:pr-14 md:pr-16 text-sm sm:text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed transition-all ${
                   oldConversationLocked ? 'bg-gray-100 dark:bg-gray-800 cursor-not-allowed opacity-60' : ''
                 }`}
                 style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', fontSize: '16px' }}
