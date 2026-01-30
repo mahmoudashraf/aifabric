@@ -3095,7 +3095,44 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         </AnimatePresence>
 
         {/* Mobile: Floating Action Buttons - Stacked with Labels */}
-        <div className="md:hidden fixed bottom-24 right-4 z-20 flex flex-col items-center gap-6">
+        <div className="md:hidden fixed bottom-24 right-4 z-20 flex flex-col items-center gap-5">
+          {/* Browse Products Button */}
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="flex flex-col items-center gap-1"
+          >
+            <Button
+              onClick={() => setIsBrowseProductsOpen(!isBrowseProductsOpen)}
+              size="lg"
+              className="h-14 w-14 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-rose-500 hover:from-purple-600 hover:via-pink-600 hover:to-rose-600 text-white shadow-2xl border-2 border-white/30"
+            >
+              <List className="h-6 w-6" />
+            </Button>
+            <span className="text-[10px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
+              Browse Products
+            </span>
+          </motion.div>
+
+          {/* Search Products Button */}
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.05 }}
+            className="flex flex-col items-center gap-1"
+          >
+            <Button
+              onClick={() => setIsAISearchOpen(!isAISearchOpen)}
+              size="lg"
+              className="h-14 w-14 rounded-full bg-gradient-to-br from-cyan-500 via-blue-500 to-indigo-500 hover:from-cyan-600 hover:via-blue-600 hover:to-indigo-600 text-white shadow-2xl border-2 border-white/30"
+            >
+              <Search className="h-6 w-6" />
+            </Button>
+            <span className="text-[10px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
+              Search Products
+            </span>
+          </motion.div>
+
           {/* Cart Button */}
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
@@ -3114,25 +3151,86 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               Cart
             </span>
           </motion.div>
-
-          {/* Browse Products Button (AI Search) */}
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="flex flex-col items-center gap-1"
-          >
-            <Button
-              onClick={() => setIsAISearchOpen(!isAISearchOpen)}
-              size="lg"
-              className="h-14 w-14 rounded-full bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-500 hover:from-cyan-600 hover:via-blue-600 hover:to-purple-600 text-white shadow-2xl border-2 border-white/30"
-            >
-              <Search className="h-6 w-6" />
-            </Button>
-            <span className="text-[10px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
-              Browse Products
-            </span>
-          </motion.div>
         </div>
+
+        {/* Mobile: Browse Products Bottom Sheet */}
+        <AnimatePresence>
+          {isBrowseProductsOpen && (
+            <>
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-30"
+                onClick={() => setIsBrowseProductsOpen(false)}
+              />
+
+              {/* Bottom Sheet */}
+              <motion.div
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 rounded-t-3xl shadow-2xl z-40 max-h-[65vh] overflow-hidden"
+              >
+                {/* Handle */}
+                <div className="flex justify-center pt-3 pb-2">
+                  <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full" />
+                </div>
+
+                {/* Header */}
+                <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Package className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                    <h3 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Browse Products</h3>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsBrowseProductsOpen(false)}
+                    className="h-8 w-8"
+                  >
+                    <X className="h-5 w-5" />
+                  </Button>
+                </div>
+
+                {/* Products Grid */}
+                <div className="p-6 overflow-y-auto max-h-[calc(65vh-120px)]">
+                  <div className="grid grid-cols-2 gap-4">
+                    {browseProductCategories.map((category, idx) => {
+                      const Icon = category.icon;
+                      return (
+                        <motion.div
+                          key={category.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: idx * 0.05 }}
+                          onClick={() => {
+                            handleQuickAction(category.query, "catalog", "navigator");
+                            setIsBrowseProductsOpen(false);
+                          }}
+                          className="cursor-pointer group"
+                        >
+                          <div className="overflow-hidden rounded-2xl border-2 border-gray-200 dark:border-gray-700 hover:border-purple-500 active:scale-95 transition-all shadow-md hover:shadow-xl">
+                            <div className={`h-24 bg-gradient-to-br ${category.color} flex items-center justify-center relative overflow-hidden`}>
+                              <Icon className="h-12 w-12 text-white/90 group-hover:scale-110 transition-transform" />
+                              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all" />
+                            </div>
+                            <div className="p-3 bg-white dark:bg-gray-800">
+                              <h3 className="font-bold text-sm mb-1">{category.label}</h3>
+                              <p className="text-xs text-muted-foreground">{category.description}</p>
+                            </div>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
 
         {/* Mobile: AI Search Circular Menu */}
         <AnimatePresence>
