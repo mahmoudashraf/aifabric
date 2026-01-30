@@ -132,38 +132,51 @@ export async function fetchSuggestions(
   reviews?: Review[],
   coupons?: Coupon[]
 ): Promise<string[]> {
-  // Build content string from attached items
+  // Build attachments array with vector space format
+  const attachments = [
+    ...products.map((p) => ({
+      id: p.id,
+      vectorSpace: "product",
+      contentText: `${p.name} - ${p.category || 'General'} - $${p.price}`,
+      source: "ui-card",
+    })),
+    ...(reviews || []).map((r) => ({
+      id: r.id || `review-${r.productId}`,
+      vectorSpace: "review",
+      contentText: `${r.rating} stars - ${r.comment || r.text || ''}`,
+      source: "ui-card",
+    })),
+    ...(coupons || []).map((c) => ({
+      id: c.id || c.code,
+      vectorSpace: "coupon",
+      contentText: `${c.code} - ${c.description}`,
+      source: "ui-card",
+    })),
+  ];
+
+  const activeAttachmentIds = attachments.map(a => a.id);
+
+  // Build content description
   const contentParts: string[] = [];
-
   if (products.length > 0) {
-    const productDescriptions = products.map(p =>
-      `Product: ${p.name} (${p.category || 'General'}) - $${p.price}`
-    ).join('; ');
-    contentParts.push(`Attached products: ${productDescriptions}`);
+    contentParts.push(`Products: ${products.map(p => p.name).join(', ')}`);
   }
-
   if (reviews && reviews.length > 0) {
-    const reviewDescriptions = reviews.map(r =>
-      `Review: ${r.rating} stars - "${r.comment || r.text || ''}"`
-    ).join('; ');
-    contentParts.push(`Attached reviews: ${reviewDescriptions}`);
+    contentParts.push(`Reviews: ${reviews.length} attached`);
   }
-
   if (coupons && coupons.length > 0) {
-    const couponDescriptions = coupons.map(c =>
-      `Coupon: ${c.code} - ${c.description}`
-    ).join('; ');
-    contentParts.push(`Attached coupons: ${couponDescriptions}`);
+    contentParts.push(`Coupons: ${coupons.map(c => c.code).join(', ')}`);
   }
-
-  const content = contentParts.join('. ');
 
   const response = await fetch(`${API_BASE_URL}/chat/suggestions`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      content,
+      content: contentParts.join('; ') || "Give me suggestions based on attached items",
+      userId,
       maxSuggestions: 5,
+      attachments: attachments.length > 0 ? attachments : undefined,
+      activeAttachmentIds: activeAttachmentIds.length > 0 ? activeAttachmentIds : undefined,
     }),
   });
 

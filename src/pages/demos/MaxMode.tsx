@@ -863,34 +863,50 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     const timeoutId = setTimeout(async () => {
       setIsLoadingSuggestions(true);
       try {
-        // Build content string from attached items
-        const contentParts: string[] = [];
-
-        attachedItems.forEach(item => {
+        // Build attachments array with vector space format
+        const attachments = attachedItems.map(item => {
+          // Build content text
           const parts: string[] = [];
           if (item.data.name) parts.push(item.data.name);
           if (item.data.title) parts.push(item.data.title);
           if (item.data.category) parts.push(`(${item.data.category})`);
           if (item.data.price) parts.push(`$${item.data.price}`);
           if (item.data.code) parts.push(`Code: ${item.data.code}`);
-          if (item.data.description) parts.push(item.data.description);
 
-          if (parts.length > 0) {
-            contentParts.push(`${item.type}: ${parts.join(' - ')}`);
-          }
+          // Map item type to vectorSpace
+          let vectorSpace = "product";
+          if (item.type === "order") vectorSpace = "order";
+          else if (item.type === "review") vectorSpace = "review";
+          else if (item.type === "coupon") vectorSpace = "coupon";
+
+          return {
+            id: item.data.id || item.data.sku || Date.now().toString(),
+            vectorSpace,
+            contentText: parts.join(' - '),
+            source: "ui-card",
+          };
         });
 
-        const content = contentParts.join('; ');
+        const activeAttachmentIds = attachments.map(a => a.id);
 
-        // Use /chat/suggestions endpoint
+        // Build content description
+        const contentParts = attachedItems.map(item => {
+          const name = item.data.name || item.data.title || item.data.code || 'Item';
+          return `${item.type}: ${name}`;
+        });
+
+        // Use /chat/suggestions endpoint with new format
         const response = await fetch(`${API_BASE_URL}/chat/suggestions`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            content,
+            content: contentParts.join('; ') || "Give me suggestions based on attached items",
+            userId: "demo-user",
             maxSuggestions: 4,
+            attachments: attachments.length > 0 ? attachments : undefined,
+            activeAttachmentIds: activeAttachmentIds.length > 0 ? activeAttachmentIds : undefined,
           }),
         });
 
