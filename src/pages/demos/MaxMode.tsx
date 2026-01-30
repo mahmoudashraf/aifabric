@@ -863,146 +863,49 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     const timeoutId = setTimeout(async () => {
       setIsLoadingSuggestions(true);
       try {
-        // Build attachments with vector space format - same as demo page
-        const attachmentsWithMetadata = attachedItems.map(item => {
-          // Build comprehensive content text with key details for RAG
-          const contentParts: string[] = [];
-          if (item.data.sku) contentParts.push(`SKU: ${item.data.sku}`);
-          if (item.data.name) contentParts.push(item.data.name);
-          if (item.data.title) contentParts.push(item.data.title);
-          if (item.data.description) contentParts.push(item.data.description);
-          if (item.data.content) contentParts.push(item.data.content);
-          if (item.data.price) contentParts.push(`Price: ${item.data.price} ${item.data.currency || 'USD'}`);
-          if (item.data.category) contentParts.push(`Category: ${item.data.category}`);
-          if (item.data.status) contentParts.push(`Status: ${item.data.status}`);
-          const contentText = contentParts.join(' | ');
+        // Build content string from attached items
+        const contentParts: string[] = [];
 
-          // Map item type to correct vectorSpace
-          let vectorSpace = "product";
-          if (item.type === "order") {
-            vectorSpace = "order";
-          } else if (item.type === "review") {
-            vectorSpace = "review";
-          } else if (item.type === "coupon") {
-            vectorSpace = "coupon";
-          } else if (item.type === "document") {
-            const docCategory = item.data.metadata?.category?.toLowerCase();
-            vectorSpace = docCategory === "order" ? "order" : "product";
+        attachedItems.forEach(item => {
+          const parts: string[] = [];
+          if (item.data.name) parts.push(item.data.name);
+          if (item.data.title) parts.push(item.data.title);
+          if (item.data.category) parts.push(`(${item.data.category})`);
+          if (item.data.price) parts.push(`$${item.data.price}`);
+          if (item.data.code) parts.push(`Code: ${item.data.code}`);
+          if (item.data.description) parts.push(item.data.description);
+
+          if (parts.length > 0) {
+            contentParts.push(`${item.type}: ${parts.join(' - ')}`);
           }
-
-          // Build metadata
-          const fullMetadata = {
-            ...(item.data.metadata || {}),
-            id: item.data.id,
-            sku: item.data.sku,
-            name: item.data.name,
-            title: item.data.title,
-            description: item.data.description,
-            price: item.data.price,
-            category: item.data.category || item.data.type,
-            inStockQty: item.data.inStockQty,
-            imageUrl: item.data.imageUrl,
-            rating: item.data.rating,
-            reviewCount: item.data.reviewCount,
-            status: item.data.status,
-            code: item.data.code,
-            discountType: item.data.discountType,
-            discountValue: item.data.discountValue,
-          };
-
-          // Remove undefined values
-          Object.keys(fullMetadata).forEach(key => {
-            if (fullMetadata[key] === undefined) {
-              delete fullMetadata[key];
-            }
-          });
-
-          const rawId = item.data.id || item.data.sku || Date.now().toString();
-          const cleanId = String(rawId).replace(/[\[\]\(\)"'`]/g, '').trim();
-
-          return {
-            id: cleanId,
-            vectorSpace,
-            contentSnippet: contentText,
-            metadata: fullMetadata,
-            source: item.type,
-            url: String(item.data.url || "").replace(/[\[\]\(\)"'`]/g, '').trim(),
-            imageUrl: String(item.data.imageUrl || item.data.metadata?.imageUrl || "").replace(/[\[\]\(\)"'`]/g, '').trim(),
-          };
         });
 
-        const activeAttachmentIds = attachmentsWithMetadata.map(a => a.id);
+        const content = contentParts.join('; ');
 
-        // Use /chat/query endpoint - same as demo page
-        const response = await fetch(`${API_BASE_URL}/chat/query`, {
+        // Use /chat/suggestions endpoint
+        const response = await fetch(`${API_BASE_URL}/chat/suggestions`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            query: "Give me most suitable 5 suggestion (questions/actions) based on available actions and attached items",
-            userId: "demo-user",
-            sessionId: "demo-session-max",
-            position: "checkout",
-            mode: "copilot",
-            attachments: attachmentsWithMetadata.length > 0 ? attachmentsWithMetadata : undefined,
-            activeAttachmentIds: activeAttachmentIds.length > 0 ? activeAttachmentIds : undefined,
+            content,
+            maxSuggestions: 4,
           }),
         });
 
         if (response.ok) {
           const data = await response.json();
-          // Extract suggestions from the response
-          let newSuggestions: string[] = [];
-
-          // Helper to extract string from suggestion (handles both string and object formats)
-          const extractSuggestionText = (suggestion: unknown): string | null => {
-            if (typeof suggestion === 'string') {
-              return suggestion;
+          // Response format: { success, message, suggestions: string[], raw }
+          if (data.suggestions && Array.isArray(data.suggestions)) {
+            const newSuggestions = data.suggestions.filter(
+              (s: unknown): s is string => typeof s === 'string' && s.length > 0
+            );
+            if (newSuggestions.length > 0) {
+              setSuggestions(newSuggestions.slice(0, 4));
+              setShowSuggestions(true);
+              setTimeout(() => setShowSuggestions(false), 5000);
             }
-            if (suggestion && typeof suggestion === 'object') {
-              // API returns objects with {intent, query, rationale, confidence, sanitization}
-              const obj = suggestion as Record<string, unknown>;
-              if (typeof obj.query === 'string') {
-                return obj.query;
-              }
-              if (typeof obj.text === 'string') {
-                return obj.text;
-              }
-              if (typeof obj.suggestion === 'string') {
-                return obj.suggestion;
-              }
-            }
-            return null;
-          };
-
-          if (data.result?.sanitizedPayload?.suggestions && Array.isArray(data.result.sanitizedPayload.suggestions)) {
-            newSuggestions = data.result.sanitizedPayload.suggestions
-              .map(extractSuggestionText)
-              .filter((s: string | null): s is string => s !== null && s.length > 0);
-          } else if (data.result?.sanitizedPayload?.message) {
-            // Try to extract suggestions from numbered list in message
-            const message = data.result.sanitizedPayload.message;
-            if (typeof message === 'string') {
-              const lines = message.split('\n').filter((line: string) => line.trim());
-              const parsed = lines
-                .filter((line: string) => /^\d+[\.\)]\s*/.test(line.trim()))
-                .map((line: string) => line.replace(/^\d+[\.\)]\s*/, '').trim())
-                .filter((s: string) => s.length > 0);
-              if (parsed.length > 0) {
-                newSuggestions = parsed;
-              }
-            }
-          } else if (data.suggestions && Array.isArray(data.suggestions)) {
-            newSuggestions = data.suggestions
-              .map(extractSuggestionText)
-              .filter((s: string | null): s is string => s !== null && s.length > 0);
-          }
-
-          if (newSuggestions.length > 0) {
-            setSuggestions(newSuggestions.slice(0, 4));
-            setShowSuggestions(true);
-            setTimeout(() => setShowSuggestions(false), 5000);
           }
         } else {
           // Fallback to generic suggestions on error

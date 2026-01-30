@@ -132,138 +132,51 @@ export async function fetchSuggestions(
   reviews?: Review[],
   coupons?: Coupon[]
 ): Promise<string[]> {
-  // Build attachments with vector space format - same as sendChatQuery
-  const attachmentsWithMetadata = [
-    ...products.map((p) => ({
-      id: p.id,
-      vectorSpace: "product",
-      contentSnippet: p.description || p.name || "",
-      metadata: {
-        id: p.id,
-        sku: p.sku,
-        name: p.name,
-        description: p.description,
-        price: p.price,
-        category: p.category,
-        inStockQty: p.inStockQty,
-        imageUrl: p.imageUrl,
-        rating: p.rating,
-        reviewCount: p.reviewCount,
-      },
-      source: "product",
-      url: "",
-      imageUrl: p.imageUrl || "",
-    })),
-    ...(reviews || []).map((r) => ({
-      id: r.id,
-      vectorSpace: "review",
-      contentSnippet: r.comment || "",
-      metadata: {
-        id: r.id,
-        productId: r.productId,
-        userId: r.userId,
-        rating: r.rating,
-        comment: r.comment,
-        createdAt: r.createdAt,
-      },
-      source: "review",
-      url: "",
-      imageUrl: "",
-    })),
-    ...(coupons || []).map((c) => ({
-      id: c.id,
-      vectorSpace: "coupon",
-      contentSnippet: c.description || c.code || "",
-      metadata: {
-        id: c.id,
-        code: c.code,
-        description: c.description,
-        discountType: c.discountType,
-        discountValue: c.discountValue,
-        minPurchase: c.minPurchase,
-        maxDiscount: c.maxDiscount,
-        validFrom: c.validFrom,
-        validUntil: c.validUntil,
-        usageLimit: c.usageLimit,
-        usedCount: c.usedCount,
-      },
-      source: "coupon",
-      url: "",
-      imageUrl: "",
-    })),
-  ];
+  // Build content string from attached items
+  const contentParts: string[] = [];
 
-  const activeAttachmentIds = attachmentsWithMetadata.map(a => a.id);
+  if (products.length > 0) {
+    const productDescriptions = products.map(p =>
+      `Product: ${p.name} (${p.category || 'General'}) - $${p.price}`
+    ).join('; ');
+    contentParts.push(`Attached products: ${productDescriptions}`);
+  }
 
-  const response = await fetch(`${API_BASE_URL}/chat/query`, {
+  if (reviews && reviews.length > 0) {
+    const reviewDescriptions = reviews.map(r =>
+      `Review: ${r.rating} stars - "${r.comment || r.text || ''}"`
+    ).join('; ');
+    contentParts.push(`Attached reviews: ${reviewDescriptions}`);
+  }
+
+  if (coupons && coupons.length > 0) {
+    const couponDescriptions = coupons.map(c =>
+      `Coupon: ${c.code} - ${c.description}`
+    ).join('; ');
+    contentParts.push(`Attached coupons: ${couponDescriptions}`);
+  }
+
+  const content = contentParts.join('. ');
+
+  const response = await fetch(`${API_BASE_URL}/chat/suggestions`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      query: "Give me most suitable 5 suggestion (questions/actions) based on available actions and attached items",
-      userId,
-      sessionId,
-      position: "checkout",
-      mode: "copilot",
-      attachments: attachmentsWithMetadata.length > 0 ? attachmentsWithMetadata : undefined,
-      activeAttachmentIds: activeAttachmentIds.length > 0 ? activeAttachmentIds : undefined,
+      content,
+      maxSuggestions: 5,
     }),
   });
 
   if (!response.ok) throw new Error("Failed to fetch suggestions");
   const data = await response.json();
 
-  // Helper to extract string from suggestion (handles both string and object formats)
-  const extractSuggestionText = (suggestion: unknown): string | null => {
-    if (typeof suggestion === 'string') {
-      return suggestion;
-    }
-    if (suggestion && typeof suggestion === 'object') {
-      // API returns objects with {intent, query, rationale, confidence, sanitization}
-      const obj = suggestion as Record<string, unknown>;
-      if (typeof obj.query === 'string') {
-        return obj.query;
-      }
-      if (typeof obj.text === 'string') {
-        return obj.text;
-      }
-      if (typeof obj.suggestion === 'string') {
-        return obj.suggestion;
-      }
-    }
-    return null;
-  };
-
-  // Extract suggestions from the response - they might be in the result payload
-  if (data.result && data.result.sanitizedPayload && data.result.sanitizedPayload.suggestions) {
-    const rawSuggestions = data.result.sanitizedPayload.suggestions;
-    if (Array.isArray(rawSuggestions)) {
-      return rawSuggestions
-        .map(extractSuggestionText)
-        .filter((s): s is string => s !== null && s.length > 0);
-    }
-  }
-  // Fallback: try to parse suggestions from the message if it's an array
-  if (data.result && data.result.sanitizedPayload && data.result.sanitizedPayload.message) {
-    // Try to extract suggestions from the message if they're formatted as a list
-    const message = data.result.sanitizedPayload.message;
-    if (typeof message === 'string') {
-      // Check if message contains numbered list
-      const lines = message.split('\n').filter((line: string) => line.trim());
-      const suggestions = lines
-        .filter((line: string) => /^\d+[\.\)]\s*/.test(line.trim()))
-        .map((line: string) => line.replace(/^\d+[\.\)]\s*/, '').trim())
-        .filter((s: string) => s.length > 0);
-      if (suggestions.length > 0) {
-        return suggestions;
-      }
-    }
-  }
-  // Also check for suggestions at the top level of data
+  // Response format: { success, message, suggestions: string[], raw }
   if (data.suggestions && Array.isArray(data.suggestions)) {
-    return data.suggestions
-      .map(extractSuggestionText)
-      .filter((s): s is string => s !== null && s.length > 0);
+    return data.suggestions.filter((s: unknown): s is string =>
+      typeof s === 'string' && s.length > 0
+    );
   }
+
   return [];
 }
 
