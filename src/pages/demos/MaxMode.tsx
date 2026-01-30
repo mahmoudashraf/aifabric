@@ -75,6 +75,37 @@ const normalizeMessageContent = (value: unknown): string => {
   }
 };
 
+const parseActionMessage = (content: string): { isAction: boolean; actionType: string; query: string; fullMessage: string } => {
+  const actionMatch = content.match(/^Action:\s*([^:]+):\s*(.+)$/i);
+  if (actionMatch) {
+    return {
+      isAction: true,
+      actionType: actionMatch[1].trim(),
+      query: actionMatch[2].trim(),
+      fullMessage: content
+    };
+  }
+  return { isAction: false, actionType: '', query: content, fullMessage: content };
+};
+
+const getActionIcon = (actionType: string) => {
+  const type = actionType.toLowerCase();
+  if (type.includes('list') || type.includes('search') || type.includes('find')) {
+    return Search;
+  } else if (type.includes('add to cart') || type.includes('cart')) {
+    return ShoppingCart;
+  } else if (type.includes('checkout') || type.includes('order')) {
+    return Receipt;
+  } else if (type.includes('product') || type.includes('details')) {
+    return Package;
+  } else if (type.includes('compare')) {
+    return TrendingUp;
+  } else if (type.includes('recommend')) {
+    return Sparkles;
+  }
+  return Wand2; // Default action icon
+};
+
 interface MaxModeProps {
   isOpen: boolean;
   onClose: () => void;
@@ -2396,9 +2427,49 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             })}
                           </div>
                         )}
-                        <p className={`text-sm md:text-base whitespace-pre-wrap leading-relaxed ${message.type === "ai" && styles ? styles.text : ""}`} style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
-                          {normalizeMessageContent(message.content)}
-                        </p>
+                        {(() => {
+                          const content = normalizeMessageContent(message.content);
+                          const parsedAction = parseActionMessage(content);
+
+                          if (message.type === "user" && parsedAction.isAction) {
+                            const ActionIcon = getActionIcon(parsedAction.actionType);
+                            return (
+                              <div className="flex items-start gap-2">
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <div className="p-1.5 bg-gradient-to-br from-purple-500 to-pink-500 rounded-md">
+                                      <ActionIcon className="h-3.5 w-3.5 text-white" />
+                                    </div>
+                                    <span className="text-xs font-semibold text-purple-600 dark:text-purple-400">
+                                      {parsedAction.actionType}
+                                    </span>
+                                  </div>
+                                  <p className="text-sm md:text-base whitespace-pre-wrap leading-relaxed ml-8">
+                                    {parsedAction.query}
+                                  </p>
+                                </div>
+                                <Button
+                                  onClick={() => {
+                                    setChatQuery(parsedAction.fullMessage);
+                                    handleChatQuery(parsedAction.fullMessage);
+                                  }}
+                                  size="icon"
+                                  variant="ghost"
+                                  className="h-7 w-7 text-purple-600 hover:text-purple-700 hover:bg-purple-100 dark:text-purple-400 dark:hover:bg-purple-900/30"
+                                  title="Resend action"
+                                >
+                                  <RotateCcw className="h-3.5 w-3.5" />
+                                </Button>
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <p className={`text-sm md:text-base whitespace-pre-wrap leading-relaxed ${message.type === "ai" && styles ? styles.text : ""}`} style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+                              {content}
+                            </p>
+                          );
+                        })()}
                         {message.resultType === "CONFIRMATION_REQUIRED" && confirmationStatus[message.id] !== 'confirmed' && confirmationStatus[message.id] !== 'rejected' && (
                           <div className="mt-4 flex gap-2">
                             <Button
@@ -3099,9 +3170,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           )}
         </AnimatePresence>
 
-        {/* Mobile: Floating Action Buttons - Stacked with Labels */}
-        <div className="md:hidden fixed bottom-24 right-4 z-20 flex flex-col items-center gap-4">
-          {/* Cart Button */}
+        {/* Mobile: Cart Button - Top Position */}
+        <div className="md:hidden fixed top-32 right-4 z-20">
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -3118,7 +3188,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               Cart
             </span>
           </motion.div>
+        </div>
 
+        {/* Mobile: Floating Action Buttons - Bottom Position */}
+        <div className="md:hidden fixed bottom-24 right-4 z-20 flex flex-col items-center gap-4">
           {/* Browse Products Button */}
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
