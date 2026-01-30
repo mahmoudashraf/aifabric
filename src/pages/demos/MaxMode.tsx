@@ -2395,32 +2395,29 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           if (message.type === "user" && parsedAction.isAction) {
                             const ActionIcon = getActionIcon(parsedAction.actionType);
                             return (
-                              <div className="flex items-start gap-2">
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <div className="p-1.5 bg-gradient-to-br from-purple-500 to-pink-500 rounded-md">
-                                      <ActionIcon className="h-3.5 w-3.5 text-white" />
-                                    </div>
-                                    <span className="text-xs font-semibold text-purple-600 dark:text-purple-400">
-                                      {parsedAction.actionType}
-                                    </span>
+                              <div className="relative group">
+                                <div className="flex items-center gap-3 p-4 rounded-2xl bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-900/20 dark:via-pink-900/20 dark:to-blue-900/20 border-2 border-purple-200 dark:border-purple-700 shadow-md hover:shadow-lg transition-all">
+                                  <div className="flex items-center justify-center h-10 w-10 rounded-xl bg-gradient-to-br from-purple-500 via-pink-500 to-blue-500 shadow-lg flex-shrink-0">
+                                    <ActionIcon className="h-5 w-5 text-white" />
                                   </div>
-                                  <p className="text-sm md:text-base whitespace-pre-wrap leading-relaxed ml-8">
-                                    {parsedAction.query}
-                                  </p>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-base md:text-lg font-semibold text-gray-900 dark:text-white leading-tight">
+                                      {parsedAction.query}
+                                    </p>
+                                  </div>
+                                  <Button
+                                    onClick={() => {
+                                      setChatQuery(parsedAction.fullMessage);
+                                      handleChatQuery(parsedAction.fullMessage);
+                                    }}
+                                    size="icon"
+                                    variant="ghost"
+                                    className="h-9 w-9 rounded-xl bg-white dark:bg-gray-800 border border-purple-200 dark:border-purple-700 text-purple-600 hover:text-purple-700 hover:bg-purple-50 dark:text-purple-400 dark:hover:bg-purple-900/30 shadow-sm hover:shadow-md transition-all flex-shrink-0"
+                                    title="Resend action"
+                                  >
+                                    <RotateCcw className="h-4 w-4" />
+                                  </Button>
                                 </div>
-                                <Button
-                                  onClick={() => {
-                                    setChatQuery(parsedAction.fullMessage);
-                                    handleChatQuery(parsedAction.fullMessage);
-                                  }}
-                                  size="icon"
-                                  variant="ghost"
-                                  className="h-7 w-7 text-purple-600 hover:text-purple-700 hover:bg-purple-100 dark:text-purple-400 dark:hover:bg-purple-900/30"
-                                  title="Resend action"
-                                >
-                                  <RotateCcw className="h-3.5 w-3.5" />
-                                </Button>
                               </div>
                             );
                           }
