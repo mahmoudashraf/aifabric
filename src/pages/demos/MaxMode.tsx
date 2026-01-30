@@ -2395,32 +2395,37 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           if (message.type === "user" && parsedAction.isAction) {
                             const ActionIcon = getActionIcon(parsedAction.actionType);
                             return (
-                              <div className="flex items-start gap-2">
-                                <div className="flex-1">
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <div className="p-1.5 bg-gradient-to-br from-purple-500 to-pink-500 rounded-md">
-                                      <ActionIcon className="h-3.5 w-3.5 text-white" />
+                              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500 via-pink-500 to-purple-600 p-[2px] shadow-lg">
+                                <div className="relative bg-white dark:bg-gray-900 rounded-2xl p-4">
+                                  <div className="flex items-center gap-3 mb-3">
+                                    <div className="p-2.5 bg-gradient-to-br from-purple-500 via-pink-500 to-purple-600 rounded-xl shadow-md">
+                                      <ActionIcon className="h-5 w-5 text-white" />
                                     </div>
-                                    <span className="text-xs font-semibold text-purple-600 dark:text-purple-400">
-                                      {parsedAction.actionType}
-                                    </span>
+                                    <div className="flex-1">
+                                      <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">
+                                        {parsedAction.actionType}
+                                      </span>
+                                    </div>
+                                    <Button
+                                      onClick={() => {
+                                        setChatQuery(parsedAction.fullMessage);
+                                        handleChatQuery(parsedAction.fullMessage);
+                                      }}
+                                      size="icon"
+                                      variant="ghost"
+                                      className="h-8 w-8 rounded-lg bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/30 dark:hover:bg-purple-900/50 text-purple-600 dark:text-purple-400 transition-all hover:scale-105"
+                                      title="Resend action"
+                                    >
+                                      <RotateCcw className="h-4 w-4" />
+                                    </Button>
                                   </div>
-                                  <p className="text-sm md:text-base whitespace-pre-wrap leading-relaxed ml-8">
+                                  <p className="text-base md:text-lg font-semibold text-gray-900 dark:text-gray-100 leading-relaxed">
                                     {parsedAction.query}
                                   </p>
+
+                                  {/* Decorative shine effect */}
+                                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-200/20 to-transparent rounded-full blur-2xl -z-10" />
                                 </div>
-                                <Button
-                                  onClick={() => {
-                                    setChatQuery(parsedAction.fullMessage);
-                                    handleChatQuery(parsedAction.fullMessage);
-                                  }}
-                                  size="icon"
-                                  variant="ghost"
-                                  className="h-7 w-7 text-purple-600 hover:text-purple-700 hover:bg-purple-100 dark:text-purple-400 dark:hover:bg-purple-900/30"
-                                  title="Resend action"
-                                >
-                                  <RotateCcw className="h-3.5 w-3.5" />
-                                </Button>
                               </div>
                             );
                           }
