@@ -1324,8 +1324,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     setCurrentPosition("catalog");
     setCurrentMode("navigator");
 
-    // Set the query in the input
-    setChatQuery(category.query);
+    // Don't set the query in the input - let user type their own query
+    // setChatQuery(category.query);
 
     toast({
       title: "🔍 AI Search Attached",
@@ -3094,31 +3094,45 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           )}
         </AnimatePresence>
 
-        {/* Mobile: AI Search Button */}
-        <motion.div
-          className="md:hidden fixed bottom-24 right-4 z-20"
-        >
-          <Button
-            onClick={() => setIsAISearchOpen(!isAISearchOpen)}
-            size="lg"
-            className="h-14 w-14 rounded-full bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-500 hover:from-cyan-600 hover:via-blue-600 hover:to-purple-600 text-white shadow-2xl border-2 border-white/30"
+        {/* Mobile: Floating Action Buttons - Stacked with Labels */}
+        <div className="md:hidden fixed bottom-24 right-4 z-20 flex flex-col items-center gap-4">
+          {/* Cart Button */}
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            className="flex flex-col items-center gap-1"
           >
-            <Search className="h-6 w-6" />
-          </Button>
-        </motion.div>
+            <Button
+              onClick={openCart}
+              size="lg"
+              className="h-14 w-14 rounded-full bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white shadow-2xl border-2 border-white/30"
+            >
+              <ShoppingCart className="h-6 w-6" />
+            </Button>
+            <span className="text-[10px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm">
+              Cart
+            </span>
+          </motion.div>
 
-        {/* Mobile: Cart Button */}
-        <motion.div
-          className="md:hidden fixed bottom-24 right-20 z-20"
-        >
-          <Button
-            onClick={openCart}
-            size="lg"
-            className="h-14 w-14 rounded-full bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white shadow-2xl border-2 border-white/30"
+          {/* Browse Products Button (AI Search) */}
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="flex flex-col items-center gap-1"
           >
-            <ShoppingCart className="h-6 w-6" />
-          </Button>
-        </motion.div>
+            <Button
+              onClick={() => setIsAISearchOpen(!isAISearchOpen)}
+              size="lg"
+              className="h-14 w-14 rounded-full bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-500 hover:from-cyan-600 hover:via-blue-600 hover:to-purple-600 text-white shadow-2xl border-2 border-white/30"
+            >
+              <Search className="h-6 w-6" />
+            </Button>
+            <span className="text-[10px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
+              Browse Products
+            </span>
+          </motion.div>
+        </div>
 
         {/* Mobile: AI Search Circular Menu */}
         <AnimatePresence>
@@ -4007,24 +4021,25 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
             {/* Input container */}
             <div className="relative flex-1">
-              {/* Search Category Tag inside input */}
+              {/* Search Category Tag inside input - Compact & Creative */}
               {searchCategory && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="absolute top-2 left-2 z-10"
+                  initial={{ opacity: 0, scale: 0.8, x: -10 }}
+                  animate={{ opacity: 1, scale: 1, x: 0 }}
+                  exit={{ opacity: 0, scale: 0.8, x: -10 }}
+                  className="absolute top-1.5 left-1.5 z-10"
                 >
-                  <div className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1 bg-gradient-to-r from-blue-500/90 to-purple-500/90 border border-blue-400/50 rounded-full shadow-md backdrop-blur-sm">
-                    <Search className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-white" />
-                    <span className="text-[10px] sm:text-xs font-semibold text-white">
+                  <div className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-md shadow-lg">
+                    <Search className="h-2.5 w-2.5 text-white flex-shrink-0" />
+                    <span className="text-[9px] font-bold text-white uppercase tracking-wide">
                       {searchCategory}
                     </span>
                     <button
                       onClick={clearSearchCategory}
-                      className="h-4 w-4 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
-                      title="Clear search category"
+                      className="h-3 w-3 rounded bg-white/25 hover:bg-white/40 flex items-center justify-center transition-all hover:scale-110 ml-0.5"
+                      title="Clear"
                     >
-                      <X className="h-2.5 w-2.5 text-white" />
+                      <X className="h-2 w-2 text-white stroke-[3]" />
                     </button>
                   </div>
                 </motion.div>
@@ -4035,7 +4050,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                   oldConversationLocked
                     ? "This conversation is locked..."
                     : searchCategory
-                    ? `Type your search query for ${searchCategory}...`
+                    ? "Type your search query..."
                     : attachedItems.length > 0
                     ? `Ask about ${attachedItems.length} item${attachedItems.length === 1 ? '' : 's'}...`
                     : "Ask me anything..."
@@ -4053,7 +4068,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 disabled={oldConversationLocked}
                 className={`${
                   isInputFocused ? 'min-h-[80px] sm:min-h-[100px] md:min-h-[80px]' : 'min-h-[44px] sm:min-h-[48px] md:min-h-[80px]'
-                } ${searchCategory ? 'pt-10 sm:pt-10' : ''} pr-12 sm:pr-14 md:pr-16 text-sm sm:text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed transition-all ${
+                } ${searchCategory ? 'pt-6 sm:pt-7' : ''} pr-12 sm:pr-14 md:pr-16 text-sm sm:text-base resize-none border-2 border-purple-500/30 focus:border-purple-500 rounded-2xl shadow-xl leading-relaxed transition-all ${
                   oldConversationLocked ? 'bg-gray-100 dark:bg-gray-800 cursor-not-allowed opacity-60' : ''
                 }`}
                 style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif', fontSize: '16px' }}
