@@ -612,6 +612,72 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     });
   }, [chatMessages, attachedItems, currentPosition, currentMode, currentConversationId, contextDocuments, maxModeContext]);
 
+  // Load most recent unlocked conversation on open (if no messages)
+  const hasLoadedRecentConversation = useRef(false);
+  useEffect(() => {
+    if (!isOpen || hasLoadedRecentConversation.current) return;
+    // Only load if we don't have existing messages
+    if (chatMessages.length > 0) {
+      hasLoadedRecentConversation.current = true;
+      return;
+    }
+
+    const loadRecentConversation = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/chat/conversations?ownerId=demo-user`);
+        if (!response.ok) return;
+        const convList: Conversation[] = await response.json();
+
+        if (convList.length === 0) return;
+
+        // Sort by lastInteractionAt or createdAt to get most recent
+        const sorted = [...convList].sort((a, b) => {
+          const dateA = new Date(a.lastInteractionAt || a.createdAt).getTime();
+          const dateB = new Date(b.lastInteractionAt || b.createdAt).getTime();
+          return dateB - dateA;
+        });
+
+        // Find the most recent unlocked conversation
+        const recentUnlocked = sorted.find(c => c.status !== "LOCKED" && c.status !== "CLOSED");
+
+        if (recentUnlocked) {
+          // Load the conversation
+          const convResponse = await fetch(`${API_BASE_URL}/chat/conversations/${recentUnlocked.id}?ownerId=demo-user`);
+          if (!convResponse.ok) return;
+          const data: ConversationDetail = await convResponse.json();
+
+          // Convert turns to chat messages
+          const messages: ChatMessage[] = [];
+          data.turns.forEach((turn, idx) => {
+            messages.push({
+              id: `${recentUnlocked.id}-user-${idx}`,
+              type: "user",
+              content: turn.userQuery,
+              timestamp: turn.timestamp,
+            });
+            messages.push({
+              id: `${recentUnlocked.id}-ai-${idx}`,
+              type: "ai",
+              content: turn.aiResponse,
+              timestamp: turn.timestamp,
+            });
+          });
+
+          setChatMessages(messages);
+          setCurrentConversationId(recentUnlocked.id);
+          setIsViewingOldConversation(false);
+          setOldConversationLocked(false);
+        }
+      } catch (error) {
+        console.error("Failed to load recent conversation:", error);
+      } finally {
+        hasLoadedRecentConversation.current = true;
+      }
+    };
+
+    loadRecentConversation();
+  }, [isOpen, chatMessages.length]);
+
   // Re-attach an item from a previous message
   const handleReattachItem = useCallback((item: { type: string; data: any }) => {
     setAttachedItems(prev => {
