@@ -24,7 +24,6 @@ import {
   Info,
   Ban,
   AlertTriangle,
-  Zap,
   FileText,
   Image as ImageIcon,
   Paperclip,
@@ -252,7 +251,7 @@ const ActionResultRenderer = ({
           <Button
             size="icon"
             variant="ghost"
-            className="absolute top-2 right-2 h-8 w-8 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg border border-white/30 hover:scale-110 transition-all z-10"
+            className="absolute top-2 right-2 h-8 w-8 bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg border border-white/30 hover:scale-110 transition-all"
             onClick={(e) => {
               e.stopPropagation();
               onAttach(item);
@@ -1004,7 +1003,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       } finally {
         setIsLoadingSuggestions(false);
       }
-    }, 2000); // 2 second delay for better UX
+    }, 10000); // 10 second delay for better UX
 
     return () => clearTimeout(timeoutId);
   }, [attachedItems]);
@@ -1317,8 +1316,12 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       }
     };
 
-    setAttachedItems(prev => [...prev, searchAttachment]);
+    // Replace existing AI search item instead of adding to the list
+    setAttachedItems(prev => [...prev.filter(item => item.type !== 'ai-search'), searchAttachment]);
     setIsAISearchOpen(false);
+
+    // Clear any existing search category tag (only one tag allowed)
+    setSearchCategory(null);
 
     // AI Search uses catalog position (discovery/browsing)
     setCurrentPosition("catalog");
@@ -1411,6 +1414,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     setSearchCategory(category);
     setIsSearchCategoryOpen(false);
     setIsQuickActionsOpen(false);
+    // Clear any existing AI Search items (only one tag allowed)
+    setAttachedItems(prev => prev.filter(item => item.type !== 'ai-search'));
     // Focus the input
     setTimeout(() => chatInputRef.current?.focus(), 100);
   };
@@ -2101,7 +2106,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 size="lg"
                 className="h-14 w-14 rounded-full bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white shadow-2xl border-2 border-white/30"
               >
-                <Zap className="h-6 w-6" />
+                <BrainCircuit className="h-6 w-6" />
               </Button>
               {/* Position indicator and Debug button - Mobile */}
               <div className="flex items-center gap-1">
@@ -2462,7 +2467,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           <ActionResultRenderer
                             data={message.result.sanitizedPayload.data.actionResult.data}
                             messageId={message.id}
-                            expandedCount={expandedActions[message.id] || 3}
+                            expandedCount={expandedActions[message.id] || 4}
                             onExpand={(count) => {
                               setExpandedActions(prev => ({
                                 ...prev,
@@ -3095,26 +3100,26 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         </AnimatePresence>
 
         {/* Mobile: Floating Action Buttons - Stacked with Labels */}
-        <div className="md:hidden fixed bottom-24 right-4 z-20 flex flex-col items-center gap-5">
-          {/* Browse Products Button */}
+        <div className="md:hidden fixed bottom-24 right-4 z-20 flex flex-col items-center gap-4">
+          {/* Cart Button */}
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             className="flex flex-col items-center gap-1"
           >
             <Button
-              onClick={() => setIsBrowseProductsOpen(!isBrowseProductsOpen)}
+              onClick={openCart}
               size="lg"
-              className="h-14 w-14 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-rose-500 hover:from-purple-600 hover:via-pink-600 hover:to-rose-600 text-white shadow-2xl border-2 border-white/30"
+              className="h-12 w-12 rounded-full bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white shadow-2xl border-2 border-white/30"
             >
-              <List className="h-6 w-6" />
+              <ShoppingCart className="h-5 w-5" />
             </Button>
-            <span className="text-[10px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
-              Browse Products
+            <span className="text-[9px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm">
+              Cart
             </span>
           </motion.div>
 
-          {/* Search Products Button */}
+          {/* Browse Products Button */}
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -3122,18 +3127,18 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             className="flex flex-col items-center gap-1"
           >
             <Button
-              onClick={() => setIsAISearchOpen(!isAISearchOpen)}
+              onClick={() => setIsBrowseProductsOpen(!isBrowseProductsOpen)}
               size="lg"
-              className="h-14 w-14 rounded-full bg-gradient-to-br from-cyan-500 via-blue-500 to-indigo-500 hover:from-cyan-600 hover:via-blue-600 hover:to-indigo-600 text-white shadow-2xl border-2 border-white/30"
+              className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-rose-500 hover:from-purple-600 hover:via-pink-600 hover:to-rose-600 text-white shadow-2xl border-2 border-white/30"
             >
-              <Search className="h-6 w-6" />
+              <List className="h-5 w-5" />
             </Button>
-            <span className="text-[10px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
-              Search Products
+            <span className="text-[9px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
+              Products
             </span>
           </motion.div>
 
-          {/* Cart Button */}
+          {/* AI Search Button */}
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -3141,14 +3146,14 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             className="flex flex-col items-center gap-1"
           >
             <Button
-              onClick={openCart}
+              onClick={() => setIsAISearchOpen(!isAISearchOpen)}
               size="lg"
-              className="h-14 w-14 rounded-full bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white shadow-2xl border-2 border-white/30"
+              className="h-12 w-12 rounded-full bg-gradient-to-br from-cyan-500 via-blue-500 to-indigo-500 hover:from-cyan-600 hover:via-blue-600 hover:to-indigo-600 text-white shadow-2xl border-2 border-white/30"
             >
-              <ShoppingCart className="h-6 w-6" />
+              <Search className="h-5 w-5" />
             </Button>
-            <span className="text-[10px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm">
-              Cart
+            <span className="text-[9px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
+              AI Search
             </span>
           </motion.div>
         </div>
@@ -3183,7 +3188,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Package className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                    <h3 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Browse Products</h3>
+                    <h3 className="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Products</h3>
                   </div>
                   <Button
                     variant="ghost"
