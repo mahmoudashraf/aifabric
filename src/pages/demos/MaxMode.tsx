@@ -755,7 +755,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   // AI Search menu categories (includes an actual query to populate the input)
   const aiSearchCategories = searchCategories.map((c) => ({
     ...c,
-    query: `Search products in category ${c.label} and show top results with prices and stock`,
+    query: `request retrieval and generation for product ${c.label} and show top results with prices and stock`,
   }));
 
   // Browse Products categories with specific ready-to-send queries
@@ -1587,7 +1587,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     // Build the API query - prepend category if set
     let apiQuery = query;
     if (currentSearchCategory) {
-      apiQuery = `search products for ${currentSearchCategory}: ${query}`;
+      apiQuery = `request retrieval and generation for product ${currentSearchCategory}: ${query}`;
     }
 
     // User message shows only the query text, category is stored separately as a tag
