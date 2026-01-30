@@ -2379,7 +2379,21 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             const ActionIcon = getActionIcon(parsedAction.actionType);
                             return (
                               <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500 via-pink-500 to-purple-600 p-[2px] shadow-lg">
-                                <div className="relative bg-white dark:bg-gray-900 rounded-2xl p-4">
+                                <div className="relative bg-white dark:bg-gray-900 rounded-2xl p-4 pl-16">
+                                  {/* Resend Button - Left Side, Vertically Centered */}
+                                  <Button
+                                    onClick={() => {
+                                      setChatQuery(parsedAction.fullMessage);
+                                      handleChatQuery(parsedAction.fullMessage);
+                                    }}
+                                    size="icon"
+                                    variant="ghost"
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-xl bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/30 dark:hover:bg-purple-900/50 text-purple-600 dark:text-purple-400 transition-all hover:scale-105 shadow-md"
+                                    title="Resend action"
+                                  >
+                                    <RotateCcw className="h-5 w-5" />
+                                  </Button>
+
                                   <div className="flex items-center gap-3 mb-3">
                                     <div className="p-2.5 bg-gradient-to-br from-purple-500 via-pink-500 to-purple-600 rounded-xl shadow-md">
                                       <ActionIcon className="h-5 w-5 text-white" />
@@ -2389,18 +2403,6 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                         {parsedAction.actionType}
                                       </span>
                                     </div>
-                                    <Button
-                                      onClick={() => {
-                                        setChatQuery(parsedAction.fullMessage);
-                                        handleChatQuery(parsedAction.fullMessage);
-                                      }}
-                                      size="icon"
-                                      variant="ghost"
-                                      className="h-8 w-8 rounded-lg bg-purple-50 hover:bg-purple-100 dark:bg-purple-900/30 dark:hover:bg-purple-900/50 text-purple-600 dark:text-purple-400 transition-all hover:scale-105"
-                                      title="Resend action"
-                                    >
-                                      <RotateCcw className="h-4 w-4" />
-                                    </Button>
                                   </div>
                                   <p className="text-base md:text-lg font-semibold text-gray-900 dark:text-gray-100 leading-relaxed">
                                     {parsedAction.query}
@@ -3989,15 +3991,11 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               className="mb-3"
             >
               <div className="p-4 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 rounded-xl border-2 border-purple-300/50 shadow-lg">
-                <div className="flex items-center justify-between mb-3">
-                  <p className="text-xs font-semibold text-purple-800 dark:text-purple-200 flex items-center gap-2">
-                    <Wand2 className="h-4 w-4" />
-                    AI Suggestions
-                  </p>
+                <div className="flex items-center gap-3 mb-3">
                   <Button
                     size="icon"
                     variant="ghost"
-                    className="h-6 w-6 text-purple-600 hover:text-purple-900"
+                    className="h-7 w-7 rounded-lg bg-purple-100 hover:bg-purple-200 dark:bg-purple-900/30 dark:hover:bg-purple-900/50 text-purple-600 hover:text-purple-900"
                     onClick={() => {
                       setShowSuggestions(false);
                       // Mark all current suggestions as shown
@@ -4005,8 +4003,12 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     }}
                     aria-label="Dismiss suggestions"
                   >
-                    <X className="h-3 w-3" />
+                    <ChevronDown className="h-4 w-4" />
                   </Button>
+                  <p className="text-xs font-semibold text-purple-800 dark:text-purple-200 flex items-center gap-2">
+                    <Wand2 className="h-4 w-4" />
+                    AI Suggestions
+                  </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {suggestions.map((suggestion, idx) => (
