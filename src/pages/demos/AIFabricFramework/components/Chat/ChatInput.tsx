@@ -1,11 +1,13 @@
-import { RefObject, KeyboardEvent } from "react";
+import { RefObject, KeyboardEvent, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, X, Zap, Loader2, Sparkles, Bot } from "lucide-react";
+import { Send, X, Zap, Loader2, Sparkles, Bot, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import type { Product, Review, Coupon } from "../../types";
+import { QuickTools } from "./QuickTools";
+import { BrowseProductsDialog } from "./BrowseProductsDialog";
+import type { Product, Review, Coupon, ActionTag } from "../../types";
 
 interface ChatInputProps {
   query: string;
@@ -22,6 +24,9 @@ interface ChatInputProps {
   isLoadingSuggestions: boolean;
   inputRef: RefObject<HTMLTextAreaElement>;
   onFocus?: () => void;
+  activeTag?: ActionTag | null;
+  onTagChange?: (tag: ActionTag | null) => void;
+  onTagSubmit?: (tag: ActionTag) => void;
 }
 
 export function ChatInput({
@@ -39,8 +44,12 @@ export function ChatInput({
   isLoadingSuggestions,
   inputRef,
   onFocus,
+  activeTag,
+  onTagChange,
+  onTagSubmit,
 }: ChatInputProps) {
   const navigate = useNavigate();
+  const [isBrowseDialogOpen, setIsBrowseDialogOpen] = useState(false);
 
   const hasAttachments =
     attachedProducts.length > 0 || attachedReviews.length > 0 || attachedCoupons.length > 0;
@@ -52,10 +61,85 @@ export function ChatInput({
     }
   };
 
+  const handleToolClick = (tag: ActionTag) => {
+    // Replace current tool with new one
+    if (tag.type === "browse") {
+      setIsBrowseDialogOpen(true);
+      return;
+    }
+
+    if (tag.type === "cart") {
+      // Directly submit the cart action
+      if (onTagSubmit) {
+        onTagSubmit(tag);
+      }
+      return;
+    }
+
+    // For search tool, just set it as active
+    if (onTagChange) {
+      onTagChange(activeTag?.type === tag.type ? null : tag);
+    }
+  };
+
+  const handleBrowseSelect = (query: string, label: string) => {
+    const browseTag: ActionTag = {
+      id: Date.now().toString(),
+      type: "browse",
+      label: label,
+      query: query,
+      timestamp: new Date().toISOString(),
+    };
+
+    if (onTagSubmit) {
+      onTagSubmit(browseTag);
+    }
+  };
+
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background/95 to-transparent pt-12 pb-6 px-4 z-40">
-      <div className="max-w-4xl mx-auto">
-        {/* Attachments display */}
+    <>
+      <BrowseProductsDialog
+        isOpen={isBrowseDialogOpen}
+        onClose={() => setIsBrowseDialogOpen(false)}
+        onSelect={handleBrowseSelect}
+      />
+      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background/95 to-transparent pt-8 sm:pt-12 pb-4 sm:pb-6 px-3 sm:px-4 z-40">
+        <div className="max-w-4xl mx-auto">
+          {/* Quick Tools */}
+          <QuickTools activeTag={activeTag || null} onToolClick={handleToolClick} />
+
+          {/* Active Tag Display */}
+          <AnimatePresence>
+            {activeTag && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="mb-2"
+              >
+                <Badge
+                  variant="secondary"
+                  className="pr-1 flex items-center gap-2 w-fit"
+                >
+                  {activeTag.type === "search" && <span>🔍 Search Mode</span>}
+                  {activeTag.type === "cart" && (
+                    <>
+                      <ShoppingCart className="h-3 w-3" />
+                      <span>My Cart</span>
+                    </>
+                  )}
+                  <button
+                    onClick={() => onTagChange && onTagChange(null)}
+                    className="ml-1 hover:bg-muted rounded-full p-0.5"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Attachments display */}
         <AnimatePresence>
           {hasAttachments && (
             <motion.div
@@ -143,8 +227,8 @@ export function ChatInput({
         </AnimatePresence>
 
         {/* Input area */}
-        <div className="flex gap-3 items-end bg-background/95 backdrop-blur-md rounded-2xl border-2 border-primary/20 shadow-xl shadow-primary/5 p-3">
-          <div className="flex items-center text-primary/60 pl-1">
+        <div className="flex gap-2 sm:gap-3 items-end bg-background/95 backdrop-blur-md rounded-2xl border-2 border-primary/20 shadow-xl shadow-primary/5 p-2 sm:p-3">
+          <div className="hidden sm:flex items-center text-primary/60 pl-1">
             <Bot className="h-5 w-5" />
           </div>
           <Textarea
@@ -158,18 +242,18 @@ export function ChatInput({
                 ? "Ask about attached items..."
                 : "Ask about products, orders, or get help..."
             }
-            className="flex-1 min-h-[52px] max-h-[140px] resize-none border-0 focus-visible:ring-0 bg-transparent text-base"
+            className="flex-1 min-h-[44px] sm:min-h-[52px] max-h-[120px] sm:max-h-[140px] resize-none border-0 focus-visible:ring-0 bg-transparent text-sm sm:text-base"
             rows={1}
           />
-          <div className="flex gap-2 items-center">
+          <div className="flex gap-1.5 sm:gap-2 items-center">
             <Button
               variant="outline"
               onClick={() => navigate("/maxAI")}
-              className="h-10 px-3 gap-2 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border-purple-500/30 hover:border-purple-500/50 hover:bg-purple-500/20"
+              className="h-9 sm:h-10 px-2 sm:px-3 gap-1 sm:gap-2 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border-purple-500/30 hover:border-purple-500/50 hover:bg-purple-500/20"
               title="Open MAX AI Mode"
             >
-              <Zap className="h-4 w-4 text-purple-500" />
-              <span className="text-sm font-medium bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <Zap className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-purple-500" />
+              <span className="text-xs sm:text-sm font-medium bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                 MAX
               </span>
             </Button>
@@ -177,17 +261,17 @@ export function ChatInput({
               size="icon"
               onClick={onSubmit}
               disabled={isLoading || !query.trim()}
-              className="h-10 w-10"
+              className="h-9 w-9 sm:h-10 sm:w-10"
             >
               {isLoading ? (
-                <Loader2 className="h-5 w-5 animate-spin" />
+                <Loader2 className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
               ) : (
-                <Send className="h-5 w-5" />
+                <Send className="h-4 w-4 sm:h-5 sm:w-5" />
               )}
             </Button>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

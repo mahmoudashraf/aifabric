@@ -4,7 +4,7 @@ import { useMaxModeContextOptional } from "@/contexts/MaxModeContext";
 import * as api from "../utils/api";
 import type { ChatPosition, ChatMode } from "../utils/api";
 import { DEFAULT_USER_ID, DEFAULT_SESSION_ID } from "../constants";
-import type { ChatMessage, Product, Review, Coupon, Conversation } from "../types";
+import type { ChatMessage, Product, Review, Coupon, Conversation, ActionTag } from "../types";
 
 // Helper to determine position based on context
 function determinePosition(
@@ -55,6 +55,9 @@ export function useChat() {
   // Suggestions
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+
+  // Action Tags
+  const [activeTag, setActiveTag] = useState<ActionTag | null>(null);
 
   // Track if query came from suggestion
   const isSuggestionQueryRef = useRef(false);
@@ -564,6 +567,80 @@ export function useChat() {
     }
   }, []);
 
+  // Handle resending an action
+  const handleResendAction = useCallback(async (query: string) => {
+    await handleChatQuery(query);
+  }, [handleChatQuery]);
+
+  // Handle tag submission (for cart and browse actions)
+  const handleTagSubmit = useCallback(async (tag: ActionTag) => {
+    // Create user message with action tag
+    const userMessage: ChatMessage = {
+      id: Date.now().toString(),
+      type: "user",
+      content: tag.query,
+      timestamp: new Date().toISOString(),
+      actionTag: tag,
+    };
+
+    setChatMessages((prev) => [...prev, userMessage]);
+    setIsLoading(true);
+    setIsChatExpanded(true);
+
+    // Clear active tag
+    setActiveTag(null);
+
+    try {
+      const data = await api.sendChatQuery(
+        tag.query,
+        DEFAULT_USER_ID,
+        DEFAULT_SESSION_ID,
+        currentConversationId || undefined,
+        undefined,
+        currentPosition,
+        currentMode
+      );
+
+      if (data.conversationId && !currentConversationId) {
+        setCurrentConversationId(data.conversationId);
+      }
+
+      let messageContent: unknown = "";
+      let result = undefined;
+      let resultType = undefined;
+
+      if (data.result && data.result.sanitizedPayload) {
+        messageContent = data.result.sanitizedPayload.message || "I processed your request successfully.";
+        result = data.result;
+        resultType = data.result.type;
+      } else {
+        messageContent = data.response || data.message || "I processed your request successfully.";
+      }
+
+      const normalizedContent =
+        typeof messageContent === "string" ? messageContent : JSON.stringify(messageContent, null, 2);
+
+      const aiMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        type: "ai",
+        content: normalizedContent,
+        timestamp: new Date().toISOString(),
+        result: result,
+        resultType: resultType,
+      };
+
+      setChatMessages((prev) => [...prev, aiMessage]);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to process your request. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [currentConversationId, currentPosition, currentMode, toast]);
+
   return {
     // State
     chatMessages,
@@ -579,6 +656,7 @@ export function useChat() {
     isLoadingSuggestions,
     currentPosition,
     currentMode,
+    activeTag,
 
     // Refs
     messagesEndRef,
@@ -589,6 +667,7 @@ export function useChat() {
     setChatQuery,
     setIsChatExpanded,
     setPosition,
+    setActiveTag,
 
     // Actions
     loadConversations,
@@ -602,5 +681,7 @@ export function useChat() {
     handleAttachCoupon,
     handleRemoveAttachedCoupon,
     scrollToBottom,
+    handleTagSubmit,
+    handleResendAction,
   };
 }

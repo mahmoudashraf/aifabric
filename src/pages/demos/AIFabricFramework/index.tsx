@@ -45,7 +45,7 @@ export default function AIFabricFramework() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      <div className="container mx-auto px-4 py-8 pb-32">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 pb-[180px] sm:pb-32">
         {/* Header with migration controls */}
         <Header
           stockFill={migration.stockFill}
@@ -92,7 +92,7 @@ export default function AIFabricFramework() {
 
         {/* Main content tabs */}
         <Tabs defaultValue="products" className="w-full">
-          <TabsList className="grid w-full grid-cols-6 mb-6">
+          <TabsList className="grid w-full grid-cols-6 mb-4 sm:mb-6 h-auto sm:h-10">
             <TabsTrigger value="products" className="gap-2">
               <Package className="h-4 w-4" />
               <span className="hidden sm:inline">Products</span>
@@ -197,6 +197,7 @@ export default function AIFabricFramework() {
         isLoading={chat.isLoading}
         onConfirmation={chat.handleConfirmationAction}
         messagesEndRef={chat.messagesEndRef}
+        onResendAction={chat.handleResendAction}
       />
 
       {/* Chat input */}
@@ -215,6 +216,9 @@ export default function AIFabricFramework() {
         isLoadingSuggestions={chat.isLoadingSuggestions}
         inputRef={chat.chatInputRef}
         onFocus={() => chat.setIsChatExpanded(true)}
+        activeTag={chat.activeTag}
+        onTagChange={chat.setActiveTag}
+        onTagSubmit={chat.handleTagSubmit}
       />
     </div>
   );
