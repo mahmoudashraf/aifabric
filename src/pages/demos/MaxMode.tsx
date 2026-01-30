@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useMaxModeContextOptional } from "@/contexts/MaxModeContext";
 import {
   X,
   Send,
@@ -504,6 +505,81 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const contextPanelEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLTextAreaElement>(null);
   const { toast } = useToast();
+
+  // MaxMode context for state persistence and sharing with demo page
+  const maxModeContext = useMaxModeContextOptional();
+  const hasLoadedPersistedState = useRef(false);
+
+  // Load persisted state and pending attachments on mount
+  useEffect(() => {
+    if (!maxModeContext || hasLoadedPersistedState.current) return;
+    hasLoadedPersistedState.current = true;
+
+    // Load persisted state
+    const persistedState = maxModeContext.loadPersistedState();
+    if (persistedState) {
+      if (persistedState.chatMessages.length > 0) {
+        setChatMessages(persistedState.chatMessages);
+      }
+      if (persistedState.attachedItems.length > 0) {
+        setAttachedItems(persistedState.attachedItems);
+      }
+      if (persistedState.currentPosition) {
+        setCurrentPosition(persistedState.currentPosition);
+      }
+      if (persistedState.currentMode) {
+        setCurrentMode(persistedState.currentMode);
+      }
+      if (persistedState.conversationId) {
+        setCurrentConversationId(persistedState.conversationId);
+      }
+      if (persistedState.contextDocuments && persistedState.contextDocuments.length > 0) {
+        setContextDocuments(persistedState.contextDocuments);
+      }
+    }
+
+    // Load pending attachments from demo page
+    const pending = maxModeContext.getPendingAttachments();
+    if (pending && pending.length > 0) {
+      setAttachedItems(prev => {
+        const newItems = pending.filter(p =>
+          !prev.some(existing =>
+            existing.type === p.type &&
+            (existing.data.id === p.data.id || existing.data.sku === p.data.sku)
+          )
+        );
+        return [...prev, ...newItems];
+      });
+      maxModeContext.clearPendingAttachments();
+    }
+  }, [maxModeContext]);
+
+  // Persist state when it changes
+  useEffect(() => {
+    if (!maxModeContext) return;
+
+    maxModeContext.updateMaxModeState({
+      chatMessages,
+      attachedItems,
+      currentPosition,
+      currentMode,
+      conversationId: currentConversationId,
+      contextDocuments,
+    });
+  }, [chatMessages, attachedItems, currentPosition, currentMode, currentConversationId, contextDocuments, maxModeContext]);
+
+  // Re-attach an item from a previous message
+  const handleReattachItem = useCallback((item: { type: string; data: any }) => {
+    setAttachedItems(prev => {
+      // Check if already attached
+      const exists = prev.some(existing =>
+        existing.type === item.type &&
+        (existing.data.id === item.data.id || existing.data.sku === item.data.sku)
+      );
+      if (exists) return prev;
+      return [...prev, item];
+    });
+  }, []);
 
   // Quick action tools - aligned with available backend actions
   // Position: "catalog" for browsing/discovery, "checkout" for cart/order actions
@@ -1824,6 +1900,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                           <div className="mb-3 space-y-2">
                             {message.attachedItems.map((item, idx) => {
                               const isAISearch = item.type === 'ai-search';
+                              const isAlreadyAttached = attachedItems.some(attached =>
+                                attached.type === item.type &&
+                                (attached.data.id === item.data.id || attached.data.sku === item.data.sku)
+                              );
                               return (
                                 <div key={idx} className={`p-2 rounded-lg border text-xs flex items-center gap-2 ${
                                   isAISearch
@@ -1835,7 +1915,38 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                   ) : (
                                     <Paperclip className="h-3 w-3" />
                                   )}
-                                  <span className="font-semibold">{item.data.title || `${item.data.type || item.type}: ${item.data.name || ''}`}</span>
+                                  <span className="flex-1 font-semibold">{item.data.title || `${item.data.type || item.type}: ${item.data.name || ''}`}</span>
+                                  {!isAISearch && (
+                                    <button
+                                      onClick={() => {
+                                        if (isAlreadyAttached) {
+                                          toast({
+                                            title: "Already Attached",
+                                            description: `This item is already attached to chat`,
+                                            variant: "default",
+                                          });
+                                          return;
+                                        }
+                                        handleReattachItem(item);
+                                        toast({
+                                          title: "💬 Re-attached to Chat",
+                                          description: `Item is now part of the conversation`,
+                                        });
+                                      }}
+                                      className={`p-1 rounded transition-colors ${
+                                        isAlreadyAttached
+                                          ? 'text-green-500 cursor-default'
+                                          : 'text-gray-400 hover:text-purple-600 hover:bg-purple-100/20'
+                                      }`}
+                                      title={isAlreadyAttached ? "Already attached" : "Re-attach to chat"}
+                                    >
+                                      {isAlreadyAttached ? (
+                                        <CheckCircle2 className="h-3.5 w-3.5" />
+                                      ) : (
+                                        <Plus className="h-3.5 w-3.5" />
+                                      )}
+                                    </button>
+                                  )}
                                 </div>
                               );
                             })}

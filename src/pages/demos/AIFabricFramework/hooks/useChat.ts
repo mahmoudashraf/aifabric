@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useMaxModeContextOptional } from "@/contexts/MaxModeContext";
 import * as api from "../utils/api";
 import type { ChatPosition, ChatMode } from "../utils/api";
 import { DEFAULT_USER_ID, DEFAULT_SESSION_ID } from "../constants";
@@ -32,6 +33,7 @@ function determinePosition(
 
 export function useChat() {
   const { toast } = useToast();
+  const maxModeContext = useMaxModeContextOptional();
 
   // Chat state
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -381,9 +383,12 @@ export function useChat() {
     setCurrentPosition("checkout");
     setCurrentMode("copilot");
 
+    // Add to pending attachments for MaxMode
+    maxModeContext?.addPendingAttachment({ type: 'product', data: product });
+
     // Fetch suggestions for all attachments
     fetchSuggestionsForAttachments(newProducts);
-  }, [attachedProducts, fetchSuggestionsForAttachments]);
+  }, [attachedProducts, fetchSuggestionsForAttachments, maxModeContext]);
 
   const handleRemoveAttachment = useCallback((productId: string) => {
     const newProducts = attachedProducts.filter((p) => p.id !== productId);
@@ -408,9 +413,11 @@ export function useChat() {
     // Set position to checkout when review is attached
     setCurrentPosition("checkout");
     setCurrentMode("copilot");
+    // Add to pending attachments for MaxMode
+    maxModeContext?.addPendingAttachment({ type: 'review', data: review });
     // Fetch suggestions with the new reviews
     fetchSuggestionsForAttachments(attachedProducts, newReviews);
-  }, [attachedProducts, attachedReviews, fetchSuggestionsForAttachments]);
+  }, [attachedProducts, attachedReviews, fetchSuggestionsForAttachments, maxModeContext]);
 
   const handleRemoveAttachedReview = useCallback((reviewId: string) => {
     const newReviews = attachedReviews.filter((r) => r.id !== reviewId);
@@ -434,9 +441,11 @@ export function useChat() {
     // Set position to checkout when coupon is attached
     setCurrentPosition("checkout");
     setCurrentMode("copilot");
+    // Add to pending attachments for MaxMode
+    maxModeContext?.addPendingAttachment({ type: 'coupon', data: coupon });
     // Fetch suggestions with the new coupons
     fetchSuggestionsForAttachments(attachedProducts, attachedReviews, newCoupons);
-  }, [attachedProducts, attachedReviews, attachedCoupons, fetchSuggestionsForAttachments]);
+  }, [attachedProducts, attachedReviews, attachedCoupons, fetchSuggestionsForAttachments, maxModeContext]);
 
   const handleRemoveAttachedCoupon = useCallback((couponId: string) => {
     const newCoupons = attachedCoupons.filter((c) => c.id !== couponId);
