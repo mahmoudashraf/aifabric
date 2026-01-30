@@ -1003,7 +1003,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       } finally {
         setIsLoadingSuggestions(false);
       }
-    }, 2000); // 2 second delay for better UX
+    }, 10000); // 10 second delay for better UX
 
     return () => clearTimeout(timeoutId);
   }, [attachedItems]);
