@@ -1,6 +1,6 @@
 import { RefObject, KeyboardEvent, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, X, Zap, Loader2, Sparkles, Bot, ShoppingCart } from "lucide-react";
+import { Send, X, Zap, Loader2, Sparkles, Bot, ShoppingCart, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";

@@ -282,12 +282,12 @@ const ActionResultRenderer = ({
 
     return (
       <div key={itemId || idx} className="relative group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 transition-all hover:shadow-xl overflow-hidden">
-        {/* Attach Button */}
+        {/* Attach Button - z-20 ensures it stays above image hover effects */}
         {onAttach && (
           <Button
             size="icon"
             variant="ghost"
-            className={`absolute top-2 right-2 h-8 w-8 ${
+            className={`absolute top-2 right-2 z-20 h-8 w-8 ${
               isItemAlreadyAttached
                 ? 'bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
                 : 'bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600'
@@ -306,9 +306,9 @@ const ActionResultRenderer = ({
           </Button>
         )}
 
-        {/* Product Image */}
+        {/* Product Image - z-10 keeps it below the attach button */}
         {imageUrl && (
-          <div className="aspect-[4/3] w-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800">
+          <div className="aspect-[4/3] w-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 relative z-10">
             <img
               src={imageUrl}
               alt={name}
