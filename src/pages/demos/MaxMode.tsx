@@ -3229,7 +3229,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       </AnimatePresence>
 
       {/* Mobile: All Floating Action Buttons - Single Column - z-40 stays below input area */}
-        <div className="md:hidden fixed bottom-24 right-1 z-40 flex flex-col-reverse items-center gap-3">
+        <div className="md:hidden fixed bottom-32 right-1 z-40 flex flex-col-reverse items-center gap-3">
           {/* AI Search Button */}
           <motion.div
             ref={aiSearchButtonRef}
