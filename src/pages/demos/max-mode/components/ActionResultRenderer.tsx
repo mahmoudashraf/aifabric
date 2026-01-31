@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle2, Paperclip, Star } from "lucide-react";
+import { CheckCircle2, Paperclip, Search, Sparkles, Star } from "lucide-react";
 
 import { formatFieldName, formatFieldValue } from "../utils";
 
@@ -70,7 +70,7 @@ export const ActionResultRenderer = ({
         )}
 
         {imageUrl && (
-          <div className="aspect-[4/3] w-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 relative">
+          <div className="aspect-square w-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 relative">
             <img
               src={imageUrl}
               alt={name}
@@ -82,27 +82,27 @@ export const ActionResultRenderer = ({
           </div>
         )}
 
-        <div className="p-3">
-          <div className="flex items-center gap-2 mb-1">
+        <div className="p-2.5">
+          <div className="flex items-center gap-1.5 mb-0.5">
             {brand && (
-              <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wide">
+              <span className="text-[9px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wide">
                 {brand}
               </span>
             )}
-            {category && <span className="text-[10px] text-gray-500 dark:text-gray-400">{category}</span>}
+            {category && <span className="text-[9px] text-gray-500 dark:text-gray-400">{category}</span>}
           </div>
 
-          <h4 className="font-bold text-sm text-gray-800 dark:text-gray-100 line-clamp-2 mb-2">{name}</h4>
+          <h4 className="font-bold text-xs text-gray-800 dark:text-gray-100 line-clamp-2 mb-1.5">{name}</h4>
 
           <div className="flex items-center justify-between">
             {price !== undefined && (
-              <span className="text-lg font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+              <span className="text-base font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                 ${typeof price === "number" ? price.toLocaleString() : price}
               </span>
             )}
             {stockQty !== undefined && (
               <span
-                className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${
                   stockQty > 50
                     ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
                     : stockQty > 0
@@ -110,19 +110,19 @@ export const ActionResultRenderer = ({
                       : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
                 }`}
               >
-                {stockQty > 0 ? `${stockQty} in stock` : "Out of stock"}
+                {stockQty > 0 ? `${stockQty}` : "Out"}
               </span>
             )}
           </div>
 
-          <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+          <div className="flex items-center justify-between mt-1.5 pt-1.5 border-t border-gray-100 dark:border-gray-700">
             {rating !== undefined && (
-              <div className="flex items-center gap-1">
-                <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{rating}</span>
+              <div className="flex items-center gap-0.5">
+                <Star className="h-2.5 w-2.5 fill-yellow-400 text-yellow-400" />
+                <span className="text-[10px] font-medium text-gray-600 dark:text-gray-400">{rating}</span>
               </div>
             )}
-            {sku && <span className="text-[10px] text-gray-400 dark:text-gray-500 font-mono">{sku}</span>}
+            {sku && <span className="text-[9px] text-gray-400 dark:text-gray-500 font-mono truncate max-w-[80px]">{sku}</span>}
           </div>
         </div>
       </div>
@@ -201,8 +201,18 @@ export const ActionResultRenderer = ({
 
     return (
       <div className="mt-3">
+        <div className="flex items-center gap-2 mb-3 pb-2 border-b-2 border-blue-200 dark:border-blue-800">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full border border-blue-300/50 dark:border-blue-700/50">
+            <Search className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+            <span className="text-xs font-bold text-blue-700 dark:text-blue-300">Items</span>
+          </div>
+          <div className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
+            <Sparkles className="h-3 w-3" />
+            <span className="font-medium">{data.length} results found</span>
+          </div>
+        </div>
         {hasProducts ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {visibleItems.map((item: any, idx: number) =>
               isProductLike(item) ? renderProductCard(item, idx) : renderGenericCard(item, idx)
             )}
@@ -242,9 +252,18 @@ export const ActionResultRenderer = ({
 
             return (
               <div key={arrayKey}>
-                <h4 className="text-sm font-bold mb-2 text-blue-700 dark:text-blue-300">{formatFieldName(arrayKey)}</h4>
+                <div className="flex items-center gap-2 mb-3 pb-2 border-b-2 border-blue-200 dark:border-blue-800">
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full border border-blue-300/50 dark:border-blue-700/50">
+                    <Search className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                    <span className="text-xs font-bold text-blue-700 dark:text-blue-300">{formatFieldName(arrayKey)}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
+                    <Sparkles className="h-3 w-3" />
+                    <span className="font-medium">{arrayData.length} results found</span>
+                  </div>
+                </div>
                 {hasProducts ? (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {visibleItems.map((item: any, idx: number) =>
                       isProductLike(item) ? renderProductCard(item, idx) : renderGenericCard(item, idx)
                     )}
