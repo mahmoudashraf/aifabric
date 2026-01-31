@@ -2022,10 +2022,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         <div className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 rounded-full pl-3 pr-1 py-1 shadow-xl border-2 border-white/30">
           <div className="flex items-center gap-2">
             <motion.div
-              animate={{ rotate: [0, 360] }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             >
-              <Sparkles className="h-4 w-4 md:h-5 md:w-5 text-white" />
+              <BrainCircuit className="h-4 w-4 md:h-5 md:w-5 text-white" />
             </motion.div>
             <span className="text-xs md:text-sm font-bold text-white hidden sm:inline">
               MAX Mode
