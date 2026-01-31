@@ -2301,7 +2301,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       {/* Main Split Content */}
       <div className="h-full relative">
         {/* Chat Messages - Full Width */}
-        <div className={`absolute top-12 md:top-[165px] left-0 right-0 bottom-0 overflow-y-auto px-3 md:px-6 py-4 md:py-6 pb-[180px] md:pb-[240px] pr-20 transition-all ${isPanelVisible && contextDocuments.length > 0 ? (selectedProduct || isCartView ? 'md:pr-[730px]' : 'md:pr-[450px]') : 'md:pr-4'} ${isDebugModalOpen ? 'xl:pl-[420px]' : ''}`}>
+        <div className={`absolute top-12 md:top-[165px] left-0 right-0 bottom-0 overflow-y-auto px-3 md:px-6 py-4 md:py-6 pb-[180px] md:pb-[240px] transition-all ${isPanelVisible && contextDocuments.length > 0 ? (selectedProduct || isCartView ? 'md:pr-[730px]' : 'md:pr-[450px]') : 'md:pr-4'} ${isDebugModalOpen ? 'xl:pl-[420px]' : ''}`}>
           <div className="max-w-3xl mx-auto space-y-4">
             <AnimatePresence mode="popLayout">
               {chatMessages.map((message, index) => {
@@ -3161,38 +3161,36 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           )}
         </AnimatePresence>
 
-        {/* Mobile: AI Search Categories - Floating Horizontal Row */}
+        {/* Mobile: AI Search Categories - Horizontal Row at Same Level */}
       <AnimatePresence>
         {isAISearchOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
             transition={{ type: "spring", damping: 20 }}
-            className="md:hidden fixed bottom-40 left-3 right-3 z-30 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border-2 border-indigo-200 dark:border-indigo-700 p-3"
+            className="md:hidden fixed bottom-24 left-3 right-20 z-20 flex items-center gap-2 overflow-x-auto scrollbar-hide px-2 py-2 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-full"
           >
-            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
-              {aiSearchCategories.map((category, idx) => (
-                <motion.button
-                  key={category.label}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: idx * 0.05 }}
-                  onClick={() => {
-                    handleAISearchCategory(category);
-                    setIsAISearchOpen(false);
-                  }}
-                  className="flex-shrink-0 flex flex-col items-center gap-1 group"
-                >
-                  <div className="h-12 w-12 rounded-full bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 border-2 border-indigo-300 hover:border-indigo-500 dark:border-indigo-600 dark:hover:border-indigo-400 shadow-lg hover:shadow-xl flex items-center justify-center transition-all active:scale-95">
-                    <category.icon className={`h-5 w-5 ${category.color}`} />
-                  </div>
-                  <span className={`text-[9px] font-semibold ${category.color} leading-tight text-center max-w-[48px]`}>
-                    {category.label}
-                  </span>
-                </motion.button>
-              ))}
-            </div>
+            {aiSearchCategories.map((category, idx) => (
+              <motion.button
+                key={category.label}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: idx * 0.05 }}
+                onClick={() => {
+                  handleAISearchCategory(category);
+                  setIsAISearchOpen(false);
+                }}
+                className="flex-shrink-0 flex flex-col items-center gap-1"
+              >
+                <div className={`h-12 w-12 rounded-full bg-white dark:bg-gray-800 border-2 ${category.border} shadow-lg flex items-center justify-center transition-all active:scale-95 hover:scale-105`}>
+                  <category.icon className={`h-5 w-5 ${category.color}`} />
+                </div>
+                <span className={`text-[8px] font-semibold ${category.color} leading-tight text-center max-w-[48px]`}>
+                  {category.label}
+                </span>
+              </motion.button>
+            ))}
           </motion.div>
         )}
       </AnimatePresence>
