@@ -1,0 +1,102 @@
+import type { RefObject } from "react";
+
+import { LockedConversationBanner } from "./Composer/LockedConversationBanner";
+import { AttachmentsRow } from "./Composer/AttachmentsRow";
+import { ComposerInputRow } from "./Composer/ComposerInputRow";
+import { SuggestionsPanel } from "./Composer/SuggestionsPanel";
+import type { AttachedItem } from "./types";
+
+export type { AttachedItem } from "./types";
+
+export function Composer({
+  attachedItems,
+  onRemoveAttachment,
+  searchCategory,
+  onClearSearchCategory,
+  onRemoveAiSearch,
+  suggestions,
+  showSuggestions,
+  isLoadingSuggestions,
+  onDismissSuggestions,
+  onShowSuggestions,
+  onSuggestionSelect,
+  oldConversationLocked,
+  onStartNewConversation,
+  onOpenHistory,
+  chatQuery,
+  onChatQueryChange,
+  isInputFocused,
+  onInputFocusChange,
+  chatInputRef,
+  isLoading,
+  currentPosition,
+  onOpenDebug,
+  onSubmit,
+}: {
+  attachedItems: AttachedItem[];
+  onRemoveAttachment: (filteredIndex: number) => void;
+  searchCategory: string | null;
+  onClearSearchCategory: () => void;
+  onRemoveAiSearch: () => void;
+  suggestions: string[];
+  showSuggestions: boolean;
+  isLoadingSuggestions: boolean;
+  onDismissSuggestions: () => void;
+  onShowSuggestions: () => void;
+  onSuggestionSelect: (suggestion: string) => void;
+  oldConversationLocked: boolean;
+  onStartNewConversation: () => void;
+  onOpenHistory: () => void;
+  chatQuery: string;
+  onChatQueryChange: (value: string) => void;
+  isInputFocused: boolean;
+  onInputFocusChange: (focused: boolean) => void;
+  chatInputRef: RefObject<HTMLTextAreaElement>;
+  isLoading: boolean;
+  currentPosition: "landing" | "catalog" | "checkout";
+  onOpenDebug: () => void;
+  onSubmit: () => void;
+}) {
+  const hasAiSearch = Boolean(attachedItems.find((item) => item.type === "ai-search"));
+  const nonAiAttachments = attachedItems.filter((item) => item.type !== "ai-search");
+  const aiSearchCategory = (attachedItems.find((item) => item.type === "ai-search")?.data?.category as string | undefined) || null;
+
+  return (
+    <div className="absolute bottom-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t-2 border-purple-500/30 p-3 md:p-6">
+      <div className="max-w-4xl mx-auto">
+        <AttachmentsRow items={nonAiAttachments} onRemoveAttachment={onRemoveAttachment} />
+
+        <SuggestionsPanel
+          suggestions={suggestions}
+          showSuggestions={showSuggestions}
+          isLoadingSuggestions={isLoadingSuggestions}
+          onDismissSuggestions={onDismissSuggestions}
+          onShowSuggestions={onShowSuggestions}
+          onSuggestionSelect={onSuggestionSelect}
+        />
+
+        {oldConversationLocked && <LockedConversationBanner onStartNewConversation={onStartNewConversation} />}
+
+        <ComposerInputRow
+          searchCategory={searchCategory}
+          hasAiSearch={hasAiSearch}
+          aiSearchCategory={aiSearchCategory}
+          onClearSearchCategory={onClearSearchCategory}
+          onRemoveAiSearch={onRemoveAiSearch}
+          oldConversationLocked={oldConversationLocked}
+          onOpenHistory={onOpenHistory}
+          chatQuery={chatQuery}
+          onChatQueryChange={onChatQueryChange}
+          isInputFocused={isInputFocused}
+          onInputFocusChange={onInputFocusChange}
+          chatInputRef={chatInputRef}
+          isLoading={isLoading}
+          currentPosition={currentPosition}
+          onOpenDebug={onOpenDebug}
+          nonAiAttachmentsCount={nonAiAttachments.length}
+          onSubmit={onSubmit}
+        />
+      </div>
+    </div>
+  );
+}
