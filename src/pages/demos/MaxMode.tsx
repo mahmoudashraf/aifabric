@@ -4618,29 +4618,39 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                             requiresRetrieval ? "bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-300 dark:border-blue-700" :
                             "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                           }`}>
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <span className={`text-[10px] font-bold uppercase ${
-                                  ragExecuted ? "text-emerald-700 dark:text-emerald-300" :
-                                  retrievalSkipped ? "text-amber-700 dark:text-amber-300" :
-                                  "text-gray-600 dark:text-gray-400"
-                                }`}>
-                                  🔍 RAG Status
-                                </span>
-                                <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${
-                                  ragExecuted ? "bg-emerald-500 text-white" :
-                                  retrievalSkipped ? "bg-amber-500 text-white" :
-                                  requiresRetrieval ? "bg-blue-500 text-white" :
-                                  "bg-gray-400 text-white"
-                                }`}>
-                                  {ragExecuted ? "EXECUTED" : retrievalSkipped ? "SKIPPED" : requiresRetrieval ? "INTENDED" : "NOT REQUIRED"}
-                                </span>
+                            <div className="space-y-1">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <span className={`text-[10px] font-bold uppercase ${
+                                    ragExecuted ? "text-emerald-700 dark:text-emerald-300" :
+                                    retrievalSkipped ? "text-amber-700 dark:text-amber-300" :
+                                    "text-gray-600 dark:text-gray-400"
+                                  }`}>
+                                    🔍 RAG Status
+                                  </span>
+                                  <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded ${
+                                    ragExecuted ? "bg-emerald-500 text-white" :
+                                    retrievalSkipped ? "bg-amber-500 text-white" :
+                                    requiresRetrieval ? "bg-blue-500 text-white" :
+                                    "bg-gray-400 text-white"
+                                  }`}>
+                                    {ragExecuted ? "EXECUTED" : retrievalSkipped ? "SKIPPED" : requiresRetrieval ? "INTENDED" : "NOT REQUIRED"}
+                                  </span>
+                                </div>
+                                <div className="flex gap-2 text-[9px]">
+                                  {requiresRetrieval && <span className="text-blue-600">retrieval:✓</span>}
+                                  {resultData?.requiresGeneration && <span className="text-purple-600">generation:✓</span>}
+                                  {retrievalSkipped && <span className="text-amber-600">skip:{retrievalSkipReason}</span>}
+                                </div>
                               </div>
-                              <div className="flex gap-2 text-[9px]">
-                                {requiresRetrieval && <span className="text-blue-600">retrieval:✓</span>}
-                                {resultData?.requiresGeneration && <span className="text-purple-600">generation:✓</span>}
-                                {retrievalSkipped && <span className="text-amber-600">skip:{retrievalSkipReason}</span>}
-                              </div>
+                              {hasRagResponse && (
+                                <div className="flex items-start gap-1 text-[9px]">
+                                  <span className="text-gray-500 font-medium shrink-0">Query:</span>
+                                  <span className="text-gray-700 dark:text-gray-300 line-clamp-1 flex-1">
+                                    {debugRequest?.payload?.query || resultData.ragResponse.query}
+                                  </span>
+                                </div>
+                              )}
                             </div>
                             {hasRagResponse && (() => {
                               const originalQuery = debugRequest?.payload?.query || resultData.ragResponse.query;
