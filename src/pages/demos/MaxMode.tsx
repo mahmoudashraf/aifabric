@@ -281,7 +281,7 @@ const ActionResultRenderer = ({
     const isItemAlreadyAttached = isAttached && itemId ? isAttached(itemId) : false;
 
     return (
-      <div key={idx} className="relative group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 transition-all hover:shadow-xl overflow-hidden">
+      <div key={itemId || idx} className="relative group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 transition-all hover:shadow-xl overflow-hidden">
         {/* Attach Button */}
         {onAttach && (
           <Button
@@ -376,7 +376,7 @@ const ActionResultRenderer = ({
     const isItemAlreadyAttached = isAttached && itemId ? isAttached(itemId) : false;
 
     return (
-    <Card key={idx} className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-colors relative group" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+    <Card key={itemId || idx} className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-colors relative group" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
       {onAttach && typeof item === "object" && item !== null && (
         <Button
           size="icon"
@@ -2301,7 +2301,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       {/* Main Split Content */}
       <div className="h-full relative">
         {/* Chat Messages - Full Width */}
-        <div className={`absolute top-12 md:top-[165px] left-0 right-0 bottom-0 overflow-y-auto px-3 md:px-6 py-4 md:py-6 pb-[180px] md:pb-[240px] transition-all ${isPanelVisible && contextDocuments.length > 0 ? (selectedProduct || isCartView ? 'md:pr-[730px]' : 'md:pr-[450px]') : 'md:pr-4'} ${isDebugModalOpen ? 'xl:pl-[420px]' : ''}`}>
+        <div className={`absolute top-12 md:top-[165px] left-0 right-0 bottom-0 overflow-y-auto px-3 md:px-6 py-4 md:py-6 pb-[180px] md:pb-[240px] pr-20 transition-all ${isPanelVisible && contextDocuments.length > 0 ? (selectedProduct || isCartView ? 'md:pr-[730px]' : 'md:pr-[450px]') : 'md:pr-4'} ${isDebugModalOpen ? 'xl:pl-[420px]' : ''}`}>
           <div className="max-w-3xl mx-auto space-y-4">
             <AnimatePresence mode="popLayout">
               {chatMessages.map((message, index) => {
@@ -3161,7 +3161,43 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           )}
         </AnimatePresence>
 
-        {/* Mobile: All Floating Action Buttons - Single Column */}
+        {/* Mobile: AI Search Categories - Floating Horizontal Row */}
+      <AnimatePresence>
+        {isAISearchOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ type: "spring", damping: 20 }}
+            className="md:hidden fixed bottom-40 left-3 right-3 z-30 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border-2 border-indigo-200 dark:border-indigo-700 p-3"
+          >
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+              {aiSearchCategories.map((category, idx) => (
+                <motion.button
+                  key={category.label}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: idx * 0.05 }}
+                  onClick={() => {
+                    handleAISearchCategory(category);
+                    setIsAISearchOpen(false);
+                  }}
+                  className="flex-shrink-0 flex flex-col items-center gap-1 group"
+                >
+                  <div className="h-12 w-12 rounded-full bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 border-2 border-indigo-300 hover:border-indigo-500 dark:border-indigo-600 dark:hover:border-indigo-400 shadow-lg hover:shadow-xl flex items-center justify-center transition-all active:scale-95">
+                    <category.icon className={`h-5 w-5 ${category.color}`} />
+                  </div>
+                  <span className={`text-[9px] font-semibold ${category.color} leading-tight text-center max-w-[48px]`}>
+                    {category.label}
+                  </span>
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile: All Floating Action Buttons - Single Column */}
         <div className="md:hidden fixed bottom-24 right-1 z-20 flex flex-col-reverse items-center gap-3">
           {/* AI Search Button */}
           <motion.div
@@ -4164,41 +4200,6 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               </Button>
             </motion.div>
           )}
-
-          {/* AI Search Categories Row - Mobile Only */}
-          <AnimatePresence>
-            {isAISearchOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                className="md:hidden mb-3 relative"
-              >
-                <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                  {aiSearchCategories.map((category, idx) => (
-                    <motion.button
-                      key={category.label}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: idx * 0.05 }}
-                      onClick={() => {
-                        handleAISearchCategory(category);
-                        setIsAISearchOpen(false);
-                      }}
-                      className="flex-shrink-0 flex flex-col items-center gap-1 group"
-                    >
-                      <div className="h-14 w-14 rounded-full bg-white hover:bg-gray-50 border-2 border-cyan-300 hover:border-cyan-500 shadow-lg hover:shadow-xl flex items-center justify-center transition-all active:scale-95">
-                        <category.icon className={`h-5 w-5 ${category.color}`} />
-                      </div>
-                      <span className={`text-[9px] font-semibold ${category.color} leading-tight text-center max-w-[56px]`}>
-                        {category.label}
-                      </span>
-                    </motion.button>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
 
           <div className="flex items-center gap-2 md:gap-3">
             {/* History button */}
