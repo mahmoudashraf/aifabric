@@ -2355,9 +2355,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     >
                       {message.type === "ai" && Icon && !styles?.hideBadge && (
                         <div className="relative">
-                          <div className={`px-4 md:px-5 py-2.5 md:py-3 flex items-center justify-between bg-gradient-to-r ${styles?.bg} backdrop-blur-sm`}>
+                          <div className={`px-4 md:px-5 py-2.5 md:py-3 flex items-center justify-between bg-gradient-to-r ${styles?.bg}`}>
                             <div className="flex items-center gap-2.5">
-                              <div className={`p-2 rounded-xl ${styles?.iconColor} bg-white/20 backdrop-blur-sm`}>
+                              <div className={`p-2 rounded-xl ${styles?.iconColor} bg-white/20`}>
                                 <Icon className="h-4 w-4 md:h-4.5 md:w-4.5 text-white" />
                               </div>
                               <span className="text-xs md:text-sm font-bold text-white drop-shadow-sm">
@@ -2371,7 +2371,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                   setSelectedDebugMessage(message);
                                   setIsDebugModalOpen(true);
                                 }}
-                                className="p-1.5 rounded-lg hover:bg-white/20 transition-colors backdrop-blur-sm"
+                                className="p-1.5 rounded-lg hover:bg-white/20 transition-colors"
                                 title="View API Debug Data"
                               >
                                 <Info className="h-4 w-4 text-white/80 hover:text-white" />
