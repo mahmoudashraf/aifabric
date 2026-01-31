@@ -3161,7 +3161,43 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           )}
         </AnimatePresence>
 
-        {/* Mobile: All Floating Action Buttons - Single Column */}
+        {/* Mobile: AI Search Categories - Floating Horizontal Row */}
+      <AnimatePresence>
+        {isAISearchOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ type: "spring", damping: 20 }}
+            className="md:hidden fixed bottom-40 left-3 right-3 z-30 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border-2 border-indigo-200 dark:border-indigo-700 p-3"
+          >
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+              {aiSearchCategories.map((category, idx) => (
+                <motion.button
+                  key={category.label}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: idx * 0.05 }}
+                  onClick={() => {
+                    handleAISearchCategory(category);
+                    setIsAISearchOpen(false);
+                  }}
+                  className="flex-shrink-0 flex flex-col items-center gap-1 group"
+                >
+                  <div className="h-12 w-12 rounded-full bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 border-2 border-indigo-300 hover:border-indigo-500 dark:border-indigo-600 dark:hover:border-indigo-400 shadow-lg hover:shadow-xl flex items-center justify-center transition-all active:scale-95">
+                    <category.icon className={`h-5 w-5 ${category.color}`} />
+                  </div>
+                  <span className={`text-[9px] font-semibold ${category.color} leading-tight text-center max-w-[48px]`}>
+                    {category.label}
+                  </span>
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile: All Floating Action Buttons - Single Column */}
         <div className="md:hidden fixed bottom-24 right-1 z-20 flex flex-col-reverse items-center gap-3">
           {/* AI Search Button */}
           <motion.div
@@ -4164,41 +4200,6 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               </Button>
             </motion.div>
           )}
-
-          {/* AI Search Categories Row - Mobile Only */}
-          <AnimatePresence>
-            {isAISearchOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                className="md:hidden mb-3 relative"
-              >
-                <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                  {aiSearchCategories.map((category, idx) => (
-                    <motion.button
-                      key={category.label}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: idx * 0.05 }}
-                      onClick={() => {
-                        handleAISearchCategory(category);
-                        setIsAISearchOpen(false);
-                      }}
-                      className="flex-shrink-0 flex flex-col items-center gap-1 group"
-                    >
-                      <div className="h-14 w-14 rounded-full bg-white hover:bg-gray-50 border-2 border-cyan-300 hover:border-cyan-500 shadow-lg hover:shadow-xl flex items-center justify-center transition-all active:scale-95">
-                        <category.icon className={`h-5 w-5 ${category.color}`} />
-                      </div>
-                      <span className={`text-[9px] font-semibold ${category.color} leading-tight text-center max-w-[56px]`}>
-                        {category.label}
-                      </span>
-                    </motion.button>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
 
           <div className="flex items-center gap-2 md:gap-3">
             {/* History button */}
