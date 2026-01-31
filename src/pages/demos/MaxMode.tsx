@@ -606,6 +606,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const contextPanelRef = useRef<HTMLDivElement>(null);
   const contextPanelEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLTextAreaElement>(null);
+  const aiSearchRowRef = useRef<HTMLDivElement>(null);
+  const aiSearchButtonRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   // MaxMode context for state persistence and sharing with demo page
@@ -848,6 +850,30 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       chatInputRef.current.focus();
     }
   }, [chatMessages, isOpen]);
+
+  // Close AI Search row when clicking outside
+  useEffect(() => {
+    if (!isAISearchOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+
+      // Check if click is outside both the row and the toggle button
+      if (
+        aiSearchRowRef.current &&
+        !aiSearchRowRef.current.contains(target) &&
+        aiSearchButtonRef.current &&
+        !aiSearchButtonRef.current.contains(target)
+      ) {
+        setIsAISearchOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isAISearchOpen]);
 
   // Collect all documents from all messages and auto-scroll to new documents
   useEffect(() => {
@@ -1975,43 +2001,49 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[100] bg-gradient-to-br from-blue-50 via-blue-50/50 to-white dark:from-gray-900 dark:via-blue-900/20 dark:to-gray-900/90"
     >
-      {/* Header - Compact on Mobile */}
-      <div className="absolute top-0 left-0 right-0 h-12 md:h-16 bg-gradient-to-r from-blue-600 to-blue-500 flex items-center justify-between px-3 md:px-6 shadow-lg z-10">
-        <div className="flex items-center gap-2 md:gap-3">
-          <motion.div
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          >
-            <Sparkles className="h-4 w-4 md:h-6 md:w-6 text-white" />
-          </motion.div>
-          <h1 className="text-sm md:text-xl font-bold text-white">
-            <span className="hidden sm:inline">MAX Mode - AI Shopping Assistant</span>
-            <span className="sm:hidden">MAX Mode</span>
-          </h1>
-        </div>
-        <div className="flex items-center gap-1 md:gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={showSampleDocuments}
-            className="hidden md:flex text-white hover:bg-white/20 text-xs"
-          >
-            <FileText className="h-4 w-4 mr-1" />
-            Test Panel
-          </Button>
+      {/* Floating Header Badge - Top Right */}
+      <motion.div
+        initial={{ opacity: 0, y: -20, x: 20 }}
+        animate={{ opacity: 1, y: 0, x: 0 }}
+        className="fixed top-3 right-3 md:top-4 md:right-4 z-50 flex items-center gap-2"
+      >
+        {/* Test Panel Button - Desktop Only */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={showSampleDocuments}
+          className="hidden md:flex bg-white/90 dark:bg-gray-800/90 hover:bg-white text-blue-600 shadow-lg backdrop-blur-sm text-xs border border-blue-200"
+        >
+          <FileText className="h-4 w-4 mr-1" />
+          Test Panel
+        </Button>
+
+        {/* MaxMode Info + Close Button */}
+        <div className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 rounded-full pl-3 pr-1 py-1 shadow-xl border-2 border-white/30">
+          <div className="flex items-center gap-2">
+            <motion.div
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            >
+              <Sparkles className="h-4 w-4 md:h-5 md:w-5 text-white" />
+            </motion.div>
+            <span className="text-xs md:text-sm font-bold text-white hidden sm:inline">
+              MAX Mode
+            </span>
+          </div>
           <Button
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="text-white hover:bg-white/20 h-8 w-8 md:h-10 md:w-10"
+            className="text-white hover:bg-white/20 h-7 w-7 md:h-8 md:w-8 rounded-full"
           >
-            <X className="h-4 w-4 md:h-5 md:w-5" />
+            <X className="h-4 w-4 md:h-4.5 md:w-4.5" />
           </Button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Quick Actions Bar - Desktop Only */}
-      <div className="hidden md:block absolute top-16 left-0 right-0 px-6 py-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b z-10">
+      <div className="hidden md:block absolute top-0 left-0 right-0 px-6 py-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b z-10">
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
           {quickActions.slice(0, 8).map((action, idx) => (
             <div key={idx}>
@@ -2071,7 +2103,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className="hidden md:block fixed top-[140px] left-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-blue-200 dark:border-blue-700 p-4 z-50 min-w-[320px]"
+              className="hidden md:block fixed top-[80px] left-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-blue-200 dark:border-blue-700 p-4 z-50 min-w-[320px]"
             >
               <div className="text-sm font-bold text-blue-600 dark:text-blue-400 mb-3 px-1">Select Category to Search</div>
               <div className="flex flex-wrap gap-2">
@@ -2111,7 +2143,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className="hidden md:block fixed top-[140px] left-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-blue-200 dark:border-blue-700 p-6 z-50 max-w-[600px]"
+              className="hidden md:block fixed top-[80px] left-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-blue-200 dark:border-blue-700 p-6 z-50 max-w-[600px]"
             >
               <div className="flex items-center gap-2 mb-4">
                 <Package className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -2301,7 +2333,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       {/* Main Split Content */}
       <div className="h-full relative">
         {/* Chat Messages - Full Width */}
-        <div className={`absolute top-12 md:top-[165px] left-0 right-0 bottom-0 overflow-y-auto px-3 md:px-6 py-4 md:py-6 pb-[180px] md:pb-[240px] transition-all ${isPanelVisible && contextDocuments.length > 0 ? (selectedProduct || isCartView ? 'md:pr-[730px]' : 'md:pr-[450px]') : 'md:pr-4'} ${isDebugModalOpen ? 'xl:pl-[420px]' : ''}`}>
+        <div className={`absolute top-0 md:top-[72px] left-0 right-0 bottom-0 overflow-y-auto px-3 md:px-6 py-4 md:py-6 pb-[180px] md:pb-[240px] transition-all ${isPanelVisible && contextDocuments.length > 0 ? (selectedProduct || isCartView ? 'md:pr-[730px]' : 'md:pr-[450px]') : 'md:pr-4'} ${isDebugModalOpen ? 'xl:pl-[420px]' : ''}`}>
           <div className="max-w-3xl mx-auto space-y-4">
             <AnimatePresence mode="popLayout">
               {chatMessages.map((message, index) => {
@@ -2329,9 +2361,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     >
                       {message.type === "ai" && Icon && !styles?.hideBadge && (
                         <div className="relative">
-                          <div className={`px-4 md:px-5 py-2.5 md:py-3 flex items-center justify-between bg-gradient-to-r ${styles?.bg} backdrop-blur-sm`}>
+                          <div className={`px-4 md:px-5 py-2.5 md:py-3 flex items-center justify-between bg-gradient-to-r ${styles?.bg}`}>
                             <div className="flex items-center gap-2.5">
-                              <div className={`p-2 rounded-xl ${styles?.iconColor} bg-white/20 backdrop-blur-sm`}>
+                              <div className={`p-2 rounded-xl ${styles?.iconColor} bg-white/20`}>
                                 <Icon className="h-4 w-4 md:h-4.5 md:w-4.5 text-white" />
                               </div>
                               <span className="text-xs md:text-sm font-bold text-white drop-shadow-sm">
@@ -2345,7 +2377,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                   setSelectedDebugMessage(message);
                                   setIsDebugModalOpen(true);
                                 }}
-                                className="p-1.5 rounded-lg hover:bg-white/20 transition-colors backdrop-blur-sm"
+                                className="p-1.5 rounded-lg hover:bg-white/20 transition-colors"
                                 title="View API Debug Data"
                               >
                                 <Info className="h-4 w-4 text-white/80 hover:text-white" />
@@ -3147,7 +3179,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               animate={{ opacity: 1, scale: 1, x: 0 }}
               exit={{ opacity: 0, scale: 0.8, x: 100 }}
               transition={{ type: "spring", damping: 20 }}
-              className="hidden md:block absolute top-20 right-4 z-20"
+              className="hidden md:block absolute top-16 right-4 z-20"
             >
               <Button
                 onClick={() => setIsPanelVisible(true)}
@@ -3165,11 +3197,12 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       <AnimatePresence>
         {isAISearchOpen && (
           <motion.div
+            ref={aiSearchRowRef}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ type: "spring", damping: 20 }}
-            className="md:hidden fixed bottom-24 left-3 right-20 z-20 flex items-center gap-2 overflow-x-auto scrollbar-hide px-2 py-2 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-full"
+            className="md:hidden fixed bottom-24 left-3 right-20 z-20 flex items-center gap-2 overflow-x-auto scrollbar-hide"
           >
             {aiSearchCategories.map((category, idx) => (
               <motion.button
@@ -3199,6 +3232,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         <div className="md:hidden fixed bottom-24 right-1 z-20 flex flex-col-reverse items-center gap-3">
           {/* AI Search Button */}
           <motion.div
+            ref={aiSearchButtonRef}
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0 }}
