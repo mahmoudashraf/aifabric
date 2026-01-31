@@ -606,6 +606,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const contextPanelRef = useRef<HTMLDivElement>(null);
   const contextPanelEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLTextAreaElement>(null);
+  const aiSearchRowRef = useRef<HTMLDivElement>(null);
+  const aiSearchButtonRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   // MaxMode context for state persistence and sharing with demo page
@@ -848,6 +850,30 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       chatInputRef.current.focus();
     }
   }, [chatMessages, isOpen]);
+
+  // Close AI Search row when clicking outside
+  useEffect(() => {
+    if (!isAISearchOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+
+      // Check if click is outside both the row and the toggle button
+      if (
+        aiSearchRowRef.current &&
+        !aiSearchRowRef.current.contains(target) &&
+        aiSearchButtonRef.current &&
+        !aiSearchButtonRef.current.contains(target)
+      ) {
+        setIsAISearchOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isAISearchOpen]);
 
   // Collect all documents from all messages and auto-scroll to new documents
   useEffect(() => {
@@ -3165,6 +3191,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       <AnimatePresence>
         {isAISearchOpen && (
           <motion.div
+            ref={aiSearchRowRef}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
@@ -3199,6 +3226,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         <div className="md:hidden fixed bottom-24 right-1 z-20 flex flex-col-reverse items-center gap-3">
           {/* AI Search Button */}
           <motion.div
+            ref={aiSearchButtonRef}
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0 }}
