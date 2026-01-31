@@ -2032,8 +2032,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             >
               <BrainCircuit className="h-4 w-4 md:h-5 md:w-5 text-white" />
             </motion.div>
-            <span className="text-xs md:text-sm font-bold text-white hidden sm:inline">
-              MAX Mode
+            <span className="text-xs md:text-sm font-bold text-white">
+              MAX AI
             </span>
           </div>
           <Button
