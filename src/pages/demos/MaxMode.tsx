@@ -3202,7 +3202,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ type: "spring", damping: 20 }}
-            className="md:hidden fixed bottom-24 left-3 right-20 z-40 flex items-center gap-2 overflow-x-auto scrollbar-hide"
+            className="md:hidden fixed bottom-32 left-3 right-20 z-40 flex items-center gap-2 overflow-x-auto scrollbar-hide px-2 py-2 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-full"
           >
             {aiSearchCategories.map((category, idx) => (
               <motion.button
