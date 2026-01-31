@@ -2321,9 +2321,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[92%] md:max-w-[85%] rounded-2xl md:rounded-3xl overflow-hidden ${
+                      className={`max-w-[70%] md:max-w-[80%] rounded-3xl overflow-hidden ${
                         message.type === "user"
-                          ? "bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-xl"
+                          ? "bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white shadow-lg border border-blue-400/30"
                           : `${styles?.bg} shadow-xl relative`
                       }`}
                     >
@@ -3169,7 +3169,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ type: "spring", damping: 20 }}
-            className="md:hidden fixed bottom-24 left-3 right-20 z-20 flex items-center gap-2 overflow-x-auto scrollbar-hide"
+            className="md:hidden fixed bottom-24 left-3 right-20 z-20 flex items-center gap-2 overflow-x-auto scrollbar-hide px-2 py-2 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-full"
           >
             {aiSearchCategories.map((category, idx) => (
               <motion.button
