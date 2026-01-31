@@ -2,6 +2,30 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMaxModeContextOptional } from "@/contexts/MaxModeContext";
 import { AISearchDisplay } from "@/components/AISearchDisplay";
+import { ActionResultRenderer } from "./max-mode/components/ActionResultRenderer";
+import { DesktopContextPanel } from "./max-mode/components/DesktopContextPanel";
+import { MaxModeHeader } from "./max-mode/components/MaxModeHeader";
+import { QuickActionsDesktop } from "./max-mode/components/QuickActionsDesktop";
+import { QuickActionsMobileSheet } from "./max-mode/components/QuickActionsMobileSheet";
+import { getActionIcon, parseActionMessage } from "./max-mode/actionMessage";
+import { formatFieldName, formatFieldValue, normalizeMessageContent } from "./max-mode/utils";
+import {
+  AI_SEARCH_CATEGORIES,
+  API_BASE_URL,
+  BROWSE_PRODUCT_CATEGORIES,
+  QUICK_ACTIONS,
+  SEARCH_CATEGORIES,
+} from "./max-mode/constants";
+import type {
+  ChatMessage,
+  ChatResult,
+  Conversation,
+  ConversationDetail,
+  DebugData,
+  Document,
+  MaxModeProps,
+  ResultType,
+} from "./max-mode/types";
 import {
   X,
   Send,
@@ -65,184 +89,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
-const API_BASE_URL = "https://ai-fabric-framework-production.up.railway.app/api";
+// Types, helpers, and large subcomponents live in `./max-mode/*` to keep this demo page maintainable.
 
-// React cannot render plain objects as children. The backend occasionally returns
-// structured objects in places we expect strings (e.g. intent metadata), so we
-// normalize everything to a safe string for display.
-const normalizeMessageContent = (value: unknown): string => {
-  if (typeof value === "string") return value;
-  if (value === null || value === undefined) return "";
-  try {
-    return JSON.stringify(value, null, 2);
-  } catch {
-    return String(value);
-  }
-};
-
-const parseActionMessage = (content: string): { isAction: boolean; actionType: string; query: string; fullMessage: string } => {
-  const actionMatch = content.match(/^Action:\s*([^:]+):\s*(.+)$/i);
-  if (actionMatch) {
-    return {
-      isAction: true,
-      actionType: actionMatch[1].trim(),
-      query: actionMatch[2].trim(),
-      fullMessage: content
-    };
-  }
-  return { isAction: false, actionType: '', query: content, fullMessage: content };
-};
-
-const getActionIcon = (actionType: string) => {
-  const type = actionType.toLowerCase();
-  if (type.includes('list') || type.includes('search') || type.includes('find')) {
-    return Search;
-  } else if (type.includes('add to cart') || type.includes('cart')) {
-    return ShoppingCart;
-  } else if (type.includes('checkout') || type.includes('order')) {
-    return Receipt;
-  } else if (type.includes('product') || type.includes('details')) {
-    return Package;
-  } else if (type.includes('compare')) {
-    return TrendingUp;
-  } else if (type.includes('recommend')) {
-    return Sparkles;
-  }
-  return Wand2; // Default action icon
-};
-
-interface MaxModeProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-interface Product {
-  id: string;
-  sku: string;
-  name: string;
-  description: string;
-  price: number;
-  category?: string;
-  inStockQty?: number;
-}
-
-type ResultType =
-  | "ACTION_EXECUTED"
-  | "ACTION_DENIED"
-  | "INFORMATION_PROVIDED"
-  | "CONFIRMATION_REQUIRED"
-  | "CLARIFICATION_REQUIRED"
-  | "OUT_OF_SCOPE"
-  | "COMPOUND_HANDLED"
-  | "ERROR";
-
-interface SanitizedPayload {
-  type: ResultType;
-  success: boolean;
-  message: string;
-  data?: any;
-  safeSummary?: string;
-  sanitization?: {
-    risk: string;
-    detectedTypes: string[];
-  };
-}
-
-interface ChatResult {
-  type: ResultType;
-  success: boolean;
-  smartSuggestion?: any;
-  sanitizedPayload: SanitizedPayload;
-}
-
-interface DebugData {
-  request: {
-    endpoint: string;
-    method: string;
-    timestamp: string;
-    payload: any;
-  };
-  response: {
-    timestamp: string;
-    status: number;
-    data: any;
-    durationMs?: number;
-  };
-}
-
-interface ChatMessage {
-  id: string;
-  type: "user" | "ai";
-  content: string;
-  timestamp: string;
-  result?: ChatResult;
-  resultType?: ResultType;
-  attachedItems?: Array<{ type: string; data: any }>;
-  documents?: Document[];
-  debugData?: DebugData;
-  searchCategory?: string;
-}
-
-interface Document {
-  id: string;
-  title: string;
-  content: string;
-  type: string;
-  metadata?: any;
-  messageId?: string;
-  similarity?: number;
-  score?: number;
-}
-
-interface Conversation {
-  id: string;
-  ownerId: string;
-  title?: string;
-  status?: string;
-  createdAt: string;
-  lastInteractionAt?: string;
-  turnsCount?: number;
-}
-
-interface ConversationTurn {
-  timestamp: string;
-  userQuery: string;
-  aiResponse: string;
-}
-
-interface ConversationDetail extends Conversation {
-  turns: ConversationTurn[];
-}
-
-// Helper functions for formatting
-const formatFieldName = (key: string): string => {
-  return key
-    .replace(/([A-Z])/g, " $1")
-    .replace(/_/g, " ")
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(" ")
-    .trim();
-};
-
-const formatFieldValue = (value: any): string => {
-  if (value === null || value === undefined) return "N/A";
-  if (typeof value === "boolean") return value ? "Yes" : "No";
-  if (Array.isArray(value)) return value.join(", ");
-  if (typeof value === "object") return JSON.stringify(value, null, 2);
-  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}T/.test(value)) {
-    try {
-      const date = new Date(value);
-      return date.toLocaleString();
-    } catch {
-      return value;
-    }
-  }
-  return String(value);
-};
-
-// Component to render actionResult data generically
-const ActionResultRenderer = ({
+// (Legacy inline) Component to render actionResult data generically (moved to `./max-mode/components/ActionResultRenderer.tsx`)
+const LegacyActionResultRenderer = ({
   data,
   messageId,
   expandedCount,
@@ -554,6 +404,9 @@ const ActionResultRenderer = ({
   return <p className="mt-3 text-xs text-muted-foreground">{formatFieldValue(data)}</p>;
 };
 
+// Transitional: keep the legacy inline renderer around until the full MaxMode refactor lands.
+void LegacyActionResultRenderer;
+
 const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [chatQuery, setChatQuery] = useState("");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -758,91 +611,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
     });
   }, []);
 
-  // Quick action tools - aligned with available backend actions
-  // Position: "catalog" for browsing/discovery, "checkout" for cart/order actions
-  const quickActions = [
-    { icon: Search, label: "Search Products", query: "Search for wireless headphones with good ratings and show me the prices, features, and availability", color: "text-blue-600", bg: "bg-blue-500/10", border: "border-blue-500/30", position: "catalog" as const, mode: "navigator" as const },
-    { icon: List, label: "Browse Products", query: "List all available products with their SKU, name, price, category, stock quantity, and ratings", color: "text-blue-600", bg: "bg-blue-500/10", border: "border-blue-500/30", position: "catalog" as const, mode: "navigator" as const },
-    { icon: ShoppingCart, label: "My Cart", query: "View my cart", color: "text-green-600", bg: "bg-green-500/10", border: "border-green-500/30", position: "checkout" as const, mode: "copilot" as const },
-    { icon: ShoppingBag, label: "Checkout", query: "Checkout my cart", color: "text-orange-600", bg: "bg-orange-500/10", border: "border-orange-500/30", position: "checkout" as const, mode: "copilot" as const },
-    { icon: Receipt, label: "My Orders", query: "List my orders", color: "text-indigo-600", bg: "bg-indigo-500/10", border: "border-indigo-500/30", position: "checkout" as const, mode: "copilot" as const },
-    { icon: Clock, label: "Active Orders", query: "Show my active orders", color: "text-cyan-600", bg: "bg-cyan-500/10", border: "border-cyan-500/30", position: "checkout" as const, mode: "copilot" as const },
-    { icon: Truck, label: "Track Order", query: "Track my order shipment", color: "text-teal-600", bg: "bg-teal-500/10", border: "border-teal-500/30", position: "checkout" as const, mode: "copilot" as const },
-    { icon: RotateCcw, label: "Returns", query: "Create a return request", color: "text-red-600", bg: "bg-red-500/10", border: "border-red-500/30", position: "checkout" as const, mode: "copilot" as const },
-    { icon: Tag, label: "Coupons", query: "Show available coupons", color: "text-pink-600", bg: "bg-pink-500/10", border: "border-pink-500/30", position: "catalog" as const, mode: "navigator" as const },
-    { icon: Star, label: "Reviews", query: "Add a product review", color: "text-yellow-600", bg: "bg-yellow-500/10", border: "border-yellow-500/30", position: "catalog" as const, mode: "navigator" as const },
-    { icon: User, label: "My Account", query: "Show my account details", color: "text-slate-600", bg: "bg-slate-500/10", border: "border-slate-500/30", position: "checkout" as const, mode: "copilot" as const },
-    { icon: MapPin, label: "Addresses", query: "List my saved addresses", color: "text-emerald-600", bg: "bg-emerald-500/10", border: "border-emerald-500/30", position: "checkout" as const, mode: "copilot" as const },
-    { icon: MessageSquare, label: "Support", query: "Create a support ticket", color: "text-violet-600", bg: "bg-violet-500/10", border: "border-violet-500/30", position: "checkout" as const, mode: "copilot" as const },
-    { icon: TrendingUp, label: "Trending", query: "What's trending?", color: "text-rose-600", bg: "bg-rose-500/10", border: "border-rose-500/30", position: "catalog" as const, mode: "navigator" as const },
-  ];
-
-  // Product search categories matching our actual data
-  const searchCategories = [
-    { icon: Laptop, label: "Laptops", emoji: "💻", color: "text-blue-600", bg: "bg-blue-500/10", border: "border-blue-500/30" },
-    { icon: Smartphone, label: "Smartphones", emoji: "📱", color: "text-indigo-600", bg: "bg-indigo-500/10", border: "border-indigo-500/30" },
-    { icon: Headphones, label: "Headphones", emoji: "🎧", color: "text-rose-600", bg: "bg-rose-500/10", border: "border-rose-500/30" },
-    { icon: Camera, label: "Cameras", emoji: "📷", color: "text-green-600", bg: "bg-green-500/10", border: "border-green-500/30" },
-    { icon: Monitor, label: "Monitors", emoji: "🖥️", color: "text-orange-600", bg: "bg-orange-500/10", border: "border-orange-500/30" },
-  ];
-
-  // AI Search menu categories (includes an actual query to populate the input)
-  const aiSearchCategories = searchCategories.map((c) => ({
-    ...c,
-    query: `request retrieval and generation for product ${c.label} and show top results with prices and stock`,
-  }));
-
-  // Browse Products categories with specific ready-to-send queries
-  const browseProductCategories = [
-    {
-      id: "apple-laptops",
-      icon: Laptop,
-      label: "Apple Laptops",
-      query: "Action: List product: Apple laptops",
-      color: "from-blue-500 to-cyan-500",
-      description: "MacBook Pro & Air",
-    },
-    {
-      id: "sony-headphones",
-      icon: Headphones,
-      label: "Sony Headphones",
-      query: "Action: List product: Sony headphones",
-      color: "from-purple-500 to-pink-500",
-      description: "Premium noise-cancelling",
-    },
-    {
-      id: "samsung-tablets",
-      icon: Tablet,
-      label: "Samsung Tablets",
-      query: "Action: List product: Samsung tablets",
-      color: "from-green-500 to-emerald-500",
-      description: "Galaxy Tab series",
-    },
-    {
-      id: "sony-cameras",
-      icon: Camera,
-      label: "Sony Cameras",
-      query: "Action: List product: Sony cameras",
-      color: "from-orange-500 to-red-500",
-      description: "Professional photography",
-    },
-    {
-      id: "gaming-laptops",
-      icon: Laptop,
-      label: "Gaming Laptops",
-      query: "Action: List product: gaming laptops high performance",
-      color: "from-red-500 to-pink-500",
-      description: "High-performance gaming",
-    },
-    {
-      id: "wireless-headphones",
-      icon: Headphones,
-      label: "Wireless Headphones",
-      query: "Action: List product: wireless headphones Bluetooth",
-      color: "from-indigo-500 to-purple-500",
-      description: "Bluetooth connectivity",
-    },
-  ];
+  const quickActions = QUICK_ACTIONS;
+  const searchCategories = SEARCH_CATEGORIES;
+  const aiSearchCategories = AI_SEARCH_CATEGORIES;
+  const browseProductCategories = BROWSE_PRODUCT_CATEGORIES;
 
   // Auto-scroll to latest message - show it at the top of viewport
   useEffect(() => {
@@ -1101,18 +873,6 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const handleQuickAction = (query: string, position?: "landing" | "catalog" | "checkout", mode?: "navigator" | "copilot") => {
     setChatQuery(query);
     setTimeout(() => handleChatQuery(query, position, mode), 100);
-  };
-
-  const handleScrollUp = () => {
-    if (contextPanelRef.current) {
-      contextPanelRef.current.scrollBy({ top: -300, behavior: "smooth" });
-    }
-  };
-
-  const handleScrollDown = () => {
-    if (contextPanelRef.current) {
-      contextPanelRef.current.scrollBy({ top: 300, behavior: "smooth" });
-    }
   };
 
   const isItemAttached = (itemId: string) => {
@@ -2008,334 +1768,33 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[100] bg-gradient-to-br from-blue-50 via-blue-50/50 to-white dark:from-gray-900 dark:via-blue-900/20 dark:to-gray-900/90"
     >
-      {/* Floating Header Badge - Top Right */}
-      <motion.div
-        initial={{ opacity: 0, y: -20, x: 20 }}
-        animate={{ opacity: 1, y: 0, x: 0 }}
-        className="fixed top-3 right-3 md:top-4 md:right-4 z-50 flex items-center gap-2"
-      >
-        {/* Test Panel Button - Desktop Only */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={showSampleDocuments}
-          className="hidden md:flex bg-white/90 dark:bg-gray-800/90 hover:bg-white text-blue-600 shadow-lg backdrop-blur-sm text-xs border border-blue-200"
-        >
-          <FileText className="h-4 w-4 mr-1" />
-          Test Panel
-        </Button>
+      <MaxModeHeader onClose={onClose} onShowSampleDocuments={showSampleDocuments} />
 
-        {/* MaxMode Info + Close Button */}
-        <div className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 rounded-full pl-3 pr-1 py-1 shadow-xl border-2 border-white/30">
-          <div className="flex items-center gap-2">
-            <motion.div
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <BrainCircuit className="h-4 w-4 md:h-5 md:w-5 text-white" />
-            </motion.div>
-            <span className="text-xs md:text-sm font-bold text-white">
-              MAX AI
-            </span>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClose}
-            className="text-white hover:bg-white/20 h-7 w-7 md:h-8 md:w-8 rounded-full"
-          >
-            <X className="h-4 w-4 md:h-4.5 md:w-4.5" />
-          </Button>
-        </div>
-      </motion.div>
+      <QuickActionsDesktop
+        quickActions={quickActions}
+        isSearchCategoryOpen={isSearchCategoryOpen}
+        setIsSearchCategoryOpen={setIsSearchCategoryOpen}
+        isBrowseProductsOpen={isBrowseProductsOpen}
+        setIsBrowseProductsOpen={setIsBrowseProductsOpen}
+        searchCategories={searchCategories}
+        browseProductCategories={browseProductCategories}
+        onSelectSearchCategory={handleSelectSearchCategory}
+        onQuickAction={handleQuickAction}
+      />
 
-      {/* Quick Actions Bar - Desktop Only */}
-      <div className="hidden md:block absolute top-0 left-0 right-0 px-6 py-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b z-10">
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-          {quickActions.slice(0, 8).map((action, idx) => (
-            <div key={idx}>
-              {action.label === "Search Products" ? (
-                <motion.button
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.05 }}
-                  onClick={() => setIsSearchCategoryOpen(!isSearchCategoryOpen)}
-                  className={`flex flex-col items-center gap-1 p-3 rounded-xl ${action.bg} border ${action.border} hover:scale-105 transition-all min-w-[80px] ${isSearchCategoryOpen ? 'ring-2 ring-blue-500' : ''}`}
-                >
-                  <action.icon className={`h-5 w-5 ${action.color}`} />
-                  <span className="text-[10px] font-medium text-foreground whitespace-nowrap">{action.label}</span>
-                </motion.button>
-              ) : action.label === "Browse Products" ? (
-                <motion.button
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.05 }}
-                  onClick={() => setIsBrowseProductsOpen(!isBrowseProductsOpen)}
-                  className={`flex flex-col items-center gap-1 p-3 rounded-xl ${action.bg} border ${action.border} hover:scale-105 transition-all min-w-[80px] ${isBrowseProductsOpen ? 'ring-2 ring-blue-500' : ''}`}
-                >
-                  <action.icon className={`h-5 w-5 ${action.color}`} />
-                  <span className="text-[10px] font-medium text-foreground whitespace-nowrap">{action.label}</span>
-                </motion.button>
-              ) : (
-                <motion.button
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: idx * 0.05 }}
-                  onClick={() => handleQuickAction(action.query, action.position, action.mode)}
-                  className={`flex flex-col items-center gap-1 p-3 rounded-xl ${action.bg} border ${action.border} hover:scale-105 transition-all min-w-[80px]`}
-                >
-                  <action.icon className={`h-5 w-5 ${action.color}`} />
-                  <span className="text-[10px] font-medium text-foreground whitespace-nowrap">{action.label}</span>
-                </motion.button>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Floating Search Category Menu - Desktop Only */}
-      <AnimatePresence>
-        {isSearchCategoryOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="hidden md:block fixed inset-0 z-40"
-              onClick={() => setIsSearchCategoryOpen(false)}
-            />
-            {/* Floating Menu */}
-            <motion.div
-              initial={{ opacity: 0, y: -10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className="hidden md:block fixed top-[80px] left-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-blue-200 dark:border-blue-700 p-4 z-50 min-w-[320px]"
-            >
-              <div className="text-sm font-bold text-blue-600 dark:text-blue-400 mb-3 px-1">Select Category to Search</div>
-              <div className="flex flex-wrap gap-2">
-                {searchCategories.map((cat, catIdx) => (
-                  <motion.button
-                    key={catIdx}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: catIdx * 0.03 }}
-                    onClick={() => handleSelectSearchCategory(cat.label)}
-                    className={`flex items-center gap-2 px-4 py-2.5 rounded-full ${cat.bg} border-2 ${cat.border} hover:scale-105 transition-all text-left shadow-sm`}
-                  >
-                    <span className="text-base">{cat.emoji}</span>
-                    <span className={`text-sm font-semibold ${cat.color}`}>{cat.label}</span>
-                  </motion.button>
-                ))}
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-
-      {/* Floating Browse Products Menu - Desktop Only */}
-      <AnimatePresence>
-        {isBrowseProductsOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="hidden md:block fixed inset-0 z-40"
-              onClick={() => setIsBrowseProductsOpen(false)}
-            />
-            {/* Floating Menu */}
-            <motion.div
-              initial={{ opacity: 0, y: -10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className="hidden md:block fixed top-[80px] left-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-blue-200 dark:border-blue-700 p-6 z-50 max-w-[600px]"
-            >
-              <div className="flex items-center gap-2 mb-4">
-                <Package className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                <div className="text-sm font-bold text-blue-600 dark:text-blue-400">Browse Products</div>
-              </div>
-              <div className="grid grid-cols-3 gap-3">
-                {browseProductCategories.map((category, idx) => {
-                  const Icon = category.icon;
-                  return (
-                    <motion.div
-                      key={category.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.05 }}
-                      onClick={() => {
-                        handleQuickAction(category.query, "catalog", "navigator");
-                        setIsBrowseProductsOpen(false);
-                      }}
-                      className="cursor-pointer group"
-                    >
-                      <div className="overflow-hidden rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-blue-500 transition-all hover:shadow-lg">
-                        <div className={`h-20 bg-gradient-to-br ${category.color} flex items-center justify-center relative overflow-hidden`}>
-                          <Icon className="h-10 w-10 text-white/90 group-hover:scale-110 transition-transform" />
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all" />
-                        </div>
-                        <div className="p-3 bg-white dark:bg-gray-800">
-                          <h3 className="font-semibold text-sm mb-0.5">{category.label}</h3>
-                          <p className="text-xs text-muted-foreground">{category.description}</p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-
-
-      {/* Mobile Quick Actions Bottom Sheet */}
-      <AnimatePresence>
-        {isQuickActionsOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsQuickActionsOpen(false)}
-              className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[60]"
-            />
-
-            {/* Bottom Sheet */}
-            <motion.div
-              initial={{ y: "100%" }}
-              animate={{ y: 0 }}
-              exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 rounded-t-3xl shadow-2xl z-[70] max-h-[70vh] overflow-hidden"
-            >
-              {/* Handle */}
-              <div className="flex justify-center pt-3 pb-2">
-                <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full" />
-              </div>
-
-              {/* Header */}
-              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
-                <h3 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">Quick Actions</h3>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsQuickActionsOpen(false)}
-                  className="h-8 w-8"
-                >
-                  <X className="h-5 w-5" />
-                </Button>
-              </div>
-
-              {/* Actions Grid or Category Selection */}
-              <div className="p-6 overflow-y-auto max-h-[calc(70vh-120px)]">
-                {isSearchCategoryOpen ? (
-                  // Search Category Selection View
-                  <div>
-                    <button
-                      onClick={() => setIsSearchCategoryOpen(false)}
-                      className="flex items-center gap-2 text-blue-600 dark:text-blue-400 mb-4 text-sm font-medium"
-                    >
-                      <ChevronDown className="h-4 w-4 rotate-90" />
-                      Back to Actions
-                    </button>
-                    <h4 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3">Search by Category</h4>
-                    <div className="grid grid-cols-2 gap-3">
-                      {searchCategories.map((cat, catIdx) => (
-                        <motion.button
-                          key={catIdx}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: catIdx * 0.05 }}
-                          onClick={() => handleSelectSearchCategory(cat.label)}
-                          className={`flex items-center gap-3 p-4 rounded-2xl ${cat.bg} border-2 ${cat.border} active:scale-95 transition-all`}
-                        >
-                          <span className="text-2xl">{cat.emoji}</span>
-                          <span className={`text-sm font-bold ${cat.color}`}>{cat.label}</span>
-                        </motion.button>
-                      ))}
-                    </div>
-                  </div>
-                ) : isBrowseProductsOpen ? (
-                  // Browse Products Selection View
-                  <div>
-                    <button
-                      onClick={() => setIsBrowseProductsOpen(false)}
-                      className="flex items-center gap-2 text-blue-600 dark:text-blue-400 mb-4 text-sm font-medium"
-                    >
-                      <ChevronDown className="h-4 w-4 rotate-90" />
-                      Back to Actions
-                    </button>
-                    <div className="flex items-center gap-2 mb-3">
-                      <Package className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                      <h4 className="text-sm font-bold text-gray-700 dark:text-gray-300">Browse Products</h4>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      {browseProductCategories.map((category, idx) => {
-                        const Icon = category.icon;
-                        return (
-                          <motion.div
-                            key={category.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: idx * 0.05 }}
-                            onClick={() => {
-                              handleQuickAction(category.query, "catalog", "navigator");
-                              setIsBrowseProductsOpen(false);
-                              setIsQuickActionsOpen(false);
-                            }}
-                            className="cursor-pointer group"
-                          >
-                            <div className="overflow-hidden rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-purple-500 active:scale-95 transition-all">
-                              <div className={`h-16 bg-gradient-to-br ${category.color} flex items-center justify-center relative overflow-hidden`}>
-                                <Icon className="h-8 w-8 text-white/90 group-hover:scale-110 transition-transform" />
-                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-all" />
-                              </div>
-                              <div className="p-2 bg-white dark:bg-gray-800">
-                                <h3 className="font-semibold text-xs mb-0.5">{category.label}</h3>
-                                <p className="text-[10px] text-muted-foreground">{category.description}</p>
-                              </div>
-                            </div>
-                          </motion.div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ) : (
-                  // Normal Actions Grid
-                  <div className="grid grid-cols-3 gap-3">
-                    {quickActions.map((action, idx) => (
-                      <motion.button
-                        key={idx}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: idx * 0.03 }}
-                        onClick={() => {
-                          if (action.label === "Search Products") {
-                            setIsSearchCategoryOpen(true);
-                          } else if (action.label === "Browse Products") {
-                            setIsBrowseProductsOpen(true);
-                          } else {
-                            handleQuickAction(action.query, action.position, action.mode);
-                            setIsQuickActionsOpen(false);
-                          }
-                        }}
-                        className={`flex flex-col items-center gap-2 p-4 rounded-2xl ${action.bg} border-2 ${action.border} active:scale-95 transition-all`}
-                      >
-                        <action.icon className={`h-7 w-7 ${action.color}`} />
-                        <span className="text-[11px] font-semibold text-foreground text-center leading-tight">{action.label}</span>
-                      </motion.button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      <QuickActionsMobileSheet
+        isOpen={isQuickActionsOpen}
+        setIsOpen={setIsQuickActionsOpen}
+        quickActions={quickActions}
+        isSearchCategoryOpen={isSearchCategoryOpen}
+        setIsSearchCategoryOpen={setIsSearchCategoryOpen}
+        isBrowseProductsOpen={isBrowseProductsOpen}
+        setIsBrowseProductsOpen={setIsBrowseProductsOpen}
+        searchCategories={searchCategories}
+        browseProductCategories={browseProductCategories}
+        onSelectSearchCategory={handleSelectSearchCategory}
+        onQuickAction={handleQuickAction}
+      />
 
       {/* Main Split Content */}
       <div className="h-full relative">
@@ -2734,471 +2193,65 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           </div>
         </div>
 
-        {/* Desktop: Side Panel (Documents) - Hidden on Mobile */}
-        <AnimatePresence>
-          {contextDocuments.length > 0 && isPanelVisible && (
-            <motion.div
-              initial={{ opacity: 0, x: 420 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 420 }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className={`hidden md:flex absolute top-[165px] right-0 bottom-0 mr-2 ${selectedProduct || isCartView ? 'w-[700px] max-w-[700px]' : 'w-[420px] max-w-[420px]'} border-l-2 border-blue-500/30 bg-gradient-to-b from-blue-50/95 to-white/95 dark:from-gray-900/95 dark:via-blue-900/20 dark:to-gray-900/95 backdrop-blur-xl p-6 shadow-2xl z-10 flex-col transition-all duration-300`}
-            >
-              {/* Header */}
-              <div className="bg-gradient-to-br from-blue-600 to-blue-500 backdrop-blur-md p-5 rounded-2xl mb-6 shadow-2xl border-2 border-white/20">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <motion.div
-                      animate={{ rotate: [0, 360] }}
-                      transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                      className="p-2 bg-white/20 rounded-lg backdrop-blur-sm"
-                    >
-                      <Sparkles className="h-5 w-5 text-white" />
-                    </motion.div>
-                    <div>
-                      <h2 className="font-bold text-lg text-white">
-                        {isCartView ? 'Shopping Cart' : selectedProduct ? 'Product Details' : 'Context Panel'}
-                      </h2>
-                      <p className="text-xs text-white/80">
-                        {isCartView
-                          ? 'View and manage your cart'
-                          : selectedProduct
-                            ? 'View details and add to cart'
-                            : `${contextDocuments.length} ${contextDocuments.length === 1 ? 'document' : 'documents'} • Click to view`
-                        }
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    {(selectedProduct || isCartView) && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={isCartView ? closeCart : closeProductDetails}
-                        className="h-8 px-3 text-xs text-white hover:bg-white/20 border border-white/30"
-                      >
-                        <ArrowRight className="h-3 w-3 mr-1 rotate-180" />
-                        Back
-                      </Button>
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setIsPanelVisible(false)}
-                      className="h-8 px-3 text-xs text-white hover:bg-white/20 border border-white/30"
-                    >
-                      <EyeOff className="h-3 w-3 mr-1" />
-                      Hide
-                    </Button>
-                  </div>
-                </div>
-                <div className="h-1 bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 rounded-full"></div>
-              </div>
-
-              {/* Cart View, Product Details or Documents List */}
-              {isCartView ? (
-                /* Cart View */
-                <div className="flex-1 overflow-y-auto space-y-4" style={{
-                  scrollbarWidth: 'thin',
-                  scrollbarColor: 'rgba(168, 85, 247, 0.5) rgba(243, 232, 255, 0.2)'
-                }}>
-                  {cartData && cartData.items && cartData.items.length > 0 ? (
-                    <>
-                      {/* Cart Items */}
-                      <div className="space-y-3">
-                        {cartData.items.map((item: any, idx: number) => (
-                          <Card key={idx} className="border-2 border-blue-200 bg-white/60">
-                            <CardContent className="p-4">
-                              <div className="flex items-start gap-3">
-                                <div className="flex-1">
-                                  <h4 className="font-semibold text-gray-900 mb-1">{item.productName || item.sku}</h4>
-                                  <p className="text-sm text-gray-600 mb-2">SKU: {item.sku}</p>
-                                  <div className="flex items-center justify-between">
-                                    <span className="text-lg font-bold text-gray-900">${item.price}</span>
-                                    <span className="text-sm text-gray-500">Qty: {item.quantity}</span>
-                                  </div>
-                                  <div className="mt-2 text-sm font-semibold text-gray-900">
-                                    Subtotal: ${(item.price * item.quantity).toFixed(2)}
-                                  </div>
-                                </div>
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  onClick={() => removeFromCart(item.sku)}
-                                  className="h-8 w-8 text-red-600 hover:bg-red-50 hover:text-red-700"
-                                >
-                                  <X className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        ))}
-                      </div>
-
-                      {/* Cart Summary */}
-                      <Card className="border-2 border-blue-300 bg-gradient-to-br from-blue-50 to-white">
-                        <CardContent className="p-4 space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Subtotal:</span>
-                            <span className="font-semibold">${cartData.subtotal?.toFixed(2) || '0.00'}</span>
-                          </div>
-                          {cartData.discount > 0 && (
-                            <div className="flex justify-between text-sm">
-                              <span className="text-gray-600">Discount:</span>
-                              <span className="font-semibold text-green-600">-${cartData.discount?.toFixed(2)}</span>
-                            </div>
-                          )}
-                          <div className="border-t border-blue-200 pt-2 flex justify-between">
-                            <span className="text-lg font-bold text-gray-900">Total:</span>
-                            <span className="text-lg font-bold text-gray-900">${cartData.total?.toFixed(2) || '0.00'}</span>
-                          </div>
-                          {cartData.couponCode && (
-                            <div className="text-xs text-gray-500 flex items-center gap-1">
-                              <Tag className="h-3 w-3" />
-                              Coupon: {cartData.couponCode}
-                            </div>
-                          )}
-                        </CardContent>
-                      </Card>
-
-                      {/* Action Buttons */}
-                      <div className="space-y-2">
-                        <Button
-                          onClick={() => {
-                            setChatQuery("Checkout my cart");
-                            handleChatQuery("Checkout my cart");
-                            closeCart();
-                          }}
-                          className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg"
-                          size="lg"
-                        >
-                          <ShoppingBag className="h-5 w-5 mr-2" />
-                          Proceed to Checkout
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            const cartAttachment = {
-                              type: "cart",
-                              data: {
-                                title: `Cart (${cartData.items.length} items - $${cartData.total?.toFixed(2)})`,
-                                items: cartData.items,
-                                subtotal: cartData.subtotal,
-                                discount: cartData.discount,
-                                total: cartData.total,
-                                couponCode: cartData.couponCode
-                              }
-                            };
-                            setAttachedItems(prev => [...prev, cartAttachment]);
-
-                            // Cart attachments use checkout position
-                            setCurrentPosition("checkout");
-                            setCurrentMode("copilot");
-
-                            toast({
-                              title: "💬 Cart Added to Chat",
-                              description: "Your cart details are now part of the conversation",
-                            });
-                          }}
-                          variant="outline"
-                          className="w-full border-blue-300 text-blue-600 hover:bg-blue-50"
-                          size="lg"
-                        >
-                          <BrainCircuit className="h-5 w-5 mr-2" />
-                          Attach Cart to Chat
-                        </Button>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-full text-center py-12">
-                      <ShoppingCart className="h-16 w-16 text-gray-300 mb-4" />
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Your cart is empty</h3>
-                      <p className="text-sm text-gray-500 mb-4">Add some products to get started!</p>
-                      <Button
-                        onClick={() => {
-                          closeCart();
-                          setChatQuery("Show me available products");
-                          handleChatQuery("Show me available products");
-                        }}
-                        className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white"
-                      >
-                        Browse Products
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              ) : selectedProduct ? (
-                /* Product Details View */
-                <div className="flex-1 overflow-y-auto space-y-6" style={{
-                  scrollbarWidth: 'thin',
-                  scrollbarColor: 'rgba(168, 85, 247, 0.5) rgba(243, 232, 255, 0.2)'
-                }}>
-                  {selectedProduct.metadata?.imageUrl && (
-                    <div className="relative h-80 overflow-hidden rounded-2xl bg-gradient-to-br from-blue-100 to-white">
-                      <img
-                        src={selectedProduct.metadata.imageUrl}
-                        alt={selectedProduct.title}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                    </div>
-                  )}
-
-                  <div className="space-y-4">
-                    <div>
-                      <h3 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent mb-2">
-                        {selectedProduct.title}
-                      </h3>
-                      <Badge variant="outline" className="text-xs bg-blue-100 border-blue-300 text-blue-700">
-                        {selectedProduct.type}
-                      </Badge>
-                    </div>
-
-                    <div className="p-4 bg-white/60 rounded-xl border-2 border-purple-200">
-                      <p className="text-sm text-gray-700 leading-relaxed">
-                        {selectedProduct.content}
-                      </p>
-                    </div>
-
-                    {selectedProduct.metadata && (
-                      <div className="space-y-3">
-                        <h4 className="font-semibold text-gray-900">Product Details</h4>
-                        <div className="grid grid-cols-2 gap-3">
-                          {Object.entries(selectedProduct.metadata).map(([key, value]) => {
-                            if (key === 'imageUrl') return null;
-                            return (
-                              <div key={key} className="p-3 bg-white/60 rounded-lg border border-purple-200">
-                                <p className="text-xs text-gray-500 mb-1">{formatFieldName(key)}</p>
-                                <p className="text-sm font-semibold text-gray-900">{formatFieldValue(value)}</p>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Action Buttons */}
-                    <div className="sticky bottom-0 bg-gradient-to-t from-blue-50 via-blue-50/50 to-transparent pt-6 pb-2 space-y-3">
-                      <Button
-                        onClick={() => addToCart(selectedProduct)}
-                        className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg"
-                        size="lg"
-                      >
-                        <ShoppingCart className="h-5 w-5 mr-2" />
-                        Add to Cart
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          handleAttachDocument(selectedProduct);
-                          closeProductDetails();
-                        }}
-                        variant="outline"
-                        className="w-full border-blue-300 text-blue-600 hover:bg-blue-50"
-                        size="lg"
-                      >
-                        <BrainCircuit className="h-5 w-5 mr-2" />
-                        Attach to Chat
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                /* Documents List - Scrollable with Floating Buttons */
-                <div className="flex-1 relative min-h-0">
-                {/* Floating Scroll Up Button - Hidden on Mobile */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleScrollUp}
-                  className="hidden lg:flex absolute top-4 left-1/2 -translate-x-1/2 z-20 h-10 w-10 rounded-full bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-xl border-2 border-white/30 hover:scale-110 transition-all"
-                  title="Scroll Up"
-                >
-                  <ChevronUp className="h-5 w-5" />
-                </Button>
-
-                {/* Scrollable Documents Container */}
-                <div
-                  ref={contextPanelRef}
-                  className="absolute inset-0 overflow-y-auto px-2 py-2 space-y-4"
-                  style={{
-                    scrollbarWidth: 'thin',
-                    scrollbarColor: 'rgba(168, 85, 247, 0.5) rgba(243, 232, 255, 0.2)'
-                  }}
-                >
-                  <AnimatePresence mode="popLayout">
-                    {contextDocuments.map((doc, idx) => {
-                      const DocIcon = getDocumentIcon(doc.type);
-                      const isFocused = doc.messageId === focusedMessageId;
-                      const isNewDoc = !viewedDocumentIds.has(doc.id) && newDocuments.some(nd => nd.id === doc.id);
-                      return (
-                        <motion.div
-                          key={doc.id}
-                          data-doc-message-id={doc.messageId}
-                          data-doc-id={doc.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ delay: idx * 0.05 }}
-                        >
-                          <Card
-                            onClick={() => openProductDetails(doc)}
-                            className={`relative group hover:shadow-2xl transition-all duration-300 border-2 cursor-pointer ${
-                            isNewDoc
-                              ? 'border-yellow-400 shadow-lg shadow-yellow-200/50 bg-gradient-to-br from-yellow-50/90 via-blue-50/40 to-white/40'
-                              : isFocused
-                                ? 'border-yellow-400 shadow-lg shadow-yellow-200/50 bg-gradient-to-br from-yellow-50 via-blue-50/50 to-white/50'
-                                : 'border-blue-300 hover:border-blue-500 bg-gradient-to-br from-white via-blue-50/50 to-white'
-                          } dark:from-gray-800 dark:to-blue-900/20 overflow-hidden`}>
-                            {doc.metadata?.imageUrl && (
-                              <div className="relative h-48 overflow-hidden bg-gradient-to-br from-blue-100 to-white">
-                                <img
-                                  src={doc.metadata.imageUrl}
-                                  alt={doc.title}
-                                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                                {isNewDoc && (
-                                  <div className="absolute top-2 left-2 bg-yellow-400 text-yellow-900 text-[10px] font-bold px-2 py-1 rounded-full shadow-lg z-10">
-                                    NEW
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                            {/* Attach Button - Always Visible - Outside CardHeader for better access */}
-                            <Button
-                              size="icon"
-                              variant="ghost"
-                              className={`absolute top-2 right-2 h-10 w-10 ${
-                                isItemAttached(doc.id)
-                                  ? 'bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
-                                  : 'bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600'
-                              } text-white shadow-xl border-2 border-white/50 hover:scale-110 hover:border-white/50 transition-all z-50 pointer-events-auto cursor-pointer`}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                e.preventDefault();
-                                console.log('Attaching document:', doc.title, doc.id);
-                                handleAttachDocument(doc);
-                              }}
-                              title={isItemAttached(doc.id) ? "Already in Chat" : "Attach to Chat"}
-                            >
-                              {isItemAttached(doc.id) ? (
-                                <CheckCircle2 className="h-5 w-5" />
-                              ) : (
-                                <BrainCircuit className="h-5 w-5" />
-                              )}
-                            </Button>
-
-                            <CardHeader className="pb-3 relative pt-2">
-                              <div className="flex items-start justify-between gap-2 pr-12">
-                                <div className="flex items-start gap-3 flex-1">
-                                  {!doc.metadata?.imageUrl && (
-                                    <motion.div
-                                      whileHover={{ rotate: [0, -10, 10, -10, 0], scale: 1.1 }}
-                                      transition={{ duration: 0.5 }}
-                                      className="p-3 bg-gradient-to-br from-blue-600 to-blue-500 rounded-xl shadow-lg"
-                                    >
-                                      <DocIcon className="h-5 w-5 text-white" />
-                                    </motion.div>
-                                  )}
-                                  <div className="flex-1 min-w-0">
-                                    <CardTitle className="text-base font-bold line-clamp-2 bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
-                                      {doc.title}
-                                    </CardTitle>
-                                    <div className="flex items-center gap-1.5 mt-1.5">
-                                      <Badge variant="outline" className="text-[10px] bg-blue-100 border-blue-300 text-blue-700">
-                                        {doc.type}
-                                      </Badge>
-                                      {isNewDoc && (
-                                        <Badge className="text-[10px] bg-yellow-400 text-yellow-900 border-yellow-500">
-                                          NEW
-                                        </Badge>
-                                      )}
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </CardHeader>
-                            <CardContent>
-                              <p className="text-sm text-muted-foreground leading-relaxed" style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
-                                {doc.content}
-                              </p>
-                              {(doc.similarity || doc.score) && (
-                                <div className="mt-3">
-                                  <div className="flex items-center gap-2">
-                                    <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
-                                    <Badge variant="outline" className="text-[10px] bg-gradient-to-r from-yellow-100 to-orange-100 border-yellow-300 text-yellow-800 font-semibold">
-                                      {((doc.similarity || doc.score) * 100).toFixed(1)}% Match
-                                    </Badge>
-                                  </div>
-                                </div>
-                              )}
-                              {doc.metadata && (
-                                <div className="mt-3 pt-3 border-t border-blue-200">
-                                  <div className="flex flex-wrap gap-1.5">
-                                    {Object.entries(doc.metadata)
-                                      .filter(([key]) => !key.startsWith('_') && !key.includes('indexedCreatedAt') && key !== 'imageUrl' && key !== 'vectorSpace')
-                                      .slice(0, 4)
-                                      .map(([key, value], badgeIdx) => {
-                                        const colors = [
-                                          'bg-blue-100 text-blue-700 border-blue-300',
-                                          'bg-green-100 text-green-700 border-green-300',
-                                          'bg-pink-100 text-pink-700 border-pink-300',
-                                          'bg-indigo-100 text-indigo-700 border-indigo-300',
-                                        ];
-                                        return (
-                                          <Badge key={key} variant="outline" className={`text-[10px] ${colors[badgeIdx % colors.length]} font-medium`}>
-                                            {formatFieldName(key)}: {String(value).slice(0, 25)}
-                                          </Badge>
-                                        );
-                                      })}
-                                  </div>
-                                </div>
-                              )}
-                            </CardContent>
-                          </Card>
-                        </motion.div>
-                      );
-                    })}
-                  </AnimatePresence>
-                  <div ref={contextPanelEndRef} />
-                </div>
-
-                {/* Floating Scroll Down Button - Hidden on Mobile */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleScrollDown}
-                  className="hidden lg:flex absolute bottom-4 left-1/2 -translate-x-1/2 z-20 h-10 w-10 rounded-full bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-xl border-2 border-white/30 hover:scale-110 transition-all"
-                  title="Scroll Down"
-                >
-                  <ChevronDown className="h-5 w-5" />
-                </Button>
-                </div>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Floating Show Panel Button - Desktop only */}
-        <AnimatePresence>
-          {contextDocuments.length > 0 && !isPanelVisible && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, x: 100 }}
-              animate={{ opacity: 1, scale: 1, x: 0 }}
-              exit={{ opacity: 0, scale: 0.8, x: 100 }}
-              transition={{ type: "spring", damping: 20 }}
-              className="hidden md:block absolute top-16 right-4 z-20"
-            >
-              <Button
-                onClick={() => setIsPanelVisible(true)}
-                size="lg"
-                className="bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-2xl border-2 border-white/30 rounded-full px-6"
-              >
-                <Eye className="h-5 w-5 mr-2" />
-                Show Panel
-              </Button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <DesktopContextPanel
+          contextDocuments={contextDocuments}
+          isPanelVisible={isPanelVisible}
+          setIsPanelVisible={setIsPanelVisible}
+          selectedProduct={selectedProduct}
+          isCartView={isCartView}
+          cartData={cartData}
+          focusedMessageId={focusedMessageId}
+          newDocuments={newDocuments}
+          viewedDocumentIds={viewedDocumentIds}
+          contextPanelRef={contextPanelRef}
+          contextPanelEndRef={contextPanelEndRef}
+          isItemAttached={isItemAttached}
+          onOpenProductDetails={openProductDetails}
+          onCloseCart={closeCart}
+          onCloseProductDetails={closeProductDetails}
+          onRemoveFromCart={(sku) => {
+            void removeFromCart(sku);
+          }}
+          onProceedToCheckout={() => {
+            setChatQuery("Checkout my cart");
+            void handleChatQuery("Checkout my cart");
+            closeCart();
+          }}
+          onAttachCartToChat={() => {
+            if (!cartData || !cartData.items || cartData.items.length === 0) return;
+            const cartAttachment = {
+              type: "cart",
+              data: {
+                title: `Cart (${cartData.items.length} items - $${cartData.total?.toFixed(2)})`,
+                items: cartData.items,
+                subtotal: cartData.subtotal,
+                discount: cartData.discount,
+                total: cartData.total,
+                couponCode: cartData.couponCode,
+              },
+            };
+            setAttachedItems((prev) => [...prev, cartAttachment]);
+            setCurrentPosition("checkout");
+            setCurrentMode("copilot");
+            toast({
+              title: "💬 Cart Added to Chat",
+              description: "Your cart details are now part of the conversation",
+            });
+          }}
+          onBrowseProducts={() => {
+            closeCart();
+            setChatQuery("Show me available products");
+            void handleChatQuery("Show me available products");
+          }}
+          onAddToCart={(product) => {
+            void addToCart(product);
+          }}
+          onAttachProductToChat={(product) => {
+            handleAttachDocument(product);
+            closeProductDetails();
+          }}
+          onAttachDocument={handleAttachDocument}
+        />
 
         {/* Mobile: AI Search Categories - Horizontal Row at Same Level */}
       <AnimatePresence>
