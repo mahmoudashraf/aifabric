@@ -2321,9 +2321,9 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
                   >
                     <div
-                      className={`max-w-[70%] md:max-w-[80%] rounded-3xl overflow-hidden ${
+                      className={`max-w-[85%] md:max-w-[90%] rounded-3xl overflow-hidden ${
                         message.type === "user"
-                          ? "bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white shadow-lg border border-blue-400/30"
+                          ? "bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 text-white shadow-lg"
                           : `${styles?.bg} shadow-xl relative`
                       }`}
                     >
