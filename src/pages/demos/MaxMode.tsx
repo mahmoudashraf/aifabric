@@ -5,7 +5,10 @@ import { AISearchDisplay } from "@/components/AISearchDisplay";
 import { ActionResultRenderer } from "./max-mode/components/ActionResultRenderer";
 import { DesktopContextPanel } from "./max-mode/components/DesktopContextPanel";
 import { MaxModeHeader } from "./max-mode/components/MaxModeHeader";
+import { MobileFloatingActions } from "./max-mode/components/MobileFloatingActions";
+import { MobileNewDocsPreviewPanel } from "./max-mode/components/MobileNewDocsPreviewPanel";
 import { QuickActionsDesktop } from "./max-mode/components/QuickActionsDesktop";
+import { MobileContextSheet } from "./max-mode/components/MobileContextSheet";
 import { QuickActionsMobileSheet } from "./max-mode/components/QuickActionsMobileSheet";
 import { getActionIcon, parseActionMessage } from "./max-mode/actionMessage";
 import { formatFieldName, formatFieldValue, normalizeMessageContent } from "./max-mode/utils";
@@ -2253,789 +2256,102 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           onAttachDocument={handleAttachDocument}
         />
 
-        {/* Mobile: AI Search Categories - Horizontal Row at Same Level */}
-      <AnimatePresence>
-        {isAISearchOpen && (
-          <motion.div
-            ref={aiSearchRowRef}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ type: "spring", damping: 20 }}
-            className="md:hidden fixed bottom-32 left-3 right-20 z-40 flex items-center gap-2 overflow-x-auto scrollbar-hide px-2 py-2 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-full"
-          >
-            {aiSearchCategories.map((category, idx) => (
-              <motion.button
-                key={category.label}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: idx * 0.05 }}
-                onClick={() => {
-                  handleAISearchCategory(category);
-                  setIsAISearchOpen(false);
-                }}
-                className="flex-shrink-0 flex flex-col items-center gap-1"
-              >
-                <div className={`h-12 w-12 rounded-full border-2 ${category.border} flex items-center justify-center transition-all active:scale-95 hover:scale-105`}>
-                  <category.icon className={`h-5 w-5 ${category.color}`} />
-                </div>
-                <span className={`text-[8px] font-semibold ${category.color} leading-tight text-center max-w-[48px] bg-white/90 dark:bg-gray-800/90 px-1.5 py-0.5 rounded-full`}>
-                  {category.label}
-                </span>
-              </motion.button>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Mobile: All Floating Action Buttons - Single Column - z-40 stays below input area */}
-        <div className="md:hidden fixed bottom-32 right-1 z-40 flex flex-col-reverse items-center gap-3">
-          {/* Collapse/Expand Toggle Button */}
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="flex flex-col items-center gap-1"
-          >
-            <Button
-              onClick={() => setIsFloatingMenuCollapsed(!isFloatingMenuCollapsed)}
-              size="lg"
-              className="h-10 w-10 rounded-full bg-gradient-to-br from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white shadow-xl border-2 border-white/30"
-            >
-              {isFloatingMenuCollapsed ? (
-                <ChevronsLeft className="h-4 w-4" />
-              ) : (
-                <ChevronsRight className="h-4 w-4" />
-              )}
-            </Button>
-          </motion.div>
-
-          {/* AI Search Button */}
-          <AnimatePresence>
-            {!isFloatingMenuCollapsed && (
-              <motion.div
-                ref={aiSearchButtonRef}
-                initial={{ scale: 0, opacity: 0, x: 20 }}
-                animate={{ scale: 1, opacity: 1, x: 0 }}
-                exit={{ scale: 0, opacity: 0, x: 20 }}
-                transition={{ type: "spring", damping: 20 }}
-                className="flex flex-col items-center gap-1"
-              >
-                <Button
-                  onClick={() => setIsAISearchOpen(!isAISearchOpen)}
-                  size="lg"
-                  className="h-12 w-12 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-2xl border-2 border-white/30"
-                >
-                  <Search className="h-5 w-5" />
-                </Button>
-                <span className="text-[9px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
-                  AI Search
-                </span>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Browse Products Button */}
-          <AnimatePresence>
-            {!isFloatingMenuCollapsed && (
-              <motion.div
-                initial={{ scale: 0, opacity: 0, x: 20 }}
-                animate={{ scale: 1, opacity: 1, x: 0 }}
-                exit={{ scale: 0, opacity: 0, x: 20 }}
-                transition={{ type: "spring", damping: 20, delay: 0.05 }}
-                className="flex flex-col items-center gap-1"
-              >
-                <Button
-                  onClick={() => setIsBrowseProductsOpen(!isBrowseProductsOpen)}
-                  size="lg"
-                  className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-2xl border-2 border-white/30"
-                >
-                  <List className="h-5 w-5" />
-                </Button>
-                <span className="text-[9px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
-                  Products
-                </span>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Documents Button - Conditional */}
-          <AnimatePresence>
-            {contextDocuments.length > 0 && !isFloatingMenuCollapsed && (
-              <motion.div
-                initial={{ scale: 0, opacity: 0, x: 20 }}
-                animate={{ scale: 1, opacity: 1, x: 0 }}
-                exit={{ scale: 0, opacity: 0, x: 20 }}
-                transition={{ type: "spring", damping: 20, delay: 0.1 }}
-                className="flex flex-col items-center gap-1"
-              >
-                <Button
-                  onClick={handleOpenBottomSheet}
-                  size="lg"
-                  className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white shadow-2xl border-2 border-white/30 relative"
-                >
-                  <FileText className="h-5 w-5" />
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center p-0">
-                    {contextDocuments.length}
-                  </Badge>
-                </Button>
-                <span className="text-[9px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
-                  Docs
-                </span>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Cart Button */}
-          <AnimatePresence>
-            {!isFloatingMenuCollapsed && (
-              <motion.div
-                initial={{ scale: 0, opacity: 0, x: 20 }}
-                animate={{ scale: 1, opacity: 1, x: 0 }}
-                exit={{ scale: 0, opacity: 0, x: 20 }}
-                transition={{ type: "spring", damping: 20, delay: 0.15 }}
-                className="flex flex-col items-center gap-1"
-              >
-                <Button
-                  onClick={openCart}
-                  size="lg"
-                  className="h-12 w-12 rounded-full bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white shadow-2xl border-2 border-white/30"
-                >
-                  <ShoppingCart className="h-5 w-5" />
-                </Button>
-                <span className="text-[9px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm">
-                  Cart
-                </span>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Quick Actions Button */}
-          <AnimatePresence>
-            {!isQuickActionsOpen && !isFloatingMenuCollapsed && (
-              <motion.div
-                initial={{ scale: 0, opacity: 0, x: 20 }}
-                animate={{ scale: 1, opacity: 1, x: 0 }}
-                exit={{ scale: 0, opacity: 0, x: 20 }}
-                transition={{ type: "spring", damping: 20, delay: 0.2 }}
-                className="flex flex-col items-center gap-1"
-              >
-                <Button
-                  onClick={() => setIsQuickActionsOpen(true)}
-                  size="lg"
-                  className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-2xl border-2 border-white/30"
-                >
-                  <BrainCircuit className="h-5 w-5" />
-                </Button>
-                <span className="text-[9px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
-                  Actions
-                </span>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Mobile: Browse Products Bottom Sheet */}
-        <AnimatePresence>
-          {isBrowseProductsOpen && (
-            <>
-              {/* Backdrop */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-30"
-                onClick={() => setIsBrowseProductsOpen(false)}
-              />
-
-              {/* Bottom Sheet */}
-              <motion.div
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
-                exit={{ y: "100%" }}
-                transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 rounded-t-3xl shadow-2xl z-40 max-h-[65vh] overflow-hidden"
-              >
-                {/* Handle */}
-                <div className="flex justify-center pt-3 pb-2">
-                  <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full" />
-                </div>
-
-                {/* Header */}
-                <div className="px-5 py-4 border-b border-blue-200/50 dark:border-blue-800/50 flex items-center justify-between bg-gradient-to-r from-blue-50 to-white dark:from-gray-800 dark:to-blue-900/30">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2.5 bg-gradient-to-br from-blue-600 to-blue-500 rounded-xl shadow-lg">
-                      <Package className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">Browse Products</h3>
-                      <p className="text-[10px] text-gray-600 dark:text-gray-400 font-medium">Quick category search</p>
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setIsBrowseProductsOpen(false)}
-                    className="h-9 w-9 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-xl"
-                  >
-                    <X className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                  </Button>
-                </div>
-
-                {/* Products List in Rows */}
-                <div className="p-4 overflow-y-auto max-h-[calc(65vh-120px)]">
-                  <div className="space-y-2.5">
-                    {browseProductCategories.map((category, idx) => {
-                      const Icon = category.icon;
-                      return (
-                        <motion.div
-                          key={category.id}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: idx * 0.03 }}
-                          onClick={() => {
-                            handleQuickAction(category.query, "catalog", "navigator");
-                            setIsBrowseProductsOpen(false);
-                          }}
-                          className="cursor-pointer group"
-                        >
-                          <div className={`relative overflow-hidden flex items-center gap-3.5 p-4 rounded-2xl border border-transparent bg-gradient-to-br ${category.color} hover:shadow-xl active:scale-[0.98] transition-all shadow-md`}>
-                            {/* Icon Circle */}
-                            <div className="relative z-10 p-3 bg-white/25 backdrop-blur-sm rounded-xl flex-shrink-0 group-hover:scale-110 transition-transform">
-                              <Icon className="h-6 w-6 text-white drop-shadow-md" />
-                            </div>
-
-                            {/* Text Content */}
-                            <div className="relative z-10 flex-1 min-w-0">
-                              <h3 className="font-bold text-base text-white mb-0.5 drop-shadow-sm">{category.label}</h3>
-                              <p className="text-xs text-white/90 font-medium">{category.description}</p>
-                            </div>
-
-                            {/* Arrow Icon */}
-                            <div className="relative z-10 flex-shrink-0">
-                              <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg group-hover:bg-white/30 transition-all">
-                                <ArrowRight className="h-4 w-4 text-white group-hover:translate-x-0.5 transition-transform" />
-                              </div>
-                            </div>
-
-                            {/* Shine Effect Overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                          </div>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
-
+        <MobileFloatingActions
+          isAISearchOpen={isAISearchOpen}
+          setIsAISearchOpen={setIsAISearchOpen}
+          aiSearchCategories={aiSearchCategories}
+          aiSearchRowRef={aiSearchRowRef}
+          aiSearchButtonRef={aiSearchButtonRef}
+          onAISearchCategory={handleAISearchCategory}
+          isFloatingMenuCollapsed={isFloatingMenuCollapsed}
+          setIsFloatingMenuCollapsed={setIsFloatingMenuCollapsed}
+          contextDocumentsCount={contextDocuments.length}
+          onOpenDocuments={handleOpenBottomSheet}
+          onOpenCart={openCart}
+          isQuickActionsOpen={isQuickActionsOpen}
+          setIsQuickActionsOpen={setIsQuickActionsOpen}
+          isBrowseProductsOpen={isBrowseProductsOpen}
+          setIsBrowseProductsOpen={setIsBrowseProductsOpen}
+          browseProductCategories={browseProductCategories}
+          onBrowseProductCategory={(category) => {
+            handleQuickAction(category.query, "catalog", "navigator");
+          }}
+        />
 
         {/* Mobile: New Documents Preview Panel */}
-        <AnimatePresence>
-          {isNewDocsPreviewOpen && newDocuments.length > 0 && (
-            <>
-              {/* Backdrop */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="md:hidden fixed inset-0 bg-black/30 z-[35]"
-                onClick={handleCloseNewDocsPreview}
-              />
-
-              {/* Small Right Panel */}
-              <motion.div
-                initial={{ x: 300, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                exit={{ x: 300, opacity: 0 }}
-                transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                className="md:hidden fixed top-20 bottom-20 right-0 w-[280px] bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:via-blue-900/20 dark:to-gray-900 shadow-2xl z-[40] flex flex-col rounded-l-3xl border-l-2 border-blue-300"
-              >
-                {/* Header */}
-                <div className="px-4 py-3 border-b border-blue-200 dark:border-blue-800 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="p-2 bg-gradient-to-br from-blue-600 to-blue-500 rounded-lg">
-                      <Sparkles className="h-4 w-4 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
-                        New Products
-                      </h3>
-                      <p className="text-[10px] text-muted-foreground">
-                        {newDocuments.length} {newDocuments.length === 1 ? 'item' : 'items'}
-                      </p>
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={handleCloseNewDocsPreview}
-                    className="h-8 w-8"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-
-                {/* New Documents List - Scrollable */}
-                <div className="flex-1 overflow-y-auto px-3 py-3 space-y-2">
-                  {newDocuments.map((doc, idx) => {
-                    const DocIcon = getDocumentIcon(doc.type);
-                    return (
-                      <motion.div
-                        key={doc.id}
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.05 }}
-                      >
-                        <Card
-                          onClick={() => {
-                            openProductDetails(doc);
-                            handleCloseNewDocsPreview();
-                            setIsBottomSheetOpen(true);
-                          }}
-                          className="relative group active:scale-98 transition-all border-2 border-yellow-300 bg-gradient-to-br from-yellow-50/80 via-blue-50/30 to-white/30 cursor-pointer shadow-lg"
-                        >
-                          {doc.metadata?.imageUrl && (
-                            <div className="relative h-24 overflow-hidden bg-gradient-to-br from-blue-100 to-white rounded-t-lg">
-                              <img
-                                src={doc.metadata.imageUrl}
-                                alt={doc.title}
-                                className="w-full h-full object-cover"
-                              />
-                              <div className="absolute top-1 right-1 bg-yellow-400 text-yellow-900 text-[8px] font-bold px-1.5 py-0.5 rounded-full">
-                                NEW
-                              </div>
-                            </div>
-                          )}
-                          <CardHeader className="pb-2 pt-2 px-2">
-                            <div className="flex items-start gap-2">
-                              {!doc.metadata?.imageUrl && (
-                                <>
-                                  <div className="p-1.5 bg-gradient-to-br from-blue-600 to-blue-500 rounded-lg flex-shrink-0">
-                                    <DocIcon className="h-3 w-3 text-white" />
-                                  </div>
-                                  <div className="absolute top-1 right-1 bg-yellow-400 text-yellow-900 text-[8px] font-bold px-1.5 py-0.5 rounded-full">
-                                    NEW
-                                  </div>
-                                </>
-                              )}
-                              <div className="flex-1 min-w-0">
-                                <CardTitle className="text-xs font-bold line-clamp-2 text-gray-900">
-                                  {doc.title}
-                                </CardTitle>
-                                {doc.metadata?.price && (
-                                  <p className="text-xs font-semibold text-gray-900 mt-1">
-                                    {doc.metadata.price}
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          </CardHeader>
-                        </Card>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-
-                {/* View All Button */}
-                <div className="p-3 border-t border-blue-200">
-                  <Button
-                    onClick={() => {
-                      handleCloseNewDocsPreview();
-                      handleOpenBottomSheet();
-                    }}
-                    className="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-lg"
-                    size="sm"
-                  >
-                    View All Documents
-                  </Button>
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
+        <MobileNewDocsPreviewPanel
+          isOpen={isNewDocsPreviewOpen}
+          newDocuments={newDocuments}
+          onClose={handleCloseNewDocsPreview}
+          onSelectDocument={(doc) => {
+            openProductDetails(doc);
+            handleCloseNewDocsPreview();
+            setIsBottomSheetOpen(true);
+          }}
+          onViewAll={() => {
+            handleCloseNewDocsPreview();
+            handleOpenBottomSheet();
+          }}
+        />
 
 
-        {/* Mobile: Documents Bottom Sheet */}
-        <AnimatePresence>
-          {isBottomSheetOpen && contextDocuments.length > 0 && (
-            <>
-              {/* Backdrop */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setIsBottomSheetOpen(false)}
-                className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[60]"
-              />
-
-              {/* Bottom Sheet */}
-              <motion.div
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
-                exit={{ y: "100%" }}
-                transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                drag="y"
-                dragConstraints={{ top: 0, bottom: 0 }}
-                dragElastic={{ top: 0, bottom: 0.5 }}
-                onDragEnd={(e, { offset, velocity }) => {
-                  if (offset.y > 100 || velocity.y > 500) {
-                    setIsBottomSheetOpen(false);
-                  }
-                }}
-                className="md:hidden fixed bottom-0 left-0 right-0 bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:via-blue-900/20 dark:to-gray-900 rounded-t-3xl shadow-2xl z-[70] max-h-[80vh] flex flex-col"
-              >
-                {/* Handle */}
-                <div className="flex justify-center pt-3 pb-2">
-                  <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full" />
-                </div>
-
-                {/* Header */}
-                <div className="px-4 py-3 border-b border-blue-200 dark:border-blue-800 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    {selectedProduct && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={closeProductDetails}
-                        className="h-8 w-8 -ml-2"
-                      >
-                        <ArrowRight className="h-5 w-5 rotate-180" />
-                      </Button>
-                    )}
-                    <div className="p-2 bg-gradient-to-br from-blue-600 to-blue-500 rounded-lg">
-                      <Sparkles className="h-4 w-4 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
-                        {isCartView ? 'Shopping Cart' : selectedProduct ? 'Product Details' : 'Context Documents'}
-                      </h3>
-                      <p className="text-[10px] text-muted-foreground">
-                        {isCartView
-                          ? 'View and manage your cart'
-                          : selectedProduct
-                            ? 'View details and add to cart'
-                            : `${contextDocuments.length} ${contextDocuments.length === 1 ? 'item' : 'items'} • Tap to view`
-                        }
-                      </p>
-                    </div>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                      setIsBottomSheetOpen(false);
-                      setSelectedProduct(null);
-                      if (isCartView) closeCart();
-                    }}
-                    className="h-8 w-8"
-                  >
-                    <X className="h-5 w-5" />
-                  </Button>
-                </div>
-
-                {/* Cart View, Product Details or Documents List - Scrollable */}
-                <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
-                  {isCartView ? (
-                    /* Mobile Cart View */
-                    <div className="space-y-3">
-                      {cartData && cartData.items && cartData.items.length > 0 ? (
-                        <>
-                          {/* Cart Items */}
-                          {cartData.items.map((item: any, idx: number) => (
-                            <Card key={idx} className="border-2 border-purple-200 bg-white/80">
-                              <CardContent className="p-3">
-                                <div className="flex items-start gap-2">
-                                  <div className="flex-1">
-                                    <h4 className="font-semibold text-sm text-gray-900 mb-1">{item.productName || item.sku}</h4>
-                                    <p className="text-xs text-gray-600 mb-1">SKU: {item.sku}</p>
-                                    <div className="flex items-center justify-between">
-                                      <span className="text-base font-bold text-purple-600">${item.price}</span>
-                                      <span className="text-xs text-gray-500">Qty: {item.quantity}</span>
-                                    </div>
-                                    <div className="mt-1 text-xs font-semibold text-gray-900">
-                                      Subtotal: ${(item.price * item.quantity).toFixed(2)}
-                                    </div>
-                                  </div>
-                                  <Button
-                                    size="icon"
-                                    variant="ghost"
-                                    onClick={() => removeFromCart(item.sku)}
-                                    className="h-7 w-7 text-red-600 hover:bg-red-50 hover:text-red-700"
-                                  >
-                                    <X className="h-3 w-3" />
-                                  </Button>
-                                </div>
-                              </CardContent>
-                            </Card>
-                          ))}
-
-                          {/* Cart Summary */}
-                          <Card className="border-2 border-blue-300 bg-gradient-to-br from-blue-50 to-white">
-                            <CardContent className="p-3 space-y-2">
-                              <div className="flex justify-between text-xs">
-                                <span className="text-gray-600">Subtotal:</span>
-                                <span className="font-semibold">${cartData.subtotal?.toFixed(2) || '0.00'}</span>
-                              </div>
-                              {cartData.discount > 0 && (
-                                <div className="flex justify-between text-xs">
-                                  <span className="text-gray-600">Discount:</span>
-                                  <span className="font-semibold text-green-600">-${cartData.discount?.toFixed(2)}</span>
-                                </div>
-                              )}
-                              <div className="border-t border-blue-200 pt-2 flex justify-between">
-                                <span className="text-base font-bold text-gray-900">Total:</span>
-                                <span className="text-base font-bold text-gray-900">${cartData.total?.toFixed(2) || '0.00'}</span>
-                              </div>
-                              {cartData.couponCode && (
-                                <div className="text-[10px] text-gray-500 flex items-center gap-1">
-                                  <Tag className="h-3 w-3" />
-                                  Coupon: {cartData.couponCode}
-                                </div>
-                              )}
-                            </CardContent>
-                          </Card>
-
-                          {/* Action Buttons */}
-                          <div className="space-y-2">
-                            <Button
-                              onClick={() => {
-                                setChatQuery("Checkout my cart");
-                                handleChatQuery("Checkout my cart");
-                                setIsBottomSheetOpen(false);
-                                closeCart();
-                              }}
-                              className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg"
-                              size="lg"
-                            >
-                              <ShoppingBag className="h-5 w-5 mr-2" />
-                              Proceed to Checkout
-                            </Button>
-                            <Button
-                              onClick={() => {
-                                const cartAttachment = {
-                                  type: "cart",
-                                  data: {
-                                    title: `Cart (${cartData.items.length} items - $${cartData.total?.toFixed(2)})`,
-                                    items: cartData.items,
-                                    subtotal: cartData.subtotal,
-                                    discount: cartData.discount,
-                                    total: cartData.total,
-                                    couponCode: cartData.couponCode
-                                  }
-                                };
-                                setAttachedItems(prev => [...prev, cartAttachment]);
-
-                                // Cart attachments use checkout position
-                                setCurrentPosition("checkout");
-                                setCurrentMode("copilot");
-
-                                toast({
-                                  title: "💬 Cart Added to Chat",
-                                  description: "Your cart details are now part of the conversation",
-                                });
-                              }}
-                              variant="outline"
-                              className="w-full border-blue-300 text-blue-600 hover:bg-blue-50"
-                            >
-                              <BrainCircuit className="h-5 w-5 mr-2" />
-                              Attach Cart to Chat
-                            </Button>
-                          </div>
-                        </>
-                      ) : (
-                        <div className="flex flex-col items-center justify-center text-center py-12">
-                          <ShoppingCart className="h-12 w-12 text-gray-300 mb-3" />
-                          <h3 className="text-base font-semibold text-gray-900 mb-1">Your cart is empty</h3>
-                          <p className="text-xs text-gray-500 mb-3">Add some products to get started!</p>
-                          <Button
-                            onClick={() => {
-                              setIsBottomSheetOpen(false);
-                              closeCart();
-                              setChatQuery("Show me available products");
-                              handleChatQuery("Show me available products");
-                            }}
-                            className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white"
-                            size="sm"
-                          >
-                            Browse Products
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  ) : selectedProduct ? (
-                    /* Mobile Product Details */
-                    <div className="space-y-4">
-                      {selectedProduct.metadata?.imageUrl && (
-                        <div className="relative h-64 overflow-hidden rounded-xl bg-gradient-to-br from-blue-100 to-white -mx-4">
-                          <img
-                            src={selectedProduct.metadata.imageUrl}
-                            alt={selectedProduct.title}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      )}
-
-                      <div>
-                        <h3 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent mb-2">
-                          {selectedProduct.title}
-                        </h3>
-                        <Badge variant="outline" className="text-xs bg-blue-100 border-blue-300 text-blue-700">
-                          {selectedProduct.type}
-                        </Badge>
-                      </div>
-
-                      <div className="p-3 bg-white/80 rounded-lg border-2 border-blue-200">
-                        <p className="text-sm text-gray-700 leading-relaxed">
-                          {selectedProduct.content}
-                        </p>
-                      </div>
-
-                      {selectedProduct.metadata && (
-                        <div className="space-y-3">
-                          <h4 className="font-semibold text-gray-900 text-sm">Product Details</h4>
-                          <div className="space-y-2">
-                            {Object.entries(selectedProduct.metadata).map(([key, value]) => {
-                              if (key === 'imageUrl') return null;
-                              return (
-                                <div key={key} className="p-3 bg-white/80 rounded-lg border border-blue-200">
-                                  <p className="text-xs text-gray-500 mb-0.5">{formatFieldName(key)}</p>
-                                  <p className="text-sm font-semibold text-gray-900">{formatFieldValue(value)}</p>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Action Buttons */}
-                      <div className="sticky bottom-0 bg-gradient-to-t from-white via-white to-transparent pt-4 pb-2 space-y-2 -mx-4 px-4">
-                        <Button
-                          onClick={() => {
-                            addToCart(selectedProduct);
-                            setIsBottomSheetOpen(false);
-                            setSelectedProduct(null);
-                          }}
-                          className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-lg"
-                          size="lg"
-                        >
-                          <ShoppingCart className="h-5 w-5 mr-2" />
-                          Add to Cart
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            handleAttachDocument(selectedProduct);
-                            setIsBottomSheetOpen(false);
-                            setSelectedProduct(null);
-                          }}
-                          variant="outline"
-                          className="w-full border-blue-300 text-blue-600 hover:bg-blue-50"
-                        >
-                          <BrainCircuit className="h-5 w-5 mr-2" />
-                          Attach to Chat
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    /* Documents List - Newer first on mobile */
-                    <AnimatePresence mode="popLayout">
-                    {[...contextDocuments].reverse().map((doc, idx) => {
-                      const DocIcon = getDocumentIcon(doc.type);
-                      const isNewDoc = !viewedDocumentIds.has(doc.id) && newDocuments.some(nd => nd.id === doc.id);
-                      return (
-                        <motion.div
-                          key={doc.id}
-                          data-doc-id={doc.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ delay: idx * 0.03 }}
-                        >
-                          <Card
-                            onClick={() => openProductDetails(doc)}
-                            className={`relative group active:scale-98 transition-all border-2 cursor-pointer ${
-                              isNewDoc
-                                ? 'border-yellow-400 bg-gradient-to-br from-yellow-50/90 via-blue-50/40 to-white/40 shadow-lg'
-                                : 'border-blue-200 hover:border-blue-400 bg-gradient-to-br from-white via-blue-50/30 to-white'
-                            }`}>
-                            {doc.metadata?.imageUrl && (
-                              <div className="relative h-32 overflow-hidden bg-gradient-to-br from-blue-100 to-white">
-                                <img
-                                  src={doc.metadata.imageUrl}
-                                  alt={doc.title}
-                                  className="w-full h-full object-cover"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                                {isNewDoc && (
-                                  <div className="absolute top-2 right-2 bg-yellow-400 text-yellow-900 text-[9px] font-bold px-2 py-1 rounded-full shadow-lg">
-                                    NEW
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                            <CardHeader className="pb-2 pt-3 px-3">
-                              <div className="flex items-start gap-2">
-                                {!doc.metadata?.imageUrl && (
-                                  <div className="p-2 bg-gradient-to-br from-blue-600 to-blue-500 rounded-lg flex-shrink-0">
-                                    <DocIcon className="h-4 w-4 text-white" />
-                                  </div>
-                                )}
-                                <div className="flex-1 min-w-0">
-                                  <CardTitle className="text-sm font-bold line-clamp-2 bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
-                                    {doc.title}
-                                  </CardTitle>
-                                  <div className="flex items-center gap-1 mt-1">
-                                    <Badge variant="outline" className="text-[9px] bg-blue-100 border-blue-300 text-blue-700">
-                                      {doc.type}
-                                    </Badge>
-                                    {isNewDoc && (
-                                      <Badge className="text-[9px] bg-yellow-400 text-yellow-900 border-yellow-500">
-                                        NEW
-                                      </Badge>
-                                    )}
-                                  </div>
-                                </div>
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  className={`h-9 w-9 flex-shrink-0 ${
-                                    isItemAttached(doc.id)
-                                      ? 'bg-gradient-to-br from-green-500 to-emerald-500'
-                                      : 'bg-gradient-to-br from-blue-600 to-blue-500'
-                                  } text-white shadow-lg border border-white/30 hover:scale-110 transition-all z-50 pointer-events-auto cursor-pointer`}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    e.preventDefault();
-                                    console.log('Mobile - Attaching document:', doc.title, doc.id);
-                                    handleAttachDocument(doc);
-                                  }}
-                                  title={isItemAttached(doc.id) ? "Already in Chat" : "Attach to Chat"}
-                                >
-                                  {isItemAttached(doc.id) ? (
-                                    <CheckCircle2 className="h-4 w-4" />
-                                  ) : (
-                                    <BrainCircuit className="h-4 w-4" />
-                                  )}
-                                </Button>
-                              </div>
-                            </CardHeader>
-                            <CardContent className="px-3 pb-3">
-                              <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
-                                {doc.content}
-                              </p>
-                            </CardContent>
-                          </Card>
-                        </motion.div>
-                      );
-                    })}
-                    </AnimatePresence>
-                  )}
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
+        <MobileContextSheet
+          isOpen={isBottomSheetOpen}
+          setIsOpen={setIsBottomSheetOpen}
+          contextDocuments={contextDocuments}
+          selectedProduct={selectedProduct}
+          isCartView={isCartView}
+          cartData={cartData}
+          viewedDocumentIds={viewedDocumentIds}
+          newDocuments={newDocuments}
+          isItemAttached={isItemAttached}
+          onCloseAll={() => {
+            setIsBottomSheetOpen(false);
+            closeProductDetails();
+            if (isCartView) closeCart();
+          }}
+          onCloseCart={closeCart}
+          onCloseProductDetails={closeProductDetails}
+          onOpenProductDetails={openProductDetails}
+          onRemoveFromCart={(sku) => {
+            void removeFromCart(sku);
+          }}
+          onProceedToCheckout={() => {
+            setChatQuery("Checkout my cart");
+            void handleChatQuery("Checkout my cart");
+          }}
+          onAttachCartToChat={() => {
+            if (!cartData || !cartData.items || cartData.items.length === 0) return;
+            const cartAttachment = {
+              type: "cart",
+              data: {
+                title: `Cart (${cartData.items.length} items - $${cartData.total?.toFixed(2)})`,
+                items: cartData.items,
+                subtotal: cartData.subtotal,
+                discount: cartData.discount,
+                total: cartData.total,
+                couponCode: cartData.couponCode,
+              },
+            };
+            setAttachedItems((prev) => [...prev, cartAttachment]);
+            setCurrentPosition("checkout");
+            setCurrentMode("copilot");
+            toast({
+              title: "💬 Cart Added to Chat",
+              description: "Your cart details are now part of the conversation",
+            });
+          }}
+          onBrowseProducts={() => {
+            closeCart();
+            setChatQuery("Show me available products");
+            void handleChatQuery("Show me available products");
+          }}
+          onAddToCart={(product) => {
+            void addToCart(product);
+          }}
+          onAttachProductToChat={handleAttachDocument}
+          onAttachDocument={handleAttachDocument}
+        />
       </div>
 
       {/* Collection Animation - Rises from bottom when item is attached */}

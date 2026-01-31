@@ -13,10 +13,18 @@ This plan restructures MAX Mode into smaller, reusable pieces while keeping beha
 
 ## Current modules extracted (completed)
 
+- `src/pages/demos/max-mode/constants.ts` – API base URL + quick actions/categories data
 - `src/pages/demos/max-mode/types.ts` – shared types for the demo page
 - `src/pages/demos/max-mode/utils.ts` – formatting + safe message normalization helpers
 - `src/pages/demos/max-mode/actionMessage.ts` – action message parsing + icon selection
 - `src/pages/demos/max-mode/components/ActionResultRenderer.tsx` – reusable renderer for action result payloads
+- `src/pages/demos/max-mode/components/MaxModeHeader.tsx` – top header (close, debug/test panel)
+- `src/pages/demos/max-mode/components/QuickActionsDesktop.tsx` – desktop quick actions bar
+- `src/pages/demos/max-mode/components/QuickActionsMobileSheet.tsx` – mobile quick actions sheet
+- `src/pages/demos/max-mode/components/DesktopContextPanel.tsx` – desktop right context panel
+- `src/pages/demos/max-mode/components/MobileContextSheet.tsx` – mobile context sheet (docs/cart/product)
+- `src/pages/demos/max-mode/components/MobileFloatingActions.tsx` – mobile floating actions + browse products sheet
+- `src/pages/demos/max-mode/components/MobileNewDocsPreviewPanel.tsx` – mobile “New Products” preview panel
 
 ## Target structure (end state)
 
@@ -61,11 +69,14 @@ Build check: `npm run build`
 
 ### Phase 2: Extract UI-only components (medium risk, mostly prop threading)
 
-- [ ] `MaxModeHeader` (top-right badge, close button, “Test Panel” button)
-- [ ] `QuickActionsBar` (desktop) + `SearchCategoryMenu` + `BrowseProductsMenu`
-- [ ] `QuickActionsSheet` (mobile bottom sheet)
+- [x] `MaxModeHeader` (top-right badge, close button, “Test Panel” button)
+- [x] `QuickActionsDesktop` (desktop) + menu subcomponents (search/browse)
+- [x] `QuickActionsMobileSheet` (mobile bottom sheet)
+- [x] `DesktopContextPanel` + `MobileContextSheet` (documents/product/cart UI)
+- [x] `MobileFloatingActions` (mobile AI search row + floating buttons + browse products)
+- [x] `MobileNewDocsPreviewPanel` (mobile “New Products” preview panel)
 - [ ] `MessageBubble` (user + AI variants) and keep the logic-free rendering there
-- [ ] `ContextPanel` + `ProductDetails` + `CartView` into `Panels/`
+- [ ] `Composer` (textarea + send + attachments row) as a focused component
 - [ ] Centralize icon imports per component (avoid 1 giant lucide import list)
 
 Build check after each extraction: `npm run build`
@@ -102,11 +113,12 @@ Build check: `npm run build`
 
 ## TODO checklist (next concrete tasks)
 
-- [ ] Create `src/pages/demos/max-mode/constants.ts` and move:
+- [x] Create `src/pages/demos/max-mode/constants.ts` and move:
   - `quickActions`, `searchCategories`, `aiSearchCategories`, `browseProductCategories`
-  - (optional) `API_BASE_URL` (or adopt a single shared config)
-- [ ] Extract `MaxModeHeader` + `QuickActionsBar` first (lowest prop coupling)
-- [ ] Extract `ContextPanel` next (lots of JSX but mostly presentational)
+  - `API_BASE_URL`
+- [x] Delete the legacy mobile floating actions JSX in `src/pages/demos/MaxMode.tsx` (replaced by `MobileFloatingActions`)
+- [x] Extract `MobileNewDocsPreviewPanel` (the “New Products” right-side panel on mobile)
+- [ ] Extract `Chat/MessageBubble` and `Chat/MessageList` (reduce `MaxMode.tsx` render size)
+- [ ] Extract `Chat/Composer` (input + attachments + send)
 - [ ] Introduce `useMaxModeController` reducer (keep actions small and typed)
-- [ ] Remove the legacy inline renderer block in `src/pages/demos/MaxMode.tsx` after confidence (should become a clean import-only usage)
-
+- [ ] Move fetch logic into `max-mode/api/*` (dedupe + consistent error handling)
