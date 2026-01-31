@@ -34,6 +34,10 @@ import {
   ArrowRight,
   ChevronUp,
   ChevronDown,
+  ChevronRight,
+  ChevronLeft,
+  ChevronsRight,
+  ChevronsLeft,
   Eye,
   EyeOff,
   Truck,
@@ -571,6 +575,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [confirmationStatus, setConfirmationStatus] = useState<{ [key: string]: 'pending' | 'confirmed' | 'rejected' }>({});
   const [selectedProduct, setSelectedProduct] = useState<Document | null>(null);
   const [isAISearchOpen, setIsAISearchOpen] = useState(false);
+  const [isFloatingMenuCollapsed, setIsFloatingMenuCollapsed] = useState(false);
   const [userId] = useState<string>("demo-user-" + Math.random().toString(36).substr(2, 9));
   const [newDocuments, setNewDocuments] = useState<Document[]>([]);
   const [isNewDocsPreviewOpen, setIsNewDocsPreviewOpen] = useState(false);
@@ -3230,53 +3235,82 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
 
       {/* Mobile: All Floating Action Buttons - Single Column - z-40 stays below input area */}
         <div className="md:hidden fixed bottom-32 right-1 z-40 flex flex-col-reverse items-center gap-3">
-          {/* AI Search Button */}
+          {/* Collapse/Expand Toggle Button */}
           <motion.div
-            ref={aiSearchButtonRef}
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0 }}
             className="flex flex-col items-center gap-1"
           >
             <Button
-              onClick={() => setIsAISearchOpen(!isAISearchOpen)}
+              onClick={() => setIsFloatingMenuCollapsed(!isFloatingMenuCollapsed)}
               size="lg"
-              className="h-12 w-12 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-2xl border-2 border-white/30"
+              className="h-10 w-10 rounded-full bg-gradient-to-br from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white shadow-xl border-2 border-white/30"
             >
-              <Search className="h-5 w-5" />
+              {isFloatingMenuCollapsed ? (
+                <ChevronsLeft className="h-4 w-4" />
+              ) : (
+                <ChevronsRight className="h-4 w-4" />
+              )}
             </Button>
-            <span className="text-[9px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
-              AI Search
-            </span>
           </motion.div>
 
+          {/* AI Search Button */}
+          <AnimatePresence>
+            {!isFloatingMenuCollapsed && (
+              <motion.div
+                ref={aiSearchButtonRef}
+                initial={{ scale: 0, opacity: 0, x: 20 }}
+                animate={{ scale: 1, opacity: 1, x: 0 }}
+                exit={{ scale: 0, opacity: 0, x: 20 }}
+                transition={{ type: "spring", damping: 20 }}
+                className="flex flex-col items-center gap-1"
+              >
+                <Button
+                  onClick={() => setIsAISearchOpen(!isAISearchOpen)}
+                  size="lg"
+                  className="h-12 w-12 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-2xl border-2 border-white/30"
+                >
+                  <Search className="h-5 w-5" />
+                </Button>
+                <span className="text-[9px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
+                  AI Search
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Browse Products Button */}
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.05 }}
-            className="flex flex-col items-center gap-1"
-          >
-            <Button
-              onClick={() => setIsBrowseProductsOpen(!isBrowseProductsOpen)}
-              size="lg"
-              className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-2xl border-2 border-white/30"
-            >
-              <List className="h-5 w-5" />
-            </Button>
-            <span className="text-[9px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
-              Products
-            </span>
-          </motion.div>
+          <AnimatePresence>
+            {!isFloatingMenuCollapsed && (
+              <motion.div
+                initial={{ scale: 0, opacity: 0, x: 20 }}
+                animate={{ scale: 1, opacity: 1, x: 0 }}
+                exit={{ scale: 0, opacity: 0, x: 20 }}
+                transition={{ type: "spring", damping: 20, delay: 0.05 }}
+                className="flex flex-col items-center gap-1"
+              >
+                <Button
+                  onClick={() => setIsBrowseProductsOpen(!isBrowseProductsOpen)}
+                  size="lg"
+                  className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white shadow-2xl border-2 border-white/30"
+                >
+                  <List className="h-5 w-5" />
+                </Button>
+                <span className="text-[9px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
+                  Products
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Documents Button - Conditional */}
           <AnimatePresence>
-            {contextDocuments.length > 0 && (
+            {contextDocuments.length > 0 && !isFloatingMenuCollapsed && (
               <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                transition={{ delay: 0.1 }}
+                initial={{ scale: 0, opacity: 0, x: 20 }}
+                animate={{ scale: 1, opacity: 1, x: 0 }}
+                exit={{ scale: 0, opacity: 0, x: 20 }}
+                transition={{ type: "spring", damping: 20, delay: 0.1 }}
                 className="flex flex-col items-center gap-1"
               >
                 <Button
@@ -3297,32 +3331,37 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
           </AnimatePresence>
 
           {/* Cart Button */}
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.15 }}
-            className="flex flex-col items-center gap-1"
-          >
-            <Button
-              onClick={openCart}
-              size="lg"
-              className="h-12 w-12 rounded-full bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white shadow-2xl border-2 border-white/30"
-            >
-              <ShoppingCart className="h-5 w-5" />
-            </Button>
-            <span className="text-[9px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm">
-              Cart
-            </span>
-          </motion.div>
+          <AnimatePresence>
+            {!isFloatingMenuCollapsed && (
+              <motion.div
+                initial={{ scale: 0, opacity: 0, x: 20 }}
+                animate={{ scale: 1, opacity: 1, x: 0 }}
+                exit={{ scale: 0, opacity: 0, x: 20 }}
+                transition={{ type: "spring", damping: 20, delay: 0.15 }}
+                className="flex flex-col items-center gap-1"
+              >
+                <Button
+                  onClick={openCart}
+                  size="lg"
+                  className="h-12 w-12 rounded-full bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white shadow-2xl border-2 border-white/30"
+                >
+                  <ShoppingCart className="h-5 w-5" />
+                </Button>
+                <span className="text-[9px] font-bold text-gray-700 dark:text-gray-300 bg-white/90 dark:bg-gray-800/90 px-2 py-0.5 rounded-full shadow-sm">
+                  Cart
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Quick Actions Button */}
           <AnimatePresence>
-            {!isQuickActionsOpen && (
+            {!isQuickActionsOpen && !isFloatingMenuCollapsed && (
               <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0, opacity: 0 }}
-                transition={{ delay: 0.2 }}
+                initial={{ scale: 0, opacity: 0, x: 20 }}
+                animate={{ scale: 1, opacity: 1, x: 0 }}
+                exit={{ scale: 0, opacity: 0, x: 20 }}
+                transition={{ type: "spring", damping: 20, delay: 0.2 }}
                 className="flex flex-col items-center gap-1"
               >
                 <Button
