@@ -169,7 +169,7 @@ export function MessageBubble({
             if (message.type === "user" && parsedAction.isAction) {
               const ActionIcon = getActionIcon(parsedAction.actionType);
               return (
-                <div className="relative">
+                <div className="relative inline-block max-w-full">
                   <Button
                     onClick={() => onResendAction(parsedAction.fullMessage)}
                     size="icon"
@@ -180,24 +180,13 @@ export function MessageBubble({
                     <RotateCcw className="h-4 w-4" />
                   </Button>
 
-                  <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 p-[2px] shadow-lg">
-                    <div className="relative bg-white dark:bg-gray-900 rounded-2xl p-4">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="p-2.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-md">
-                          <ActionIcon className="h-5 w-5 text-white" />
-                        </div>
-                        <div className="flex-1">
-                          <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
-                            {parsedAction.actionType}
-                          </span>
-                        </div>
-                      </div>
-                      <p className="text-base md:text-lg font-semibold text-gray-900 dark:text-gray-100 leading-relaxed">
-                        {parsedAction.query}
-                      </p>
-
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-200/20 to-transparent rounded-full blur-2xl -z-10" />
+                  <div className="inline-flex items-center gap-2.5 px-4 py-2.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full shadow-lg">
+                    <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
+                      <ActionIcon className="h-4 w-4 text-white" />
                     </div>
+                    <span className="text-base font-bold text-white pr-2">
+                      {parsedAction.query}
+                    </span>
                   </div>
                 </div>
               );
