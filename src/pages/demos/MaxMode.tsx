@@ -2323,7 +2323,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     <div
                       className={`max-w-[85%] md:max-w-[90%] rounded-3xl overflow-hidden ${
                         message.type === "user"
-                          ? "bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 text-white shadow-lg"
+                          ? "bg-gradient-to-br from-blue-700 via-blue-800 to-blue-900 text-white shadow-lg mr-16 md:mr-0"
                           : `${styles?.bg} shadow-xl relative`
                       }`}
                     >
@@ -3183,10 +3183,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                 }}
                 className="flex-shrink-0 flex flex-col items-center gap-1"
               >
-                <div className={`h-12 w-12 rounded-full bg-white dark:bg-gray-800 border-2 ${category.border} shadow-lg flex items-center justify-center transition-all active:scale-95 hover:scale-105`}>
+                <div className={`h-12 w-12 rounded-full border-2 ${category.border} flex items-center justify-center transition-all active:scale-95 hover:scale-105`}>
                   <category.icon className={`h-5 w-5 ${category.color}`} />
                 </div>
-                <span className={`text-[8px] font-semibold ${category.color} leading-tight text-center max-w-[48px]`}>
+                <span className={`text-[8px] font-semibold ${category.color} leading-tight text-center max-w-[48px] bg-white/90 dark:bg-gray-800/90 px-1.5 py-0.5 rounded-full`}>
                   {category.label}
                 </span>
               </motion.button>
