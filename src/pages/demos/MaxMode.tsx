@@ -594,6 +594,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
   const [selectedDebugMessage, setSelectedDebugMessage] = useState<ChatMessage | null>(null);
   // Full JSON panel expansion state
   const [isJsonPanelExpanded, setIsJsonPanelExpanded] = useState(false);
+  // Query expansion state for RAG debug
+  const [isQueryExpanded, setIsQueryExpanded] = useState(false);
   // Search category submenu state
   const [isSearchCategoryOpen, setIsSearchCategoryOpen] = useState(false);
   const [isBrowseProductsOpen, setIsBrowseProductsOpen] = useState(false);
@@ -4640,14 +4642,81 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                                 {retrievalSkipped && <span className="text-amber-600">skip:{retrievalSkipReason}</span>}
                               </div>
                             </div>
-                            {hasRagResponse && (
-                              <div className="mt-1.5 grid grid-cols-4 gap-1 text-[9px]">
-                                <div><span className="text-gray-500">Query:</span> <span className="font-medium truncate block">{resultData.ragResponse.query?.substring(0, 20)}...</span></div>
-                                <div><span className="text-gray-500">Entity:</span> <span className="font-medium">{resultData.ragResponse.entityType}</span></div>
-                                <div><span className="text-gray-500">Docs:</span> <span className="font-medium">{resultData.ragResponse.usedDocuments || resultData.documents?.length || 0}</span></div>
-                                <div><span className="text-gray-500">Time:</span> <span className="font-medium">{resultData.ragResponse.processingTimeMs}ms</span></div>
-                              </div>
-                            )}
+                            {hasRagResponse && (() => {
+                              const originalQuery = debugRequest?.payload?.query || resultData.ragResponse.query;
+                              const optimizedQuery = resultData.ragResponse.optimizedQuery || resultData.ragResponse.query;
+                              const charLimit = 100;
+                              const shouldShowExpand = originalQuery?.length > charLimit || optimizedQuery?.length > charLimit;
+
+                              return (
+                                <div className="mt-1.5 space-y-1.5">
+                                  {/* Query Display Section */}
+                                  <div className="bg-white/50 dark:bg-gray-700/50 rounded-lg p-2 space-y-1.5">
+                                    <div className="flex items-center justify-between">
+                                      <span className="text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase">Queries</span>
+                                      {shouldShowExpand && (
+                                        <button
+                                          onClick={() => setIsQueryExpanded(!isQueryExpanded)}
+                                          className="flex items-center gap-1 text-[9px] text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
+                                        >
+                                          {isQueryExpanded ? (
+                                            <>
+                                              <ChevronUp className="h-3 w-3" />
+                                              <span>See less</span>
+                                            </>
+                                          ) : (
+                                            <>
+                                              <ChevronDown className="h-3 w-3" />
+                                              <span>See more</span>
+                                            </>
+                                          )}
+                                        </button>
+                                      )}
+                                    </div>
+
+                                    {/* Original Query */}
+                                    <div className="space-y-0.5">
+                                      <div className="flex items-center gap-1">
+                                        <span className="text-[9px] text-gray-500 font-medium">Original:</span>
+                                        <span className="px-1 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-[8px] font-bold">USER INPUT</span>
+                                      </div>
+                                      <p className={`text-[10px] text-gray-800 dark:text-gray-200 ${!isQueryExpanded && originalQuery?.length > charLimit ? 'line-clamp-2' : ''}`}>
+                                        {isQueryExpanded ? originalQuery : (originalQuery?.length > charLimit ? `${originalQuery.substring(0, charLimit)}...` : originalQuery)}
+                                      </p>
+                                    </div>
+
+                                    {/* Optimized Query */}
+                                    {optimizedQuery && optimizedQuery !== originalQuery && (
+                                      <div className="space-y-0.5 pt-1 border-t border-gray-200 dark:border-gray-600">
+                                        <div className="flex items-center gap-1">
+                                          <span className="text-[9px] text-gray-500 font-medium">Optimized:</span>
+                                          <span className="px-1 py-0.5 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded text-[8px] font-bold">FOR EMBEDDINGS</span>
+                                        </div>
+                                        <p className={`text-[10px] text-gray-800 dark:text-gray-200 ${!isQueryExpanded && optimizedQuery?.length > charLimit ? 'line-clamp-2' : ''}`}>
+                                          {isQueryExpanded ? optimizedQuery : (optimizedQuery?.length > charLimit ? `${optimizedQuery.substring(0, charLimit)}...` : optimizedQuery)}
+                                        </p>
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  {/* Metadata Grid */}
+                                  <div className="grid grid-cols-3 gap-1 text-[9px]">
+                                    <div className="text-center bg-white/50 dark:bg-gray-700/50 rounded px-1.5 py-1">
+                                      <div className="text-gray-500 text-[8px]">Entity</div>
+                                      <div className="font-bold text-gray-700 dark:text-gray-300">{resultData.ragResponse.entityType}</div>
+                                    </div>
+                                    <div className="text-center bg-white/50 dark:bg-gray-700/50 rounded px-1.5 py-1">
+                                      <div className="text-gray-500 text-[8px]">Docs</div>
+                                      <div className="font-bold text-gray-700 dark:text-gray-300">{resultData.ragResponse.usedDocuments || resultData.documents?.length || 0}</div>
+                                    </div>
+                                    <div className="text-center bg-white/50 dark:bg-gray-700/50 rounded px-1.5 py-1">
+                                      <div className="text-gray-500 text-[8px]">Time</div>
+                                      <div className="font-bold text-gray-700 dark:text-gray-300">{resultData.ragResponse.processingTimeMs}ms</div>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })()}
                           </div>
 
                           {/* Orchestration Policy */}
