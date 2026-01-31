@@ -2323,7 +2323,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
                     <div
                       className={`max-w-[85%] md:max-w-[90%] rounded-3xl overflow-hidden ${
                         message.type === "user"
-                          ? "bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 text-white shadow-lg"
+                          ? "bg-gradient-to-br from-blue-700 via-blue-800 to-blue-900 text-white shadow-lg mr-16 md:mr-0"
                           : `${styles?.bg} shadow-xl relative`
                       }`}
                     >
