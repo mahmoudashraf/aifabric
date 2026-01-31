@@ -2022,10 +2022,10 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         <div className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 rounded-full pl-3 pr-1 py-1 shadow-xl border-2 border-white/30">
           <div className="flex items-center gap-2">
             <motion.div
-              animate={{ rotate: [0, 360] }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             >
-              <Sparkles className="h-4 w-4 md:h-5 md:w-5 text-white" />
+              <BrainCircuit className="h-4 w-4 md:h-5 md:w-5 text-white" />
             </motion.div>
             <span className="text-xs md:text-sm font-bold text-white hidden sm:inline">
               MAX Mode
@@ -3202,7 +3202,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ type: "spring", damping: 20 }}
-            className="md:hidden fixed bottom-24 left-3 right-20 z-40 flex items-center gap-2 overflow-x-auto scrollbar-hide"
+            className="md:hidden fixed bottom-32 left-3 right-20 z-40 flex items-center gap-2 overflow-x-auto scrollbar-hide px-2 py-2 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-full"
           >
             {aiSearchCategories.map((category, idx) => (
               <motion.button
@@ -3229,7 +3229,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       </AnimatePresence>
 
       {/* Mobile: All Floating Action Buttons - Single Column - z-40 stays below input area */}
-        <div className="md:hidden fixed bottom-24 right-1 z-40 flex flex-col-reverse items-center gap-3">
+        <div className="md:hidden fixed bottom-32 right-1 z-40 flex flex-col-reverse items-center gap-3">
           {/* AI Search Button */}
           <motion.div
             ref={aiSearchButtonRef}
