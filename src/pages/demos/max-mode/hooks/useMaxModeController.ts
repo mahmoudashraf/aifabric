@@ -4,16 +4,17 @@ import { Ban, Bot, CheckCircle2, HelpCircle, Info, XCircle } from "lucide-react"
 
 import { useToast } from "@/hooks/use-toast";
 
-import { postChatQuery } from "../api/chat";
 import { AI_SEARCH_CATEGORIES, BROWSE_PRODUCT_CATEGORIES, QUICK_ACTIONS, SEARCH_CATEGORIES } from "../constants";
-import type { ChatMessage, ChatResult, Document, ResultType } from "../types";
-import { normalizeMessageContent } from "../utils";
+import type { ChatMessage, Document, ResultType } from "../types";
 import { useAttachmentsController } from "./useAttachmentsController";
 import { useCartController } from "./useCartController";
 import { useChatFlow } from "./useChatFlow";
+import { useConfirmationFlow } from "./useConfirmationFlow";
 import { useConversationsController } from "./useConversationsController";
 import { useMaxModePersistence } from "./useMaxModePersistence";
 import { useMaxModeViewSync } from "./useMaxModeViewSync";
+import { useNewDocsPreviewActions } from "./useNewDocsPreviewActions";
+import { useSearchControls } from "./useSearchControls";
 import { useSuggestionsController } from "./useSuggestionsController";
 
 export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
@@ -127,6 +128,17 @@ export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
     setSelectedDebugMessage,
   });
 
+  const { handleConfirmation } = useConfirmationFlow({
+    attachedItems,
+    currentConversationId,
+    setConfirmationStatus,
+    setChatMessages,
+    setContextDocuments,
+    setCurrentConversationId,
+    setIsLoading,
+    toast,
+  });
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const latestMessageRef = useRef<HTMLDivElement>(null);
   const contextPanelRef = useRef<HTMLDivElement>(null);
@@ -185,6 +197,25 @@ export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
     setCurrentMode,
     chatInputRef,
     toast,
+  });
+
+  const { handleAISearchCategory, handleSelectSearchCategory, clearSearchCategory } = useSearchControls({
+    aiSearchCategories,
+    setAttachedItems,
+    setIsAISearchOpen,
+    setSearchCategory,
+    setCurrentPosition,
+    setCurrentMode,
+    chatInputRef,
+    toast,
+  });
+
+  const { handleOpenBottomSheet, handleCloseNewDocsPreview } = useNewDocsPreviewActions({
+    newDocuments,
+    setIsBottomSheetOpen,
+    setIsNewDocsPreviewOpen,
+    setNewDocuments,
+    setViewedDocumentIds,
   });
 
   const quickActions = QUICK_ACTIONS;
@@ -301,161 +332,6 @@ export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
     setTimeout(() => handleChatQuery(query, position, mode), 100);
   };
 
-  const handleConfirmation = async (messageId: string, confirmed: boolean, message: ChatMessage) => {
-    setConfirmationStatus(prev => ({
-      ...prev,
-      [messageId]: confirmed ? 'confirmed' : 'rejected'
-    }));
-
-    // Send confirmation message to continue the conversation flow
-    const confirmationQuery = confirmed ? "Yes, confirm" : "No, cancel";
-
-    // Add user message
-    const userMessage: ChatMessage = {
-      id: Date.now().toString(),
-      type: "user",
-      content: confirmationQuery,
-      timestamp: new Date().toISOString(),
-    };
-
-    setChatMessages(prev => [...prev, userMessage]);
-	    setIsLoading(true);
-
-	    try {
-	      const { data } = await postChatQuery({
-	        query: confirmationQuery,
-	        userId: "demo-user",
-	        sessionId: "demo-session",
-	        conversationId: currentConversationId || undefined,
-	        attachments: attachedItems,
-	      });
-
-	      if (data.conversationId && !currentConversationId) {
-	        setCurrentConversationId(data.conversationId);
-	      }
-
-      let messageContent: unknown = "";
-      let result: ChatResult | undefined;
-      let resultType: ResultType | undefined;
-
-      if (data.result && data.result.sanitizedPayload) {
-        messageContent = data.result.sanitizedPayload.message || "I processed your confirmation.";
-        result = data.result;
-        resultType = data.result.type;
-      } else {
-        messageContent = data.response || data.message || "I processed your confirmation.";
-      }
-
-      const aiMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        type: "ai",
-        content: normalizeMessageContent(messageContent),
-        timestamp: new Date().toISOString(),
-        result: result,
-        resultType: resultType,
-      };
-
-      setChatMessages((prev) => [...prev, aiMessage]);
-
-      if (data.documents && Array.isArray(data.documents)) {
-        setContextDocuments(data.documents);
-      }
-
-      toast({
-        title: confirmed ? "✅ Confirmed" : "❌ Rejected",
-        description: confirmed ? "Your confirmation has been processed" : "Action cancelled",
-      });
-    } catch (error) {
-      console.error("Error processing confirmation:", error);
-      toast({
-        title: "Error",
-        description: "Failed to process confirmation. Please try again.",
-        variant: "destructive",
-      });
-
-      const errorMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        type: "ai",
-        content: "I apologize, but I encountered an error processing your confirmation. Please try again.",
-        timestamp: new Date().toISOString(),
-        resultType: "INFORMATION_PROVIDED",
-      };
-
-      setChatMessages((prev) => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleAISearchCategory = (category: (typeof aiSearchCategories)[number]) => {
-    // Create search attachment
-    const searchAttachment = {
-      type: "ai-search",
-      data: {
-        category: category.label,
-        title: `AI Search: ${category.label}`
-      }
-    };
-
-    // Replace existing AI search item instead of adding to the list
-    setAttachedItems(prev => [...prev.filter(item => item.type !== 'ai-search'), searchAttachment]);
-    setIsAISearchOpen(false);
-
-    // Clear any existing search category tag (only one tag allowed)
-    setSearchCategory(null);
-
-    // AI Search uses catalog position (discovery/browsing)
-    setCurrentPosition("catalog");
-    setCurrentMode("navigator");
-
-    toast({
-      title: "🔍 AI Search Attached",
-      description: `${category.label} search criteria added to chat`,
-    });
-
-    // Focus on chat input
-    setTimeout(() => {
-      chatInputRef.current?.focus();
-    }, 100);
-  };
-
-  const handleOpenBottomSheet = () => {
-    setIsBottomSheetOpen(true);
-
-    // Mark new documents as viewed
-    const newDocIds = newDocuments.map(doc => doc.id);
-    setViewedDocumentIds(prev => new Set([...prev, ...newDocIds]));
-
-    // Scroll to first new document after bottom sheet opens
-    if (newDocuments.length > 0) {
-      setTimeout(() => {
-        const firstNewDocId = newDocuments[0].id;
-        const element = document.querySelector(`[data-doc-id="${firstNewDocId}"]`);
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }, 300);
-
-      // Clear newDocuments after viewing
-      setTimeout(() => {
-        setNewDocuments([]);
-      }, 500);
-    }
-  };
-
-  const handleCloseNewDocsPreview = () => {
-    setIsNewDocsPreviewOpen(false);
-
-    // Mark new documents as viewed when closing preview
-    const newDocIds = newDocuments.map(doc => doc.id);
-    setViewedDocumentIds(prev => new Set([...prev, ...newDocIds]));
-
-    // Clear newDocuments after a short delay
-    setTimeout(() => {
-      setNewDocuments([]);
-    }, 300);
-  };
-
   const showSampleDocuments = () => {
     const sampleDocs: Document[] = [
       {
@@ -485,22 +361,6 @@ export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
       title: "✨ Sample Documents Loaded",
       description: "Check the right panel!",
     });
-  };
-
-  // Handle selecting a search category - shows tag badge, doesn't modify input
-  const handleSelectSearchCategory = (category: string) => {
-    setSearchCategory(category);
-    setIsSearchCategoryOpen(false);
-    setIsQuickActionsOpen(false);
-    // Clear any existing AI Search items (only one tag allowed)
-    setAttachedItems(prev => prev.filter(item => item.type !== 'ai-search'));
-    // Focus the input
-    setTimeout(() => chatInputRef.current?.focus(), 100);
-  };
-
-  // Clear search category tag
-  const clearSearchCategory = () => {
-    setSearchCategory(null);
   };
 
   const getResultStyles = (resultType?: ResultType) => {
@@ -612,7 +472,6 @@ export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
     isItemAttached,
     handleReattachItem,
     handleAttachActionResultItem,
-    handleSelectSearchCategory,
     clearSearchCategory,
     loadConversations,
     openConversation,
@@ -621,7 +480,7 @@ export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
     openConversationsPanel,
     handleQuickAction,
     handleChatQuery,
-    handleConfirmation,
+    handleConfirmation: (messageId: string, confirmed: boolean, _message: ChatMessage) => handleConfirmation(messageId, confirmed),
     addToCart,
     fetchCart,
     removeFromCart,
@@ -634,6 +493,13 @@ export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
     handleOpenBottomSheet,
     handleCloseNewDocsPreview,
     showSampleDocuments,
+    handleSelectSearchCategory: (category: string) =>
+      handleSelectSearchCategory(category, {
+        closeMenus: () => {
+          setIsSearchCategoryOpen(false);
+          setIsQuickActionsOpen(false);
+        },
+      }),
     // view helpers (reduce UI wiring in MaxModeView)
     openDebugInspector,
     closeDebugInspector,

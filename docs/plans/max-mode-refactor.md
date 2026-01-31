@@ -28,6 +28,9 @@ This plan restructures MAX Mode into smaller, reusable pieces while keeping beha
 - `src/pages/demos/max-mode/hooks/useChatFlow.ts` – `handleChatQuery` + request/response parsing + per-message debug payload
 - `src/pages/demos/max-mode/hooks/useMaxModeViewSync.ts` – scroll sync + doc aggregation + welcome message + AI search outside click
 - `src/pages/demos/max-mode/hooks/useAttachmentsController.ts` – attach/reattach/remove helpers (action results + documents)
+- `src/pages/demos/max-mode/hooks/useConfirmationFlow.ts` – confirmation message flow (confirm/cancel → chat)
+- `src/pages/demos/max-mode/hooks/useSearchControls.ts` – AI search + search tag selection helpers
+- `src/pages/demos/max-mode/hooks/useNewDocsPreviewActions.ts` – mobile new-doc preview open/close helpers
 - `src/pages/demos/max-mode/components/ActionResultRenderer.tsx` – reusable renderer for action result payloads
 - `src/pages/demos/max-mode/components/MaxModeHeader.tsx` – top header (close, debug/test panel)
 - `src/pages/demos/max-mode/components/QuickActionsDesktop.tsx` – desktop quick actions bar
@@ -35,19 +38,27 @@ This plan restructures MAX Mode into smaller, reusable pieces while keeping beha
 - `src/pages/demos/max-mode/components/DesktopContextPanel.tsx` – desktop right context panel
 - `src/pages/demos/max-mode/components/DesktopContextPanel/*` – split views (cart/product/docs)
 - `src/pages/demos/max-mode/components/MobileContextSheet.tsx` – mobile context sheet (docs/cart/product)
+- `src/pages/demos/max-mode/components/MobileContextSheet/*` – split views (cart/product/docs)
 - `src/pages/demos/max-mode/components/MobileFloatingActions.tsx` – mobile floating actions + browse products sheet
 - `src/pages/demos/max-mode/components/MobileNewDocsPreviewPanel.tsx` – mobile “New Products” preview panel
 - `src/pages/demos/max-mode/components/Chat/MessageBubble.tsx` – chat message bubble (user/AI)
 - `src/pages/demos/max-mode/components/Chat/MessageList.tsx` – message list wrapper (scroll area + loading)
 - `src/pages/demos/max-mode/components/Chat/Composer.tsx` – chat composer (input + attachments + suggestions)
+- `src/pages/demos/max-mode/components/Chat/Composer/*` – split composer sections (attachments/suggestions/input)
+- `src/pages/demos/max-mode/components/Chat/types.ts` – shared chat UI types
 - `src/pages/demos/max-mode/MaxModePage.tsx` – main demo implementation (now in `max-mode/`)
 - `src/pages/demos/MaxMode.tsx` – thin route wrapper
 - `src/pages/demos/max-mode/components/MaxModeView.tsx` – view/layout for MAX Mode (pure render)
+- `src/pages/demos/max-mode/components/MaxModeView/*` – split view sections (quick actions, main content, composer, overlays, animations)
 - `src/pages/demos/max-mode/hooks/useMaxModeController.ts` – MAX Mode state/effects/controller hook
 
 Note: `useMaxModeController` now exposes view-level helper actions (debug open/close, suggestion actions, cart-to-chat attach) to keep `MaxModeView` mostly declarative.
 - `src/pages/demos/max-mode/components/Panels/DebugInspectorPanel.tsx` – API debug inspector (request/response + raw JSON modal)
 - `src/pages/demos/max-mode/components/Panels/DebugInspector/RawResultJsonModal.tsx` – extracted raw JSON modal
+- `src/pages/demos/max-mode/components/Panels/DebugInspector/DebugInspectorContent.tsx` – extracted content renderer
+- `src/pages/demos/max-mode/components/Panels/DebugInspector/RequestSection.tsx` – request section UI
+- `src/pages/demos/max-mode/components/Panels/DebugInspector/ResponseSection.tsx` – response section UI
+- `src/pages/demos/max-mode/components/Panels/DebugInspector/*` – response section subcomponents (RAG status, routing, action, etc.)
 - `src/pages/demos/max-mode/components/Conversations/ConversationHistoryPanel.tsx` – chat history panel (list + selection + delete)
 
 ## Target structure (end state)
@@ -156,5 +167,22 @@ Build check: `npm run build`
 - [x] Add `max-mode/api/*` wrappers for chat/cart/conversations
 - [x] Move state/effects into `hooks/useMaxModeController.ts` (still `useState`-based for now)
 - [x] Split controller into sub-hooks (chat flow, persistence, conversations, cart, attachments, suggestions, view sync)
+- [x] Split `MobileContextSheet.tsx` into `MobileContextSheet/*`
+- [x] Split `Chat/Composer.tsx` into `Chat/Composer/*`
 - [ ] Convert `useMaxModeController` to a typed `useReducer` (keep actions small and explicit)
 - [ ] Move remaining fetch logic into `max-mode/api/*` (if any remains)
+
+## Size snapshot (Jan 31, 2026)
+
+Largest remaining files by LOC (to consider splitting next):
+
+- `src/pages/demos/max-mode/hooks/useMaxModeController.ts` (~521)
+- `src/pages/demos/max-mode/components/MobileFloatingActions.tsx` (~333)
+- `src/pages/demos/max-mode/components/Chat/MessageBubble.tsx` (~321)
+- `src/pages/demos/max-mode/hooks/useChatFlow.ts` (~316)
+
+Next reasonable refactor targets:
+
+- Split `MobileFloatingActions.tsx` into search row + sheet + FAB cluster
+- Split `MessageBubble.tsx` into AI header / attachments / content / confirmations / sources
+- Split `useChatFlow.ts` into “request builder” + “response parser” helpers
