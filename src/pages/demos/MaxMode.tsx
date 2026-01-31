@@ -2001,43 +2001,49 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[100] bg-gradient-to-br from-blue-50 via-blue-50/50 to-white dark:from-gray-900 dark:via-blue-900/20 dark:to-gray-900/90"
     >
-      {/* Header - Compact on Mobile */}
-      <div className="absolute top-0 left-0 right-0 h-12 md:h-16 bg-gradient-to-r from-blue-600 to-blue-500 flex items-center justify-between px-3 md:px-6 shadow-lg z-10">
-        <div className="flex items-center gap-2 md:gap-3">
-          <motion.div
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          >
-            <Sparkles className="h-4 w-4 md:h-6 md:w-6 text-white" />
-          </motion.div>
-          <h1 className="text-sm md:text-xl font-bold text-white">
-            <span className="hidden sm:inline">MAX Mode - AI Shopping Assistant</span>
-            <span className="sm:hidden">MAX Mode</span>
-          </h1>
-        </div>
-        <div className="flex items-center gap-1 md:gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={showSampleDocuments}
-            className="hidden md:flex text-white hover:bg-white/20 text-xs"
-          >
-            <FileText className="h-4 w-4 mr-1" />
-            Test Panel
-          </Button>
+      {/* Floating Header Badge - Top Right */}
+      <motion.div
+        initial={{ opacity: 0, y: -20, x: 20 }}
+        animate={{ opacity: 1, y: 0, x: 0 }}
+        className="fixed top-3 right-3 md:top-4 md:right-4 z-50 flex items-center gap-2"
+      >
+        {/* Test Panel Button - Desktop Only */}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={showSampleDocuments}
+          className="hidden md:flex bg-white/90 dark:bg-gray-800/90 hover:bg-white text-blue-600 shadow-lg backdrop-blur-sm text-xs border border-blue-200"
+        >
+          <FileText className="h-4 w-4 mr-1" />
+          Test Panel
+        </Button>
+
+        {/* MaxMode Info + Close Button */}
+        <div className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-blue-500 rounded-full pl-3 pr-1 py-1 shadow-xl border-2 border-white/30">
+          <div className="flex items-center gap-2">
+            <motion.div
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            >
+              <Sparkles className="h-4 w-4 md:h-5 md:w-5 text-white" />
+            </motion.div>
+            <span className="text-xs md:text-sm font-bold text-white hidden sm:inline">
+              MAX Mode
+            </span>
+          </div>
           <Button
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="text-white hover:bg-white/20 h-8 w-8 md:h-10 md:w-10"
+            className="text-white hover:bg-white/20 h-7 w-7 md:h-8 md:w-8 rounded-full"
           >
-            <X className="h-4 w-4 md:h-5 md:w-5" />
+            <X className="h-4 w-4 md:h-4.5 md:w-4.5" />
           </Button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Quick Actions Bar - Desktop Only */}
-      <div className="hidden md:block absolute top-16 left-0 right-0 px-6 py-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b z-10">
+      <div className="hidden md:block absolute top-0 left-0 right-0 px-6 py-4 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-b z-10">
         <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
           {quickActions.slice(0, 8).map((action, idx) => (
             <div key={idx}>
@@ -2097,7 +2103,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className="hidden md:block fixed top-[140px] left-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-blue-200 dark:border-blue-700 p-4 z-50 min-w-[320px]"
+              className="hidden md:block fixed top-[80px] left-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-blue-200 dark:border-blue-700 p-4 z-50 min-w-[320px]"
             >
               <div className="text-sm font-bold text-blue-600 dark:text-blue-400 mb-3 px-1">Select Category to Search</div>
               <div className="flex flex-wrap gap-2">
@@ -2137,7 +2143,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              className="hidden md:block fixed top-[140px] left-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-blue-200 dark:border-blue-700 p-6 z-50 max-w-[600px]"
+              className="hidden md:block fixed top-[80px] left-6 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border-2 border-blue-200 dark:border-blue-700 p-6 z-50 max-w-[600px]"
             >
               <div className="flex items-center gap-2 mb-4">
                 <Package className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -2327,7 +2333,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
       {/* Main Split Content */}
       <div className="h-full relative">
         {/* Chat Messages - Full Width */}
-        <div className={`absolute top-12 md:top-[165px] left-0 right-0 bottom-0 overflow-y-auto px-3 md:px-6 py-4 md:py-6 pb-[180px] md:pb-[240px] transition-all ${isPanelVisible && contextDocuments.length > 0 ? (selectedProduct || isCartView ? 'md:pr-[730px]' : 'md:pr-[450px]') : 'md:pr-4'} ${isDebugModalOpen ? 'xl:pl-[420px]' : ''}`}>
+        <div className={`absolute top-0 md:top-[72px] left-0 right-0 bottom-0 overflow-y-auto px-3 md:px-6 py-4 md:py-6 pb-[180px] md:pb-[240px] transition-all ${isPanelVisible && contextDocuments.length > 0 ? (selectedProduct || isCartView ? 'md:pr-[730px]' : 'md:pr-[450px]') : 'md:pr-4'} ${isDebugModalOpen ? 'xl:pl-[420px]' : ''}`}>
           <div className="max-w-3xl mx-auto space-y-4">
             <AnimatePresence mode="popLayout">
               {chatMessages.map((message, index) => {
@@ -3173,7 +3179,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
               animate={{ opacity: 1, scale: 1, x: 0 }}
               exit={{ opacity: 0, scale: 0.8, x: 100 }}
               transition={{ type: "spring", damping: 20 }}
-              className="hidden md:block absolute top-20 right-4 z-20"
+              className="hidden md:block absolute top-16 right-4 z-20"
             >
               <Button
                 onClick={() => setIsPanelVisible(true)}
