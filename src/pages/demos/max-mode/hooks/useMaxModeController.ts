@@ -20,6 +20,11 @@ import { useSuggestionsController } from "./useSuggestionsController";
 export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
   const { toast } = useToast();
 
+  const quickActions = QUICK_ACTIONS;
+  const searchCategories = SEARCH_CATEGORIES;
+  const aiSearchCategories = AI_SEARCH_CATEGORIES;
+  const browseProductCategories = BROWSE_PRODUCT_CATEGORIES;
+
   const [chatQuery, setChatQuery] = useState("");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -217,11 +222,6 @@ export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
     setNewDocuments,
     setViewedDocumentIds,
   });
-
-  const quickActions = QUICK_ACTIONS;
-  const searchCategories = SEARCH_CATEGORIES;
-  const aiSearchCategories = AI_SEARCH_CATEGORIES;
-  const browseProductCategories = BROWSE_PRODUCT_CATEGORIES;
 
   const openDebugInspector = useCallback((message?: ChatMessage) => {
     if (message) setSelectedDebugMessage(message);

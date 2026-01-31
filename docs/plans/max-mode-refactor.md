@@ -174,6 +174,10 @@ Build check: `npm run build`
 
 ## Size snapshot (Jan 31, 2026)
 
+Runtime notes:
+
+- Fixed `ReferenceError: Cannot access 'aiSearchCategories' before initialization` by moving category constants above `useSearchControls(...)` usage in `src/pages/demos/max-mode/hooks/useMaxModeController.ts`.
+
 Largest remaining files by LOC (to consider splitting next):
 
 - `src/pages/demos/max-mode/hooks/useMaxModeController.ts` (~521)
