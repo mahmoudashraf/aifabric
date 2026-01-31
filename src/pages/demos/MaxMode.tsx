@@ -282,12 +282,12 @@ const ActionResultRenderer = ({
 
     return (
       <div key={itemId || idx} className="relative group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 transition-all hover:shadow-xl overflow-hidden">
-        {/* Attach Button - z-20 ensures it stays above image hover effects */}
+        {/* Attach Button - z-10 is above image but below fixed input area (z-50) */}
         {onAttach && (
           <Button
             size="icon"
             variant="ghost"
-            className={`absolute top-2 right-2 z-20 h-8 w-8 ${
+            className={`absolute top-2 right-2 z-10 h-8 w-8 ${
               isItemAlreadyAttached
                 ? 'bg-gradient-to-br from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600'
                 : 'bg-gradient-to-br from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600'
@@ -306,9 +306,9 @@ const ActionResultRenderer = ({
           </Button>
         )}
 
-        {/* Product Image - z-10 keeps it below the attach button */}
+        {/* Product Image - relative keeps it below the attach button */}
         {imageUrl && (
-          <div className="aspect-[4/3] w-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 relative z-10">
+          <div className="aspect-[4/3] w-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 relative">
             <img
               src={imageUrl}
               alt={name}
@@ -3202,7 +3202,7 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ type: "spring", damping: 20 }}
-            className="md:hidden fixed bottom-24 left-3 right-20 z-20 flex items-center gap-2 overflow-x-auto scrollbar-hide"
+            className="md:hidden fixed bottom-24 left-3 right-20 z-40 flex items-center gap-2 overflow-x-auto scrollbar-hide"
           >
             {aiSearchCategories.map((category, idx) => (
               <motion.button
@@ -3228,8 +3228,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         )}
       </AnimatePresence>
 
-      {/* Mobile: All Floating Action Buttons - Single Column */}
-        <div className="md:hidden fixed bottom-24 right-1 z-20 flex flex-col-reverse items-center gap-3">
+      {/* Mobile: All Floating Action Buttons - Single Column - z-40 stays below input area */}
+        <div className="md:hidden fixed bottom-24 right-1 z-40 flex flex-col-reverse items-center gap-3">
           {/* AI Search Button */}
           <motion.div
             ref={aiSearchButtonRef}
@@ -4038,8 +4038,8 @@ const MaxMode = ({ isOpen, onClose }: MaxModeProps) => {
         )}
       </AnimatePresence>
 
-      {/* Input Area */}
-      <div className="absolute bottom-0 left-0 right-0 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t-2 border-purple-500/30 p-3 md:p-6">
+      {/* Input Area - z-50 ensures it stays above chat messages and product cards */}
+      <div className="absolute bottom-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t-2 border-purple-500/30 p-3 md:p-6">
         <div className="max-w-4xl mx-auto">
           {/* Attached Items - Beautiful Cards (exclude AI Search - shown in input tag) */}
           {attachedItems.filter(item => item.type !== 'ai-search').length > 0 && (
