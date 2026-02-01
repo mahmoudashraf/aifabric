@@ -67,7 +67,7 @@ export function Composer({
     <>
       {/* Floating attachments and suggestions above input box */}
       <div className="absolute bottom-28 md:bottom-34 left-0 right-0 z-40 px-3 md:px-6 pointer-events-none">
-        <div className="max-w-4xl mx-auto pointer-events-auto">
+        <div className="max-w-3xl mx-auto pointer-events-auto">
           <AttachmentsRow
             items={nonAiAttachments}
             showAttachments={showAttachments}
@@ -89,7 +89,7 @@ export function Composer({
 
       {/* Fixed input box at bottom */}
       <div className="absolute bottom-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t-2 border-purple-500/30 p-3 md:p-6">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           {oldConversationLocked && <LockedConversationBanner onStartNewConversation={onStartNewConversation} />}
 
           <ComposerInputRow
