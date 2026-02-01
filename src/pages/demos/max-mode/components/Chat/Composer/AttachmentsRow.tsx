@@ -31,7 +31,7 @@ export function AttachmentsRow({
             exit={{ opacity: 0, y: -10 }}
             className="mb-3"
           >
-            <div className="p-3 md:p-4 bg-gradient-to-br from-blue-500/20 to-blue-400/20 rounded-xl border-2 border-blue-400/50 shadow-lg">
+            <div className="p-3 md:p-4 bg-white dark:bg-gray-800 rounded-xl border-2 border-blue-400 shadow-lg">
               <div className="flex items-center gap-3 mb-3">
                 <Button
                   size="icon"
@@ -62,8 +62,8 @@ export function AttachmentsRow({
                         <Card
                           className={`border-2 shadow-lg hover:shadow-xl transition-all ${
                             isAISearch
-                              ? "border-indigo-400/50 bg-gradient-to-br from-indigo-500/20 to-purple-500/20"
-                              : "border-blue-400/50 bg-gradient-to-br from-blue-500/20 to-blue-400/20"
+                              ? "border-indigo-400 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900 dark:to-purple-900"
+                              : "border-blue-400 bg-gradient-to-br from-blue-100 to-blue-50 dark:from-blue-900 dark:to-blue-800"
                           }`}
                         >
                           <CardContent className="p-2 md:p-2.5 flex items-center gap-2">
@@ -118,7 +118,7 @@ export function AttachmentsRow({
             size="sm"
             variant="outline"
             onClick={onShowAttachments}
-            className="w-full bg-gradient-to-br from-blue-500/20 to-blue-400/20 hover:from-blue-500/30 hover:to-blue-400/30 border-2 border-blue-400/50 hover:border-blue-500/60 text-purple-700 dark:text-purple-300 shadow-lg"
+            className="w-full bg-white dark:bg-gray-800 hover:bg-blue-50 dark:hover:bg-gray-700 border-2 border-blue-400 hover:border-blue-500 text-purple-700 dark:text-purple-300 shadow-lg"
           >
             <Paperclip className="h-3.5 w-3.5 mr-2" />
             Attachments ({items.length})

@@ -30,7 +30,7 @@ export function SuggestionsPanel({
             exit={{ opacity: 0, y: -10 }}
             className="mb-3"
           >
-            <div className="p-4 bg-gradient-to-br from-blue-500/20 to-blue-400/20 rounded-xl border-2 border-blue-400/50 shadow-lg">
+            <div className="p-4 bg-white dark:bg-gray-800 rounded-xl border-2 border-blue-400 shadow-lg">
               <div className="flex items-center gap-3 mb-3">
                 <Button
                   size="icon"
@@ -85,7 +85,7 @@ export function SuggestionsPanel({
             size="sm"
             variant="outline"
             onClick={onShowSuggestions}
-            className="w-full bg-gradient-to-br from-blue-500/20 to-blue-400/20 hover:from-blue-500/30 hover:to-blue-400/30 border-2 border-blue-400/50 hover:border-blue-500/60 text-purple-700 dark:text-purple-300 shadow-lg"
+            className="w-full bg-white dark:bg-gray-800 hover:bg-blue-50 dark:hover:bg-gray-700 border-2 border-blue-400 hover:border-blue-500 text-purple-700 dark:text-purple-300 shadow-lg"
           >
             <Wand2 className="h-3.5 w-3.5 mr-2" />
             Show AI Suggestions ({suggestions.length})
@@ -95,7 +95,7 @@ export function SuggestionsPanel({
 
       {isLoadingSuggestions && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-3">
-          <div className="p-3 bg-gradient-to-br from-blue-500/20 to-blue-400/20 rounded-lg border-2 border-blue-400/50 shadow-lg">
+          <div className="p-3 bg-white dark:bg-gray-800 rounded-lg border-2 border-blue-400 shadow-lg">
             <p className="text-xs text-purple-700 dark:text-purple-300 flex items-center gap-2">
               <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }}>
                 <Sparkles className="h-3.5 w-3.5" />
