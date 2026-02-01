@@ -115,7 +115,7 @@ export function ChatInput({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              className="mb-3 flex flex-wrap gap-2"
+              className="mb-1.5 flex flex-wrap gap-2"
             >
               {attachedProducts.map((product) => (
                 <Badge
@@ -173,7 +173,7 @@ export function ChatInput({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 10 }}
-              className="mb-2"
+              className="mb-1"
             >
               <div className="flex items-center gap-2 mb-1">
                 <Sparkles className="h-3 w-3 text-primary" />
@@ -182,13 +182,14 @@ export function ChatInput({
               </div>
               <div className="flex flex-wrap gap-2">
                 {suggestions.map((suggestion, idx) => (
-                  <button
+                  <Badge
                     key={idx}
+                    variant="secondary"
+                    className="cursor-pointer hover:bg-secondary/80 transition-colors text-xs px-3 py-1.5"
                     onClick={() => onQueryChange(suggestion)}
-                    className="text-xs px-2 py-1 bg-muted hover:bg-muted/80 rounded-full text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {suggestion}
-                  </button>
+                  </Badge>
                 ))}
               </div>
             </motion.div>
