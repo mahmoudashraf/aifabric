@@ -64,6 +64,8 @@ This project is built with:
 
 Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
 
+**Railway:** This repo is ready for [Railway](https://railway.app). See [docs/railway-deployment.md](docs/railway-deployment.md) for setup, env vars, and deploy steps.
+
 ## Can I connect a custom domain to my Lovable project?
 
 Yes, you can!

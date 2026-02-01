@@ -1,3 +1,8 @@
+# Environment (use Railway Variables or similar for deployment)
+.env
+.env.local
+.env.*.local
+
 # Logs
 logs
 *.log
