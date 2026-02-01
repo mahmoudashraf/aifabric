@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Bot, Sparkles, FileText, Search, ShoppingCart, Package, Clock, Paperclip, History, Database } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { ChatMessage } from "../../types";
 
 interface AIThinkingAnimationProps {
@@ -135,6 +135,7 @@ function generateThinkingSteps(
 export function AIThinkingAnimation({ messages, attachedItems = [] }: AIThinkingAnimationProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [thinkingSteps, setThinkingSteps] = useState<string[]>([]);
+  const thinkingRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Generate steps when component mounts
@@ -150,6 +151,13 @@ export function AIThinkingAnimation({ messages, attachedItems = [] }: AIThinking
     return () => clearInterval(interval);
   }, [messages, attachedItems]);
 
+  useEffect(() => {
+    // Scroll into view when component appears
+    if (thinkingRef.current) {
+      thinkingRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+  }, []);
+
   // Get the last user message for display
   const lastUserMessage = [...messages].reverse().find((m) => m.type === "user");
   const userQuery = lastUserMessage?.content || "your request";
@@ -164,6 +172,7 @@ export function AIThinkingAnimation({ messages, attachedItems = [] }: AIThinking
 
   return (
     <motion.div
+      ref={thinkingRef}
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}

@@ -66,7 +66,7 @@ export function Composer({
   return (
     <>
       {/* Floating attachments and suggestions above input box */}
-      <div className="absolute bottom-28 md:bottom-34 left-0 right-0 z-40 px-3 md:px-6 pointer-events-none">
+      <div className="absolute bottom-28 md:bottom-34 left-0 right-0 z-30 px-3 md:px-6 pointer-events-none">
         <div className="max-w-3xl mx-auto pointer-events-auto">
           <AttachmentsRow
             items={nonAiAttachments}
