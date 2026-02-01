@@ -30,7 +30,7 @@ export function SuggestionsPanel({
             exit={{ opacity: 0, y: -10 }}
             className="mb-3"
           >
-            <div className="p-4 bg-gradient-to-r from-blue-500/10 to-blue-400/10 rounded-xl border-2 border-blue-300/50 shadow-lg">
+            <div className="p-4 bg-gradient-to-br from-blue-500/20 to-blue-400/20 rounded-xl border-2 border-blue-400/50 shadow-lg">
               <div className="flex items-center gap-3 mb-3">
                 <Button
                   size="icon"
@@ -95,7 +95,7 @@ export function SuggestionsPanel({
 
       {isLoadingSuggestions && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mb-3">
-          <div className="p-3 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-lg border-2 border-purple-300/50">
+          <div className="p-3 bg-gradient-to-br from-blue-500/20 to-blue-400/20 rounded-lg border-2 border-blue-400/50 shadow-lg">
             <p className="text-xs text-purple-700 dark:text-purple-300 flex items-center gap-2">
               <motion.div animate={{ rotate: 360 }} transition={{ duration: 2, repeat: Infinity, ease: "linear" }}>
                 <Sparkles className="h-3.5 w-3.5" />
