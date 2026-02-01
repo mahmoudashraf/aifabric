@@ -60,8 +60,7 @@ export function useSuggestionsController({
           const newSuggestions = data.suggestions.filter((s: unknown): s is string => typeof s === "string" && s.length > 0);
           if (newSuggestions.length > 0) {
             setSuggestions(newSuggestions.slice(0, 4));
-            setShowSuggestions(true);
-            setTimeout(() => setShowSuggestions(false), 5000);
+            // Keep suggestions closed by default - user must open them explicitly
           }
         }
       } catch (error) {
@@ -73,8 +72,7 @@ export function useSuggestionsController({
           "What should I know before deciding?",
         ];
         setSuggestions(genericSuggestions);
-        setShowSuggestions(true);
-        setTimeout(() => setShowSuggestions(false), 5000);
+        // Keep suggestions closed by default - user must open them explicitly
       } finally {
         setIsLoadingSuggestions(false);
       }
