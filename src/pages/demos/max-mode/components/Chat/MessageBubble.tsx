@@ -12,6 +12,8 @@ import {
   Sparkles,
   XCircle,
 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 import { Button } from "@/components/ui/button";
 
@@ -192,11 +194,19 @@ export function MessageBubble({
               );
             }
 
-            return (
+            return message.type === "ai" ? (
+              <div
+                className="prose prose-sm md:prose-base max-w-none dark:prose-invert prose-headings:font-bold prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg prose-p:leading-relaxed prose-strong:font-bold prose-strong:text-gray-900 dark:prose-strong:text-white prose-ul:list-disc prose-ol:list-decimal prose-li:marker:text-blue-600 dark:prose-li:marker:text-blue-400"
+                style={{
+                  fontFamily:
+                    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                }}
+              >
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+              </div>
+            ) : (
               <p
-                className={`text-base md:text-lg whitespace-pre-wrap leading-relaxed font-medium ${
-                  message.type === "ai" ? "text-gray-800 dark:text-gray-100" : ""
-                }`}
+                className="text-base md:text-lg whitespace-pre-wrap leading-relaxed font-medium"
                 style={{
                   fontFamily:
                     '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
