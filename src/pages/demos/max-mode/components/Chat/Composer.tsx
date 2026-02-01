@@ -64,7 +64,7 @@ export function Composer({
   return (
     <>
       {/* Floating attachments and suggestions above input box */}
-      <div className="absolute bottom-28 md:bottom-32 left-0 right-0 z-40 px-3 md:px-6 pointer-events-none">
+      <div className="absolute bottom-40 md:bottom-48 left-0 right-0 z-40 px-3 md:px-6 pointer-events-none">
         <div className="max-w-4xl mx-auto pointer-events-auto">
           <AttachmentsRow items={nonAiAttachments} onRemoveAttachment={onRemoveAttachment} />
 
