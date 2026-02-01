@@ -85,7 +85,7 @@ export function SuggestionsPanel({
             size="sm"
             variant="outline"
             onClick={onShowSuggestions}
-            className="w-full bg-white/80 hover:bg-purple-50 border-purple-300 hover:border-purple-500 text-purple-700 shadow-sm"
+            className="w-full bg-gradient-to-br from-blue-500/20 to-blue-400/20 hover:from-blue-500/30 hover:to-blue-400/30 border-2 border-blue-400/50 hover:border-blue-500/60 text-purple-700 dark:text-purple-300 shadow-lg"
           >
             <Wand2 className="h-3.5 w-3.5 mr-2" />
             Show AI Suggestions ({suggestions.length})
