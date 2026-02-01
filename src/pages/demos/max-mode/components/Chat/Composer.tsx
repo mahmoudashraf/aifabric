@@ -1,4 +1,5 @@
 import type { RefObject } from "react";
+import { useState } from "react";
 
 import { LockedConversationBanner } from "./Composer/LockedConversationBanner";
 import { AttachmentsRow } from "./Composer/AttachmentsRow";
@@ -57,6 +58,7 @@ export function Composer({
   onOpenDebug: () => void;
   onSubmit: () => void;
 }) {
+  const [showAttachments, setShowAttachments] = useState(true);
   const hasAiSearch = Boolean(attachedItems.find((item) => item.type === "ai-search"));
   const nonAiAttachments = attachedItems.filter((item) => item.type !== "ai-search");
   const aiSearchCategory = (attachedItems.find((item) => item.type === "ai-search")?.data?.category as string | undefined) || null;
@@ -66,7 +68,13 @@ export function Composer({
       {/* Floating attachments and suggestions above input box */}
       <div className="absolute bottom-28 md:bottom-34 left-0 right-0 z-40 px-3 md:px-6 pointer-events-none">
         <div className="max-w-4xl mx-auto pointer-events-auto">
-          <AttachmentsRow items={nonAiAttachments} onRemoveAttachment={onRemoveAttachment} />
+          <AttachmentsRow
+            items={nonAiAttachments}
+            showAttachments={showAttachments}
+            onRemoveAttachment={onRemoveAttachment}
+            onDismissAttachments={() => setShowAttachments(false)}
+            onShowAttachments={() => setShowAttachments(true)}
+          />
 
           <SuggestionsPanel
             suggestions={suggestions}
