@@ -62,41 +62,49 @@ export function Composer({
   const aiSearchCategory = (attachedItems.find((item) => item.type === "ai-search")?.data?.category as string | undefined) || null;
 
   return (
-    <div className="absolute bottom-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t-2 border-purple-500/30 p-3 md:p-6">
-      <div className="max-w-4xl mx-auto">
-        <AttachmentsRow items={nonAiAttachments} onRemoveAttachment={onRemoveAttachment} />
+    <>
+      {/* Floating attachments and suggestions above input box */}
+      <div className="absolute bottom-20 md:bottom-24 left-0 right-0 z-40 px-3 md:px-6 pointer-events-none">
+        <div className="max-w-4xl mx-auto pointer-events-auto">
+          <AttachmentsRow items={nonAiAttachments} onRemoveAttachment={onRemoveAttachment} />
 
-        <SuggestionsPanel
-          suggestions={suggestions}
-          showSuggestions={showSuggestions}
-          isLoadingSuggestions={isLoadingSuggestions}
-          onDismissSuggestions={onDismissSuggestions}
-          onShowSuggestions={onShowSuggestions}
-          onSuggestionSelect={onSuggestionSelect}
-        />
-
-        {oldConversationLocked && <LockedConversationBanner onStartNewConversation={onStartNewConversation} />}
-
-        <ComposerInputRow
-          searchCategory={searchCategory}
-          hasAiSearch={hasAiSearch}
-          aiSearchCategory={aiSearchCategory}
-          onClearSearchCategory={onClearSearchCategory}
-          onRemoveAiSearch={onRemoveAiSearch}
-          oldConversationLocked={oldConversationLocked}
-          onOpenHistory={onOpenHistory}
-          chatQuery={chatQuery}
-          onChatQueryChange={onChatQueryChange}
-          isInputFocused={isInputFocused}
-          onInputFocusChange={onInputFocusChange}
-          chatInputRef={chatInputRef}
-          isLoading={isLoading}
-          currentPosition={currentPosition}
-          onOpenDebug={onOpenDebug}
-          nonAiAttachmentsCount={nonAiAttachments.length}
-          onSubmit={onSubmit}
-        />
+          <SuggestionsPanel
+            suggestions={suggestions}
+            showSuggestions={showSuggestions}
+            isLoadingSuggestions={isLoadingSuggestions}
+            onDismissSuggestions={onDismissSuggestions}
+            onShowSuggestions={onShowSuggestions}
+            onSuggestionSelect={onSuggestionSelect}
+          />
+        </div>
       </div>
-    </div>
+
+      {/* Fixed input box at bottom */}
+      <div className="absolute bottom-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-t-2 border-purple-500/30 p-3 md:p-6">
+        <div className="max-w-4xl mx-auto">
+          {oldConversationLocked && <LockedConversationBanner onStartNewConversation={onStartNewConversation} />}
+
+          <ComposerInputRow
+            searchCategory={searchCategory}
+            hasAiSearch={hasAiSearch}
+            aiSearchCategory={aiSearchCategory}
+            onClearSearchCategory={onClearSearchCategory}
+            onRemoveAiSearch={onRemoveAiSearch}
+            oldConversationLocked={oldConversationLocked}
+            onOpenHistory={onOpenHistory}
+            chatQuery={chatQuery}
+            onChatQueryChange={onChatQueryChange}
+            isInputFocused={isInputFocused}
+            onInputFocusChange={onInputFocusChange}
+            chatInputRef={chatInputRef}
+            isLoading={isLoading}
+            currentPosition={currentPosition}
+            onOpenDebug={onOpenDebug}
+            nonAiAttachmentsCount={nonAiAttachments.length}
+            onSubmit={onSubmit}
+          />
+        </div>
+      </div>
+    </>
   );
 }
