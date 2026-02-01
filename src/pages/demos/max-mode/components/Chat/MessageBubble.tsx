@@ -174,17 +174,17 @@ export function MessageBubble({
                     onClick={() => onResendAction(parsedAction.fullMessage)}
                     size="icon"
                     variant="ghost"
-                    className="absolute -left-3 -top-3 h-9 w-9 rounded-full bg-blue-600 hover:bg-blue-700 text-white transition-all hover:scale-110 shadow-xl z-10 border-2 border-white dark:border-gray-900"
+                    className="absolute -left-2 md:-left-3 -top-2 md:-top-3 h-8 w-8 md:h-9 md:w-9 rounded-full bg-blue-600 hover:bg-blue-700 text-white transition-all hover:scale-110 shadow-xl z-10 border-2 border-white dark:border-gray-900"
                     title="Resend action"
                   >
-                    <RotateCcw className="h-4 w-4" />
+                    <RotateCcw className="h-3.5 w-3.5 md:h-4 md:w-4" />
                   </Button>
 
-                  <div className="inline-flex items-center gap-2.5 px-4 py-2.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full shadow-lg">
-                    <div className="p-2 bg-white/20 backdrop-blur-sm rounded-lg">
-                      <ActionIcon className="h-4 w-4 text-white" />
+                  <div className="inline-flex items-center gap-2 md:gap-2.5 px-3 md:px-4 py-2 md:py-2.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full shadow-lg max-w-full">
+                    <div className="p-1.5 md:p-2 bg-white/20 backdrop-blur-sm rounded-lg flex-shrink-0">
+                      <ActionIcon className="h-3.5 w-3.5 md:h-4 md:w-4 text-white" />
                     </div>
-                    <span className="text-base font-bold text-white pr-2">
+                    <span className="text-sm md:text-base font-bold text-white pr-1 md:pr-2 truncate">
                       {parsedAction.query}
                     </span>
                   </div>
