@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Bot, Sparkles, FileText, Search, ShoppingCart, Package, Clock, Paperclip } from "lucide-react";
+import { Bot, Sparkles, FileText, Search, ShoppingCart, Package, Clock, Paperclip, History, Database } from "lucide-react";
 import { useState, useEffect } from "react";
 import type { ChatMessage } from "../../types";
 
@@ -59,6 +59,28 @@ function generateThinkingSteps(
   const previousAIMessages = messages.filter((m) => m.type === "ai" && m.result?.sanitizedPayload?.data);
   const previousUserMessages = messages.filter((m) => m.type === "user").slice(-3, -1); // Get last 2 user messages before current
 
+  // Show previous user queries being considered
+  if (previousUserMessages.length > 0) {
+    const lastPrevQuery = previousUserMessages[previousUserMessages.length - 1];
+    const prevQueryShort = lastPrevQuery.content.length > 40
+      ? lastPrevQuery.content.substring(0, 40) + "..."
+      : lastPrevQuery.content;
+    steps.push(`Reviewing previous request: "${prevQueryShort}"`);
+  }
+
+  // Check for documents in conversation (from right panel)
+  const allDocuments = messages.flatMap((m) => m.documents || []);
+  if (allDocuments.length > 0) {
+    const uniqueDocs = Array.from(new Map(allDocuments.map(d => [d.id, d])).values());
+    if (uniqueDocs.length === 1) {
+      steps.push(`Analyzing document: "${uniqueDocs[0].title}"`);
+    } else if (uniqueDocs.length <= 3) {
+      steps.push(`Analyzing ${uniqueDocs.length} documents from conversation`);
+    } else {
+      steps.push(`Searching through ${uniqueDocs.length} knowledge base documents`);
+    }
+  }
+
   if (previousAIMessages.length > 0) {
     const lastAIMessage = previousAIMessages[previousAIMessages.length - 1];
     const data = lastAIMessage.result?.sanitizedPayload?.data;
@@ -75,11 +97,6 @@ function generateThinkingSteps(
         steps.push(`Comparing with ${productCount} previous results`);
       }
     }
-  }
-
-  // Show previous user requests for context
-  if (previousUserMessages.length > 0 && attachedItems.length > 0) {
-    steps.push("Considering conversation history");
   }
 
   // Step 4: Action-specific processing steps - be very specific
@@ -137,6 +154,13 @@ export function AIThinkingAnimation({ messages, attachedItems = [] }: AIThinking
   const lastUserMessage = [...messages].reverse().find((m) => m.type === "user");
   const userQuery = lastUserMessage?.content || "your request";
   const displayQuery = userQuery.length > 70 ? userQuery.substring(0, 70) + "..." : userQuery;
+
+  // Get previous user queries for display
+  const previousUserQueries = messages.filter((m) => m.type === "user").slice(-3, -1);
+
+  // Get all documents from conversation
+  const allDocuments = messages.flatMap((m) => m.documents || []);
+  const uniqueDocuments = Array.from(new Map(allDocuments.map(d => [d.id, d])).values()).slice(0, 3);
 
   return (
     <motion.div
@@ -200,6 +224,93 @@ export function AIThinkingAnimation({ messages, attachedItems = [] }: AIThinking
             </div>
           </div>
 
+          {/* Previous queries context */}
+          {previousUserQueries.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              className="mb-3 space-y-2"
+            >
+              <div className="flex items-center gap-2 text-[10px] font-semibold text-purple-600 dark:text-purple-400 uppercase tracking-wide">
+                <History className="h-3.5 w-3.5" />
+                <span>Previous conversation context</span>
+              </div>
+              {previousUserQueries.slice(0, 2).map((query, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="p-2.5 bg-white/70 dark:bg-gray-900/50 rounded-lg border border-purple-100 dark:border-purple-900 backdrop-blur-sm"
+                >
+                  <div className="flex items-start gap-2">
+                    <Search className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[10px] text-purple-600 dark:text-purple-400 font-semibold mb-0.5">
+                        Previous Query
+                      </div>
+                      <div className="text-xs text-gray-800 dark:text-gray-200 font-medium line-clamp-2">
+                        "{query.content}"
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+
+          {/* Documents from conversation (right panel) */}
+          {uniqueDocuments.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              className="mb-3 space-y-2"
+            >
+              <div className="flex items-center gap-2 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide">
+                <Database className="h-3.5 w-3.5" />
+                <span>Knowledge base ({allDocuments.length} document{allDocuments.length > 1 ? "s" : ""})</span>
+              </div>
+              {uniqueDocuments.map((doc, index) => (
+                <motion.div
+                  key={doc.id}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="p-2.5 bg-white/70 dark:bg-gray-900/50 rounded-lg border border-emerald-100 dark:border-emerald-900 backdrop-blur-sm"
+                >
+                  <div className="flex items-start gap-2">
+                    <FileText className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-xs text-gray-800 dark:text-gray-200 font-bold line-clamp-1 mb-0.5">
+                        {doc.title}
+                      </div>
+                      {doc.metadata?.description && (
+                        <div className="text-[10px] text-gray-600 dark:text-gray-400 line-clamp-2">
+                          {doc.metadata.description}
+                        </div>
+                      )}
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold">
+                          {doc.type}
+                        </span>
+                        {doc.similarity !== undefined && (
+                          <span className="text-[9px] text-gray-500 dark:text-gray-500">
+                            {Math.round(doc.similarity * 100)}% match
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+              {allDocuments.length > 3 && (
+                <div className="text-[10px] text-gray-500 dark:text-gray-400 text-center">
+                  +{allDocuments.length - 3} more document{allDocuments.length - 3 > 1 ? "s" : ""}
+                </div>
+              )}
+            </motion.div>
+          )}
+
           {/* Attached items indicator - show actual items */}
           {attachedItems.length > 0 && (
             <motion.div
@@ -214,6 +325,7 @@ export function AIThinkingAnimation({ messages, attachedItems = [] }: AIThinking
               {attachedItems.slice(0, 3).map((item, index) => {
                 const itemName = item.data?.name || item.data?.title || item.data?.sku || `Item ${index + 1}`;
                 const itemPrice = item.data?.price;
+                const itemDescription = item.data?.description;
                 const itemType = item.type.includes("product") ? "Product" : item.type.includes("document") ? "Document" : "Item";
 
                 return (
@@ -233,6 +345,11 @@ export function AIThinkingAnimation({ messages, attachedItems = [] }: AIThinking
                         <div className="text-xs text-gray-800 dark:text-gray-200 font-medium line-clamp-1">
                           {itemName}
                         </div>
+                        {itemDescription && (
+                          <div className="text-[10px] text-gray-600 dark:text-gray-400 line-clamp-2 mt-0.5">
+                            {itemDescription}
+                          </div>
+                        )}
                         {itemPrice && (
                           <div className="text-[10px] text-green-600 dark:text-green-400 font-semibold mt-0.5">
                             ${typeof itemPrice === "number" ? itemPrice.toLocaleString() : itemPrice}
