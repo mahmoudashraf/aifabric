@@ -9,7 +9,7 @@ export function useSuggestionsController({
 }) {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
-  const [showSuggestions, setShowSuggestions] = useState(true);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const [shownSuggestions, setShownSuggestions] = useState<Set<string>>(new Set());
 
   useEffect(() => {
