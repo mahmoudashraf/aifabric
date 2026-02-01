@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { ChatMessage, ResultType } from "../../types";
 import type { AiStyles } from "./MessageBubble";
 import { MessageBubble } from "./MessageBubble";
+import { AIThinkingAnimation } from "./AIThinkingAnimation";
 
 export function MessageList({
   containerClassName,
@@ -80,29 +81,7 @@ export function MessageList({
           })}
         </AnimatePresence>
 
-        {isLoading && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
-            <div className="bg-muted p-4 rounded-2xl shadow-lg">
-              <div className="flex gap-2">
-                <motion.div
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ repeat: Infinity, duration: 1, delay: 0 }}
-                  className="w-2 h-2 bg-blue-600 rounded-full"
-                />
-                <motion.div
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ repeat: Infinity, duration: 1, delay: 0.2 }}
-                  className="w-2 h-2 bg-pink-600 rounded-full"
-                />
-                <motion.div
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ repeat: Infinity, duration: 1, delay: 0.4 }}
-                  className="w-2 h-2 bg-blue-600 rounded-full"
-                />
-              </div>
-            </div>
-          </motion.div>
-        )}
+        {isLoading && <AIThinkingAnimation messages={messages} attachedItems={attachedItems} />}
 
         <div ref={messagesEndRef} />
       </div>
