@@ -298,7 +298,7 @@ export function MessageBubble({
               />
             )}
 
-          {message.type === "ai" && message.debugData && aiStyles?.hideBadge && (
+          {message.type === "ai" && message.debugData && (
             <div className="mt-3 flex justify-end">
               <button
                 onClick={(e) => {

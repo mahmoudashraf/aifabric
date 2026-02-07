@@ -48,6 +48,7 @@ export function ResponseSection({
               <RagStatusCard
                 debugRequest={debugRequest}
                 resultData={resultData}
+                metadata={metadata}
                 ragExecuted={ragExecuted}
                 requiresRetrieval={requiresRetrieval}
                 retrievalSkipped={retrievalSkipped}
