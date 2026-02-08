@@ -83,7 +83,7 @@ export function RagStatusCard({
         (() => {
           const originalQuery = debugRequest?.payload?.query || resultData.ragResponse.query;
           const optimizedQuery = resultData.ragResponse.optimizedQuery || resultData.ragResponse.query;
-          const embeddingQuery = metadata?.embeddingQuery;
+          const embeddingQuery = resultData?.metadata?.embeddingQuery || resultData?.ragResponse?.metadata?.embeddingQuery || metadata?.embeddingQuery;
           const charLimit = 100;
           const shouldShowExpand = originalQuery?.length > charLimit || optimizedQuery?.length > charLimit || (embeddingQuery?.length ?? 0) > charLimit;
 
