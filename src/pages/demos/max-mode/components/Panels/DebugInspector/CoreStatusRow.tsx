@@ -24,11 +24,15 @@ export function CoreStatusRow({
               ? "bg-green-500 text-white"
               : result?.type === "CONFIRMATION_REQUIRED"
                 ? "bg-yellow-500 text-white"
-                : result?.type === "INFORMATION_PROVIDED"
-                  ? "bg-blue-500 text-white"
-                  : result?.type === "ACTION_DENIED"
-                    ? "bg-red-500 text-white"
-                    : "bg-gray-500 text-white"
+                : result?.type === "CLARIFICATION_REQUIRED"
+                  ? "bg-orange-500 text-white"
+                  : result?.type === "COMPOUND_HANDLED"
+                    ? "bg-purple-500 text-white"
+                    : result?.type === "INFORMATION_PROVIDED"
+                      ? "bg-blue-500 text-white"
+                      : result?.type === "ACTION_DENIED"
+                        ? "bg-red-500 text-white"
+                        : "bg-gray-500 text-white"
           }`}
         >
           {result?.type?.replace(/_/g, " ").substring(0, 12) || "N/A"}

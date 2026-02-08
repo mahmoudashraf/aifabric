@@ -3,7 +3,10 @@ import type { RefObject } from "react";
 import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import {
+  AlertCircle,
+  Ban,
   CheckCircle2,
+  HelpCircle,
   Info,
   Paperclip,
   Plus,
@@ -11,6 +14,7 @@ import {
   Search,
   Sparkles,
   XCircle,
+  Zap,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -296,6 +300,78 @@ export function MessageBubble({
                 isAttached={isItemAttached}
                 onAttach={(item) => onAttachActionResultItem(item)}
               />
+            )}
+
+          {message.resultType === "CLARIFICATION_REQUIRED" && (
+            <div className="mt-4 p-3 bg-orange-50 dark:bg-orange-900/20 border-2 border-orange-200 dark:border-orange-700 rounded-lg">
+              <p className="text-sm text-orange-800 dark:text-orange-200 font-semibold flex items-center gap-2">
+                <AlertCircle className="h-4 w-4" />
+                Clarification Needed
+              </p>
+              {message.result?.sanitizedPayload?.data?.options && (
+                <ul className="mt-2 space-y-1">
+                  {(message.result.sanitizedPayload.data.options as string[]).map((option: string, idx: number) => (
+                    <li key={idx} className="text-xs text-orange-700 dark:text-orange-300 flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-orange-400 flex-shrink-0" />
+                      {option}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+
+          {message.result?.sanitizedPayload?.type === "COMPOUND_HANDLED" &&
+            message.result?.sanitizedPayload?.data?.results &&
+            Array.isArray(message.result.sanitizedPayload.data.results) && (
+              <div className="mt-4 space-y-2">
+                {(message.result.sanitizedPayload.data.results as any[]).map((subResult: any, idx: number) => {
+                  const subType = subResult.type;
+                  const subIcon =
+                    subType === "ACTION_EXECUTED" ? CheckCircle2
+                    : subType === "ACTION_DENIED" ? Ban
+                    : subType === "CONFIRMATION_REQUIRED" ? HelpCircle
+                    : subType === "CLARIFICATION_REQUIRED" ? AlertCircle
+                    : subType === "INFORMATION_PROVIDED" ? Info
+                    : Zap;
+                  const SubIcon = subIcon;
+                  const colorMap: Record<string, string> = {
+                    ACTION_EXECUTED: "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700 text-green-800 dark:text-green-200",
+                    ACTION_DENIED: "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-700 text-red-800 dark:text-red-200",
+                    CONFIRMATION_REQUIRED: "bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-700 text-yellow-800 dark:text-yellow-200",
+                    CLARIFICATION_REQUIRED: "bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-700 text-orange-800 dark:text-orange-200",
+                    INFORMATION_PROVIDED: "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700 text-blue-800 dark:text-blue-200",
+                  };
+                  const colors = colorMap[subType] || "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200";
+
+                  return (
+                    <div key={idx} className={`p-2.5 rounded-lg border ${colors}`}>
+                      <div className="flex items-center gap-2 mb-1">
+                        <SubIcon className="h-3.5 w-3.5 flex-shrink-0" />
+                        <span className="text-xs font-bold">{subType?.replace(/_/g, " ") || "Result"}</span>
+                        {subResult.success !== undefined && (
+                          <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${subResult.success ? "bg-green-500/20 text-green-700 dark:text-green-300" : "bg-red-500/20 text-red-700 dark:text-red-300"}`}>
+                            {subResult.success ? "OK" : "FAILED"}
+                          </span>
+                        )}
+                      </div>
+                      {subResult.message && (
+                        <p className="text-[11px] opacity-80">{subResult.message}</p>
+                      )}
+                      {subResult.data?.actionResult?.data && (
+                        <ActionResultRenderer
+                          data={subResult.data.actionResult.data}
+                          messageId={`${message.id}-sub-${idx}`}
+                          expandedCount={expandedCount}
+                          onExpand={(count) => onExpandActionResults(message.id, count)}
+                          isAttached={isItemAttached}
+                          onAttach={(item) => onAttachActionResultItem(item)}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             )}
 
           {message.type === "ai" && message.debugData && (

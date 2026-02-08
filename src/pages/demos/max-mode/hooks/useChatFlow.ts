@@ -202,7 +202,7 @@ export function useChatFlow({
           result = data.result;
           resultType = data.result.type;
 
-          if (resultType === "INFORMATION_PROVIDED") {
+          if (resultType === "INFORMATION_PROVIDED" || resultType === "COMPOUND_HANDLED") {
             const rawDocs =
               data.result.data?.documents ||
               data.result.data?.ragResponse?.documents ||
