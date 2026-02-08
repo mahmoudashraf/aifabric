@@ -48,6 +48,7 @@ export function ResponseSection({
               <RagStatusCard
                 debugRequest={debugRequest}
                 resultData={resultData}
+                metadata={metadata}
                 ragExecuted={ragExecuted}
                 requiresRetrieval={requiresRetrieval}
                 retrievalSkipped={retrievalSkipped}
@@ -73,6 +74,8 @@ export function ResponseSection({
 
               {(result?.type === "ACTION_EXECUTED" ||
                 result?.type === "CONFIRMATION_REQUIRED" ||
+                result?.type === "CLARIFICATION_REQUIRED" ||
+                result?.type === "COMPOUND_HANDLED" ||
                 result?.type === "ACTION_DENIED") && <ActionExecutionCard resultType={result.type} resultData={resultData} />}
 
               <RawResultJsonPreview result={result} onExpandJson={onExpandJson} />

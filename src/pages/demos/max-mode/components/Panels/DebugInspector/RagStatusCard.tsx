@@ -3,6 +3,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 export function RagStatusCard({
   debugRequest,
   resultData,
+  metadata,
   ragExecuted,
   requiresRetrieval,
   retrievalSkipped,
@@ -13,6 +14,7 @@ export function RagStatusCard({
 }: {
   debugRequest: any;
   resultData: any;
+  metadata: any;
   ragExecuted: boolean;
   requiresRetrieval: boolean;
   retrievalSkipped: boolean;
@@ -81,8 +83,9 @@ export function RagStatusCard({
         (() => {
           const originalQuery = debugRequest?.payload?.query || resultData.ragResponse.query;
           const optimizedQuery = resultData.ragResponse.optimizedQuery || resultData.ragResponse.query;
+          const embeddingQuery = metadata?.embeddingQuery;
           const charLimit = 100;
-          const shouldShowExpand = originalQuery?.length > charLimit || optimizedQuery?.length > charLimit;
+          const shouldShowExpand = originalQuery?.length > charLimit || optimizedQuery?.length > charLimit || (embeddingQuery?.length ?? 0) > charLimit;
 
           return (
             <div className="mt-1.5 space-y-1.5">
@@ -147,6 +150,28 @@ export function RagStatusCard({
                         : optimizedQuery?.length > charLimit
                           ? `${optimizedQuery.substring(0, charLimit)}...`
                           : optimizedQuery}
+                    </p>
+                  </div>
+                )}
+
+                {embeddingQuery && (
+                  <div className="space-y-0.5 pt-1 border-t border-gray-200 dark:border-gray-600">
+                    <div className="flex items-center gap-1">
+                      <span className="text-[9px] text-gray-500 font-medium">Embedding:</span>
+                      <span className="px-1 py-0.5 bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 rounded text-[8px] font-bold">
+                        VECTOR SEARCH
+                      </span>
+                    </div>
+                    <p
+                      className={`text-[10px] text-gray-800 dark:text-gray-200 ${
+                        !isQueryExpanded && embeddingQuery?.length > charLimit ? "line-clamp-2" : ""
+                      }`}
+                    >
+                      {isQueryExpanded
+                        ? embeddingQuery
+                        : embeddingQuery?.length > charLimit
+                          ? `${embeddingQuery.substring(0, charLimit)}...`
+                          : embeddingQuery}
                     </p>
                   </div>
                 )}

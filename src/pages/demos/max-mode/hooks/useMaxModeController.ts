@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 
-import { Ban, Bot, CheckCircle2, HelpCircle, Info, XCircle } from "lucide-react";
+import { AlertCircle, Ban, Bot, CheckCircle2, HelpCircle, Info, XCircle, Zap } from "lucide-react";
 
 import { useToast } from "@/hooks/use-toast";
 
@@ -373,6 +373,10 @@ export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
         return { icon: Info, bg: "bg-muted", border: "border-transparent", text: "text-foreground", iconColor: "text-muted-foreground", label: "Information", hideBadge: true };
       case "CONFIRMATION_REQUIRED":
         return { icon: HelpCircle, bg: "bg-yellow-500/10", border: "border-yellow-500/30", text: "text-yellow-700", iconColor: "text-yellow-600", label: "Confirmation Required" };
+      case "CLARIFICATION_REQUIRED":
+        return { icon: AlertCircle, bg: "bg-orange-500/10", border: "border-orange-500/30", text: "text-orange-700", iconColor: "text-orange-600", label: "Clarification Needed" };
+      case "COMPOUND_HANDLED":
+        return { icon: Zap, bg: "bg-purple-500/10", border: "border-purple-500/30", text: "text-purple-700", iconColor: "text-purple-600", label: "Compound Action" };
       case "ERROR":
         return { icon: XCircle, bg: "bg-red-500/10", border: "border-red-500/30", text: "text-red-700", iconColor: "text-red-600", label: "Error" };
       default:
