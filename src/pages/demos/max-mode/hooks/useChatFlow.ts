@@ -158,8 +158,6 @@ export function useChatFlow({
           };
         });
 
-        const activeAttachmentIds = attachmentsWithMetadata.map((a) => a.id);
-
         const requestPayload = {
           query: apiQuery,
           userId: "demo-user",
@@ -168,7 +166,6 @@ export function useChatFlow({
           position,
           mode,
           attachments: attachmentsWithMetadata.length > 0 ? attachmentsWithMetadata : undefined,
-          activeAttachmentIds: activeAttachmentIds.length > 0 ? activeAttachmentIds : undefined,
         };
 
         setLastRequestData({
