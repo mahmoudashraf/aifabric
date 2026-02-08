@@ -253,9 +253,6 @@ export function useChat() {
         })),
       ];
 
-      // Get active attachment IDs
-      const activeAttachmentIds = attachmentsWithMetadata.map(a => a.id);
-
       const data = await api.sendChatQuery(
         queryToUse,
         DEFAULT_USER_ID,
@@ -264,7 +261,6 @@ export function useChat() {
         attachmentsWithMetadata.length > 0 ? attachmentsWithMetadata : undefined,
         position,
         mode,
-        activeAttachmentIds.length > 0 ? activeAttachmentIds : undefined
       );
 
       // Store conversation ID for future messages

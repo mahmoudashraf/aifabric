@@ -12,7 +12,6 @@ export async function getChatSuggestions(payload: {
   userId: string;
   maxSuggestions: number;
   attachments?: any[];
-  activeAttachmentIds?: string[];
 }) {
   return apiFetchJson<SuggestionsResponse>(`/chat/suggestions`, {
     method: "POST",

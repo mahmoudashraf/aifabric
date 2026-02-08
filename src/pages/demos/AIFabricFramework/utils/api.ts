@@ -102,7 +102,6 @@ export async function sendChatQuery(
   attachments?: any[],
   position?: ChatPosition,
   mode?: ChatMode,
-  activeAttachmentIds?: string[]
 ): Promise<any> {
   const response = await fetch(`${API_BASE_URL}/chat/query`, {
     method: "POST",
@@ -115,7 +114,6 @@ export async function sendChatQuery(
       position: position || "landing",
       mode: mode || "navigator",
       attachments: attachments && attachments.length > 0 ? attachments : undefined,
-      activeAttachmentIds: activeAttachmentIds && activeAttachmentIds.length > 0 ? activeAttachmentIds : undefined,
     }),
   });
   if (!response.ok) {
@@ -154,8 +152,6 @@ export async function fetchSuggestions(
     })),
   ];
 
-  const activeAttachmentIds = attachments.map(a => a.id);
-
   // Build content description
   const contentParts: string[] = [];
   if (products.length > 0) {
@@ -176,7 +172,6 @@ export async function fetchSuggestions(
       userId,
       maxSuggestions: 5,
       attachments: attachments.length > 0 ? attachments : undefined,
-      activeAttachmentIds: activeAttachmentIds.length > 0 ? activeAttachmentIds : undefined,
     }),
   });
 

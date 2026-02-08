@@ -42,7 +42,6 @@ export function useSuggestionsController({
           };
         });
 
-        const activeAttachmentIds = attachments.map((a) => a.id);
         const contentParts = attachedItems.map((item) => {
           const name = item.data.name || item.data.title || item.data.code || "Item";
           return `${item.type}: ${name}`;
@@ -53,7 +52,6 @@ export function useSuggestionsController({
           userId: "demo-user",
           maxSuggestions: 4,
           attachments: attachments.length > 0 ? attachments : undefined,
-          activeAttachmentIds: activeAttachmentIds.length > 0 ? activeAttachmentIds : undefined,
         });
 
         if (data.suggestions && Array.isArray(data.suggestions)) {
