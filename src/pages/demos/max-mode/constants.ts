@@ -71,7 +71,7 @@ export const QUICK_ACTIONS: QuickAction[] = [
     bg: "bg-blue-500/10",
     border: "border-blue-500/30",
     position: "search",
-    mode: "navigator_deep",
+    mode: "navigator",
   },
   {
     icon: List,
@@ -80,8 +80,8 @@ export const QUICK_ACTIONS: QuickAction[] = [
     color: "text-blue-600",
     bg: "bg-blue-500/10",
     border: "border-blue-500/30",
-    position: "search",
-    mode: "navigator",
+    position: "catalog",
+    mode: "cart_assistant",
   },
   {
     icon: ShoppingCart,
