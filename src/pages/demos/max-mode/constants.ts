@@ -252,7 +252,7 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
 // AI Search menu categories (includes an actual query to populate the input)
 export const AI_SEARCH_CATEGORIES: AISearchCategory[] = SEARCH_CATEGORIES.map((c) => ({
   ...c,
-  query: `i need to search for products ${c.label} and show top results with prices and stock`,
+  query: `search relevance vector spaces for ${c.label} and show top results with prices and stock`,
 }));
 
 // Browse Products categories with specific ready-to-send queries
