@@ -149,7 +149,7 @@ export function MaxModeMainContent({ controller }: { controller: MaxModeControll
         setIsBrowseProductsOpen={setIsBrowseProductsOpen}
         browseProductCategories={browseProductCategories}
         onBrowseProductCategory={(category) => {
-          handleQuickAction(category.query, "landing", "navigator");
+          handleQuickAction(category.query, "search", "navigator");
         }}
       />
 

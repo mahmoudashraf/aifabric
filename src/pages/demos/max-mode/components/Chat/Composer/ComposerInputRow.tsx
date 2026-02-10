@@ -49,7 +49,61 @@ export function ComposerInputRow({
   onSubmit: () => void;
 }) {
   return (
-    <div className="flex items-center gap-2 md:gap-3">
+    <div className="space-y-1.5">
+      {/* Mobile toggles row */}
+      <div className="flex md:hidden items-center gap-1.5 px-1">
+        <button
+          onClick={() => {
+            const isDeep = currentMode === "navigator_deep";
+            onModeChange(isDeep ? "navigator" : "navigator_deep");
+          }}
+          className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold shadow-sm transition-all active:scale-95 border ${
+            currentMode === "navigator_deep"
+              ? "bg-purple-500 text-white border-purple-400/50"
+              : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-600"
+          }`}
+        >
+          <Microscope className="h-3 w-3" />
+          <span>Deep</span>
+        </button>
+        <button
+          onClick={() => {
+            const isAssistant = currentMode === "cart_assistant";
+            onModeChange(isAssistant ? "navigator" : "cart_assistant");
+          }}
+          className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold shadow-sm transition-all active:scale-95 border ${
+            currentMode === "cart_assistant"
+              ? "bg-emerald-500 text-white border-emerald-400/50"
+              : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-600"
+          }`}
+        >
+          <ShoppingCart className="h-3 w-3" />
+          <span>Assist</span>
+        </button>
+        <span
+          className={`text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm ${
+            currentPosition === "cart"
+              ? "bg-orange-500 text-white"
+              : currentPosition === "search"
+                ? "bg-blue-500 text-white"
+                : currentPosition === "catalog"
+                  ? "bg-indigo-500 text-white"
+                  : "bg-green-500 text-white"
+          }`}
+        >
+          {currentPosition}
+        </span>
+        <button
+          onClick={onOpenDebug}
+          className="ml-auto h-5 w-5 rounded-full bg-gray-800/80 text-white flex items-center justify-center"
+          title="View API Debug Info"
+        >
+          <Info className="h-3 w-3" />
+        </button>
+      </div>
+
+      {/* Input row */}
+      <div className="flex items-center gap-2 md:gap-3">
       <Button
         size="icon"
         variant="outline"
@@ -180,6 +234,7 @@ export function ComposerInputRow({
           {isLoading ? <Loader2 className="h-5 w-5 md:h-5.5 md:w-5.5 animate-spin text-white" /> : <Send className="h-5 w-5 md:h-5.5 md:w-5.5 text-white" />}
         </Button>
       </div>
+    </div>
     </div>
   );
 }
