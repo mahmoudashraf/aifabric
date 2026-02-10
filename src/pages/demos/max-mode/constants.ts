@@ -24,7 +24,7 @@ import {
 
 export const API_BASE_URL = "https://ai-fabric-framework-production.up.railway.app/api";
 
-export type MaxModePosition = "landing" | "cart";
+export type MaxModePosition = "landing" | "catalog" | "search" | "cart";
 export type MaxModeMode = "navigator" | "navigator_deep" | "cart_assistant" | "executor";
 
 export interface QuickAction {
@@ -70,7 +70,7 @@ export const QUICK_ACTIONS: QuickAction[] = [
     color: "text-blue-600",
     bg: "bg-blue-500/10",
     border: "border-blue-500/30",
-    position: "landing",
+    position: "search",
     mode: "navigator_deep",
   },
   {
@@ -80,7 +80,7 @@ export const QUICK_ACTIONS: QuickAction[] = [
     color: "text-blue-600",
     bg: "bg-blue-500/10",
     border: "border-blue-500/30",
-    position: "landing",
+    position: "search",
     mode: "navigator",
   },
   {
@@ -150,7 +150,7 @@ export const QUICK_ACTIONS: QuickAction[] = [
     color: "text-pink-600",
     bg: "bg-pink-500/10",
     border: "border-pink-500/30",
-    position: "landing",
+    position: "catalog",
     mode: "navigator",
   },
   {
@@ -160,7 +160,7 @@ export const QUICK_ACTIONS: QuickAction[] = [
     color: "text-yellow-600",
     bg: "bg-yellow-500/10",
     border: "border-yellow-500/30",
-    position: "landing",
+    position: "catalog",
     mode: "navigator",
   },
   {
@@ -200,7 +200,7 @@ export const QUICK_ACTIONS: QuickAction[] = [
     color: "text-rose-600",
     bg: "bg-rose-500/10",
     border: "border-rose-500/30",
-    position: "landing",
+    position: "catalog",
     mode: "navigator",
   },
 ];
@@ -252,7 +252,7 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
 // AI Search menu categories (includes an actual query to populate the input)
 export const AI_SEARCH_CATEGORIES: AISearchCategory[] = SEARCH_CATEGORIES.map((c) => ({
   ...c,
-  query: `request retrieval and generation for product ${c.label} and show top results with prices and stock`,
+  query: `i need to search for products ${c.label} and show top results with prices and stock`,
 }));
 
 // Browse Products categories with specific ready-to-send queries

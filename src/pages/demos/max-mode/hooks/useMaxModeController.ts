@@ -46,7 +46,7 @@ export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
   const [isNewDocsPreviewOpen, setIsNewDocsPreviewOpen] = useState(false);
   const [viewedDocumentIds, setViewedDocumentIds] = useState<Set<string>>(new Set());
   // Position state for routing
-  const [currentPosition, setCurrentPosition] = useState<"landing" | "cart">("landing");
+  const [currentPosition, setCurrentPosition] = useState<"landing" | "catalog" | "search" | "cart">("landing");
   const [currentMode, setCurrentMode] = useState<"navigator" | "navigator_deep" | "cart_assistant" | "executor">("navigator");
 
   // Debug modal state - stores last request/response for inspection
@@ -326,10 +326,10 @@ export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
   const browseProductsFromCart = useCallback(async () => {
     closeCart();
     setChatQuery("Show me available products");
-    await handleChatQuery("Show me available products", "landing", "navigator");
+    await handleChatQuery("Show me available products", "search", "navigator");
   }, [handleChatQuery, closeCart]);
 
-  const handleQuickAction = (query: string, position?: "landing" | "cart", mode?: "navigator" | "navigator_deep" | "cart_assistant" | "executor") => {
+  const handleQuickAction = (query: string, position?: "landing" | "catalog" | "search" | "cart", mode?: "navigator" | "navigator_deep" | "cart_assistant" | "executor") => {
     setChatQuery(query);
     setTimeout(() => handleChatQuery(query, position, mode), 100);
   };

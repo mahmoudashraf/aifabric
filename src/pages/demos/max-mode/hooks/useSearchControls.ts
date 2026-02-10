@@ -17,7 +17,7 @@ export function useSearchControls({
   setAttachedItems: (updater: any) => void;
   setIsAISearchOpen: (open: boolean) => void;
   setSearchCategory: (category: string | null) => void;
-  setCurrentPosition: (pos: "landing" | "cart") => void;
+  setCurrentPosition: (pos: "landing" | "catalog" | "search" | "cart") => void;
   setCurrentMode: (mode: "navigator" | "navigator_deep" | "cart_assistant" | "executor") => void;
   chatInputRef: RefObject<HTMLTextAreaElement>;
   toast: ToastFn;
@@ -39,7 +39,7 @@ export function useSearchControls({
       setIsAISearchOpen(false);
 
       setSearchCategory(null);
-      setCurrentPosition("landing");
+      setCurrentPosition("search");
       setCurrentMode("navigator");
 
       toast({

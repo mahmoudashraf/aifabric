@@ -56,7 +56,7 @@ export function Composer({
   onInputFocusChange: (focused: boolean) => void;
   chatInputRef: RefObject<HTMLTextAreaElement>;
   isLoading: boolean;
-  currentPosition: "landing" | "cart";
+  currentPosition: "landing" | "catalog" | "search" | "cart";
   currentMode: "navigator" | "navigator_deep" | "cart_assistant" | "executor";
   onModeChange: (mode: "navigator" | "navigator_deep" | "cart_assistant" | "executor") => void;
   onOpenDebug: () => void;
