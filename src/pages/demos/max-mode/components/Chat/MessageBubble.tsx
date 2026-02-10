@@ -276,7 +276,7 @@ export function MessageBubble({
           {message.resultType === "INFORMATION_PROVIDED" &&
             message.documents &&
             message.documents.length > 0 &&
-            message.result?.data?.answer == null && (
+            (message.result as any)?.data?.answer == null && (
               <div className="mt-4 space-y-2">
                 <div className="flex items-center gap-1.5 mb-1">
                   <FileText className="h-3.5 w-3.5 text-purple-500" />
@@ -339,7 +339,7 @@ export function MessageBubble({
           {message.resultType === "INFORMATION_PROVIDED" &&
             message.documents &&
             message.documents.length > 0 &&
-            message.result?.data?.answer != null && (
+            (message.result as any)?.data?.answer != null && (
               <Button
                 onClick={() => onOpenSourcesMobile(message.id)}
                 size="sm"
@@ -354,7 +354,7 @@ export function MessageBubble({
           {message.resultType === "INFORMATION_PROVIDED" &&
             message.documents &&
             message.documents.length > 0 &&
-            message.result?.data?.answer != null &&
+            (message.result as any)?.data?.answer != null &&
             !isPanelVisible && (
               <Button
                 onClick={() => onOpenSourcesDesktop(message.id)}

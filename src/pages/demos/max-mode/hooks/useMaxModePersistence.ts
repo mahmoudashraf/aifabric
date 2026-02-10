@@ -43,8 +43,8 @@ export function useMaxModePersistence({
     if (persistedState) {
       if (persistedState.chatMessages.length > 0) setChatMessages(persistedState.chatMessages);
       if (persistedState.attachedItems.length > 0) setAttachedItems(persistedState.attachedItems);
-      if (persistedState.currentPosition) setCurrentPosition(persistedState.currentPosition);
-      if (persistedState.currentMode) setCurrentMode(persistedState.currentMode);
+      if (persistedState.currentPosition) setCurrentPosition(persistedState.currentPosition as "landing" | "cart");
+      if (persistedState.currentMode) setCurrentMode(persistedState.currentMode as "navigator" | "navigator_deep" | "cart_assistant" | "executor");
       if (persistedState.conversationId) setCurrentConversationId(persistedState.conversationId);
       if (persistedState.contextDocuments && persistedState.contextDocuments.length > 0) setContextDocuments(persistedState.contextDocuments);
     }
@@ -79,8 +79,8 @@ export function useMaxModePersistence({
     maxModeContext.updateMaxModeState({
       chatMessages,
       attachedItems,
-      currentPosition,
-      currentMode,
+      currentPosition: currentPosition as any,
+      currentMode: currentMode as any,
       conversationId: currentConversationId,
       contextDocuments,
     });

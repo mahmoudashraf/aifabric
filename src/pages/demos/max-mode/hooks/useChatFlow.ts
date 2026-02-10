@@ -22,6 +22,8 @@ export function useChatFlow({
   setLastRequestData,
   setLastResponseData,
   setSelectedDebugMessage,
+  currentPosition,
+  currentMode,
 }: {
   chatQuery: string;
   setChatQuery: Dispatch<SetStateAction<string>>;
@@ -85,8 +87,8 @@ export function useChatFlow({
         position = "cart";
         mode = "cart_assistant";
       } else {
-        position = currentPosition;
-        mode = currentMode;
+        position = actionPosition ?? currentPosition;
+        mode = actionMode ?? currentMode;
       }
 
       setCurrentPosition(position);
@@ -293,8 +295,6 @@ export function useChatFlow({
       chatMessagesLength,
       chatQuery,
       currentConversationId,
-      currentMode,
-      currentPosition,
       searchCategory,
       setChatMessages,
       setChatQuery,

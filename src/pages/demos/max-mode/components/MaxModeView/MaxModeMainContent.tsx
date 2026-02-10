@@ -77,7 +77,7 @@ export function MaxModeMainContent({ controller }: { controller: MaxModeControll
         getAiStyles={getResultStyles}
         isPanelVisible={isPanelVisible}
         attachedItems={attachedItems}
-        confirmationStatus={confirmationStatus}
+        confirmationStatus={confirmationStatus as Record<string, "confirmed" | "rejected">}
         expandedActions={expandedActions}
         onOpenDebug={openDebugInspector}
         onResendAction={(fullMessage) => {
