@@ -471,28 +471,33 @@ export function MessageBubble({
                   </span>
                 </div>
                 <div className="p-3 space-y-2">
-                  <div className="flex items-start gap-2">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">
-                        {message.result.smartSuggestion.title}
-                      </p>
-                      {message.result.smartSuggestion.rationale && (
-                        <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
-                          {message.result.smartSuggestion.rationale}
-                        </p>
-                      )}
-                    </div>
-                  </div>
                   {message.result.smartSuggestion.query && (
-                    <button
-                      onClick={() => onNextStepClick(message.result!.smartSuggestion!.query)}
-                      className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-300 dark:border-amber-600 transition-all group text-left"
-                    >
-                      <ArrowRight className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
-                      <span className="text-[11px] font-medium text-amber-800 dark:text-amber-200 truncate">
+                    <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-200 dark:border-amber-700">
+                      <Search className="h-3 w-3 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+                      <span className="text-[11px] font-semibold text-amber-800 dark:text-amber-200">
                         {message.result.smartSuggestion.query}
                       </span>
-                    </button>
+                    </div>
+                  )}
+                  {message.result.smartSuggestion.response && (
+                    <div className="prose prose-sm max-w-none dark:prose-invert prose-p:leading-relaxed prose-p:text-gray-700 dark:prose-p:text-gray-300">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {message.result.smartSuggestion.response}
+                      </ReactMarkdown>
+                    </div>
+                  )}
+                  {!message.result.smartSuggestion.response && message.result.smartSuggestion.rationale && (
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                      {message.result.smartSuggestion.rationale}
+                    </p>
+                  )}
+                  {message.result.smartSuggestion.documents && message.result.smartSuggestion.documents.length > 0 && (
+                    <div className="flex items-center gap-1.5 pt-1 border-t border-amber-200/50 dark:border-amber-700/50">
+                      <FileText className="h-3 w-3 text-amber-500" />
+                      <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">
+                        {message.result.smartSuggestion.documents.length} document{message.result.smartSuggestion.documents.length !== 1 ? "s" : ""} added to panel
+                      </span>
+                    </div>
                   )}
                 </div>
               </div>

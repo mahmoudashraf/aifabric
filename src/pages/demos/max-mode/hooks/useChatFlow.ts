@@ -243,6 +243,24 @@ export function useChatFlow({
               });
             }
           }
+
+          // Merge smart suggestion documents into messageDocs for the panel
+          const smartSugDocs = data.result.smartSuggestion?.documents || data.result.data?.smartSuggestion?.documents;
+          if (smartSugDocs && Array.isArray(smartSugDocs) && smartSugDocs.length > 0) {
+            const existingIds = new Set((messageDocs || []).map((d) => d.id));
+            const normalizedSugDocs: Document[] = smartSugDocs
+              .filter((doc: any) => !existingIds.has(doc.id))
+              .map((doc: any, idx: number) => ({
+                id: doc.id || `suggestion-doc-${idx}`,
+                title: doc.title || doc.content?.slice(0, 60) || `Suggestion Doc ${idx + 1}`,
+                content: doc.content || "No content available",
+                type: doc.type || doc.metadata?.vectorSpace || "document",
+                metadata: { ...doc.metadata, fromSuggestion: true },
+                score: doc.score,
+                similarity: doc.similarity,
+              }));
+            messageDocs = [...(messageDocs || []), ...normalizedSugDocs];
+          }
         } else {
           messageContent = data.response || data.message || "I processed your query successfully.";
         }
