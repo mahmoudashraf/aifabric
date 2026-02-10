@@ -71,7 +71,7 @@ export const QUICK_ACTIONS: QuickAction[] = [
     bg: "bg-blue-500/10",
     border: "border-blue-500/30",
     position: "landing",
-    mode: "navigator",
+    mode: "navigator_deep",
   },
   {
     icon: List,
@@ -91,7 +91,7 @@ export const QUICK_ACTIONS: QuickAction[] = [
     bg: "bg-green-500/10",
     border: "border-green-500/30",
     position: "cart",
-    mode: "cart_assistant",
+    mode: "executor",
   },
   {
     icon: ShoppingBag,
@@ -101,7 +101,7 @@ export const QUICK_ACTIONS: QuickAction[] = [
     bg: "bg-orange-500/10",
     border: "border-orange-500/30",
     position: "cart",
-    mode: "cart_assistant",
+    mode: "executor",
   },
   {
     icon: Receipt,
@@ -111,7 +111,7 @@ export const QUICK_ACTIONS: QuickAction[] = [
     bg: "bg-indigo-500/10",
     border: "border-indigo-500/30",
     position: "cart",
-    mode: "cart_assistant",
+    mode: "executor",
   },
   {
     icon: Clock,
@@ -121,7 +121,7 @@ export const QUICK_ACTIONS: QuickAction[] = [
     bg: "bg-cyan-500/10",
     border: "border-cyan-500/30",
     position: "cart",
-    mode: "cart_assistant",
+    mode: "executor",
   },
   {
     icon: Truck,
@@ -131,7 +131,7 @@ export const QUICK_ACTIONS: QuickAction[] = [
     bg: "bg-teal-500/10",
     border: "border-teal-500/30",
     position: "cart",
-    mode: "cart_assistant",
+    mode: "executor",
   },
   {
     icon: RotateCcw,

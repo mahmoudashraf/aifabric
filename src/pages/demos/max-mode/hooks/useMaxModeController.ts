@@ -131,6 +131,8 @@ export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
     setLastRequestData,
     setLastResponseData,
     setSelectedDebugMessage,
+    currentPosition,
+    currentMode,
   });
 
   const { handleConfirmation } = useConfirmationFlow({
@@ -285,7 +287,7 @@ export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
   const selectSuggestion = useCallback(
     async (suggestion: string) => {
       setShownSuggestions((prev) => new Set([...prev, suggestion]));
-      await handleChatQuery(suggestion, "landing", "navigator");
+      await handleChatQuery(suggestion);
     },
     [handleChatQuery],
   );
@@ -315,7 +317,7 @@ export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
   const proceedToCheckoutFromCart = useCallback(
     async ({ closeCartAfter }: { closeCartAfter: boolean }) => {
       setChatQuery("Checkout my cart");
-      await handleChatQuery("Checkout my cart");
+      await handleChatQuery("Checkout my cart", "cart", "executor");
       if (closeCartAfter) closeCart();
     },
     [handleChatQuery, closeCart],
@@ -324,7 +326,7 @@ export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
   const browseProductsFromCart = useCallback(async () => {
     closeCart();
     setChatQuery("Show me available products");
-    await handleChatQuery("Show me available products");
+    await handleChatQuery("Show me available products", "landing", "navigator");
   }, [handleChatQuery, closeCart]);
 
   const handleQuickAction = (query: string, position?: "landing" | "cart", mode?: "navigator" | "navigator_deep" | "cart_assistant" | "executor") => {
