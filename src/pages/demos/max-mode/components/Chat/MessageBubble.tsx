@@ -1,12 +1,15 @@
 import type { RefObject } from "react";
+import { useState } from "react";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import {
   AlertCircle,
   ArrowRight,
   Ban,
   CheckCircle2,
+  Eye,
+  FileText,
   HelpCircle,
   Info,
   Lightbulb,
@@ -15,6 +18,7 @@ import {
   RotateCcw,
   Search,
   Sparkles,
+  Star,
   XCircle,
   Zap,
 } from "lucide-react";
@@ -24,7 +28,7 @@ import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
 
 import { getActionIcon, parseActionMessage } from "../../actionMessage";
-import type { ChatMessage } from "../../types";
+import type { ChatMessage, Document } from "../../types";
 import { normalizeMessageContent } from "../../utils";
 import { ActionResultRenderer } from "../ActionResultRenderer";
 
@@ -77,9 +81,11 @@ export function MessageBubble({
   onAttachActionResultItem: (item: any) => void;
   onNextStepClick: (query: string) => void;
 }) {
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
   const Icon = message.type === "ai" ? aiStyles?.icon : undefined;
 
   return (
+    <>
     <motion.div
       ref={isLatest ? latestMessageRef : null}
       data-message-id={message.id}
@@ -267,21 +273,88 @@ export function MessageBubble({
             </div>
           )}
 
-          {message.resultType === "INFORMATION_PROVIDED" && message.documents && message.documents.length > 0 && (
-            <Button
-              onClick={() => onOpenSourcesMobile(message.id)}
-              size="sm"
-              className="mt-3 md:hidden bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 text-white shadow-lg text-xs rounded-full px-4 py-2 flex items-center gap-2"
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-              <span className="font-semibold">Sources Used</span>
-              <span className="px-1.5 py-0.5 bg-white/25 rounded-full text-[10px] font-bold">{message.documents.length}</span>
-            </Button>
-          )}
+          {message.resultType === "INFORMATION_PROVIDED" &&
+            message.documents &&
+            message.documents.length > 0 &&
+            message.result?.data?.answer == null && (
+              <div className="mt-4 space-y-2">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <FileText className="h-3.5 w-3.5 text-purple-500" />
+                  <span className="text-[11px] font-bold text-gray-600 dark:text-gray-300">
+                    {message.documents.length} Result{message.documents.length !== 1 ? "s" : ""} Found
+                  </span>
+                </div>
+                {message.documents.map((doc, idx) => {
+                  const typeColors: Record<string, string> = {
+                    review: "bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700",
+                    product: "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700",
+                    order: "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700",
+                  };
+                  const typeColor = typeColors[doc.type] || "bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-700";
+                  const TypeIcon = doc.type === "review" ? Star : FileText;
+
+                  return (
+                    <motion.button
+                      key={doc.id}
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.06 }}
+                      onClick={() => setSelectedDocument(doc)}
+                      className="w-full text-left rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 hover:border-purple-400 dark:hover:border-purple-500 hover:shadow-md transition-all group overflow-hidden"
+                    >
+                      <div className="p-3">
+                        <div className="flex items-start gap-2.5">
+                          <div className={`p-1.5 rounded-lg ${typeColor} flex-shrink-0 mt-0.5`}>
+                            <TypeIcon className="h-3.5 w-3.5" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${typeColor}`}>
+                                {doc.type}
+                              </span>
+                              <span className="text-[9px] text-gray-400 dark:text-gray-500">
+                                id: {doc.id}
+                              </span>
+                              {doc.score != null && (
+                                <span className="ml-auto text-[9px] font-bold text-purple-600 dark:text-purple-400">
+                                  {(doc.score * 100).toFixed(1)}% match
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-gray-700 dark:text-gray-300 line-clamp-2 leading-relaxed">
+                              {doc.content}
+                            </p>
+                          </div>
+                          <div className="flex-shrink-0 p-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity bg-purple-100 dark:bg-purple-900/40">
+                            <Eye className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
+                          </div>
+                        </div>
+                      </div>
+                    </motion.button>
+                  );
+                })}
+              </div>
+            )}
 
           {message.resultType === "INFORMATION_PROVIDED" &&
             message.documents &&
             message.documents.length > 0 &&
+            message.result?.data?.answer != null && (
+              <Button
+                onClick={() => onOpenSourcesMobile(message.id)}
+                size="sm"
+                className="mt-3 md:hidden bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 text-white shadow-lg text-xs rounded-full px-4 py-2 flex items-center gap-2"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                <span className="font-semibold">Sources Used</span>
+                <span className="px-1.5 py-0.5 bg-white/25 rounded-full text-[10px] font-bold">{message.documents.length}</span>
+              </Button>
+            )}
+
+          {message.resultType === "INFORMATION_PROVIDED" &&
+            message.documents &&
+            message.documents.length > 0 &&
+            message.result?.data?.answer != null &&
             !isPanelVisible && (
               <Button
                 onClick={() => onOpenSourcesDesktop(message.id)}
@@ -491,5 +564,129 @@ export function MessageBubble({
         </div>
       </div>
     </motion.div>
+
+      <AnimatePresence>
+        {selectedDocument && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedDocument(null)}
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100]"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="fixed inset-4 md:inset-x-[15%] md:inset-y-[10%] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl z-[101] overflow-hidden flex flex-col"
+            >
+              <div className="px-5 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-xl bg-purple-500/10">
+                    <FileText className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-bold text-gray-800 dark:text-gray-200">
+                      {selectedDocument.title || `Document ${selectedDocument.id}`}
+                    </h2>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        selectedDocument.type === "review"
+                          ? "bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300"
+                          : selectedDocument.type === "product"
+                            ? "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300"
+                            : "bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300"
+                      }`}>
+                        {selectedDocument.type}
+                      </span>
+                      <span className="text-[10px] text-gray-400">ID: {selectedDocument.id}</span>
+                      {selectedDocument.score != null && (
+                        <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400">
+                          {(selectedDocument.score * 100).toFixed(1)}% relevance
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSelectedDocument(null)}
+                  className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                >
+                  <XCircle className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-5">
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
+                      Content
+                    </h3>
+                    <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700">
+                      <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
+                        {selectedDocument.content}
+                      </p>
+                    </div>
+                  </div>
+
+                  {selectedDocument.metadata && Object.keys(selectedDocument.metadata).length > 0 && (
+                    <div>
+                      <h3 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
+                        Metadata
+                      </h3>
+                      <div className="grid grid-cols-2 gap-2">
+                        {Object.entries(selectedDocument.metadata)
+                          .filter(([, v]) => v != null && v !== "")
+                          .map(([key, value]) => (
+                            <div
+                              key={key}
+                              className="p-2.5 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700"
+                            >
+                              <div className="text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase">
+                                {key}
+                              </div>
+                              <div className="text-xs text-gray-700 dark:text-gray-300 mt-0.5 break-all">
+                                {String(value)}
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {(selectedDocument.score != null || selectedDocument.similarity != null) && (
+                    <div>
+                      <h3 className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
+                        Relevance Scores
+                      </h3>
+                      <div className="flex gap-3">
+                        {selectedDocument.score != null && (
+                          <div className="flex-1 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-200 dark:border-purple-700 text-center">
+                            <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                              {(selectedDocument.score * 100).toFixed(1)}%
+                            </div>
+                            <div className="text-[10px] text-purple-500 font-medium mt-0.5">Score</div>
+                          </div>
+                        )}
+                        {selectedDocument.similarity != null && (
+                          <div className="flex-1 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-700 text-center">
+                            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                              {(selectedDocument.similarity * 100).toFixed(1)}%
+                            </div>
+                            <div className="text-[10px] text-blue-500 font-medium mt-0.5">Similarity</div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
