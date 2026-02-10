@@ -1,7 +1,7 @@
 import type { RefObject } from "react";
 
 import { motion } from "framer-motion";
-import { History, Info, Loader2, Microscope, Search, Send, X } from "lucide-react";
+import { History, Info, Loader2, Microscope, Search, Send, ShoppingCart, X } from "lucide-react";
 
 import { AISearchDisplay } from "@/components/AISearchDisplay";
 import { Button } from "@/components/ui/button";
@@ -41,7 +41,7 @@ export function ComposerInputRow({
   onInputFocusChange: (focused: boolean) => void;
   chatInputRef: RefObject<HTMLTextAreaElement>;
   isLoading: boolean;
-  currentPosition: "landing" | "cart";
+  currentPosition: "landing" | "catalog" | "search" | "cart";
   currentMode: "navigator" | "navigator_deep" | "cart_assistant" | "executor";
   onModeChange: (mode: "navigator" | "navigator_deep" | "cart_assistant" | "executor") => void;
   onOpenDebug: () => void;
@@ -134,11 +134,30 @@ export function ComposerInputRow({
             <Microscope className="h-3 w-3" />
             <span>Deep</span>
           </button>
+          <button
+            onClick={() => {
+              const isAssistant = currentMode === "cart_assistant";
+              onModeChange(isAssistant ? "navigator" : "cart_assistant");
+            }}
+            className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold shadow-sm transition-all hover:scale-105 border ${
+              currentMode === "cart_assistant"
+                ? "bg-emerald-500 text-white border-emerald-400/50"
+                : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-600"
+            }`}
+            title={currentMode === "cart_assistant" ? "Cart Assistant ON — click to disable" : "Cart Assistant OFF — click to enable"}
+          >
+            <ShoppingCart className="h-3 w-3" />
+            <span>Assist</span>
+          </button>
           <span
             className={`text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm ${
               currentPosition === "cart"
                 ? "bg-orange-500 text-white"
-                : "bg-green-500 text-white"
+                : currentPosition === "search"
+                  ? "bg-blue-500 text-white"
+                  : currentPosition === "catalog"
+                    ? "bg-indigo-500 text-white"
+                    : "bg-green-500 text-white"
             }`}
           >
             {currentPosition}

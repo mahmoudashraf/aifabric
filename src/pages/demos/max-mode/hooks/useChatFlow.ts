@@ -35,16 +35,16 @@ export function useChatFlow({
   setCurrentConversationId: Dispatch<SetStateAction<string | null>>;
   setIsLoading: Dispatch<SetStateAction<boolean>>;
   setSuggestions: Dispatch<SetStateAction<string[]>>;
-  setCurrentPosition: Dispatch<SetStateAction<"landing" | "cart">>;
+  setCurrentPosition: Dispatch<SetStateAction<"landing" | "catalog" | "search" | "cart">>;
   setCurrentMode: Dispatch<SetStateAction<"navigator" | "navigator_deep" | "cart_assistant" | "executor">>;
   setLastRequestData: Dispatch<SetStateAction<any>>;
   setLastResponseData: Dispatch<SetStateAction<any>>;
   setSelectedDebugMessage: Dispatch<SetStateAction<ChatMessage | null>>;
-  currentPosition: "landing" | "cart";
+  currentPosition: "landing" | "catalog" | "search" | "cart";
   currentMode: "navigator" | "navigator_deep" | "cart_assistant" | "executor";
 }) {
   const handleChatQuery = useCallback(
-    async (presetQuery?: string, actionPosition?: "landing" | "cart", actionMode?: "navigator" | "navigator_deep" | "cart_assistant" | "executor") => {
+    async (presetQuery?: string, actionPosition?: "landing" | "catalog" | "search" | "cart", actionMode?: "navigator" | "navigator_deep" | "cart_assistant" | "executor") => {
       const query = presetQuery ?? chatQuery;
       if (!query.trim()) return;
 
@@ -53,9 +53,9 @@ export function useChatFlow({
 
       let apiQuery = query;
       if (currentSearchCategory) {
-        apiQuery = `request retrieval and generation for product ${currentSearchCategory}: ${query}`;
+        apiQuery = `i need to search for products ${currentSearchCategory}: ${query}`;
       } else if (aiSearchAttachment) {
-        apiQuery = `request retrieval and generation for product ${aiSearchAttachment.data.category}: ${query}`;
+        apiQuery = `i need to search for products ${aiSearchAttachment.data.category}: ${query}`;
       }
 
       const userMessage: ChatMessage = {
@@ -77,7 +77,7 @@ export function useChatFlow({
       const hasAttachments = currentAttachments.length > 0;
       const isFirstQuery = chatMessagesLength === 0;
 
-      let position: "landing" | "cart";
+      let position: "landing" | "catalog" | "search" | "cart";
       let mode: "navigator" | "navigator_deep" | "cart_assistant" | "executor";
 
       if (actionPosition && actionMode) {
@@ -159,13 +159,16 @@ export function useChatFlow({
           };
         });
 
+        // Only send mode explicitly for navigator_deep and cart_assistant
+        const explicitMode = (mode === "navigator_deep" || mode === "cart_assistant") ? mode : undefined;
+
         const requestPayload = {
           query: apiQuery,
           userId: "demo-user",
           sessionId: "demo-session-max",
           conversationId: currentConversationId || undefined,
           position,
-          mode,
+          mode: explicitMode,
           attachments: attachmentsWithMetadata.length > 0 ? attachmentsWithMetadata : undefined,
         };
 

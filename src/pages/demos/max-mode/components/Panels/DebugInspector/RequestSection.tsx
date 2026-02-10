@@ -36,7 +36,11 @@ export function RequestSection({ debugRequest }: { debugRequest: DebugData["requ
                 className={`inline-block px-1.5 py-0.5 text-[10px] font-bold rounded ${
                   debugRequest.payload?.position === "cart"
                     ? "bg-orange-500 text-white"
-                    : "bg-green-500 text-white"
+                    : debugRequest.payload?.position === "search"
+                      ? "bg-blue-500 text-white"
+                      : debugRequest.payload?.position === "catalog"
+                        ? "bg-indigo-500 text-white"
+                        : "bg-green-500 text-white"
                 }`}
               >
                 {debugRequest.payload?.position || "landing"}
@@ -55,7 +59,7 @@ export function RequestSection({ debugRequest }: { debugRequest: DebugData["requ
                         : "bg-indigo-500 text-white"
                 }`}
               >
-                {debugRequest.payload?.mode || "navigator"}
+                {debugRequest.payload?.mode || "—"}
               </span>
             </div>
           </div>

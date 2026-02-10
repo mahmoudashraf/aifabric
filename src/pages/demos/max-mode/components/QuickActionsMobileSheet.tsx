@@ -114,7 +114,7 @@ export function QuickActionsMobileSheet({
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: idx * 0.05 }}
                           onClick={() => {
-                            onQuickAction(category.query, "landing", "navigator");
+                            onQuickAction(category.query, "search", "navigator");
                             setIsBrowseProductsOpen(false);
                             setIsOpen(false);
                           }}

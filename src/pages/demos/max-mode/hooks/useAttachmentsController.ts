@@ -17,7 +17,7 @@ export function useAttachmentsController({
   attachedItems: Array<{ type: string; data: any }>;
   setAttachedItems: (updater: any) => void;
   setCollectingItem: (value: { title: string; type: string } | null) => void;
-  setCurrentPosition: (pos: "landing" | "cart") => void;
+  setCurrentPosition: (pos: "landing" | "catalog" | "search" | "cart") => void;
   setCurrentMode: (mode: "navigator" | "navigator_deep" | "cart_assistant" | "executor") => void;
   chatInputRef: RefObject<HTMLTextAreaElement>;
   toast: ToastFn;
