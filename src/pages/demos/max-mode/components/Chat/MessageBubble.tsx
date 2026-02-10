@@ -453,7 +453,8 @@ export function MessageBubble({
               </div>
             )}
 
-          {message.type === "ai" && message.result?.smartSuggestion && (
+          {message.type === "ai" && message.result?.smartSuggestion &&
+            (message.result.smartSuggestion.response || message.result.smartSuggestion.query || (message.result.smartSuggestion.documents && message.result.smartSuggestion.documents.length > 0)) && (
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
