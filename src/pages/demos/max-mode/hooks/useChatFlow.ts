@@ -91,6 +91,18 @@ export function useChatFlow({
         mode = actionMode ?? currentMode;
       }
 
+      // Search category tag forces navigator mode (position = search)
+      const hasSearchTag = !!(currentSearchCategory || aiSearchAttachment);
+      if (hasSearchTag) {
+        position = "search";
+        mode = "navigator";
+      }
+
+      // Deep mode is highest priority — overrides everything
+      if (currentMode === "navigator_deep") {
+        mode = "navigator_deep";
+      }
+
       setCurrentPosition(position);
       setCurrentMode(mode);
 
