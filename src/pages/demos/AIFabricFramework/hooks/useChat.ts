@@ -2,34 +2,8 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useMaxModeContextOptional } from "@/contexts/MaxModeContext";
 import * as api from "../utils/api";
-import type { ChatPosition, ChatMode } from "../utils/api";
 import { DEFAULT_USER_ID, DEFAULT_SESSION_ID } from "../constants";
-import type { ChatMessage, Product, Review, Coupon, Conversation, ActionTag } from "../types";
-
-// Helper to determine position based on context
-function determinePosition(
-  hasAttachments: boolean,
-  isFirstQuery: boolean,
-  isSuggestionQuery: boolean
-): { position: ChatPosition; mode: ChatMode } {
-  // If user has attached products, they're in checkout/action mode
-  if (hasAttachments) {
-    return { position: "checkout", mode: "copilot" };
-  }
-
-  // If using AI suggestions, they're browsing catalog
-  if (isSuggestionQuery) {
-    return { position: "catalog", mode: "navigator" };
-  }
-
-  // First query defaults to landing
-  if (isFirstQuery) {
-    return { position: "landing", mode: "navigator" };
-  }
-
-  // Default to catalog for normal text queries
-  return { position: "catalog", mode: "navigator" };
-}
+import type { ChatMessage, Product, Review, Coupon, Conversation, ActionTag, ChatPosition, ChatMode, Document } from "../types";
 
 export function useChat() {
   const { toast } = useToast();
@@ -101,8 +75,8 @@ export function useChat() {
 
       // Update position if we have attachments
       if (products.length > 0 || reviews.length > 0 || coupons.length > 0) {
-        setCurrentPosition("checkout");
-        setCurrentMode("copilot");
+        setCurrentPosition("cart");
+        setCurrentMode("navigator");
       }
     }
   }, [maxModeContext]);
@@ -151,6 +125,47 @@ export function useChat() {
     }
   }, [attachedProducts, attachedReviews, attachedCoupons]);
 
+  // Helper to extract documents from API response
+  const extractDocuments = useCallback((data: any, messageId: string): Document[] => {
+    const docs: Document[] = [];
+    const seenIds = new Set<string>();
+
+    const addDoc = (raw: any) => {
+      const id = raw.id || raw._id || `doc-${seenIds.size}`;
+      if (seenIds.has(id)) return;
+      seenIds.add(id);
+      docs.push({
+        id,
+        title: raw.title || raw.name || `${raw.type || "document"} ${id}`,
+        content: raw.content || raw.text || raw.contentSnippet || "",
+        type: raw.type || raw.vectorSpace || "document",
+        metadata: raw.metadata || {},
+        messageId,
+        similarity: raw.similarity,
+        score: raw.score,
+      });
+    };
+
+    // From result.data.documents
+    if (data.result?.sanitizedPayload?.data?.documents) {
+      (data.result.sanitizedPayload.data.documents as any[]).forEach(addDoc);
+    }
+
+    // From ragResponse.documents
+    if (data.ragResponse?.documents) {
+      (data.ragResponse.documents as any[]).forEach(addDoc);
+    }
+
+    // From smartSuggestion.documents
+    if (data.result?.smartSuggestion?.documents) {
+      (data.result.smartSuggestion.documents as any[]).forEach((raw: any) => {
+        addDoc({ ...raw, _fromSuggestion: true });
+      });
+    }
+
+    return docs;
+  }, []);
+
   // Handle chat query
   const handleChatQuery = useCallback(async (queryOverride?: string, fromSuggestion?: boolean) => {
     const queryToUse = queryOverride || chatQuery;
@@ -173,14 +188,21 @@ export function useChat() {
     setIsLoading(true);
     setIsChatExpanded(true);
 
-    // Determine position and mode based on context
-    const hasAttachments = currentAttachedProducts.length > 0 || currentAttachedReviews.length > 0 || currentAttachedCoupons.length > 0;
-    const isFirstQuery = chatMessages.length === 0;
-    const isSuggestionQuery = fromSuggestion || false;
+    // Use current position/mode — position is always set, mode defaults
+    const position = currentPosition;
+    const mode = currentMode;
 
-    const { position, mode } = determinePosition(hasAttachments, isFirstQuery, isSuggestionQuery);
-    setCurrentPosition(position);
-    setCurrentMode(mode);
+    // Override: search tag forces navigator, deep mode overrides everything
+    let resolvedPosition = position;
+    let resolvedMode = mode;
+
+    if (activeTag?.type === "search") {
+      resolvedPosition = "search";
+      resolvedMode = "navigator";
+    }
+    if (currentMode === "navigator_deep") {
+      resolvedMode = "navigator_deep";
+    }
 
     // Remove attachments and suggestions after sending
     setAttachedProducts([]);
@@ -259,8 +281,8 @@ export function useChat() {
         DEFAULT_SESSION_ID,
         currentConversationId || undefined,
         attachmentsWithMetadata.length > 0 ? attachmentsWithMetadata : undefined,
-        position,
-        mode,
+        resolvedPosition,
+        resolvedMode,
       );
 
       // Store conversation ID for future messages
@@ -281,11 +303,22 @@ export function useChat() {
         messageContent = data.response || data.message || "I processed your query successfully.";
       }
 
+      // Strip empty smart suggestions
+      if (result?.smartSuggestion) {
+        const ss = result.smartSuggestion;
+        if (!ss.response && !ss.query && (!ss.documents || ss.documents.length === 0)) {
+          result = { ...result, smartSuggestion: undefined };
+        }
+      }
+
       const normalizedContent =
         typeof messageContent === "string" ? messageContent : JSON.stringify(messageContent, null, 2);
 
+      const msgId = (Date.now() + 1).toString();
+      const messageDocs = extractDocuments(data, msgId);
+
       const aiMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
+        id: msgId,
         type: "ai",
         content: normalizedContent,
         timestamp: new Date().toISOString(),
@@ -298,6 +331,7 @@ export function useChat() {
           : undefined,
         result: result,
         resultType: resultType,
+        documents: messageDocs.length > 0 ? messageDocs : undefined,
       };
 
       setChatMessages((prev) => [...prev, aiMessage]);
@@ -310,7 +344,7 @@ export function useChat() {
     } finally {
       setIsLoading(false);
     }
-  }, [chatQuery, attachedProducts, attachedReviews, attachedCoupons, currentConversationId, toast]);
+  }, [chatQuery, attachedProducts, attachedReviews, attachedCoupons, currentConversationId, currentPosition, currentMode, activeTag, extractDocuments, toast]);
 
   // Handle confirmation action
   const handleConfirmationAction = useCallback(
@@ -356,16 +390,27 @@ export function useChat() {
           messageContent = data.response || data.message || "Action processed.";
         }
 
+        if (result?.smartSuggestion) {
+          const ss = result.smartSuggestion;
+          if (!ss.response && !ss.query && (!ss.documents || ss.documents.length === 0)) {
+            result = { ...result, smartSuggestion: undefined };
+          }
+        }
+
         const normalizedContent =
           typeof messageContent === "string" ? messageContent : JSON.stringify(messageContent, null, 2);
 
+        const msgId = (Date.now() + 1).toString();
+        const messageDocs = extractDocuments(data, msgId);
+
         const aiMessage: ChatMessage = {
-          id: (Date.now() + 1).toString(),
+          id: msgId,
           type: "ai",
           content: normalizedContent,
           timestamp: new Date().toISOString(),
           result: result,
           resultType: resultType,
+          documents: messageDocs.length > 0 ? messageDocs : undefined,
         };
 
         setChatMessages((prev) => [...prev, aiMessage]);
@@ -379,7 +424,7 @@ export function useChat() {
         setIsLoading(false);
       }
     },
-    [attachedProducts, currentConversationId, toast]
+    [attachedProducts, currentConversationId, extractDocuments, toast]
   );
 
   // Fetch suggestions for specific attachments (products, reviews, coupons)
@@ -436,9 +481,9 @@ export function useChat() {
     const newProducts = [...attachedProducts, product];
     setAttachedProducts(newProducts);
 
-    // Set position to checkout when product is attached
-    setCurrentPosition("checkout");
-    setCurrentMode("copilot");
+    // Set position to cart when product is attached
+    setCurrentPosition("cart");
+    setCurrentMode("navigator");
 
     // Sync with MaxMode state
     if (maxModeContext) {
@@ -475,9 +520,9 @@ export function useChat() {
 
     const newReviews = [...attachedReviews, review];
     setAttachedReviews(newReviews);
-    // Set position to checkout when review is attached
-    setCurrentPosition("checkout");
-    setCurrentMode("copilot");
+    // Set position to cart when review is attached
+    setCurrentPosition("cart");
+    setCurrentMode("navigator");
 
     // Sync with MaxMode state
     if (maxModeContext) {
@@ -514,9 +559,9 @@ export function useChat() {
 
     const newCoupons = [...attachedCoupons, coupon];
     setAttachedCoupons(newCoupons);
-    // Set position to checkout when coupon is attached
-    setCurrentPosition("checkout");
-    setCurrentMode("copilot");
+    // Set position to cart when coupon is attached
+    setCurrentPosition("cart");
+    setCurrentMode("navigator");
 
     // Sync with MaxMode state
     if (maxModeContext) {
@@ -557,9 +602,6 @@ export function useChat() {
     setCurrentPosition(position);
     if (mode) {
       setCurrentMode(mode);
-    } else {
-      // Auto-determine mode based on position
-      setCurrentMode(position === "checkout" ? "copilot" : "navigator");
     }
   }, []);
 
@@ -613,16 +655,27 @@ export function useChat() {
         messageContent = data.response || data.message || "I processed your request successfully.";
       }
 
+      if (result?.smartSuggestion) {
+        const ss = result.smartSuggestion;
+        if (!ss.response && !ss.query && (!ss.documents || ss.documents.length === 0)) {
+          result = { ...result, smartSuggestion: undefined };
+        }
+      }
+
       const normalizedContent =
         typeof messageContent === "string" ? messageContent : JSON.stringify(messageContent, null, 2);
 
+      const msgId = (Date.now() + 1).toString();
+      const messageDocs = extractDocuments(data, msgId);
+
       const aiMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
+        id: msgId,
         type: "ai",
         content: normalizedContent,
         timestamp: new Date().toISOString(),
         result: result,
         resultType: resultType,
+        documents: messageDocs.length > 0 ? messageDocs : undefined,
       };
 
       setChatMessages((prev) => [...prev, aiMessage]);
@@ -635,7 +688,7 @@ export function useChat() {
     } finally {
       setIsLoading(false);
     }
-  }, [currentConversationId, currentPosition, currentMode, toast]);
+  }, [currentConversationId, currentPosition, currentMode, extractDocuments, toast]);
 
   return {
     // State
@@ -664,6 +717,8 @@ export function useChat() {
     setIsChatExpanded,
     setPosition,
     setActiveTag,
+    setCurrentMode,
+    setCurrentPosition,
 
     // Actions
     loadConversations,

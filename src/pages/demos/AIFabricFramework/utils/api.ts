@@ -1,5 +1,5 @@
 import { API_BASE_URL } from "../constants";
-import type { Product, Policy, Review, Coupon, Conversation, ConversationDetail } from "../types";
+import type { Product, Policy, Review, Coupon, Conversation, ConversationDetail, ChatPosition, ChatMode } from "../types";
 
 // Products API
 export async function fetchProducts(limit = 50): Promise<Product[]> {
@@ -89,9 +89,8 @@ export async function deleteConversation(conversationId: string, ownerId?: strin
   if (!response.ok) throw new Error("Failed to delete conversation");
 }
 
-// Position types for routing
-export type ChatPosition = "landing" | "catalog" | "checkout";
-export type ChatMode = "navigator" | "copilot";
+// Re-export position/mode types from types for backward compat
+export type { ChatPosition, ChatMode } from "../types";
 
 // Chat API
 export async function sendChatQuery(
@@ -103,6 +102,9 @@ export async function sendChatQuery(
   position?: ChatPosition,
   mode?: ChatMode,
 ): Promise<any> {
+  // Only send mode explicitly for navigator_deep and cart_assistant
+  const explicitMode = (mode === "navigator_deep" || mode === "cart_assistant") ? mode : undefined;
+
   const response = await fetch(`${API_BASE_URL}/chat/query`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -112,7 +114,7 @@ export async function sendChatQuery(
       sessionId,
       conversationId: conversationId || undefined,
       position: position || "landing",
-      mode: mode || "navigator",
+      ...(explicitMode ? { mode: explicitMode } : {}),
       attachments: attachments && attachments.length > 0 ? attachments : undefined,
     }),
   });

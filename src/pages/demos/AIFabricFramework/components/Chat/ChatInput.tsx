@@ -1,13 +1,13 @@
 import { RefObject, KeyboardEvent, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, X, Zap, Loader2, Sparkles, Bot, ShoppingCart, Search } from "lucide-react";
+import { Send, X, Zap, Loader2, Sparkles, Bot, ShoppingCart, Search, Microscope } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { QuickTools } from "./QuickTools";
 import { BrowseProductsDialog } from "./BrowseProductsDialog";
-import type { Product, Review, Coupon, ActionTag } from "../../types";
+import type { Product, Review, Coupon, ActionTag, ChatPosition, ChatMode } from "../../types";
 
 interface ChatInputProps {
   query: string;
@@ -27,6 +27,9 @@ interface ChatInputProps {
   activeTag?: ActionTag | null;
   onTagChange?: (tag: ActionTag | null) => void;
   onTagSubmit?: (tag: ActionTag) => void;
+  currentPosition?: ChatPosition;
+  currentMode?: ChatMode;
+  onModeChange?: (mode: ChatMode) => void;
 }
 
 export function ChatInput({
@@ -47,6 +50,9 @@ export function ChatInput({
   activeTag,
   onTagChange,
   onTagSubmit,
+  currentPosition = "landing",
+  currentMode = "navigator",
+  onModeChange,
 }: ChatInputProps) {
   const navigate = useNavigate();
   const [isBrowseDialogOpen, setIsBrowseDialogOpen] = useState(false);
@@ -265,6 +271,53 @@ export function ChatInput({
             </Button>
           </div>
         </div>
+
+        {/* Mode toggles and position badge */}
+        {onModeChange && (
+          <div className="flex items-center gap-1.5 mt-1.5 px-1">
+            <button
+              onClick={() => {
+                const isDeep = currentMode === "navigator_deep";
+                onModeChange(isDeep ? "navigator" : "navigator_deep");
+              }}
+              className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold shadow-sm transition-all active:scale-95 border ${
+                currentMode === "navigator_deep"
+                  ? "bg-purple-500 text-white border-purple-400/50"
+                  : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-600"
+              }`}
+            >
+              <Microscope className="h-3 w-3" />
+              <span>Deep</span>
+            </button>
+            <button
+              onClick={() => {
+                const isAssistant = currentMode === "cart_assistant";
+                onModeChange(isAssistant ? "navigator" : "cart_assistant");
+              }}
+              className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold shadow-sm transition-all active:scale-95 border ${
+                currentMode === "cart_assistant"
+                  ? "bg-emerald-500 text-white border-emerald-400/50"
+                  : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-600"
+              }`}
+            >
+              <ShoppingCart className="h-3 w-3" />
+              <span>Assist</span>
+            </button>
+            <span
+              className={`text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm ${
+                currentPosition === "cart"
+                  ? "bg-orange-500 text-white"
+                  : currentPosition === "search"
+                    ? "bg-blue-500 text-white"
+                    : currentPosition === "catalog"
+                      ? "bg-indigo-500 text-white"
+                      : "bg-green-500 text-white"
+              }`}
+            >
+              {currentPosition}
+            </span>
+          </div>
+        )}
       </div>
       </div>
     </>
