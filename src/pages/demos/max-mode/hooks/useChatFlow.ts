@@ -200,6 +200,14 @@ export function useChatFlow({
           result = data.result;
           resultType = data.result.type;
 
+          // Strip empty smart suggestions
+          if (result.smartSuggestion) {
+            const ss = result.smartSuggestion;
+            if (!ss.response && !ss.query && (!ss.documents || ss.documents.length === 0)) {
+              result = { ...result, smartSuggestion: undefined };
+            }
+          }
+
           if (resultType === "INFORMATION_PROVIDED" || resultType === "COMPOUND_HANDLED") {
             const rawDocs =
               data.result.data?.documents ||
