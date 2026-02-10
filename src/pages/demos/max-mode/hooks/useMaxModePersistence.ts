@@ -23,10 +23,10 @@ export function useMaxModePersistence({
   setChatMessages: Dispatch<SetStateAction<ChatMessage[]>>;
   attachedItems: Array<{ type: string; data: any }>;
   setAttachedItems: Dispatch<SetStateAction<Array<{ type: string; data: any }>>>;
-  currentPosition: "landing" | "catalog" | "checkout";
-  setCurrentPosition: Dispatch<SetStateAction<"landing" | "catalog" | "checkout">>;
-  currentMode: "navigator" | "copilot";
-  setCurrentMode: Dispatch<SetStateAction<"navigator" | "copilot">>;
+  currentPosition: "landing" | "cart";
+  setCurrentPosition: Dispatch<SetStateAction<"landing" | "cart">>;
+  currentMode: "navigator" | "navigator_deep" | "cart_assistant" | "executor";
+  setCurrentMode: Dispatch<SetStateAction<"navigator" | "navigator_deep" | "cart_assistant" | "executor">>;
   currentConversationId: string | null;
   setCurrentConversationId: Dispatch<SetStateAction<string | null>>;
   contextDocuments: Document[];

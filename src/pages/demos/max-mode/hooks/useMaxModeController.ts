@@ -46,8 +46,8 @@ export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
   const [isNewDocsPreviewOpen, setIsNewDocsPreviewOpen] = useState(false);
   const [viewedDocumentIds, setViewedDocumentIds] = useState<Set<string>>(new Set());
   // Position state for routing
-  const [currentPosition, setCurrentPosition] = useState<"landing" | "catalog" | "checkout">("landing");
-  const [currentMode, setCurrentMode] = useState<"navigator" | "copilot">("navigator");
+  const [currentPosition, setCurrentPosition] = useState<"landing" | "cart">("landing");
+  const [currentMode, setCurrentMode] = useState<"navigator" | "navigator_deep" | "cart_assistant" | "executor">("navigator");
 
   // Debug modal state - stores last request/response for inspection
   const [isDebugModalOpen, setIsDebugModalOpen] = useState(false);
@@ -285,7 +285,7 @@ export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
   const selectSuggestion = useCallback(
     async (suggestion: string) => {
       setShownSuggestions((prev) => new Set([...prev, suggestion]));
-      await handleChatQuery(suggestion, "catalog", "navigator");
+      await handleChatQuery(suggestion, "landing", "navigator");
     },
     [handleChatQuery],
   );
@@ -304,8 +304,8 @@ export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
       },
     };
     setAttachedItems((prev) => [...prev, cartAttachment]);
-    setCurrentPosition("checkout");
-    setCurrentMode("copilot");
+    setCurrentPosition("cart");
+    setCurrentMode("cart_assistant");
     toast({
       title: "💬 Cart Added to Chat",
       description: "Your cart details are now part of the conversation",
@@ -327,7 +327,7 @@ export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
     await handleChatQuery("Show me available products");
   }, [handleChatQuery, closeCart]);
 
-  const handleQuickAction = (query: string, position?: "landing" | "catalog" | "checkout", mode?: "navigator" | "copilot") => {
+  const handleQuickAction = (query: string, position?: "landing" | "cart", mode?: "navigator" | "navigator_deep" | "cart_assistant" | "executor") => {
     setChatQuery(query);
     setTimeout(() => handleChatQuery(query, position, mode), 100);
   };
