@@ -1,9 +1,7 @@
 import type { RefObject } from "react";
 
 import { motion } from "framer-motion";
-import { History, Info, Loader2, Search, Send, X } from "lucide-react";
-
-import { ModeSelector } from "./ModeSelector";
+import { History, Info, Loader2, Microscope, Search, Send, X } from "lucide-react";
 
 import { AISearchDisplay } from "@/components/AISearchDisplay";
 import { Button } from "@/components/ui/button";
@@ -121,7 +119,21 @@ export function ComposerInputRow({
         />
 
         <div className="hidden md:flex absolute right-3 bottom-16 items-center gap-1.5">
-          <ModeSelector currentMode={currentMode} onModeChange={onModeChange} />
+          <button
+            onClick={() => {
+              const isDeep = currentMode === "navigator_deep";
+              onModeChange(isDeep ? "navigator" : "navigator_deep");
+            }}
+            className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold shadow-sm transition-all hover:scale-105 border ${
+              currentMode === "navigator_deep"
+                ? "bg-purple-500 text-white border-purple-400/50"
+                : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 border-gray-300 dark:border-gray-600"
+            }`}
+            title={currentMode === "navigator_deep" ? "Deep mode ON — click to disable" : "Deep mode OFF — click to enable deep search"}
+          >
+            <Microscope className="h-3 w-3" />
+            <span>Deep</span>
+          </button>
           <span
             className={`text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm ${
               currentPosition === "cart"

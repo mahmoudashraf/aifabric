@@ -38,6 +38,8 @@ export function useChatFlow({
   setLastRequestData: Dispatch<SetStateAction<any>>;
   setLastResponseData: Dispatch<SetStateAction<any>>;
   setSelectedDebugMessage: Dispatch<SetStateAction<ChatMessage | null>>;
+  currentPosition: "landing" | "cart";
+  currentMode: "navigator" | "navigator_deep" | "cart_assistant" | "executor";
 }) {
   const handleChatQuery = useCallback(
     async (presetQuery?: string, actionPosition?: "landing" | "cart", actionMode?: "navigator" | "navigator_deep" | "cart_assistant" | "executor") => {
@@ -83,8 +85,8 @@ export function useChatFlow({
         position = "cart";
         mode = "cart_assistant";
       } else {
-        position = "landing";
-        mode = "navigator";
+        position = currentPosition;
+        mode = currentMode;
       }
 
       setCurrentPosition(position);
@@ -291,6 +293,8 @@ export function useChatFlow({
       chatMessagesLength,
       chatQuery,
       currentConversationId,
+      currentMode,
+      currentPosition,
       searchCategory,
       setChatMessages,
       setChatQuery,
