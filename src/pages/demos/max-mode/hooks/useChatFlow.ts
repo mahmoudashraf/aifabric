@@ -295,6 +295,8 @@ export function useChatFlow({
       chatMessagesLength,
       chatQuery,
       currentConversationId,
+      currentMode,
+      currentPosition,
       searchCategory,
       setChatMessages,
       setChatQuery,
