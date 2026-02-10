@@ -8,6 +8,7 @@ import {
   ArrowRight,
   Ban,
   CheckCircle2,
+  ChevronDown,
   Eye,
   FileText,
   HelpCircle,
@@ -82,6 +83,7 @@ export function MessageBubble({
   onNextStepClick: (query: string) => void;
 }) {
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
+  const [isSuggestionExpanded, setIsSuggestionExpanded] = useState(false);
   const Icon = message.type === "ai" ? aiStyles?.icon : undefined;
 
   return (
@@ -479,13 +481,33 @@ export function MessageBubble({
                       </span>
                     </div>
                   )}
-                  {message.result.smartSuggestion.response && (
-                    <div className="prose prose-sm max-w-none dark:prose-invert prose-p:leading-relaxed prose-p:text-gray-700 dark:prose-p:text-gray-300">
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {message.result.smartSuggestion.response}
-                      </ReactMarkdown>
-                    </div>
-                  )}
+                  {message.result.smartSuggestion.response && (() => {
+                    const response = message.result!.smartSuggestion!.response!;
+                    const isLong = response.length > 200;
+                    return (
+                      <div>
+                        <div className={`prose prose-sm max-w-none dark:prose-invert prose-p:leading-relaxed prose-p:text-gray-700 dark:prose-p:text-gray-300 ${
+                          isLong && !isSuggestionExpanded ? "max-h-[100px] overflow-hidden relative" : ""
+                        }`}>
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {response}
+                          </ReactMarkdown>
+                          {isLong && !isSuggestionExpanded && (
+                            <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-amber-50 dark:from-amber-900/20 to-transparent pointer-events-none" />
+                          )}
+                        </div>
+                        {isLong && (
+                          <button
+                            onClick={() => setIsSuggestionExpanded(!isSuggestionExpanded)}
+                            className="flex items-center gap-1 mt-1 text-[10px] font-semibold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors"
+                          >
+                            <ChevronDown className={`h-3 w-3 transition-transform ${isSuggestionExpanded ? "rotate-180" : ""}`} />
+                            {isSuggestionExpanded ? "Show less" : "Show more"}
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })()}
                   {!message.result.smartSuggestion.response && message.result.smartSuggestion.rationale && (
                     <p className="text-[11px] text-gray-500 dark:text-gray-400">
                       {message.result.smartSuggestion.rationale}
