@@ -9,6 +9,7 @@ import { OrchestrationPolicyCard } from "./OrchestrationPolicyCard";
 import { RagStatusCard } from "./RagStatusCard";
 import { RawResultJsonPreview } from "./RawResultJsonPreview";
 import { ResponseHeader } from "./ResponseHeader";
+import { SmartSuggestionCard } from "./SmartSuggestionCard";
 import { VectorSpaceRoutingCard } from "./VectorSpaceRoutingCard";
 
 export function ResponseSection({
@@ -77,6 +78,13 @@ export function ResponseSection({
                 result?.type === "CLARIFICATION_REQUIRED" ||
                 result?.type === "COMPOUND_HANDLED" ||
                 result?.type === "ACTION_DENIED") && <ActionExecutionCard resultType={result.type} resultData={resultData} />}
+
+              {(result?.smartSuggestion || result?.data?.smartSuggestion || result?.nextSteps) && (
+                <SmartSuggestionCard
+                  smartSuggestion={result?.smartSuggestion || result?.data?.smartSuggestion}
+                  nextSteps={result?.nextSteps}
+                />
+              )}
 
               <RawResultJsonPreview result={result} onExpandJson={onExpandJson} />
             </div>

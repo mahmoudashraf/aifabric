@@ -90,6 +90,9 @@ export function MaxModeMainContent({ controller }: { controller: MaxModeControll
         onExpandActionResults={expandActionResults}
         isItemAttached={isItemAttached}
         onAttachActionResultItem={handleAttachActionResultItem}
+        onNextStepClick={(query) => {
+          void resendChatQuery(query);
+        }}
       />
 
       <DesktopContextPanel
