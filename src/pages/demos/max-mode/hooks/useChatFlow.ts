@@ -53,9 +53,9 @@ export function useChatFlow({
 
       let apiQuery = query;
       if (currentSearchCategory) {
-        apiQuery = `i need to search for products ${currentSearchCategory}: ${query}`;
+        apiQuery = `search relevance vector spaces for ${currentSearchCategory} ${query}`;
       } else if (aiSearchAttachment) {
-        apiQuery = `i need to search for products ${aiSearchAttachment.data.category}: ${query}`;
+        apiQuery = `search relevance vector spaces for ${aiSearchAttachment.data.category} ${query}`;
       }
 
       const userMessage: ChatMessage = {
