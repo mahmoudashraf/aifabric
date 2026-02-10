@@ -46,12 +46,47 @@ export interface SanitizedPayload {
   };
 }
 
+export interface SmartSuggestion {
+  intent: string;
+  title: string;
+  query: string;
+  confidence: number;
+  priority?: string;
+  rationale: string;
+  response?: string;
+  documents?: any[];
+  metadata?: any;
+}
+
+export interface NextStep {
+  intent: string;
+  query: string;
+  rationale: string;
+  confidence: number;
+  vectorSpace?: string;
+}
+
 export interface ChatResult {
   type: ResultType;
   success: boolean;
-  smartSuggestion?: any;
+  smartSuggestion?: SmartSuggestion;
+  nextSteps?: NextStep[];
   sanitizedPayload: SanitizedPayload;
 }
+
+export interface Document {
+  id: string;
+  title: string;
+  content: string;
+  type: string;
+  metadata?: any;
+  messageId?: string;
+  similarity?: number;
+  score?: number;
+}
+
+export type ChatPosition = "landing" | "catalog" | "search" | "cart";
+export type ChatMode = "navigator" | "navigator_deep" | "cart_assistant" | "executor";
 
 export interface ChatMessage {
   id: string;
@@ -65,6 +100,7 @@ export interface ChatMessage {
   };
   result?: ChatResult;
   resultType?: ResultType;
+  documents?: Document[];
   attachedProduct?: Product;
   attachedProducts?: Product[];
   actionTag?: ActionTag;

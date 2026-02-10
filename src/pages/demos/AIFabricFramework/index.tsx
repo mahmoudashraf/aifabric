@@ -219,6 +219,9 @@ export default function AIFabricFramework() {
         activeTag={chat.activeTag}
         onTagChange={chat.setActiveTag}
         onTagSubmit={chat.handleTagSubmit}
+        currentPosition={chat.currentPosition}
+        currentMode={chat.currentMode}
+        onModeChange={chat.setCurrentMode}
       />
     </div>
   );
