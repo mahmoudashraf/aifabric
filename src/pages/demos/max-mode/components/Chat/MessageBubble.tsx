@@ -4,10 +4,12 @@ import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import {
   AlertCircle,
+  ArrowRight,
   Ban,
   CheckCircle2,
   HelpCircle,
   Info,
+  Lightbulb,
   Paperclip,
   Plus,
   RotateCcw,
@@ -54,6 +56,7 @@ export function MessageBubble({
   onExpandActionResults,
   isItemAttached,
   onAttachActionResultItem,
+  onNextStepClick,
 }: {
   message: ChatMessage;
   isLatest: boolean;
@@ -72,6 +75,7 @@ export function MessageBubble({
   onExpandActionResults: (messageId: string, nextCount: number) => void;
   isItemAttached: (itemId: string) => boolean;
   onAttachActionResultItem: (item: any) => void;
+  onNextStepClick: (query: string) => void;
 }) {
   const Icon = message.type === "ai" ? aiStyles?.icon : undefined;
 
@@ -373,6 +377,101 @@ export function MessageBubble({
                 })}
               </div>
             )}
+
+          {message.type === "ai" && message.result?.smartSuggestion && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="mt-4"
+            >
+              <div className="rounded-xl border-2 border-amber-200 dark:border-amber-700 bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 overflow-hidden">
+                <div className="px-3 py-2 bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-800/30 dark:to-yellow-800/30 flex items-center gap-2">
+                  <div className="p-1 rounded-md bg-amber-500/20">
+                    <Lightbulb className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
+                  </div>
+                  <span className="text-[11px] font-bold text-amber-800 dark:text-amber-200">
+                    Smart Suggestion
+                  </span>
+                  <span className="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300">
+                    {Math.round((message.result.smartSuggestion.confidence ?? 0) * 100)}% confidence
+                  </span>
+                </div>
+                <div className="p-3 space-y-2">
+                  <div className="flex items-start gap-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-gray-800 dark:text-gray-200">
+                        {message.result.smartSuggestion.title}
+                      </p>
+                      {message.result.smartSuggestion.rationale && (
+                        <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+                          {message.result.smartSuggestion.rationale}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  {message.result.smartSuggestion.query && (
+                    <button
+                      onClick={() => onNextStepClick(message.result!.smartSuggestion!.query)}
+                      className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-300 dark:border-amber-600 transition-all group text-left"
+                    >
+                      <ArrowRight className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 flex-shrink-0 group-hover:translate-x-0.5 transition-transform" />
+                      <span className="text-[11px] font-medium text-amber-800 dark:text-amber-200 truncate">
+                        {message.result.smartSuggestion.query}
+                      </span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {message.type === "ai" && message.result?.nextSteps && message.result.nextSteps.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="mt-3"
+            >
+              <div className="flex items-center gap-1.5 mb-2">
+                <Zap className="h-3 w-3 text-blue-500" />
+                <span className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                  Next Steps
+                </span>
+              </div>
+              <div className="space-y-1.5">
+                {message.result.nextSteps.map((step: any, idx: number) => (
+                  <motion.button
+                    key={idx}
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.35 + idx * 0.08 }}
+                    onClick={() => onNextStepClick(step.query)}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all group text-left"
+                  >
+                    <div className="h-6 w-6 rounded-lg bg-blue-500/10 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-500/20 transition-colors">
+                      <ArrowRight className="h-3 w-3 text-blue-600 dark:text-blue-400 group-hover:translate-x-0.5 transition-transform" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold text-gray-800 dark:text-gray-200 truncate">
+                        {step.query}
+                      </p>
+                      {step.rationale && (
+                        <p className="text-[10px] text-gray-400 dark:text-gray-500 truncate">
+                          {step.rationale}
+                        </p>
+                      )}
+                    </div>
+                    {step.confidence && (
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-800/40 text-blue-600 dark:text-blue-300 flex-shrink-0">
+                        {Math.round(step.confidence * 100)}%
+                      </span>
+                    )}
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+          )}
 
           {message.type === "ai" && message.debugData && (
             <div className="mt-3 flex justify-end">

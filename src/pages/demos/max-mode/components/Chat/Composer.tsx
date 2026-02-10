@@ -31,6 +31,8 @@ export function Composer({
   chatInputRef,
   isLoading,
   currentPosition,
+  currentMode,
+  onModeChange,
   onOpenDebug,
   onSubmit,
 }: {
@@ -54,7 +56,9 @@ export function Composer({
   onInputFocusChange: (focused: boolean) => void;
   chatInputRef: RefObject<HTMLTextAreaElement>;
   isLoading: boolean;
-  currentPosition: "landing" | "catalog" | "checkout";
+  currentPosition: "landing" | "cart";
+  currentMode: "navigator" | "navigator_deep" | "cart_assistant" | "executor";
+  onModeChange: (mode: "navigator" | "navigator_deep" | "cart_assistant" | "executor") => void;
   onOpenDebug: () => void;
   onSubmit: () => void;
 }) {
@@ -107,6 +111,8 @@ export function Composer({
             chatInputRef={chatInputRef}
             isLoading={isLoading}
             currentPosition={currentPosition}
+            currentMode={currentMode}
+            onModeChange={onModeChange}
             onOpenDebug={onOpenDebug}
             nonAiAttachmentsCount={nonAiAttachments.length}
             onSubmit={onSubmit}

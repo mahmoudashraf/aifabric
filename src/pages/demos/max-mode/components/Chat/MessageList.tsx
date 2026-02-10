@@ -27,6 +27,7 @@ export function MessageList({
   onExpandActionResults,
   isItemAttached,
   onAttachActionResultItem,
+  onNextStepClick,
 }: {
   containerClassName: string;
   messages: ChatMessage[];
@@ -47,6 +48,7 @@ export function MessageList({
   onExpandActionResults: (messageId: string, nextCount: number) => void;
   isItemAttached: (itemId: string) => boolean;
   onAttachActionResultItem: (item: any) => void;
+  onNextStepClick: (query: string) => void;
 }) {
   return (
     <div className={containerClassName}>
@@ -76,6 +78,7 @@ export function MessageList({
                 onExpandActionResults={onExpandActionResults}
                 isItemAttached={isItemAttached}
                 onAttachActionResultItem={onAttachActionResultItem}
+                onNextStepClick={onNextStepClick}
               />
             );
           })}

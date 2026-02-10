@@ -90,6 +90,9 @@ export function MaxModeMainContent({ controller }: { controller: MaxModeControll
         onExpandActionResults={expandActionResults}
         isItemAttached={isItemAttached}
         onAttachActionResultItem={handleAttachActionResultItem}
+        onNextStepClick={(query) => {
+          void resendChatQuery(query);
+        }}
       />
 
       <DesktopContextPanel
@@ -146,7 +149,7 @@ export function MaxModeMainContent({ controller }: { controller: MaxModeControll
         setIsBrowseProductsOpen={setIsBrowseProductsOpen}
         browseProductCategories={browseProductCategories}
         onBrowseProductCategory={(category) => {
-          handleQuickAction(category.query, "catalog", "navigator");
+          handleQuickAction(category.query, "landing", "navigator");
         }}
       />
 

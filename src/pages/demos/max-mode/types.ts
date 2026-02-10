@@ -35,10 +35,31 @@ export interface SanitizedPayload {
   };
 }
 
+export interface SmartSuggestion {
+  intent: string;
+  title: string;
+  query: string;
+  confidence: number;
+  priority?: string;
+  rationale: string;
+  response?: string;
+  documents?: any[];
+  metadata?: any;
+}
+
+export interface NextStep {
+  intent: string;
+  query: string;
+  rationale: string;
+  confidence: number;
+  vectorSpace?: string;
+}
+
 export interface ChatResult {
   type: ResultType;
   success: boolean;
-  smartSuggestion?: any;
+  smartSuggestion?: SmartSuggestion;
+  nextSteps?: NextStep[];
   sanitizedPayload: SanitizedPayload;
 }
 

@@ -3,6 +3,8 @@ import type { RefObject } from "react";
 import { motion } from "framer-motion";
 import { History, Info, Loader2, Search, Send, X } from "lucide-react";
 
+import { ModeSelector } from "./ModeSelector";
+
 import { AISearchDisplay } from "@/components/AISearchDisplay";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,6 +24,8 @@ export function ComposerInputRow({
   chatInputRef,
   isLoading,
   currentPosition,
+  currentMode,
+  onModeChange,
   onOpenDebug,
   nonAiAttachmentsCount,
   onSubmit,
@@ -39,7 +43,9 @@ export function ComposerInputRow({
   onInputFocusChange: (focused: boolean) => void;
   chatInputRef: RefObject<HTMLTextAreaElement>;
   isLoading: boolean;
-  currentPosition: "landing" | "catalog" | "checkout";
+  currentPosition: "landing" | "cart";
+  currentMode: "navigator" | "navigator_deep" | "cart_assistant" | "executor";
+  onModeChange: (mode: "navigator" | "navigator_deep" | "cart_assistant" | "executor") => void;
   onOpenDebug: () => void;
   nonAiAttachmentsCount: number;
   onSubmit: () => void;
@@ -114,14 +120,13 @@ export function ComposerInputRow({
           }}
         />
 
-        <div className="hidden md:flex absolute right-3 bottom-16 items-center gap-1">
+        <div className="hidden md:flex absolute right-3 bottom-16 items-center gap-1.5">
+          <ModeSelector currentMode={currentMode} onModeChange={onModeChange} />
           <span
             className={`text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm ${
-              currentPosition === "checkout"
+              currentPosition === "cart"
                 ? "bg-orange-500 text-white"
-                : currentPosition === "catalog"
-                  ? "bg-blue-500 text-white"
-                  : "bg-green-500 text-white"
+                : "bg-green-500 text-white"
             }`}
           >
             {currentPosition}

@@ -138,7 +138,7 @@ export function QuickActionsDesktop({
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.05 }}
                       onClick={() => {
-                        onQuickAction(category.query, "catalog", "navigator");
+                        onQuickAction(category.query, "landing", "navigator");
                         setIsBrowseProductsOpen(false);
                       }}
                       className="cursor-pointer group"

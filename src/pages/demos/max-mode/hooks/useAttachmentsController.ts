@@ -17,8 +17,8 @@ export function useAttachmentsController({
   attachedItems: Array<{ type: string; data: any }>;
   setAttachedItems: (updater: any) => void;
   setCollectingItem: (value: { title: string; type: string } | null) => void;
-  setCurrentPosition: (pos: "landing" | "catalog" | "checkout") => void;
-  setCurrentMode: (mode: "navigator" | "copilot") => void;
+  setCurrentPosition: (pos: "landing" | "cart") => void;
+  setCurrentMode: (mode: "navigator" | "navigator_deep" | "cart_assistant" | "executor") => void;
   chatInputRef: RefObject<HTMLTextAreaElement>;
   toast: ToastFn;
 }) {
@@ -97,8 +97,8 @@ export function useAttachmentsController({
       }
 
       setAttachedItems((prev: Array<{ type: string; data: any }>) => [...prev, { type: itemType, data: normalizedItem }]);
-      setCurrentPosition("checkout");
-      setCurrentMode("copilot");
+      setCurrentPosition("cart");
+      setCurrentMode("cart_assistant");
 
       toast({
         title: "💬 Added to Chat",
@@ -127,8 +127,8 @@ export function useAttachmentsController({
       setTimeout(() => setCollectingItem(null), 1500);
 
       setAttachedItems((prev: Array<{ type: string; data: any }>) => [...prev, { type: "document", data: doc }]);
-      setCurrentPosition("checkout");
-      setCurrentMode("copilot");
+      setCurrentPosition("cart");
+      setCurrentMode("cart_assistant");
 
       toast({
         title: "💬 Added to Chat",

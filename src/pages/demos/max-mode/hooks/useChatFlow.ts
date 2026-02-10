@@ -33,14 +33,14 @@ export function useChatFlow({
   setCurrentConversationId: Dispatch<SetStateAction<string | null>>;
   setIsLoading: Dispatch<SetStateAction<boolean>>;
   setSuggestions: Dispatch<SetStateAction<string[]>>;
-  setCurrentPosition: Dispatch<SetStateAction<"landing" | "catalog" | "checkout">>;
-  setCurrentMode: Dispatch<SetStateAction<"navigator" | "copilot">>;
+  setCurrentPosition: Dispatch<SetStateAction<"landing" | "cart">>;
+  setCurrentMode: Dispatch<SetStateAction<"navigator" | "navigator_deep" | "cart_assistant" | "executor">>;
   setLastRequestData: Dispatch<SetStateAction<any>>;
   setLastResponseData: Dispatch<SetStateAction<any>>;
   setSelectedDebugMessage: Dispatch<SetStateAction<ChatMessage | null>>;
 }) {
   const handleChatQuery = useCallback(
-    async (presetQuery?: string, actionPosition?: "landing" | "catalog" | "checkout", actionMode?: "navigator" | "copilot") => {
+    async (presetQuery?: string, actionPosition?: "landing" | "cart", actionMode?: "navigator" | "navigator_deep" | "cart_assistant" | "executor") => {
       const query = presetQuery ?? chatQuery;
       if (!query.trim()) return;
 
@@ -73,20 +73,17 @@ export function useChatFlow({
       const hasAttachments = currentAttachments.length > 0;
       const isFirstQuery = chatMessagesLength === 0;
 
-      let position: "landing" | "catalog" | "checkout";
-      let mode: "navigator" | "copilot";
+      let position: "landing" | "cart";
+      let mode: "navigator" | "navigator_deep" | "cart_assistant" | "executor";
 
       if (actionPosition && actionMode) {
         position = actionPosition;
         mode = actionMode;
       } else if (hasAttachments) {
-        position = "checkout";
-        mode = "copilot";
-      } else if (isFirstQuery) {
-        position = "landing";
-        mode = "navigator";
+        position = "cart";
+        mode = "cart_assistant";
       } else {
-        position = "catalog";
+        position = "landing";
         mode = "navigator";
       }
 

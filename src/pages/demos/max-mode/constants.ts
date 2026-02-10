@@ -24,8 +24,8 @@ import {
 
 export const API_BASE_URL = "https://ai-fabric-framework-production.up.railway.app/api";
 
-export type MaxModePosition = "landing" | "catalog" | "checkout";
-export type MaxModeMode = "navigator" | "copilot";
+export type MaxModePosition = "landing" | "cart";
+export type MaxModeMode = "navigator" | "navigator_deep" | "cart_assistant" | "executor";
 
 export interface QuickAction {
   icon: LucideIcon;
@@ -61,7 +61,7 @@ export interface BrowseProductCategory {
 }
 
 // Quick action tools - aligned with available backend actions
-// Position: "catalog" for browsing/discovery, "checkout" for cart/order actions
+// Position: "landing" for browsing/discovery, "cart" for cart/order actions
 export const QUICK_ACTIONS: QuickAction[] = [
   {
     icon: Search,
@@ -70,7 +70,7 @@ export const QUICK_ACTIONS: QuickAction[] = [
     color: "text-blue-600",
     bg: "bg-blue-500/10",
     border: "border-blue-500/30",
-    position: "catalog",
+    position: "landing",
     mode: "navigator",
   },
   {
@@ -80,7 +80,7 @@ export const QUICK_ACTIONS: QuickAction[] = [
     color: "text-blue-600",
     bg: "bg-blue-500/10",
     border: "border-blue-500/30",
-    position: "catalog",
+    position: "landing",
     mode: "navigator",
   },
   {
@@ -90,8 +90,8 @@ export const QUICK_ACTIONS: QuickAction[] = [
     color: "text-green-600",
     bg: "bg-green-500/10",
     border: "border-green-500/30",
-    position: "checkout",
-    mode: "copilot",
+    position: "cart",
+    mode: "cart_assistant",
   },
   {
     icon: ShoppingBag,
@@ -100,8 +100,8 @@ export const QUICK_ACTIONS: QuickAction[] = [
     color: "text-orange-600",
     bg: "bg-orange-500/10",
     border: "border-orange-500/30",
-    position: "checkout",
-    mode: "copilot",
+    position: "cart",
+    mode: "cart_assistant",
   },
   {
     icon: Receipt,
@@ -110,8 +110,8 @@ export const QUICK_ACTIONS: QuickAction[] = [
     color: "text-indigo-600",
     bg: "bg-indigo-500/10",
     border: "border-indigo-500/30",
-    position: "checkout",
-    mode: "copilot",
+    position: "cart",
+    mode: "cart_assistant",
   },
   {
     icon: Clock,
@@ -120,8 +120,8 @@ export const QUICK_ACTIONS: QuickAction[] = [
     color: "text-cyan-600",
     bg: "bg-cyan-500/10",
     border: "border-cyan-500/30",
-    position: "checkout",
-    mode: "copilot",
+    position: "cart",
+    mode: "cart_assistant",
   },
   {
     icon: Truck,
@@ -130,8 +130,8 @@ export const QUICK_ACTIONS: QuickAction[] = [
     color: "text-teal-600",
     bg: "bg-teal-500/10",
     border: "border-teal-500/30",
-    position: "checkout",
-    mode: "copilot",
+    position: "cart",
+    mode: "cart_assistant",
   },
   {
     icon: RotateCcw,
@@ -140,8 +140,8 @@ export const QUICK_ACTIONS: QuickAction[] = [
     color: "text-red-600",
     bg: "bg-red-500/10",
     border: "border-red-500/30",
-    position: "checkout",
-    mode: "copilot",
+    position: "cart",
+    mode: "executor",
   },
   {
     icon: Tag,
@@ -150,7 +150,7 @@ export const QUICK_ACTIONS: QuickAction[] = [
     color: "text-pink-600",
     bg: "bg-pink-500/10",
     border: "border-pink-500/30",
-    position: "catalog",
+    position: "landing",
     mode: "navigator",
   },
   {
@@ -160,7 +160,7 @@ export const QUICK_ACTIONS: QuickAction[] = [
     color: "text-yellow-600",
     bg: "bg-yellow-500/10",
     border: "border-yellow-500/30",
-    position: "catalog",
+    position: "landing",
     mode: "navigator",
   },
   {
@@ -170,8 +170,8 @@ export const QUICK_ACTIONS: QuickAction[] = [
     color: "text-slate-600",
     bg: "bg-slate-500/10",
     border: "border-slate-500/30",
-    position: "checkout",
-    mode: "copilot",
+    position: "cart",
+    mode: "executor",
   },
   {
     icon: MapPin,
@@ -180,8 +180,8 @@ export const QUICK_ACTIONS: QuickAction[] = [
     color: "text-emerald-600",
     bg: "bg-emerald-500/10",
     border: "border-emerald-500/30",
-    position: "checkout",
-    mode: "copilot",
+    position: "cart",
+    mode: "executor",
   },
   {
     icon: MessageSquare,
@@ -190,8 +190,8 @@ export const QUICK_ACTIONS: QuickAction[] = [
     color: "text-violet-600",
     bg: "bg-violet-500/10",
     border: "border-violet-500/30",
-    position: "checkout",
-    mode: "copilot",
+    position: "cart",
+    mode: "executor",
   },
   {
     icon: TrendingUp,
@@ -200,7 +200,7 @@ export const QUICK_ACTIONS: QuickAction[] = [
     color: "text-rose-600",
     bg: "bg-rose-500/10",
     border: "border-rose-500/30",
-    position: "catalog",
+    position: "landing",
     mode: "navigator",
   },
 ];

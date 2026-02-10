@@ -34,11 +34,9 @@ export function RequestSection({ debugRequest }: { debugRequest: DebugData["requ
               <h4 className="text-[9px] font-semibold text-gray-500 uppercase mb-0.5">Position</h4>
               <span
                 className={`inline-block px-1.5 py-0.5 text-[10px] font-bold rounded ${
-                  debugRequest.payload?.position === "checkout"
+                  debugRequest.payload?.position === "cart"
                     ? "bg-orange-500 text-white"
-                    : debugRequest.payload?.position === "catalog"
-                      ? "bg-blue-500 text-white"
-                      : "bg-green-500 text-white"
+                    : "bg-green-500 text-white"
                 }`}
               >
                 {debugRequest.payload?.position || "landing"}
@@ -48,7 +46,13 @@ export function RequestSection({ debugRequest }: { debugRequest: DebugData["requ
               <h4 className="text-[9px] font-semibold text-gray-500 uppercase mb-0.5">Mode</h4>
               <span
                 className={`inline-block px-1.5 py-0.5 text-[10px] font-bold rounded ${
-                  debugRequest.payload?.mode === "copilot" ? "bg-purple-500 text-white" : "bg-indigo-500 text-white"
+                  debugRequest.payload?.mode === "executor"
+                    ? "bg-amber-500 text-white"
+                    : debugRequest.payload?.mode === "cart_assistant"
+                      ? "bg-emerald-500 text-white"
+                      : debugRequest.payload?.mode === "navigator_deep"
+                        ? "bg-purple-500 text-white"
+                        : "bg-indigo-500 text-white"
                 }`}
               >
                 {debugRequest.payload?.mode || "navigator"}
