@@ -13,6 +13,7 @@ interface ChatPanelProps {
   onConfirmation: (action: "confirm" | "deny", data?: any) => void;
   messagesEndRef: RefObject<HTMLDivElement>;
   onResendAction?: (query: string) => void;
+  onClarificationSubmit?: (action: string, parameters: Record<string, any>) => void;
 }
 
 export function ChatPanel({
@@ -23,6 +24,7 @@ export function ChatPanel({
   onConfirmation,
   messagesEndRef,
   onResendAction,
+  onClarificationSubmit,
 }: ChatPanelProps) {
   const [showAllDocs, setShowAllDocs] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
@@ -278,6 +280,11 @@ export function ChatPanel({
                             }
                             onResendAction={onResendAction}
                             onNextStepClick={onResendAction}
+                            onClarificationSubmit={
+                              message.resultType === "CLARIFICATION_REQUIRED"
+                                ? onClarificationSubmit
+                                : undefined
+                            }
                           />
                         ))}
                         {isLoading && <LoadingMessage />}

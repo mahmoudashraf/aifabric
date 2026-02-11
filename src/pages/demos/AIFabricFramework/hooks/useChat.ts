@@ -610,6 +610,94 @@ export function useChat() {
     await handleChatQuery(query);
   }, [handleChatQuery]);
 
+  // Handle clarification form submission
+  const handleClarificationSubmit = useCallback(
+    async (action: string, parameters: Record<string, any>) => {
+      // Build a natural language query with the parameters
+      const paramStr = Object.entries(parameters)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join(", ");
+      const query = `Proceed with ${action.replace(/_/g, " ")} using: ${paramStr}`;
+
+      const userMessage: ChatMessage = {
+        id: Date.now().toString(),
+        type: "user",
+        content: query,
+        timestamp: new Date().toISOString(),
+      };
+
+      setChatMessages((prev) => [...prev, userMessage]);
+      setIsLoading(true);
+
+      try {
+        const data = await api.sendChatQuery(
+          query,
+          DEFAULT_USER_ID,
+          DEFAULT_SESSION_ID,
+          currentConversationId || undefined,
+          attachedProducts.length > 0
+            ? attachedProducts.map((p) => ({
+                type: "product",
+                metadata: { id: p.id, sku: p.sku, category: p.category, imageUrl: p.imageUrl },
+              }))
+            : undefined,
+          currentPosition,
+          currentMode,
+        );
+
+        if (data.conversationId && !currentConversationId) {
+          setCurrentConversationId(data.conversationId);
+        }
+
+        let messageContent: unknown = "";
+        let result = undefined;
+        let resultType = undefined;
+
+        if (data.result && data.result.sanitizedPayload) {
+          messageContent = data.result.sanitizedPayload.message || "Action processed.";
+          result = data.result;
+          resultType = data.result.type;
+        } else {
+          messageContent = data.response || data.message || "Action processed.";
+        }
+
+        if (result?.smartSuggestion) {
+          const ss = result.smartSuggestion;
+          if (!ss.response && !ss.query && (!ss.documents || ss.documents.length === 0)) {
+            result = { ...result, smartSuggestion: undefined };
+          }
+        }
+
+        const normalizedContent =
+          typeof messageContent === "string" ? messageContent : JSON.stringify(messageContent, null, 2);
+
+        const msgId = (Date.now() + 1).toString();
+        const messageDocs = extractDocuments(data, msgId);
+
+        const aiMessage: ChatMessage = {
+          id: msgId,
+          type: "ai",
+          content: normalizedContent,
+          timestamp: new Date().toISOString(),
+          result: result,
+          resultType: resultType,
+          documents: messageDocs.length > 0 ? messageDocs : undefined,
+        };
+
+        setChatMessages((prev) => [...prev, aiMessage]);
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to submit clarification. Please try again.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [attachedProducts, currentConversationId, currentPosition, currentMode, extractDocuments, toast]
+  );
+
   // Handle tag submission (for cart and browse actions)
   const handleTagSubmit = useCallback(async (tag: ActionTag) => {
     // Create user message with action tag
@@ -734,5 +822,6 @@ export function useChat() {
     scrollToBottom,
     handleTagSubmit,
     handleResendAction,
+    handleClarificationSubmit,
   };
 }

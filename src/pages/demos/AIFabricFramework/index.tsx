@@ -198,6 +198,7 @@ export default function AIFabricFramework() {
         onConfirmation={chat.handleConfirmationAction}
         messagesEndRef={chat.messagesEndRef}
         onResendAction={chat.handleResendAction}
+        onClarificationSubmit={chat.handleClarificationSubmit}
       />
 
       {/* Chat input */}
