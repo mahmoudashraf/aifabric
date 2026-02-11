@@ -15,7 +15,7 @@ import {
   Lightbulb,
   Package,
   Paperclip,
-  RotateCw,
+  RotateCcw,
   Search,
   ShoppingCart,
   Star,
@@ -40,25 +40,108 @@ const normalizeContent = (value: unknown): string => {
   }
 };
 
-// Match max-mode aiStyles pattern
+// Parse "Action: action_name" style messages
+function parseActionMessage(content: string) {
+  const match = content.match(/^Action:\s*(.+)$/i);
+  if (match) {
+    return { isAction: true, actionType: match[1].trim(), query: match[1].trim(), fullMessage: content };
+  }
+  return { isAction: false, actionType: "", query: content, fullMessage: content };
+}
+
+// Get icon for action type
+function getActionIcon(actionType: string) {
+  const lower = actionType.toLowerCase();
+  if (lower.includes("cart") || lower.includes("checkout")) return ShoppingCart;
+  if (lower.includes("search") || lower.includes("find") || lower.includes("look")) return Search;
+  return Package;
+}
+
+// Match max-mode getResultStyles pattern
 function getAiStyles(resultType?: string) {
   switch (resultType) {
     case "ACTION_EXECUTED":
-      return { icon: CheckCircle2, bg: "bg-green-500/10", border: "border-green-500/30", text: "text-green-700", iconColor: "text-green-600", label: "Action Executed" };
+      return {
+        icon: CheckCircle2,
+        bg: "bg-green-500/10",
+        headerGradient: "from-green-600 to-emerald-600",
+        border: "border-green-500/30",
+        text: "text-green-700",
+        iconColor: "text-green-600",
+        label: "Action Executed",
+      };
     case "ACTION_DENIED":
-      return { icon: Ban, bg: "bg-red-500/10", border: "border-red-500/30", text: "text-red-700", iconColor: "text-red-600", label: "Action Denied" };
+      return {
+        icon: Ban,
+        bg: "bg-red-500/10",
+        headerGradient: "from-red-600 to-rose-600",
+        border: "border-red-500/30",
+        text: "text-red-700",
+        iconColor: "text-red-600",
+        label: "Action Denied",
+      };
     case "INFORMATION_PROVIDED":
-      return { icon: Info, bg: "bg-muted", border: "border-transparent", text: "text-foreground", iconColor: "text-muted-foreground", label: "Information", hideBadge: true };
+      return {
+        icon: Info,
+        bg: "bg-muted",
+        headerGradient: "",
+        border: "border-transparent",
+        text: "text-foreground",
+        iconColor: "text-muted-foreground",
+        label: "Information",
+        hideBadge: true,
+      };
     case "CONFIRMATION_REQUIRED":
-      return { icon: HelpCircle, bg: "bg-yellow-500/10", border: "border-yellow-500/30", text: "text-yellow-700", iconColor: "text-yellow-600", label: "Confirmation Required" };
+      return {
+        icon: HelpCircle,
+        bg: "bg-yellow-500/10",
+        headerGradient: "from-yellow-600 to-amber-600",
+        border: "border-yellow-500/30",
+        text: "text-yellow-700",
+        iconColor: "text-yellow-600",
+        label: "Confirmation Required",
+      };
     case "CLARIFICATION_REQUIRED":
-      return { icon: AlertCircle, bg: "bg-orange-500/10", border: "border-orange-500/30", text: "text-orange-700", iconColor: "text-orange-600", label: "Clarification Needed" };
+      return {
+        icon: AlertCircle,
+        bg: "bg-orange-500/10",
+        headerGradient: "from-orange-600 to-amber-600",
+        border: "border-orange-500/30",
+        text: "text-orange-700",
+        iconColor: "text-orange-600",
+        label: "Clarification Needed",
+      };
     case "COMPOUND_HANDLED":
-      return { icon: Zap, bg: "bg-purple-500/10", border: "border-purple-500/30", text: "text-purple-700", iconColor: "text-purple-600", label: "Compound Action" };
+      return {
+        icon: Zap,
+        bg: "bg-purple-500/10",
+        headerGradient: "from-purple-600 to-violet-600",
+        border: "border-purple-500/30",
+        text: "text-purple-700",
+        iconColor: "text-purple-600",
+        label: "Compound Action",
+      };
     case "ERROR":
-      return { icon: XCircle, bg: "bg-red-500/10", border: "border-red-500/30", text: "text-red-700", iconColor: "text-red-600", label: "Error" };
+      return {
+        icon: XCircle,
+        bg: "bg-red-500/10",
+        headerGradient: "from-red-600 to-rose-600",
+        border: "border-red-500/30",
+        text: "text-red-700",
+        iconColor: "text-red-600",
+        label: "Error",
+      };
     default:
-      return { icon: Info, bg: "bg-muted", border: "border-transparent", text: "text-foreground", iconColor: "text-muted-foreground", label: "Response", hideBadge: true };
+      return {
+        icon: Info,
+        bg: "bg-muted",
+        headerGradient: "",
+        border: "border-transparent",
+        text: "text-foreground",
+        iconColor: "text-muted-foreground",
+        label: "Response",
+        hideBadge: true,
+      };
   }
 }
 
@@ -76,15 +159,6 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
   const aiStyles = message.type === "ai" ? getAiStyles(message.resultType) : null;
   const Icon = aiStyles?.icon;
 
-  const getActionIcon = (type: string) => {
-    switch (type) {
-      case "cart": return ShoppingCart;
-      case "browse": return Package;
-      case "search": return Search;
-      default: return Package;
-    }
-  };
-
   const typeColors: Record<string, string> = {
     review: "bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700",
     product: "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700",
@@ -93,7 +167,8 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
 
   // User message
   if (message.type === "user") {
-    const ActionIcon = message.actionTag ? getActionIcon(message.actionTag.type) : null;
+    const content = normalizeContent(message.content);
+    const parsedAction = parseActionMessage(content);
 
     return (
       <motion.div
@@ -103,35 +178,21 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
         className="flex justify-end"
       >
         <div className="max-w-[85%]">
-          {message.actionTag && ActionIcon && (
+          {/* Search category badge */}
+          {message.actionTag && (
             <div className="mb-1 flex items-center justify-end gap-2">
               <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/20 border border-white/30 rounded-full text-[10px] font-semibold text-blue-600">
-                <ActionIcon className="h-3 w-3" />
+                <Search className="h-3 w-3" />
                 {message.actionTag.label}
               </div>
-              {onResendAction && (
-                <button
-                  onClick={() => onResendAction(message.actionTag!.query)}
-                  className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <RotateCw className="h-3 w-3" />
-                  <span>Resend</span>
-                </button>
-              )}
             </div>
           )}
+
           <div className="bg-gradient-to-br from-blue-700 via-blue-800 to-blue-900 text-white rounded-3xl overflow-hidden shadow-lg">
             <div className="p-4 md:p-5">
-              <p
-                className="text-base md:text-lg whitespace-pre-wrap leading-relaxed font-medium"
-                style={{
-                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                }}
-              >
-                {normalizeContent(message.content)}
-              </p>
+              {/* Attached items */}
               {message.attachedProducts && message.attachedProducts.length > 0 && (
-                <div className="mt-3 space-y-2">
+                <div className="mb-3 space-y-2">
                   {message.attachedProducts.map((p) => (
                     <div
                       key={p.id}
@@ -142,6 +203,43 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
                     </div>
                   ))}
                 </div>
+              )}
+
+              {/* Action message - pill style like max-mode */}
+              {parsedAction.isAction ? (
+                <div className="relative inline-block max-w-full">
+                  {onResendAction && (
+                    <Button
+                      onClick={() => onResendAction(parsedAction.fullMessage)}
+                      size="icon"
+                      variant="ghost"
+                      className="absolute -left-2 -top-2 h-8 w-8 rounded-full bg-blue-600 hover:bg-blue-700 text-white transition-all hover:scale-110 shadow-xl z-10 border-2 border-white dark:border-gray-900"
+                      title="Resend action"
+                    >
+                      <RotateCcw className="h-3.5 w-3.5" />
+                    </Button>
+                  )}
+                  <div className="inline-flex items-center gap-2 px-3 md:px-4 py-2 md:py-2.5 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full shadow-lg max-w-full">
+                    <div className="p-1.5 bg-white/20 backdrop-blur-sm rounded-lg flex-shrink-0">
+                      {(() => {
+                        const ActionIcon = getActionIcon(parsedAction.actionType);
+                        return <ActionIcon className="h-3.5 w-3.5 text-white" />;
+                      })()}
+                    </div>
+                    <span className="text-sm md:text-base font-bold text-white pr-1 truncate">
+                      {parsedAction.query}
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <p
+                  className="text-base md:text-lg whitespace-pre-wrap leading-relaxed font-medium"
+                  style={{
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                  }}
+                >
+                  {content}
+                </p>
               )}
             </div>
           </div>
@@ -165,11 +263,11 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
         className="flex justify-start"
       >
         <div className={`max-w-[85%] md:max-w-[90%] rounded-3xl overflow-hidden ${aiStyles?.bg} shadow-xl relative`}>
-          {/* Header badge row - matching max-mode gradient header */}
+          {/* Header badge row - vibrant gradient matching max-mode */}
           {Icon && !aiStyles?.hideBadge && (
             <div className="relative">
-              <div className={`px-4 md:px-5 py-2 md:py-2.5 flex items-center gap-2 bg-gradient-to-r ${aiStyles?.bg}`}>
-                <div className={`p-1.5 rounded-lg ${aiStyles?.iconColor} bg-white/20`}>
+              <div className={`px-4 md:px-5 py-2 md:py-2.5 flex items-center gap-2 bg-gradient-to-r ${aiStyles?.headerGradient}`}>
+                <div className="p-1.5 rounded-lg bg-white/20">
                   <Icon className="h-3.5 w-3.5 md:h-4 md:w-4 text-white" />
                 </div>
                 <span className="text-[11px] md:text-xs font-bold text-white drop-shadow-sm">{aiStyles?.label}</span>
@@ -192,14 +290,24 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
               </ReactMarkdown>
             </div>
 
-            {/* Action result data */}
-            {message.result?.sanitizedPayload?.data && (
-              <div className="mt-2">
-                <ActionResultRenderer
-                  data={message.result.sanitizedPayload.data}
-                  messageId={message.id}
-                />
-              </div>
+            {/* Action result data - use correct path like max-mode */}
+            {message.result?.sanitizedPayload?.type === "ACTION_EXECUTED" &&
+              message.result?.sanitizedPayload?.data?.actionResult?.data && (
+              <ActionResultRenderer
+                data={message.result.sanitizedPayload.data.actionResult.data}
+                messageId={message.id}
+              />
+            )}
+
+            {/* Fallback: show data directly if no actionResult path (for non-ACTION_EXECUTED types) */}
+            {message.result?.sanitizedPayload?.data &&
+              message.result?.sanitizedPayload?.type !== "ACTION_EXECUTED" &&
+              message.result?.sanitizedPayload?.type !== "INFORMATION_PROVIDED" &&
+              message.result?.sanitizedPayload?.type !== "COMPOUND_HANDLED" && (
+              <ActionResultRenderer
+                data={message.result.sanitizedPayload.data}
+                messageId={message.id}
+              />
             )}
 
             {/* Confirmation buttons - matching max-mode gradient style */}
@@ -422,7 +530,7 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
               </motion.div>
             )}
 
-            {/* Next Steps - matching max-mode design with icon container and confidence */}
+            {/* Next Steps - matching max-mode design */}
             {nextSteps && nextSteps.length > 0 && onNextStepClick && (
               <motion.div
                 initial={{ opacity: 0, y: 8 }}
@@ -502,7 +610,11 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
                     </h2>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        typeColors[selectedDocument.type]?.split(" border")[0] || "bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300"
+                        selectedDocument.type === "review"
+                          ? "bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300"
+                          : selectedDocument.type === "product"
+                            ? "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300"
+                            : "bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300"
                       }`}>
                         {selectedDocument.type}
                       </span>

@@ -1,161 +1,289 @@
 import { useState } from "react";
-import { ChevronDown, ChevronRight, ChevronUp } from "lucide-react";
+
+import { CheckCircle2, ChevronDown, Paperclip, Search, Sparkles, Star } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+
 import { formatFieldName, formatFieldValue } from "../../utils/formatters";
 
-interface ActionResultRendererProps {
-  data: any;
-  messageId: string;
-  depth?: number;
-}
-
-// Recursive component to render nested objects
-function NestedObjectRenderer({
+export const ActionResultRenderer = ({
   data,
-  depth = 0,
-  maxDepth = 3
+  messageId,
+  expandedCount: expandedCountProp,
+  onExpand,
 }: {
   data: any;
-  depth?: number;
-  maxDepth?: number;
-}) {
-  const [isExpanded, setIsExpanded] = useState(depth < 2);
-
-  if (data === null || data === undefined) {
-    return <span className="text-muted-foreground">N/A</span>;
-  }
-
-  if (typeof data !== "object") {
-    return <span className="break-all">{formatFieldValue(data)}</span>;
-  }
-
-  if (Array.isArray(data)) {
-    if (data.length === 0) {
-      return <span className="text-muted-foreground">Empty array</span>;
-    }
-    return (
-      <div className="space-y-1">
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="text-xs text-primary hover:underline flex items-center gap-1"
-        >
-          {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-          {data.length} item(s)
-        </button>
-        {isExpanded && depth < maxDepth && (
-          <div className="pl-3 border-l-2 border-border/50 space-y-1">
-            {data.slice(0, 5).map((item, idx) => (
-              <div key={idx} className="text-sm">
-                <NestedObjectRenderer data={item} depth={depth + 1} maxDepth={maxDepth} />
-              </div>
-            ))}
-            {data.length > 5 && (
-              <span className="text-xs text-muted-foreground">+{data.length - 5} more</span>
-            )}
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  // Object
-  const entries = Object.entries(data).filter(([key]) => !key.startsWith("_"));
-  if (entries.length === 0) {
-    return <span className="text-muted-foreground">Empty object</span>;
-  }
-
-  return (
-    <div className="space-y-1">
-      {depth > 0 && (
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="text-xs text-primary hover:underline flex items-center gap-1"
-        >
-          {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-          {entries.length} fields
-        </button>
-      )}
-      {(isExpanded || depth === 0) && depth < maxDepth && (
-        <div className={depth > 0 ? "pl-3 border-l-2 border-border/50 space-y-1" : "space-y-1.5"}>
-          {entries.slice(0, depth === 0 ? 10 : 6).map(([key, value]) => (
-            <div key={key} className="flex items-start gap-2 text-sm">
-              <span className="font-medium text-muted-foreground min-w-[80px] shrink-0">
-                {formatFieldName(key)}:
-              </span>
-              <div className="text-foreground min-w-0 flex-1">
-                <NestedObjectRenderer data={value} depth={depth + 1} maxDepth={maxDepth} />
-              </div>
-            </div>
-          ))}
-          {entries.length > (depth === 0 ? 10 : 6) && (
-            <span className="text-xs text-muted-foreground">
-              +{entries.length - (depth === 0 ? 10 : 6)} more fields
-            </span>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-export function ActionResultRenderer({ data, messageId, depth = 0 }: ActionResultRendererProps) {
-  const [expandedCount, setExpandedCount] = useState(3);
+  messageId: string;
+  expandedCount?: number;
+  onExpand?: (count: number) => void;
+}) => {
+  const [localExpandedCount, setLocalExpandedCount] = useState(6);
+  const expandedCount = expandedCountProp ?? localExpandedCount;
+  const handleExpand = onExpand ?? ((count: number) => setLocalExpandedCount(count));
 
   if (!data) return null;
 
-  // Handle arrays at top level
+  // Check if item looks like a product (has name/title and price or imageUrl)
+  const isProductLike = (item: any) => {
+    if (typeof item !== "object" || item === null) return false;
+    const hasName = item.name || item.Name || item.title || item.Title;
+    const hasPrice = item.price !== undefined || item.Price !== undefined;
+    const hasImage = item.imageUrl || item.ImageUrl || item.image || item.Image;
+    const hasSku = item.sku || item.Sku;
+    return hasName && (hasPrice || hasImage || hasSku);
+  };
+
+  // Render a product card with image
+  const renderProductCard = (item: any, idx: number) => {
+    const name = item.name || item.Name || item.title || item.Title || "Product";
+    const price = item.price ?? item.Price;
+    const imageUrl = item.imageUrl || item.ImageUrl || item.image || item.Image;
+    const category = item.category || item.Category;
+    const sku = item.sku || item.Sku;
+    const stockQty = item.inStockQty ?? item.InStockQty ?? item.stockQuantity ?? item.StockQuantity;
+    const rating = item.rating ?? item.Rating;
+    const brand = item.brand || item.Brand;
+    const itemId = item.id || item.Id || sku;
+
+    return (
+      <div
+        key={itemId || idx}
+        className="relative group bg-white dark:bg-gray-800 rounded-2xl shadow-lg border-2 border-blue-200 dark:border-blue-700 hover:border-blue-400 dark:hover:border-blue-500 transition-all hover:shadow-xl overflow-hidden"
+      >
+        {imageUrl && (
+          <div className="aspect-square w-full overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 relative">
+            <img
+              src={imageUrl}
+              alt={name}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = "none";
+              }}
+            />
+          </div>
+        )}
+
+        <div className="p-2.5">
+          <div className="flex items-center gap-1.5 mb-0.5">
+            {brand && (
+              <span className="text-[9px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wide">
+                {brand}
+              </span>
+            )}
+            {category && <span className="text-[9px] text-gray-500 dark:text-gray-400">{category}</span>}
+          </div>
+
+          <h4 className="font-bold text-xs text-gray-800 dark:text-gray-100 line-clamp-2 mb-1.5">{name}</h4>
+
+          <div className="flex items-center justify-between">
+            {price !== undefined && (
+              <span className="text-base font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                ${typeof price === "number" ? price.toLocaleString() : price}
+              </span>
+            )}
+            {stockQty !== undefined && (
+              <span
+                className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${
+                  stockQty > 50
+                    ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                    : stockQty > 0
+                      ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                      : "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                }`}
+              >
+                {stockQty > 0 ? `${stockQty}` : "Out"}
+              </span>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between mt-1.5 pt-1.5 border-t border-gray-100 dark:border-gray-700">
+            {rating !== undefined && (
+              <div className="flex items-center gap-0.5">
+                <Star className="h-2.5 w-2.5 fill-yellow-400 text-yellow-400" />
+                <span className="text-[10px] font-medium text-gray-600 dark:text-gray-400">{rating}</span>
+              </div>
+            )}
+            {sku && <span className="text-[9px] text-gray-400 dark:text-gray-500 font-mono truncate max-w-[80px]">{sku}</span>}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Render generic item card (non-product)
+  const renderGenericCard = (item: any, idx: number) => {
+    const itemId = item.id || item.Id || item.sku || item.Sku;
+
+    return (
+      <Card
+        key={itemId || idx}
+        className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-blue-200 hover:border-blue-400 transition-colors relative group"
+        style={{
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+        }}
+      >
+        <CardContent className="p-3">
+          {typeof item === "object" && item !== null ? (
+            <div className="space-y-2">
+              {Object.entries(item)
+                .filter(([key]) => !["imageUrl", "image", "images"].includes(key))
+                .map(([key, value]) => (
+                  <div key={key} className="flex items-start justify-between gap-2">
+                    <span className="text-muted-foreground font-semibold min-w-[100px]">{formatFieldName(key)}:</span>
+                    <span className="text-foreground text-right flex-1 font-medium">
+                      {typeof value === "object" && value !== null && !Array.isArray(value) ? (
+                        <div className="space-y-1">
+                          {Object.entries(value).map(([nestedKey, nestedValue]) => (
+                            <div key={nestedKey} className="text-[10px]">
+                              <span className="text-muted-foreground">{formatFieldName(nestedKey)}: </span>
+                              <span>{formatFieldValue(nestedValue)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        formatFieldValue(value)
+                      )}
+                    </span>
+                  </div>
+                ))}
+            </div>
+          ) : (
+            <p className="text-foreground">{formatFieldValue(item)}</p>
+          )}
+        </CardContent>
+      </Card>
+    );
+  };
+
+  // Handle arrays
   if (Array.isArray(data)) {
     const visibleItems = data.slice(0, expandedCount);
     const remaining = data.length - visibleItems.length;
+    const hasProducts = visibleItems.some(isProductLike);
 
     return (
-      <div className="mt-3 space-y-2">
-        {visibleItems.map((item: any, idx: number) => (
-          <div
-            key={`${messageId}-item-${idx}`}
-            className="bg-background/50 rounded-lg p-3 border border-border/50"
-          >
-            {typeof item === "object" && item !== null ? (
-              <NestedObjectRenderer data={item} depth={0} />
-            ) : (
-              <span className="text-sm">{formatFieldValue(item)}</span>
+      <div className="mt-3">
+        <div className="flex items-center gap-2 mb-3 pb-2 border-b-2 border-blue-200 dark:border-blue-800">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full border border-blue-300/50 dark:border-blue-700/50">
+            <Search className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+            <span className="text-xs font-bold text-blue-700 dark:text-blue-300">Items</span>
+          </div>
+          <div className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
+            <Sparkles className="h-3 w-3" />
+            <span className="font-medium">{data.length} results found</span>
+          </div>
+        </div>
+        {hasProducts ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {visibleItems.map((item: any, idx: number) =>
+              isProductLike(item) ? renderProductCard(item, idx) : renderGenericCard(item, idx)
             )}
           </div>
-        ))}
+        ) : (
+          <div className="space-y-2">
+            {visibleItems.map((item: any, idx: number) => renderGenericCard(item, idx))}
+          </div>
+        )}
         {remaining > 0 && (
-          <button
-            onClick={() => setExpandedCount((prev) => prev + 5)}
-            className="flex items-center gap-1 text-sm text-primary hover:underline"
+          <Button
+            size="sm"
+            variant="ghost"
+            className="w-full mt-3 text-xs bg-gradient-to-r from-blue-500/10 to-blue-400/10 hover:from-blue-500/20 hover:to-blue-400/20 border border-blue-300"
+            onClick={() => handleExpand(expandedCount + 6)}
           >
-            <ChevronDown className="h-4 w-4" />
-            Show {Math.min(remaining, 5)} more ({remaining} remaining)
-          </button>
-        )}
-        {expandedCount > 3 && (
-          <button
-            onClick={() => setExpandedCount(3)}
-            className="flex items-center gap-1 text-sm text-muted-foreground hover:underline"
-          >
-            <ChevronRight className="h-4 w-4" />
-            Show less
-          </button>
+            Show {Math.min(6, remaining)} more
+          </Button>
         )}
       </div>
     );
   }
 
-  // Handle objects at top level
-  if (typeof data === "object") {
+  // Handle objects
+  if (typeof data === "object" && data !== null) {
+    // Check if object has array-like properties
+    const arrayKeys = Object.keys(data).filter((key) => Array.isArray(data[key]));
+
+    if (arrayKeys.length > 0) {
+      return (
+        <div className="mt-3 space-y-3">
+          {arrayKeys.map((arrayKey) => {
+            const arrayData = data[arrayKey];
+            const visibleItems = arrayData.slice(0, expandedCount);
+            const remaining = arrayData.length - visibleItems.length;
+            const hasProducts = visibleItems.some(isProductLike);
+
+            return (
+              <div key={arrayKey}>
+                <div className="flex items-center gap-2 mb-3 pb-2 border-b-2 border-blue-200 dark:border-blue-800">
+                  <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-full border border-blue-300/50 dark:border-blue-700/50">
+                    <Search className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                    <span className="text-xs font-bold text-blue-700 dark:text-blue-300">{formatFieldName(arrayKey)}</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400">
+                    <Sparkles className="h-3 w-3" />
+                    <span className="font-medium">{arrayData.length} results found</span>
+                  </div>
+                </div>
+                {hasProducts ? (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {visibleItems.map((item: any, idx: number) =>
+                      isProductLike(item) ? renderProductCard(item, idx) : renderGenericCard(item, idx)
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {visibleItems.map((item: any, idx: number) => renderGenericCard(item, idx))}
+                  </div>
+                )}
+                {remaining > 0 && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="w-full mt-3 text-xs bg-gradient-to-r from-blue-500/10 to-blue-400/10 hover:from-blue-500/20 hover:to-blue-400/20 border border-blue-300"
+                    onClick={() => handleExpand(expandedCount + 6)}
+                  >
+                    Show {Math.min(6, remaining)} more
+                  </Button>
+                )}
+              </div>
+            );
+          })}
+          {Object.entries(data)
+            .filter(([key]) => !Array.isArray(data[key]))
+            .map(([key, value]) => (
+              <div key={key} className="text-xs">
+                <span className="text-muted-foreground font-semibold">{formatFieldName(key)}: </span>
+                <span className="text-foreground font-medium">{formatFieldValue(value)}</span>
+              </div>
+            ))}
+        </div>
+      );
+    }
+
+    // Simple object - render as card
     return (
-      <div className="mt-3 bg-background/50 rounded-lg p-3 border border-border/50">
-        <NestedObjectRenderer data={data} depth={0} />
+      <div className="mt-3">
+        <Card
+          className="text-sm bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-2 border-blue-200"
+          style={{
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+          }}
+        >
+          <CardContent className="p-3">
+            <div className="space-y-2">
+              {Object.entries(data).map(([key, value]) => (
+                <div key={key} className="flex items-start justify-between gap-2">
+                  <span className="text-muted-foreground font-semibold min-w-[120px]">{formatFieldName(key)}:</span>
+                  <span className="text-foreground text-right flex-1 font-medium">{formatFieldValue(value)}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
-  // Handle primitives
-  return (
-    <div className="mt-3 bg-background/50 rounded-lg p-3 border border-border/50">
-      <span className="text-sm">{formatFieldValue(data)}</span>
-    </div>
-  );
-}
+  return <p className="mt-3 text-xs text-muted-foreground">{formatFieldValue(data)}</p>;
+};
