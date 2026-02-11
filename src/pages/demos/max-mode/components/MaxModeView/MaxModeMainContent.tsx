@@ -93,6 +93,7 @@ export function MaxModeMainContent({ controller }: { controller: MaxModeControll
         onNextStepClick={(query) => {
           void resendChatQuery(query);
         }}
+        onClarificationSubmit={controller.handleClarificationSubmit}
       />
 
       <DesktopContextPanel
