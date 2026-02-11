@@ -9,6 +9,7 @@ import type { ChatMessage, Document, ResultType } from "../types";
 import { useAttachmentsController } from "./useAttachmentsController";
 import { useCartController } from "./useCartController";
 import { useChatFlow } from "./useChatFlow";
+import { useClarificationFlow } from "./useClarificationFlow";
 import { useConfirmationFlow } from "./useConfirmationFlow";
 import { useConversationsController } from "./useConversationsController";
 import { useMaxModePersistence } from "./useMaxModePersistence";
@@ -139,6 +140,16 @@ export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
     attachedItems,
     currentConversationId,
     setConfirmationStatus,
+    setChatMessages,
+    setContextDocuments,
+    setCurrentConversationId,
+    setIsLoading,
+    toast,
+  });
+
+  const { handleClarificationSubmit } = useClarificationFlow({
+    attachedItems,
+    currentConversationId,
     setChatMessages,
     setContextDocuments,
     setCurrentConversationId,
@@ -487,6 +498,7 @@ export function useMaxModeController({ isOpen }: { isOpen: boolean }) {
     handleQuickAction,
     handleChatQuery,
     handleConfirmation: (messageId: string, confirmed: boolean, _message: ChatMessage) => handleConfirmation(messageId, confirmed),
+    handleClarificationSubmit,
     addToCart,
     fetchCart,
     removeFromCart,
