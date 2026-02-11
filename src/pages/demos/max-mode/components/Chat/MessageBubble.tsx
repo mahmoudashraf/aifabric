@@ -548,11 +548,21 @@ export function MessageBubble({
                   )}
 
                   {hasForm && clarificationSubmitted && (
-                    <div className="p-3 bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-700 rounded-lg">
+                    <div className="p-3 bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-700 rounded-lg space-y-2">
                       <p className="text-sm text-green-800 dark:text-green-200 font-semibold flex items-center gap-2">
                         <CheckCircle2 className="h-4 w-4" />
                         Parameters submitted
                       </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {allKeys.map((key) => {
+                          const val = clarificationValues[key] ?? formValues[key];
+                          return (
+                            <span key={key} className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-800/40 text-green-700 dark:text-green-300 font-medium">
+                              <span className="font-bold">{key.replace(/([A-Z])/g, " $1").trim()}:</span> {val}
+                            </span>
+                          );
+                        })}
+                      </div>
                     </div>
                   )}
                 </div>
