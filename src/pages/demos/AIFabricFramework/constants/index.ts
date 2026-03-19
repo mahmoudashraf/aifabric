@@ -4,7 +4,7 @@ import generatedPoliciesData from "@/data/generated/policies.json";
 import generatedCouponsData from "@/data/generated/coupons.json";
 import generatedTicketsData from "@/data/generated/tickets.json";
 
-export const API_BASE_URL = "https://ai-fabric-framework-production.up.railway.app/api";
+export const API_BASE_URL = "https://runtime-prod2.up.railway.app/api";
 
 // Map generated products to match the expected format (100 products)
 export const SAMPLE_PRODUCTS = generatedProductsData.map((product: any) => ({
