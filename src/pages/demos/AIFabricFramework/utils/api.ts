@@ -1,15 +1,15 @@
-import { API_BASE_URL } from "../constants";
+import { API_BASE_URL, CRUD_API_BASE_URL } from "../constants";
 import type { Product, Policy, Review, Coupon, Conversation, ConversationDetail, ChatPosition, ChatMode } from "../types";
 
 // Products API
 export async function fetchProducts(limit = 50): Promise<Product[]> {
-  const response = await fetch(`${API_BASE_URL}/products?limit=${limit}`);
+  const response = await fetch(`${CRUD_API_BASE_URL}/products?limit=${limit}`);
   if (!response.ok) throw new Error("Failed to fetch products");
   return response.json();
 }
 
 export async function fetchProductCount(): Promise<number> {
-  const response = await fetch(`${API_BASE_URL}/products/count`);
+  const response = await fetch(`${CRUD_API_BASE_URL}/products/count`);
   if (!response.ok) throw new Error("Failed to fetch product count");
   const data = await response.json();
   return data.count;
@@ -17,14 +17,14 @@ export async function fetchProductCount(): Promise<number> {
 
 export async function searchProducts(query: string, limit = 20, threshold = 0.3): Promise<Product[]> {
   const response = await fetch(
-    `${API_BASE_URL}/products/search?q=${encodeURIComponent(query)}&limit=${limit}&threshold=${threshold}`
+    `${CRUD_API_BASE_URL}/products/search?q=${encodeURIComponent(query)}&limit=${limit}&threshold=${threshold}`
   );
   if (!response.ok) throw new Error("Failed to search products");
   return response.json();
 }
 
 export async function createProduct(product: Partial<Product>): Promise<Product> {
-  const response = await fetch(`${API_BASE_URL}/products`, {
+  const response = await fetch(`${CRUD_API_BASE_URL}/products`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(product),
@@ -37,7 +37,7 @@ export async function createProduct(product: Partial<Product>): Promise<Product>
 }
 
 export async function updateProduct(id: string, product: Partial<Product>): Promise<Product> {
-  const response = await fetch(`${API_BASE_URL}/products/${id}`, {
+  const response = await fetch(`${CRUD_API_BASE_URL}/products/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(product),
@@ -50,7 +50,7 @@ export async function updateProduct(id: string, product: Partial<Product>): Prom
 }
 
 export async function deleteProduct(id: string): Promise<void> {
-  const response = await fetch(`${API_BASE_URL}/products/${id}`, {
+  const response = await fetch(`${CRUD_API_BASE_URL}/products/${id}`, {
     method: "DELETE",
   });
   if (!response.ok) throw new Error("Failed to delete product");
@@ -58,7 +58,7 @@ export async function deleteProduct(id: string): Promise<void> {
 
 // Orders API
 export async function fetchOrders(userId: string, limit = 50): Promise<any[]> {
-  const response = await fetch(`${API_BASE_URL}/orders?userId=${userId}&limit=${limit}`);
+  const response = await fetch(`${CRUD_API_BASE_URL}/orders?userId=${userId}&limit=${limit}`);
   if (!response.ok) throw new Error("Failed to fetch orders");
   return response.json();
 }
@@ -192,20 +192,20 @@ export async function fetchSuggestions(
 
 // Policies API
 export async function fetchPolicies(limit = 50): Promise<Policy[]> {
-  const response = await fetch(`${API_BASE_URL}/policies?limit=${limit}`);
+  const response = await fetch(`${CRUD_API_BASE_URL}/policies?limit=${limit}`);
   if (!response.ok) throw new Error("Failed to fetch policies");
   return response.json();
 }
 
 export async function fetchPolicyCount(): Promise<number> {
-  const response = await fetch(`${API_BASE_URL}/policies/count`);
+  const response = await fetch(`${CRUD_API_BASE_URL}/policies/count`);
   if (!response.ok) throw new Error("Failed to fetch policy count");
   const data = await response.json();
   return data.count;
 }
 
 export async function createPolicy(policy: Partial<Policy>): Promise<Policy> {
-  const response = await fetch(`${API_BASE_URL}/policies`, {
+  const response = await fetch(`${CRUD_API_BASE_URL}/policies`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(policy),
@@ -215,7 +215,7 @@ export async function createPolicy(policy: Partial<Policy>): Promise<Policy> {
 }
 
 export async function deletePolicy(id: string): Promise<void> {
-  const response = await fetch(`${API_BASE_URL}/policies/${id}`, {
+  const response = await fetch(`${CRUD_API_BASE_URL}/policies/${id}`, {
     method: "DELETE",
   });
   if (!response.ok) throw new Error("Failed to delete policy");
@@ -223,20 +223,20 @@ export async function deletePolicy(id: string): Promise<void> {
 
 // Reviews API
 export async function fetchReviews(limit = 50): Promise<Review[]> {
-  const response = await fetch(`${API_BASE_URL}/reviews?limit=${limit}`);
+  const response = await fetch(`${CRUD_API_BASE_URL}/reviews?limit=${limit}`);
   if (!response.ok) throw new Error("Failed to fetch reviews");
   return response.json();
 }
 
 export async function fetchReviewCount(): Promise<number> {
-  const response = await fetch(`${API_BASE_URL}/reviews/count`);
+  const response = await fetch(`${CRUD_API_BASE_URL}/reviews/count`);
   if (!response.ok) throw new Error("Failed to fetch review count");
   const data = await response.json();
   return data.count;
 }
 
 export async function createReview(review: Partial<Review>): Promise<Review> {
-  const response = await fetch(`${API_BASE_URL}/reviews`, {
+  const response = await fetch(`${CRUD_API_BASE_URL}/reviews`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(review),
@@ -247,20 +247,20 @@ export async function createReview(review: Partial<Review>): Promise<Review> {
 
 // Coupons API
 export async function fetchCoupons(limit = 50): Promise<Coupon[]> {
-  const response = await fetch(`${API_BASE_URL}/coupons?limit=${limit}`);
+  const response = await fetch(`${CRUD_API_BASE_URL}/coupons?limit=${limit}`);
   if (!response.ok) throw new Error("Failed to fetch coupons");
   return response.json();
 }
 
 export async function fetchCouponCount(): Promise<number> {
-  const response = await fetch(`${API_BASE_URL}/coupons/count`);
+  const response = await fetch(`${CRUD_API_BASE_URL}/coupons/count`);
   if (!response.ok) throw new Error("Failed to fetch coupon count");
   const data = await response.json();
   return data.count;
 }
 
 export async function createCoupon(coupon: Partial<Coupon>): Promise<Coupon> {
-  const response = await fetch(`${API_BASE_URL}/coupons`, {
+  const response = await fetch(`${CRUD_API_BASE_URL}/coupons`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(coupon),
@@ -271,7 +271,7 @@ export async function createCoupon(coupon: Partial<Coupon>): Promise<Coupon> {
 
 // Support Tickets API
 export async function createTicket(ticket: { userId: string; issueType: string; description: string }): Promise<any> {
-  const response = await fetch(`${API_BASE_URL}/tickets`, {
+  const response = await fetch(`${CRUD_API_BASE_URL}/tickets`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(ticket),
@@ -285,7 +285,7 @@ export async function createTicket(ticket: { userId: string; issueType: string; 
 
 // Admin API
 export async function clearAllData(): Promise<void> {
-  const response = await fetch(`${API_BASE_URL}/admin/migration/clear`, {
+  const response = await fetch(`${CRUD_API_BASE_URL}/admin/migration/clear`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
