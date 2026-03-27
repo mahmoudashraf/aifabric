@@ -64,6 +64,7 @@ export function MessageBubble({
   isItemAttached,
   onAttachActionResultItem,
   onNextStepClick,
+  onClarificationSubmit,
 }: {
   message: ChatMessage;
   isLatest: boolean;
