@@ -444,12 +444,7 @@ export function MessageBubble({
             };
 
             const handleSubmit = () => {
-              console.log("[Clarification] Submit clicked", { canSubmit, clarificationSubmitted, hasCallback: !!onClarificationSubmit, actionName, clarificationValues, formValues, missingParams });
-              if (clarificationSubmitted) return;
-              if (!onClarificationSubmit) {
-                console.warn("[Clarification] onClarificationSubmit callback is missing");
-                return;
-              }
+              if (!canSubmit || clarificationSubmitted || !onClarificationSubmit) return;
               const finalValues: Record<string, any> = {};
               for (const key of allKeys) {
                 const val = clarificationValues[key] ?? formValues[key];
