@@ -305,6 +305,16 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
               />
             )}
 
+            {/* Fallback for ACTION_EXECUTED without actionResult.data (e.g. order creation) */}
+            {message.result?.sanitizedPayload?.type === "ACTION_EXECUTED" &&
+              message.result?.sanitizedPayload?.data &&
+              !message.result?.sanitizedPayload?.data?.actionResult?.data && (
+              <ActionResultRenderer
+                data={message.result.sanitizedPayload.data}
+                messageId={message.id}
+              />
+            )}
+
             {/* Fallback: show data directly if no actionResult path (for non-ACTION_EXECUTED types) */}
             {message.result?.sanitizedPayload?.data &&
               message.result?.sanitizedPayload?.type !== "ACTION_EXECUTED" &&

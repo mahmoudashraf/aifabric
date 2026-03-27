@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Package, Receipt, FileText, Star, Tag, Code } from "lucide-react";
+import { Package, Receipt, FileText, Star, Tag, Code, Activity } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Hooks
@@ -16,6 +16,7 @@ import {
   ReviewsTab,
   CouponsTab,
   ApiTab,
+  VerificationTab,
 } from "./components";
 
 export default function AIFabricFramework() {
@@ -92,7 +93,7 @@ export default function AIFabricFramework() {
 
         {/* Main content tabs */}
         <Tabs defaultValue="products" className="w-full">
-          <TabsList className="grid w-full grid-cols-6 mb-4 sm:mb-6 h-auto sm:h-10">
+          <TabsList className="grid w-full grid-cols-7 mb-4 sm:mb-6 h-auto sm:h-10">
             <TabsTrigger value="products" className="gap-2">
               <Package className="h-4 w-4" />
               <span className="hidden sm:inline">Products</span>
@@ -116,6 +117,10 @@ export default function AIFabricFramework() {
             <TabsTrigger value="api" className="gap-2">
               <Code className="h-4 w-4" />
               <span className="hidden sm:inline">API</span>
+            </TabsTrigger>
+            <TabsTrigger value="verification" className="gap-2">
+              <Activity className="h-4 w-4" />
+              <span className="hidden sm:inline">Verify</span>
             </TabsTrigger>
           </TabsList>
 
@@ -185,6 +190,10 @@ export default function AIFabricFramework() {
               reviewCount={migration.reviewCount}
               couponCount={migration.couponCount}
             />
+          </TabsContent>
+
+          <TabsContent value="verification">
+            <VerificationTab />
           </TabsContent>
         </Tabs>
       </div>

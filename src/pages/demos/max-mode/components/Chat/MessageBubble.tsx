@@ -387,6 +387,20 @@ export function MessageBubble({
               />
             )}
 
+          {/* Fallback for ACTION_EXECUTED without actionResult.data (e.g. order creation) */}
+          {message.result?.sanitizedPayload?.type === "ACTION_EXECUTED" &&
+            message.result?.sanitizedPayload?.data &&
+            !message.result?.sanitizedPayload?.data?.actionResult?.data && (
+              <ActionResultRenderer
+                data={message.result.sanitizedPayload.data}
+                messageId={message.id}
+                expandedCount={expandedCount}
+                onExpand={(count) => onExpandActionResults(message.id, count)}
+                isAttached={isItemAttached}
+                onAttach={(item) => onAttachActionResultItem(item)}
+              />
+            )}
+
           {/* Clarification Required - interactive form */}
           {message.resultType === "CLARIFICATION_REQUIRED" && (() => {
             const cData = message.result?.sanitizedPayload?.data;
