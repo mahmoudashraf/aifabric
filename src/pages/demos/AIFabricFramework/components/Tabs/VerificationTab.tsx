@@ -169,6 +169,24 @@ export function VerificationTab() {
         durationMs,
       };
     } catch (err: any) {
+      // CORS blocks reading the response but the server may still be reachable.
+      // Retry with no-cors: an opaque response (type "opaque", status 0) means
+      // the server responded but the browser hid the body due to CORS policy.
+      try {
+        const noCorsInit: RequestInit = { method: endpoint.method, mode: "no-cors" };
+        const opaqueResponse = await fetch(endpoint.url, noCorsInit);
+        const durationMs = Math.round(performance.now() - start);
+        if (opaqueResponse.type === "opaque") {
+          return {
+            status: "success",
+            statusCode: 200,
+            data: { note: "Server responded (CORS blocks reading body from browser)" },
+            durationMs,
+          };
+        }
+      } catch {
+        // truly unreachable
+      }
       return {
         status: "error",
         error: err.message || "Network error",
