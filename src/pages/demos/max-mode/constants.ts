@@ -22,7 +22,7 @@ import {
   User,
 } from "lucide-react";
 
-export const API_BASE_URL = "https://runtime-prod2.up.railway.app/api";
+export const API_BASE_URL = "https://ai-fabric-framework-production-d912.up.railway.app/api";
 export const CRUD_API_BASE_URL = "https://ai-fabric-framework-production-a247.up.railway.app/api";
 
 export type MaxModePosition = "landing" | "catalog" | "search" | "cart";
