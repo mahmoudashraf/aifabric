@@ -24,6 +24,7 @@ import {
 
 export const API_BASE_URL = "https://ai-fabric-framework-production-d912.up.railway.app/api";
 export const CRUD_API_BASE_URL = "https://ai-fabric-framework-production-a247.up.railway.app/api";
+export const API_AUTH_HEADERS = { "X-AIFABRIC-API-KEY": "test-key" };
 
 export type MaxModePosition = "landing" | "catalog" | "search" | "cart";
 export type MaxModeMode = "navigator" | "navigator_deep" | "cart_assistant" | "executor";
