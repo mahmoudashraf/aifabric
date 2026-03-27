@@ -35,6 +35,158 @@ import type { ChatMessage, Document } from "../../types";
 import { normalizeMessageContent } from "../../utils";
 import { ActionResultRenderer } from "../ActionResultRenderer";
 
+// Standalone clarification form — must be a real component to own its state properly
+function ClarificationForm({
+  missingParams,
+  providedParams,
+  actionName,
+  onClarificationSubmit,
+}: {
+  missingParams: string[];
+  providedParams: Record<string, any>;
+  actionName: string;
+  onClarificationSubmit: (action: string, params: Record<string, any>) => void;
+}) {
+  const allKeys = [
+    ...missingParams,
+    ...Object.keys(providedParams).filter((k) => !missingParams.includes(k)),
+  ];
+
+  const initialValues: Record<string, string> = {};
+  for (const key of allKeys) {
+    initialValues[key] =
+      providedParams[key] != null && providedParams[key] !== ""
+        ? String(providedParams[key])
+        : "";
+  }
+
+  const [values, setValues] = useState<Record<string, string>>(initialValues);
+  const [editingField, setEditingField] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+
+  const isMissing = (key: string) => missingParams.includes(key);
+  const hasProvidedValue = (key: string) =>
+    providedParams[key] != null && providedParams[key] !== "" && !isMissing(key);
+
+  const canSubmit = missingParams.every((key) => values[key]?.trim());
+
+  const handleSubmit = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!canSubmit || submitted) return;
+    const finalValues: Record<string, any> = {};
+    for (const key of allKeys) {
+      if (typeof providedParams[key] === "number") {
+        const num = Number(values[key]);
+        finalValues[key] = isNaN(num) ? values[key] : num;
+      } else {
+        finalValues[key] = values[key];
+      }
+    }
+    setSubmitted(true);
+    onClarificationSubmit(actionName, finalValues);
+  };
+
+  if (submitted) {
+    return (
+      <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-700 rounded-lg">
+        <p className="text-sm text-green-800 dark:text-green-200 font-semibold flex items-center gap-2">
+          <CheckCircle2 className="h-4 w-4" />
+          Parameters submitted
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-4 rounded-xl border-2 border-orange-200 dark:border-orange-700 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 overflow-hidden">
+      <div className="px-4 py-2.5 bg-gradient-to-r from-orange-600 to-amber-600 flex items-center gap-2">
+        <div className="p-1.5 rounded-lg bg-white/20">
+          <AlertCircle className="h-3.5 w-3.5 text-white" />
+        </div>
+        <span className="text-[11px] md:text-xs font-bold text-white drop-shadow-sm">
+          Complete Required Information
+        </span>
+        {actionName && (
+          <span className="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-white/20 text-white">
+            {actionName.replace(/_/g, " ")}
+          </span>
+        )}
+      </div>
+
+      <div className="p-4 space-y-3">
+        {allKeys.map((key) => {
+          const missing = isMissing(key);
+          const hasValue = hasProvidedValue(key);
+          const isEditing = editingField === key || missing || !hasValue;
+
+          return (
+            <div key={key} className="space-y-1">
+              <div className="flex items-center gap-1.5">
+                <label className="text-[11px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                  {key.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase()).trim()}
+                </label>
+                {missing && (
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-600 dark:text-red-400">
+                    Required
+                  </span>
+                )}
+                {hasValue && !isEditing && (
+                  <button
+                    type="button"
+                    onClick={() => setEditingField(key)}
+                    className="ml-auto flex items-center gap-0.5 text-[9px] font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 transition-colors"
+                  >
+                    <Edit3 className="h-2.5 w-2.5" />
+                    Edit
+                  </button>
+                )}
+              </div>
+
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={values[key] ?? ""}
+                  onChange={(e) => setValues((prev) => ({ ...prev, [key]: e.target.value }))}
+                  onKeyDown={(e) => { if (e.key === "Enter" && canSubmit) handleSubmit(e as any); }}
+                  placeholder={`Enter ${key.replace(/([A-Z])/g, " $1").toLowerCase().trim()}...`}
+                  className={`w-full px-3 py-2 text-sm rounded-lg border-2 bg-white dark:bg-gray-800 transition-all focus:outline-none focus:ring-2 ${
+                    missing && !values[key]?.trim()
+                      ? "border-red-300 dark:border-red-600 focus:ring-red-500/30 focus:border-red-400"
+                      : "border-orange-200 dark:border-orange-700 focus:ring-orange-500/30 focus:border-orange-400"
+                  }`}
+                  style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}
+                />
+              ) : (
+                <div
+                  onClick={() => setEditingField(key)}
+                  className="w-full px-3 py-2 text-sm rounded-lg border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 cursor-pointer hover:border-blue-300 dark:hover:border-blue-600 transition-all flex items-center justify-between group"
+                >
+                  <span className="text-gray-800 dark:text-gray-200 font-medium">{values[key]}</span>
+                  <Edit3 className="h-3 w-3 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+        <div className="pt-2">
+          <Button
+            type="button"
+            onClick={handleSubmit}
+            disabled={!canSubmit}
+            size="sm"
+            className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Send className="h-3.5 w-3.5 mr-1.5" />
+            Submit & Proceed
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export type AiStyles = {
   icon: LucideIcon;
   bg: string;
@@ -88,9 +240,7 @@ export function MessageBubble({
 }) {
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
   const [isSuggestionExpanded, setIsSuggestionExpanded] = useState(false);
-  const [clarificationValues, setClarificationValues] = useState<Record<string, string>>({});
-  const [clarificationEditingField, setClarificationEditingField] = useState<string | null>(null);
-  const [clarificationSubmitted, setClarificationSubmitted] = useState(false);
+
   const Icon = message.type === "ai" ? aiStyles?.icon : undefined;
 
   return (
@@ -403,177 +553,14 @@ export function MessageBubble({
             )}
 
           {/* Clarification Required - interactive form */}
-          {message.resultType === "CLARIFICATION_REQUIRED" && (() => {
-            const cData = message.result?.sanitizedPayload?.data;
-            const missingParams: string[] = cData?.missingRequiredParameters || [];
-            const providedParams: Record<string, any> = cData?.providedParameters || {};
-            const actionName: string = cData?.action || "";
-            const hasForm = missingParams.length > 0 || Object.keys(providedParams).length > 0;
-
-            const getFormValues = () => {
-              const vals: Record<string, string> = { ...clarificationValues };
-              for (const key of Object.keys(providedParams)) {
-                if (!(key in vals)) {
-                  vals[key] = providedParams[key] != null && providedParams[key] !== "" ? String(providedParams[key]) : "";
-                }
-              }
-              for (const key of missingParams) {
-                if (!(key in vals)) {
-                  vals[key] = providedParams[key] != null && providedParams[key] !== "" ? String(providedParams[key]) : "";
-                }
-              }
-              return vals;
-            };
-            const formValues = getFormValues();
-
-            const isMissing = (key: string) => missingParams.includes(key);
-            const hasProvidedValue = (key: string) => providedParams[key] != null && providedParams[key] !== "" && !isMissing(key);
-
-            const allKeys = [
-              ...missingParams,
-              ...Object.keys(providedParams).filter((k) => !missingParams.includes(k)),
-            ];
-
-            const canSubmit = missingParams.every((key) => {
-              const val = clarificationValues[key] ?? formValues[key];
-              return val && val.trim() !== "";
-            });
-
-            const handleFieldChange = (key: string, value: string) => {
-              setClarificationValues((prev) => ({ ...prev, [key]: value }));
-            };
-
-            const handleSubmit = () => {
-              if (!canSubmit || clarificationSubmitted || !onClarificationSubmit) return;
-              const finalValues: Record<string, any> = {};
-              for (const key of allKeys) {
-                const val = clarificationValues[key] ?? formValues[key];
-                if (typeof providedParams[key] === "number") {
-                  const num = Number(val);
-                  finalValues[key] = isNaN(num) ? val : num;
-                } else {
-                  finalValues[key] = val;
-                }
-              }
-              setClarificationSubmitted(true);
-              onClarificationSubmit(actionName, finalValues);
-            };
-
-            return (
-              <div className="mt-4 rounded-xl border-2 border-orange-200 dark:border-orange-700 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 overflow-hidden">
-                <div className="px-4 py-2.5 bg-gradient-to-r from-orange-600 to-amber-600 flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-white/20">
-                    <AlertCircle className="h-3.5 w-3.5 text-white" />
-                  </div>
-                  <span className="text-[11px] md:text-xs font-bold text-white drop-shadow-sm">
-                    {hasForm ? "Complete Required Information" : "Clarification Needed"}
-                  </span>
-                  {actionName && (
-                    <span className="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-white/20 text-white">
-                      {actionName.replace(/_/g, " ")}
-                    </span>
-                  )}
-                </div>
-
-                <div className="p-4 space-y-3">
-                  {!hasForm && cData?.options && (
-                    <ul className="space-y-1">
-                      {(cData.options as string[]).map((option: string, idx: number) => (
-                        <li key={idx} className="text-xs text-orange-700 dark:text-orange-300 flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-orange-400 flex-shrink-0" />
-                          {option}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-
-                  {hasForm && !clarificationSubmitted && (
-                    <>
-                      {allKeys.map((key) => {
-                        const missing = isMissing(key);
-                        const hasValue = hasProvidedValue(key);
-                        const isEditing = clarificationEditingField === key || missing || !hasValue;
-                        const currentValue = clarificationValues[key] ?? formValues[key];
-
-                        return (
-                          <div key={key} className="space-y-1">
-                            <div className="flex items-center gap-1.5">
-                              <label className="text-[11px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
-                                {key.replace(/([A-Z])/g, " $1").replace(/^./, (s) => s.toUpperCase()).trim()}
-                              </label>
-                              {missing && (
-                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-600 dark:text-red-400">
-                                  Required
-                                </span>
-                              )}
-                              {hasValue && !isEditing && (
-                                <button
-                                  onClick={() => setClarificationEditingField(key)}
-                                  className="ml-auto flex items-center gap-0.5 text-[9px] font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 transition-colors"
-                                >
-                                  <Edit3 className="h-2.5 w-2.5" />
-                                  Edit
-                                </button>
-                              )}
-                            </div>
-
-                            {isEditing ? (
-                              <input
-                                type="text"
-                                value={currentValue}
-                                onChange={(e) => handleFieldChange(key, e.target.value)}
-                                onKeyDown={(e) => {
-                                  if (e.key === "Enter" && canSubmit) handleSubmit();
-                                }}
-                                placeholder={`Enter ${key.replace(/([A-Z])/g, " $1").toLowerCase().trim()}...`}
-                                className={`w-full px-3 py-2 text-sm rounded-lg border-2 bg-white dark:bg-gray-800 transition-all focus:outline-none focus:ring-2 ${
-                                  missing && (!currentValue || !currentValue.trim())
-                                    ? "border-red-300 dark:border-red-600 focus:ring-red-500/30 focus:border-red-400"
-                                    : "border-orange-200 dark:border-orange-700 focus:ring-orange-500/30 focus:border-orange-400"
-                                }`}
-                                style={{
-                                  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-                                }}
-                              />
-                            ) : (
-                              <div
-                                onClick={() => setClarificationEditingField(key)}
-                                className="w-full px-3 py-2 text-sm rounded-lg border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 cursor-pointer hover:border-blue-300 dark:hover:border-blue-600 transition-all flex items-center justify-between group"
-                              >
-                                <span className="text-gray-800 dark:text-gray-200 font-medium">{currentValue}</span>
-                                <Edit3 className="h-3 w-3 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-
-                      <div className="pt-2">
-                        <Button
-                          onClick={handleSubmit}
-                          disabled={!canSubmit}
-                          size="sm"
-                          className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <Send className="h-3.5 w-3.5 mr-1.5" />
-                          Submit & Proceed
-                        </Button>
-                      </div>
-                    </>
-                  )}
-
-                  {hasForm && clarificationSubmitted && (
-                    <div className="p-3 bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-700 rounded-lg">
-                      <p className="text-sm text-green-800 dark:text-green-200 font-semibold flex items-center gap-2">
-                        <CheckCircle2 className="h-4 w-4" />
-                        Parameters submitted
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })()}
+          {message.resultType === "CLARIFICATION_REQUIRED" && onClarificationSubmit && (
+            <ClarificationForm
+              missingParams={message.result?.sanitizedPayload?.data?.missingRequiredParameters || []}
+              providedParams={message.result?.sanitizedPayload?.data?.providedParameters || {}}
+              actionName={message.result?.sanitizedPayload?.data?.action || ""}
+              onClarificationSubmit={onClarificationSubmit}
+            />
+          )}
 
           {message.result?.sanitizedPayload?.type === "COMPOUND_HANDLED" &&
             message.result?.sanitizedPayload?.data?.results &&
