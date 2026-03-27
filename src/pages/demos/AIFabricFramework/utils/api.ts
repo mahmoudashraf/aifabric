@@ -1,4 +1,4 @@
-import { API_BASE_URL, CRUD_API_BASE_URL } from "../constants";
+import { API_BASE_URL, CRUD_API_BASE_URL, API_AUTH_HEADERS } from "../constants";
 import type { Product, Policy, Review, Coupon, Conversation, ConversationDetail, ChatPosition, ChatMode } from "../types";
 
 // Products API
@@ -65,7 +65,9 @@ export async function fetchOrders(userId: string, limit = 50): Promise<any[]> {
 
 // Conversations API
 export async function fetchConversations(ownerId: string): Promise<Conversation[]> {
-  const response = await fetch(`${API_BASE_URL}/chat/conversations?ownerId=${ownerId}`);
+  const response = await fetch(`${API_BASE_URL}/chat/conversations?ownerId=${ownerId}`, {
+    headers: { ...API_AUTH_HEADERS },
+  });
   if (!response.ok) throw new Error("Failed to fetch conversations");
   return response.json();
 }
@@ -74,7 +76,9 @@ export async function getConversation(conversationId: string, ownerId?: string):
   const params = new URLSearchParams();
   if (ownerId) params.append("ownerId", ownerId);
   const queryString = params.toString() ? `?${params.toString()}` : "";
-  const response = await fetch(`${API_BASE_URL}/chat/conversations/${conversationId}${queryString}`);
+  const response = await fetch(`${API_BASE_URL}/chat/conversations/${conversationId}${queryString}`, {
+    headers: { ...API_AUTH_HEADERS },
+  });
   if (!response.ok) throw new Error("Failed to fetch conversation");
   return response.json();
 }
@@ -85,6 +89,7 @@ export async function deleteConversation(conversationId: string, ownerId?: strin
   const queryString = params.toString() ? `?${params.toString()}` : "";
   const response = await fetch(`${API_BASE_URL}/chat/conversations/${conversationId}${queryString}`, {
     method: "DELETE",
+    headers: { ...API_AUTH_HEADERS },
   });
   if (!response.ok) throw new Error("Failed to delete conversation");
 }
@@ -107,7 +112,7 @@ export async function sendChatQuery(
 
   const response = await fetch(`${API_BASE_URL}/chat/query`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...API_AUTH_HEADERS },
     body: JSON.stringify({
       query,
       userId,
@@ -168,7 +173,7 @@ export async function fetchSuggestions(
 
   const response = await fetch(`${API_BASE_URL}/chat/suggestions`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...API_AUTH_HEADERS },
     body: JSON.stringify({
       content: contentParts.join('; ') || "Give me suggestions based on attached items",
       userId,
