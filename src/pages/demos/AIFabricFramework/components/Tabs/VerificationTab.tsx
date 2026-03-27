@@ -27,6 +27,7 @@ interface VerificationEndpoint {
   url: string;
   headers?: Record<string, string>;
   body?: object;
+  excludeFromRunAll?: boolean;
 }
 
 interface EndpointGroup {
@@ -120,6 +121,7 @@ const ENDPOINT_GROUPS: EndpointGroup[] = [
         method: "POST",
         url: `${DEMO_CONNECTOR_BASE}/api/admin/demo/reset`,
         body: { confirm: true, clearConnectorData: true, clearRuntimeVectors: true },
+        excludeFromRunAll: true,
       },
     ],
   },
@@ -206,6 +208,7 @@ export function VerificationTab() {
     const allEndpoints: { key: string; endpoint: VerificationEndpoint }[] = [];
     for (const group of ENDPOINT_GROUPS) {
       for (const ep of group.endpoints) {
+        if (ep.excludeFromRunAll) continue;
         allEndpoints.push({ key: `${group.label}::${ep.name}`, endpoint: ep });
       }
     }
