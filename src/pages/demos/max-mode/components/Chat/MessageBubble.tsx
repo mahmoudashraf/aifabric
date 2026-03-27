@@ -443,7 +443,7 @@ export function MessageBubble({
             };
 
             const handleSubmit = () => {
-              if (!canSubmit || clarificationSubmitted) return;
+              if (!canSubmit || clarificationSubmitted || !onClarificationSubmit) return;
               const finalValues: Record<string, any> = {};
               for (const key of allKeys) {
                 const val = clarificationValues[key] ?? formValues[key];
@@ -455,7 +455,7 @@ export function MessageBubble({
                 }
               }
               setClarificationSubmitted(true);
-              onClarificationSubmit?.(actionName, finalValues);
+              onClarificationSubmit(actionName, finalValues);
             };
 
             return (
