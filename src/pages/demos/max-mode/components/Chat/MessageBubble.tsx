@@ -63,6 +63,7 @@ export function MessageBubble({
   onExpandActionResults,
   isItemAttached,
   onAttachActionResultItem,
+  onNextStepClick,
   onClarificationSubmit,
 }: {
   message: ChatMessage;
