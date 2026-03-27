@@ -280,11 +280,7 @@ export function ChatPanel({
                             }
                             onResendAction={onResendAction}
                             onNextStepClick={onResendAction}
-                            onClarificationSubmit={
-                              message.resultType === "CLARIFICATION_REQUIRED"
-                                ? onClarificationSubmit
-                                : undefined
-                            }
+                            onClarificationSubmit={onClarificationSubmit}
                           />
                         ))}
                         {isLoading && <LoadingMessage />}
