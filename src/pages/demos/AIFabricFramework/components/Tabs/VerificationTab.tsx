@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 const RUNTIME_BASE = "https://runtime-prod2.up.railway.app";
-const REST_CONNECTOR_BASE = "https://ai-fabric-framework-production-d912.up.railway.app";
+const REST_CONNECTOR_BASE = "https://rest-connector-dep-6c661333-dev.up.railway.app";
 const DEMO_CONNECTOR_BASE = "https://ai-fabric-framework-production-a247.up.railway.app";
 
 const REST_CONNECTOR_HEADERS = { "X-AIFABRIC-API-KEY": "test-key" };
