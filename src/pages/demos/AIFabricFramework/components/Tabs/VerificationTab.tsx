@@ -14,7 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-const RUNTIME_BASE = "https://runtime-prod2.up.railway.app";
+const RUNTIME_BASE = "https://runtime-dep-6c661333-dev.up.railway.app";
 const REST_CONNECTOR_BASE = "https://rest-connector-dep-6c661333-dev.up.railway.app";
 const DEMO_CONNECTOR_BASE = "https://ai-fabric-framework-production-a247.up.railway.app";
 
