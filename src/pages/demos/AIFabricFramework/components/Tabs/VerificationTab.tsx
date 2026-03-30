@@ -61,7 +61,7 @@ const ENDPOINT_GROUPS: EndpointGroup[] = [
         url: `${RUNTIME_BASE}/api/admin/indexing/vectors?entityType=product&offset=0&limit=50&includeContent=false&includeEmbedding=false&includeMetadata=true`,
         headers: ADMIN_HEADERS,
       },
-      { name: "Vector Spaces", method: "GET", url: `${RUNTIME_BASE}/api/ai/data-sync/vector-spaces`, headers: ADMIN_HEADERS },
+      { name: "Vector Spaces", method: "GET", url: `${RUNTIME_BASE}/api/ai/data-sync/vector-spaces`, headers: { "X-AIFABRIC-API-KEY": "test" } },
     ],
   },
   {
@@ -104,7 +104,7 @@ const ENDPOINT_GROUPS: EndpointGroup[] = [
         name: "Proxy: Vector Spaces",
         method: "GET",
         url: `${REST_CONNECTOR_BASE}/api/ai/data-sync/vector-spaces`,
-        headers: ADMIN_HEADERS,
+        headers: { "X-AIFABRIC-API-KEY": "test" },
       },
     ],
   },
