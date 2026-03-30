@@ -6,7 +6,7 @@ import generatedTicketsData from "@/data/generated/tickets.json";
 
 export const API_BASE_URL = "https://rest-connector-dep-6c661333-dev.up.railway.app/api";
 export const CRUD_API_BASE_URL = "https://ai-fabric-framework-production-a247.up.railway.app/api";
-export const API_AUTH_HEADERS = { "X-AIFABRIC-API-KEY": "test-key" };
+export const API_AUTH_HEADERS = { "X-AIFABRIC-API-KEY": "test" };
 
 // Map generated products to match the expected format (100 products)
 export const SAMPLE_PRODUCTS = generatedProductsData.map((product: any) => ({
