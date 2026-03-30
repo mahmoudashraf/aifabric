@@ -18,8 +18,7 @@ const RUNTIME_BASE = "https://runtime-dep-26ff199d-dev.up.railway.app";
 const REST_CONNECTOR_BASE = "https://rest-connector-dep-26ff199d-dev.up.railway.app";
 const DEMO_CONNECTOR_BASE = "https://ai-fabric-framework-production-a247.up.railway.app";
 
-const REST_CONNECTOR_HEADERS = { "X-AIFABRIC-API-KEY": "test" };
-const DEMO_CONNECTOR_HEADERS = { "X-AIFABRIC-API-KEY": "test" };
+const ADMIN_HEADERS = { "X-ADMIN-API-KEY": "test" };
 
 interface VerificationEndpoint {
   name: string;
@@ -54,14 +53,15 @@ const ENDPOINT_GROUPS: EndpointGroup[] = [
     color: "text-purple-600",
     endpoints: [
       { name: "Health", method: "GET", url: `${RUNTIME_BASE}/actuator/health` },
-      { name: "Actions Loaded", method: "GET", url: `${RUNTIME_BASE}/api/admin/actions/overview` },
-      { name: "Indexing Overview", method: "GET", url: `${RUNTIME_BASE}/api/admin/indexing/overview` },
+      { name: "Actions Loaded", method: "GET", url: `${RUNTIME_BASE}/api/admin/actions/overview`, headers: ADMIN_HEADERS },
+      { name: "Indexing Overview", method: "GET", url: `${RUNTIME_BASE}/api/admin/indexing/overview`, headers: ADMIN_HEADERS },
       {
         name: "Vectors Scan",
         method: "GET",
         url: `${RUNTIME_BASE}/api/admin/indexing/vectors?entityType=product&offset=0&limit=50&includeContent=false&includeEmbedding=false&includeMetadata=true`,
+        headers: ADMIN_HEADERS,
       },
-      { name: "Vector Spaces", method: "GET", url: `${RUNTIME_BASE}/api/ai/data-sync/vector-spaces` },
+      { name: "Vector Spaces", method: "GET", url: `${RUNTIME_BASE}/api/ai/data-sync/vector-spaces`, headers: ADMIN_HEADERS },
     ],
   },
   {
@@ -74,37 +74,37 @@ const ENDPOINT_GROUPS: EndpointGroup[] = [
         name: "Overview",
         method: "GET",
         url: `${REST_CONNECTOR_BASE}/api/admin/overview`,
-        headers: REST_CONNECTOR_HEADERS,
+        headers: ADMIN_HEADERS,
       },
       {
         name: "Actions Overview",
         method: "GET",
         url: `${REST_CONNECTOR_BASE}/api/admin/actions/overview`,
-        headers: REST_CONNECTOR_HEADERS,
+        headers: ADMIN_HEADERS,
       },
       {
         name: "Action: add_to_cart",
         method: "GET",
         url: `${REST_CONNECTOR_BASE}/api/admin/actions/add_to_cart`,
-        headers: REST_CONNECTOR_HEADERS,
+        headers: ADMIN_HEADERS,
       },
       {
         name: "Proxy: Indexing Overview",
         method: "GET",
         url: `${REST_CONNECTOR_BASE}/api/admin/indexing/overview`,
-        headers: REST_CONNECTOR_HEADERS,
+        headers: ADMIN_HEADERS,
       },
       {
         name: "Proxy: Vectors Scan",
         method: "GET",
         url: `${REST_CONNECTOR_BASE}/api/admin/indexing/vectors?entityType=product&offset=0&limit=50&includeContent=false&includeEmbedding=false&includeMetadata=true`,
-        headers: REST_CONNECTOR_HEADERS,
+        headers: ADMIN_HEADERS,
       },
       {
         name: "Proxy: Vector Spaces",
         method: "GET",
         url: `${REST_CONNECTOR_BASE}/api/ai/data-sync/vector-spaces`,
-        headers: REST_CONNECTOR_HEADERS,
+        headers: ADMIN_HEADERS,
       },
     ],
   },
@@ -120,6 +120,7 @@ const ENDPOINT_GROUPS: EndpointGroup[] = [
         name: "Reset Demo",
         method: "POST",
         url: `${DEMO_CONNECTOR_BASE}/api/admin/demo/reset`,
+        headers: ADMIN_HEADERS,
         body: { confirm: true, clearConnectorData: true, clearRuntimeVectors: true },
         excludeFromRunAll: true,
       },

@@ -292,7 +292,7 @@ export async function createTicket(ticket: { userId: string; issueType: string; 
 export async function clearAllData(): Promise<void> {
   const response = await fetch(`${CRUD_API_BASE_URL}/admin/migration/clear`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "X-ADMIN-API-KEY": "test" },
     body: JSON.stringify({
       confirm: true,
       clearVectors: true,
