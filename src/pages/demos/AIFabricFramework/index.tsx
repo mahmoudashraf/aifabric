@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Package, Receipt, FileText, Star, Tag, Code, Activity } from "lucide-react";
+import { Package, Receipt, FileText, Star, Tag, Code, Activity, MessageCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Widget library
@@ -215,6 +215,18 @@ export default function AIFabricFramework() {
         onResendAction={chat.handleResendAction}
         onClarificationSubmit={chat.handleClarificationSubmit}
       />
+
+      {/* Max Mode Widget floating launcher */}
+      {!isWidgetOpen && (
+        <button
+          onClick={() => setIsWidgetOpen(true)}
+          aria-label="Open AI Assistant"
+          className="fixed bottom-28 right-6 z-[9999] w-14 h-14 rounded-full flex items-center justify-center cursor-pointer border-none shadow-[0_4px_20px_rgba(99,102,241,0.4),0_2px_8px_rgba(0,0,0,0.1)] transition-all duration-300 hover:scale-110 hover:shadow-[0_6px_28px_rgba(99,102,241,0.5),0_4px_12px_rgba(0,0,0,0.15)]"
+          style={{ background: "linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7)" }}
+        >
+          <MessageCircle className="h-7 w-7 text-white" strokeWidth={2} />
+        </button>
+      )}
 
       {/* Max Mode Widget (embeddable library) */}
       <MaxModeWidget
