@@ -1,5 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+/**
+ * Host-app wrapper that imports MaxMode from the widget package.
+ * This demonstrates how a consuming app integrates the widget.
+ *
+ * For external consumers the import would be:
+ *   import { MaxModeWidget } from '@anthropic/max-mode-widget';
+ *   import '@anthropic/max-mode-widget/styles.css';
+ *
+ * Here we use the local package path for monorepo development.
+ */
 import MaxMode from "./demos/MaxMode";
 
 const MaxAIMode = () => {
@@ -7,14 +18,12 @@ const MaxAIMode = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Auto-open MAX Mode when component mounts
     setIsOpen(true);
   }, []);
 
   const handleClose = () => {
     setIsOpen(false);
-    // Navigate back to demos page when MAX Mode is closed
-    navigate('/demos/ai-fabric-framework');
+    navigate("/demos/ai-fabric-framework");
   };
 
   return (
