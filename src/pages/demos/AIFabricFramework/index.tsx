@@ -3,8 +3,8 @@ import { Package, Receipt, FileText, Star, Tag, Code, Activity } from "lucide-re
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Widget library
-import { MaxModeWidget } from "../../../../packages/max-mode-widget/dist/max-mode-widget.esm.js";
-import "../../../../packages/max-mode-widget/dist/style.css";
+import { MaxModeWidget } from "@/lib/max-mode-widget/max-mode-widget.esm.js";
+import "@/lib/max-mode-widget/style.css";
 
 // Hooks
 import { useChat, useProducts, useMigration, useDataEntities } from "./hooks";
