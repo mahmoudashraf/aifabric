@@ -7,7 +7,7 @@ Embeddable AI shopping assistant widget. Drop it into **any website** — plain 
 ### Option 1: Script Tag (any website)
 
 ```html
-<script src="https://cdn.example.com/max-mode-widget.iife.js"></script>
+<script src="https://mahmoudashraf.github.io/aifabric/max-mode-widget.iife.js"></script>
 <script>
   MaxMode.init({
     apiConfig: {
