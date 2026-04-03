@@ -4,7 +4,7 @@ import generatedPoliciesData from "@/data/generated/policies.json";
 import generatedCouponsData from "@/data/generated/coupons.json";
 import generatedTicketsData from "@/data/generated/tickets.json";
 
-export const API_BASE_URL = "https://rest-connector-dep-26ff199d-dev.up.railway.app/api";
+export const API_BASE_URL = "https://rest-connector-dep-4c2d1221-dev.up.railway.app/api";
 export const CRUD_API_BASE_URL = "https://ai-fabric-framework-production-a247.up.railway.app/api";
 export const API_AUTH_HEADERS = { "X-AIFABRIC-API-KEY": "test" };
 
