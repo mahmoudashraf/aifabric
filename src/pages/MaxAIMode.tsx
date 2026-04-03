@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { MaxModeWidget } from "../../packages/max-mode-widget/dist/max-mode-widget.esm.js";
-import "../../packages/max-mode-widget/dist/style.css";
+import { MaxModeWidget } from "@/lib/max-mode-widget/max-mode-widget.esm.js";
+import "@/lib/max-mode-widget/style.css";
 
 const MaxAIMode = () => {
   const [isOpen, setIsOpen] = useState(true);
