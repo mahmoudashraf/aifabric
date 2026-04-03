@@ -1,6 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Package, Receipt, FileText, Star, Tag, Code, Activity } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+// Widget library
+import { MaxModeWidget } from "../../../../packages/max-mode-widget/dist/max-mode-widget.esm.js";
+import "../../../../packages/max-mode-widget/dist/style.css";
 
 // Hooks
 import { useChat, useProducts, useMigration, useDataEntities } from "./hooks";
@@ -20,6 +24,8 @@ import {
 } from "./components";
 
 export default function AIFabricFramework() {
+  const [isWidgetOpen, setIsWidgetOpen] = useState(false);
+
   // Initialize hooks
   const chat = useChat();
   const products = useProducts();
@@ -210,6 +216,25 @@ export default function AIFabricFramework() {
         onClarificationSubmit={chat.handleClarificationSubmit}
       />
 
+      {/* Max Mode Widget (embeddable library) */}
+      <MaxModeWidget
+        isOpen={isWidgetOpen}
+        onClose={() => setIsWidgetOpen(false)}
+        apiConfig={{
+          chatBaseUrl: "https://rest-connector-dep-1bf14c33-dev.up.railway.app/api",
+          crudBaseUrl: "https://ai-fabric-framework-production-a247.up.railway.app/api",
+          headers: { "X-AIFABRIC-API-KEY": "test" },
+        }}
+        features={{
+          cart: true,
+          debug: true,
+          conversations: true,
+          quickActions: true,
+        }}
+        theme={{ primaryColor: "#6366f1" }}
+        onEvent={(event) => console.log("[MaxMode Event]", event)}
+      />
+
       {/* Chat input */}
       <ChatInput
         query={chat.chatQuery}
@@ -232,6 +257,7 @@ export default function AIFabricFramework() {
         currentPosition={chat.currentPosition}
         currentMode={chat.currentMode}
         onModeChange={chat.setCurrentMode}
+        onOpenMaxMode={() => setIsWidgetOpen(true)}
       />
     </div>
   );

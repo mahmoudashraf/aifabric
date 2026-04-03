@@ -67,7 +67,7 @@ You provide these URLs when initializing the widget. The widget handles all UI r
 No build tools required. Add two lines before `</body>`:
 
 ```html
-<script src="https://your-cdn.com/max-mode-widget.iife.js"></script>
+<script src="https://mahmoudashraf.github.io/aifabric/max-mode-widget.iife.js"></script>
 <script>
   MaxMode.init({
     apiConfig: {
@@ -274,7 +274,7 @@ Add to your theme's `footer.php` or use a plugin like "Insert Headers and Footer
 In the Wix Editor, go to **Settings > Custom Code** and add a code snippet with placement "Body - end":
 
 ```html
-<script src="https://your-cdn.com/max-mode-widget.iife.js"></script>
+<script src="https://mahmoudashraf.github.io/aifabric/max-mode-widget.iife.js"></script>
 <script>
   MaxMode.init({
     apiConfig: {

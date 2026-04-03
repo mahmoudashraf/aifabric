@@ -30,6 +30,7 @@ interface ChatInputProps {
   currentPosition?: ChatPosition;
   currentMode?: ChatMode;
   onModeChange?: (mode: ChatMode) => void;
+  onOpenMaxMode?: () => void;
 }
 
 export function ChatInput({
@@ -53,6 +54,7 @@ export function ChatInput({
   currentPosition = "landing",
   currentMode = "navigator",
   onModeChange,
+  onOpenMaxMode,
 }: ChatInputProps) {
   const navigate = useNavigate();
   const [isBrowseDialogOpen, setIsBrowseDialogOpen] = useState(false);
@@ -350,7 +352,7 @@ export function ChatInput({
               <div className="absolute right-2 bottom-2 flex items-center gap-1.5">
                 <Button
                   variant="outline"
-                  onClick={() => navigate("/maxAI")}
+                  onClick={() => onOpenMaxMode ? onOpenMaxMode() : navigate("/maxAI")}
                   className="h-9 px-2 gap-1 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border-purple-500/30 hover:border-purple-500/50 hover:bg-purple-500/20"
                   title="Open MAX AI Mode"
                 >
