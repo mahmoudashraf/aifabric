@@ -14,8 +14,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-const RUNTIME_BASE = "https://runtime-dep-4c2d1221-dev.up.railway.app";
-const REST_CONNECTOR_BASE = "https://rest-connector-dep-4c2d1221-dev.up.railway.app";
+const RUNTIME_BASE = "https://runtime-dep-1bf14c33-dev.up.railway.app";
+const REST_CONNECTOR_BASE = "https://rest-connector-dep-1bf14c33-dev.up.railway.app";
 const DEMO_CONNECTOR_BASE = "https://ai-fabric-framework-production-a247.up.railway.app";
 
 const ADMIN_HEADERS = { "X-ADMIN-API-KEY": "test" };
