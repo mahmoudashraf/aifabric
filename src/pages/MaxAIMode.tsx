@@ -1,17 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-/**
- * Host-app wrapper that imports MaxMode from the widget package.
- * This demonstrates how a consuming app integrates the widget.
- *
- * For external consumers the import would be:
- *   import { MaxModeWidget } from '@anthropic/max-mode-widget';
- *   import '@anthropic/max-mode-widget/styles.css';
- *
- * Here we use the local package path for monorepo development.
- */
-import MaxMode from "./demos/MaxMode";
+import { MaxModeWidget } from "../../packages/max-mode-widget/dist/max-mode-widget.esm.js";
+import "../../packages/max-mode-widget/dist/style.css";
 
 const MaxAIMode = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -28,7 +18,21 @@ const MaxAIMode = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
-      <MaxMode isOpen={isOpen} onClose={handleClose} />
+      <MaxModeWidget
+        isOpen={isOpen}
+        onClose={handleClose}
+        apiConfig={{
+          chatBaseUrl: "https://rest-connector-dep-1bf14c33-dev.up.railway.app/api",
+          crudBaseUrl: "https://ai-fabric-framework-production-a247.up.railway.app/api",
+          headers: { "X-AIFABRIC-API-KEY": "test" },
+        }}
+        features={{
+          cart: true,
+          debug: true,
+          conversations: true,
+          quickActions: true,
+        }}
+      />
     </div>
   );
 };
