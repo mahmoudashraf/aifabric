@@ -1,5 +1,29 @@
-import { API_BASE_URL, CRUD_API_BASE_URL, API_AUTH_HEADERS } from "../constants";
+import { API_BASE_URL, CRUD_API_BASE_URL, API_AUTH_HEADERS, ADMIN_API_HEADERS } from "../constants";
 import type { Product, Policy, Review, Coupon, Conversation, ConversationDetail, ChatPosition, ChatMode } from "../types";
+
+function readCount(data: any, ...keys: string[]): number {
+  for (const key of keys) {
+    const value = data?.[key];
+    if (typeof value === "number") return value;
+    if (typeof value === "string" && value.trim()) return Number(value);
+  }
+  return 0;
+}
+
+function normalizeCoupon(coupon: any): Coupon {
+  const discountPercent = coupon.discountPercent;
+  const discountAmount = coupon.discountAmount;
+  const isPercentage = discountPercent !== undefined && discountPercent !== null;
+
+  return {
+    ...coupon,
+    id: coupon.id?.toString(),
+    isActive: coupon.isActive ?? coupon.active ?? true,
+    discountType: coupon.discountType ?? (isPercentage ? "PERCENTAGE" : "FIXED"),
+    discountValue: coupon.discountValue ?? discountPercent ?? Number(discountAmount ?? 0),
+    validUntil: coupon.validUntil ?? coupon.updatedAt ?? coupon.createdAt ?? new Date().toISOString(),
+  };
+}
 
 // Products API
 export async function fetchProducts(limit = 50): Promise<Product[]> {
@@ -12,7 +36,7 @@ export async function fetchProductCount(): Promise<number> {
   const response = await fetch(`${CRUD_API_BASE_URL}/products/count`);
   if (!response.ok) throw new Error("Failed to fetch product count");
   const data = await response.json();
-  return data.count;
+  return readCount(data, "count", "totalProducts");
 }
 
 export async function searchProducts(query: string, limit = 20, threshold = 0.3): Promise<Product[]> {
@@ -206,7 +230,7 @@ export async function fetchPolicyCount(): Promise<number> {
   const response = await fetch(`${CRUD_API_BASE_URL}/policies/count`);
   if (!response.ok) throw new Error("Failed to fetch policy count");
   const data = await response.json();
-  return data.count;
+  return readCount(data, "count", "totalPolicies");
 }
 
 export async function createPolicy(policy: Partial<Policy>): Promise<Policy> {
@@ -234,10 +258,8 @@ export async function fetchReviews(limit = 50): Promise<Review[]> {
 }
 
 export async function fetchReviewCount(): Promise<number> {
-  const response = await fetch(`${CRUD_API_BASE_URL}/reviews/count`);
-  if (!response.ok) throw new Error("Failed to fetch review count");
-  const data = await response.json();
-  return data.count;
+  const reviews = await fetchReviews(500);
+  return reviews.length;
 }
 
 export async function createReview(review: Partial<Review>): Promise<Review> {
@@ -254,24 +276,36 @@ export async function createReview(review: Partial<Review>): Promise<Review> {
 export async function fetchCoupons(limit = 50): Promise<Coupon[]> {
   const response = await fetch(`${CRUD_API_BASE_URL}/coupons?limit=${limit}`);
   if (!response.ok) throw new Error("Failed to fetch coupons");
-  return response.json();
+  const data = await response.json();
+  return Array.isArray(data) ? data.map(normalizeCoupon) : [];
 }
 
 export async function fetchCouponCount(): Promise<number> {
-  const response = await fetch(`${CRUD_API_BASE_URL}/coupons/count`);
-  if (!response.ok) throw new Error("Failed to fetch coupon count");
-  const data = await response.json();
-  return data.count;
+  const coupons = await fetchCoupons(500);
+  return coupons.length;
 }
 
 export async function createCoupon(coupon: Partial<Coupon>): Promise<Coupon> {
+  const payload = {
+    code: coupon.code,
+    description: coupon.description,
+    rules: [
+      coupon.minPurchaseAmount ? `Minimum purchase: $${coupon.minPurchaseAmount}` : undefined,
+      coupon.maxDiscountAmount ? `Maximum discount: $${coupon.maxDiscountAmount}` : undefined,
+      coupon.validUntil ? `Valid until: ${coupon.validUntil}` : undefined,
+      coupon.usageLimit ? `Usage limit: ${coupon.usageLimit}` : undefined,
+    ].filter(Boolean).join("; "),
+    active: coupon.isActive ?? true,
+    discountPercent: coupon.discountType === "PERCENTAGE" ? coupon.discountValue : undefined,
+    discountAmount: coupon.discountType === "FIXED" ? coupon.discountValue : undefined,
+  };
   const response = await fetch(`${CRUD_API_BASE_URL}/coupons`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(coupon),
+    body: JSON.stringify(payload),
   });
   if (!response.ok) throw new Error("Failed to create coupon");
-  return response.json();
+  return normalizeCoupon(await response.json());
 }
 
 // Support Tickets API
@@ -292,7 +326,7 @@ export async function createTicket(ticket: { userId: string; issueType: string; 
 export async function clearAllData(): Promise<void> {
   const response = await fetch(`${CRUD_API_BASE_URL}/admin/migration/clear`, {
     method: "POST",
-    headers: { "Content-Type": "application/json", "X-ADMIN-API-KEY": "test" },
+    headers: { "Content-Type": "application/json", ...ADMIN_API_HEADERS },
     body: JSON.stringify({
       confirm: true,
       clearVectors: true,

@@ -6,19 +6,14 @@ import {
   Loader2,
   Play,
   RefreshCw,
-  Server,
-  Database,
   Cpu,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ADMIN_API_HEADERS, AI_FABRIC_RUNTIME_BASE_URL } from "../../constants";
 
-const RUNTIME_BASE = "https://runtime-dep-1bf14c33-dev.up.railway.app";
-const REST_CONNECTOR_BASE = "https://rest-connector-dep-1bf14c33-dev.up.railway.app";
-const DEMO_CONNECTOR_BASE = "https://ai-fabric-framework-production-a247.up.railway.app";
-
-const ADMIN_HEADERS = { "X-ADMIN-API-KEY": "test" };
+const RUNTIME_BASE = AI_FABRIC_RUNTIME_BASE_URL;
 
 interface VerificationEndpoint {
   name: string;
@@ -48,80 +43,26 @@ interface CheckResult {
 
 const ENDPOINT_GROUPS: EndpointGroup[] = [
   {
-    label: "Runtime",
+    label: "Chat Capabilities Demo",
     icon: <Cpu className="h-4 w-4" />,
     color: "text-purple-600",
     endpoints: [
       { name: "Health", method: "GET", url: `${RUNTIME_BASE}/actuator/health` },
-      { name: "Actions Loaded", method: "GET", url: `${RUNTIME_BASE}/api/admin/actions/overview`, headers: ADMIN_HEADERS },
-      { name: "Indexing Overview", method: "GET", url: `${RUNTIME_BASE}/api/admin/indexing/overview`, headers: ADMIN_HEADERS },
+      { name: "Products Count", method: "GET", url: `${RUNTIME_BASE}/api/products/count` },
+      { name: "Policies Count", method: "GET", url: `${RUNTIME_BASE}/api/policies/count` },
+      { name: "Products List", method: "GET", url: `${RUNTIME_BASE}/api/products?limit=5` },
+      { name: "Vector Spaces", method: "GET", url: `${RUNTIME_BASE}/api/ai/data-sync/vector-spaces` },
       {
-        name: "Vectors Scan",
+        name: "Runtime Vector Probe",
         method: "GET",
-        url: `${RUNTIME_BASE}/api/admin/indexing/vectors?entityType=product&offset=0&limit=50&includeContent=false&includeEmbedding=false&includeMetadata=true`,
-        headers: ADMIN_HEADERS,
-      },
-      { name: "Vector Spaces", method: "GET", url: `${RUNTIME_BASE}/api/ai/data-sync/vector-spaces`, headers: { "X-AIFABRIC-API-KEY": "test" } },
-    ],
-  },
-  {
-    label: "REST Connector",
-    icon: <Server className="h-4 w-4" />,
-    color: "text-blue-600",
-    endpoints: [
-      { name: "Health", method: "GET", url: `${REST_CONNECTOR_BASE}/actuator/health` },
-      {
-        name: "Overview",
-        method: "GET",
-        url: `${REST_CONNECTOR_BASE}/api/admin/overview`,
-        headers: ADMIN_HEADERS,
+        url: `${RUNTIME_BASE}/api/runtime/vector-search?vectorSpace=product&query=wireless%20headphones&limit=3&threshold=0`,
       },
       {
-        name: "Actions Overview",
-        method: "GET",
-        url: `${REST_CONNECTOR_BASE}/api/admin/actions/overview`,
-        headers: ADMIN_HEADERS,
-      },
-      {
-        name: "Action: add_to_cart",
-        method: "GET",
-        url: `${REST_CONNECTOR_BASE}/api/admin/actions/add_to_cart`,
-        headers: ADMIN_HEADERS,
-      },
-      {
-        name: "Proxy: Indexing Overview",
-        method: "GET",
-        url: `${REST_CONNECTOR_BASE}/api/admin/indexing/overview`,
-        headers: ADMIN_HEADERS,
-      },
-      {
-        name: "Proxy: Vectors Scan",
-        method: "GET",
-        url: `${REST_CONNECTOR_BASE}/api/admin/indexing/vectors?entityType=product&offset=0&limit=50&includeContent=false&includeEmbedding=false&includeMetadata=true`,
-        headers: ADMIN_HEADERS,
-      },
-      {
-        name: "Proxy: Vector Spaces",
-        method: "GET",
-        url: `${REST_CONNECTOR_BASE}/api/ai/data-sync/vector-spaces`,
-        headers: { "X-AIFABRIC-API-KEY": "test" },
-      },
-    ],
-  },
-  {
-    label: "Demo Connector",
-    icon: <Database className="h-4 w-4" />,
-    color: "text-green-600",
-    endpoints: [
-      { name: "Health", method: "GET", url: `${DEMO_CONNECTOR_BASE}/actuator/health` },
-      { name: "Products Count", method: "GET", url: `${DEMO_CONNECTOR_BASE}/api/products/count` },
-      { name: "Policies Count", method: "GET", url: `${DEMO_CONNECTOR_BASE}/api/policies/count` },
-      {
-        name: "Reset Demo",
+        name: "Clear Demo Data",
         method: "POST",
-        url: `${DEMO_CONNECTOR_BASE}/api/admin/demo/reset`,
-        headers: ADMIN_HEADERS,
-        body: { confirm: true, clearConnectorData: true, clearRuntimeVectors: true },
+        url: `${RUNTIME_BASE}/api/admin/migration/clear`,
+        headers: ADMIN_API_HEADERS,
+        body: { confirm: true, clearVectors: true, clearIndexingQueue: true },
         excludeFromRunAll: true,
       },
     ],

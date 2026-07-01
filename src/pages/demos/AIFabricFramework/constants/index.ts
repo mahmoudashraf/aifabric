@@ -4,9 +4,12 @@ import generatedPoliciesData from "@/data/generated/policies.json";
 import generatedCouponsData from "@/data/generated/coupons.json";
 import generatedTicketsData from "@/data/generated/tickets.json";
 
-export const API_BASE_URL = "https://rest-connector-dep-1bf14c33-dev.up.railway.app/api";
-export const CRUD_API_BASE_URL = "https://ai-fabric-framework-production-a247.up.railway.app/api";
-export const API_AUTH_HEADERS = { "X-AIFABRIC-API-KEY": "test" };
+export const AI_FABRIC_RUNTIME_BASE_URL =
+  "https://ai-fabric-chat-capabilities-demo.46.224.145.148.sslip.io";
+export const API_BASE_URL = `${AI_FABRIC_RUNTIME_BASE_URL}/api`;
+export const CRUD_API_BASE_URL = API_BASE_URL;
+export const API_AUTH_HEADERS: Record<string, string> = {};
+export const ADMIN_API_HEADERS = { "X-ADMIN-API-KEY": "test" };
 
 // Map generated products to match the expected format (100 products)
 export const SAMPLE_PRODUCTS = generatedProductsData.map((product: any) => ({

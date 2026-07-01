@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { CRUD_API_BASE_URL } from "@/pages/demos/AIFabricFramework/constants";
 
 interface Product {
   id: string;
@@ -51,7 +52,7 @@ export default function ProductDetails() {
     setIsLoadingProduct(true);
     try {
       const response = await fetch(
-        `https://ai-fabric-framework-production.up.railway.app/api/products/${id}`
+        `${CRUD_API_BASE_URL}/products/${id}`
       );
       if (!response.ok) throw new Error("Failed to fetch product");
       const data = await response.json();
@@ -72,7 +73,7 @@ export default function ProductDetails() {
     setIsLoadingReviews(true);
     try {
       const response = await fetch(
-        `https://ai-fabric-framework-production.up.railway.app/api/reviews/product/${id}`
+        `${CRUD_API_BASE_URL}/reviews/by-product-id/${id}`
       );
       if (!response.ok) throw new Error("Failed to fetch reviews");
       const data = await response.json();
@@ -276,7 +277,7 @@ export default function ProductDetails() {
                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-4 mb-2">
                       <div className="flex-1">
                         <h4 className="font-semibold text-sm sm:text-base">
-                          {review.title}
+                          {review.title || "Customer Review"}
                         </h4>
                         <p className="text-xs sm:text-sm text-muted-foreground">
                           By User {review.userId}

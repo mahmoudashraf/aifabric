@@ -88,7 +88,7 @@ export function ReviewsTab({
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between">
                   <div>
-                    <CardTitle className="text-base">{review.title}</CardTitle>
+                    <CardTitle className="text-base">{review.title || "Customer Review"}</CardTitle>
                     <div className="flex items-center gap-1 mt-1">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <Star

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MaxModeWidget } from "@/lib/max-mode-widget/max-mode-widget.esm.js";
 import "@/lib/max-mode-widget/style.css";
+import { API_AUTH_HEADERS, API_BASE_URL, CRUD_API_BASE_URL } from "@/pages/demos/AIFabricFramework/constants";
 
 const MaxAIMode = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -22,9 +23,9 @@ const MaxAIMode = () => {
         isOpen={isOpen}
         onClose={handleClose}
         apiConfig={{
-          chatBaseUrl: "https://rest-connector-dep-1bf14c33-dev.up.railway.app/api",
-          crudBaseUrl: "https://ai-fabric-framework-production-a247.up.railway.app/api",
-          headers: { "X-AIFABRIC-API-KEY": "test" },
+          chatBaseUrl: API_BASE_URL,
+          crudBaseUrl: CRUD_API_BASE_URL,
+          headers: API_AUTH_HEADERS,
         }}
         features={{
           cart: true,

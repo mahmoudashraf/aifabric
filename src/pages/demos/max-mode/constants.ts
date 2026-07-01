@@ -22,9 +22,11 @@ import {
   User,
 } from "lucide-react";
 
-export const API_BASE_URL = "https://rest-connector-dep-1bf14c33-dev.up.railway.app/api";
-export const CRUD_API_BASE_URL = "https://ai-fabric-framework-production-a247.up.railway.app/api";
-export const API_AUTH_HEADERS = { "X-AIFABRIC-API-KEY": "test" };
+export const AI_FABRIC_RUNTIME_BASE_URL =
+  "https://ai-fabric-chat-capabilities-demo.46.224.145.148.sslip.io";
+export const API_BASE_URL = `${AI_FABRIC_RUNTIME_BASE_URL}/api`;
+export const CRUD_API_BASE_URL = API_BASE_URL;
+export const API_AUTH_HEADERS: Record<string, string> = {};
 
 export type MaxModePosition = "landing" | "catalog" | "search" | "cart";
 export type MaxModeMode = "navigator" | "navigator_deep" | "cart_assistant" | "executor";
@@ -308,4 +310,3 @@ export const BROWSE_PRODUCT_CATEGORIES: BrowseProductCategory[] = [
     description: "Bluetooth connectivity",
   },
 ];
-

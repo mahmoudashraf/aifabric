@@ -22,6 +22,7 @@ import {
   ApiTab,
   VerificationTab,
 } from "./components";
+import { API_AUTH_HEADERS, API_BASE_URL, CRUD_API_BASE_URL } from "./constants";
 
 export default function AIFabricFramework() {
   const [isWidgetOpen, setIsWidgetOpen] = useState(false);
@@ -233,9 +234,9 @@ export default function AIFabricFramework() {
         isOpen={isWidgetOpen}
         onClose={() => setIsWidgetOpen(false)}
         apiConfig={{
-          chatBaseUrl: "https://rest-connector-dep-1bf14c33-dev.up.railway.app/api",
-          crudBaseUrl: "https://ai-fabric-framework-production-a247.up.railway.app/api",
-          headers: { "X-AIFABRIC-API-KEY": "test" },
+          chatBaseUrl: API_BASE_URL,
+          crudBaseUrl: CRUD_API_BASE_URL,
+          headers: API_AUTH_HEADERS,
         }}
         features={{
           cart: true,
