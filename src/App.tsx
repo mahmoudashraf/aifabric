@@ -10,10 +10,10 @@ import NotFound from "./pages/NotFound";
 import Documentation from "./pages/Documentation";
 import Demos from "./pages/Demos";
 import AIFabricAccountResolver from "./pages/demos/AIFabricAccountResolver";
+import AIFabricBehaviorSignals from "./pages/demos/AIFabricBehaviorSignals";
 import SmartFAQAssistant from "./pages/demos/SmartFAQAssistant";
 import DocumentIntelligenceHub from "./pages/demos/DocumentIntelligenceHub";
 import ProductDiscoveryEngine from "./pages/demos/ProductDiscoveryEngine";
-import TeamSentimentTracker from "./pages/demos/TeamSentimentTracker";
 import CodeDocumentationSearch from "./pages/demos/CodeDocumentationSearch";
 import MeetingNotesAnalyzer from "./pages/demos/MeetingNotesAnalyzer";
 import AIFabricFramework from "./pages/demos/AIFabricFramework";
@@ -120,7 +120,8 @@ const App = () => (
             <Route path="/demos/smart-faq-assistant" element={<SmartFAQAssistant />} />
             <Route path="/demos/document-intelligence-hub" element={<DocumentIntelligenceHub />} />
             <Route path="/demos/product-discovery-engine" element={<ProductDiscoveryEngine />} />
-            <Route path="/demos/team-sentiment-tracker" element={<TeamSentimentTracker />} />
+            <Route path="/demos/ai-fabric-behavior-signals" element={<AIFabricBehaviorSignals />} />
+            <Route path="/demos/team-sentiment-tracker" element={<AIFabricBehaviorSignals />} />
             <Route path="/demos/code-documentation-search" element={<CodeDocumentationSearch />} />
             <Route path="/demos/meeting-notes-analyzer" element={<MeetingNotesAnalyzer />} />
             <Route path="/demos/ai-fabric-framework" element={<AIFabricFramework />} />
