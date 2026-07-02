@@ -8,12 +8,15 @@ import {
   Bot,
   CheckCircle2,
   ChevronDown,
+  CreditCard,
+  DollarSign,
   Edit3,
   Eye,
   FileText,
   HelpCircle,
   Info,
   Lightbulb,
+  MapPin,
   Package,
   Paperclip,
   RotateCcw,
@@ -21,6 +24,7 @@ import {
   Send,
   ShoppingCart,
   Star,
+  UserCheck,
   XCircle,
   Zap,
 } from "lucide-react";
@@ -55,6 +59,10 @@ function parseActionMessage(content: string) {
 function getActionIcon(actionType: string) {
   const lower = actionType.toLowerCase();
   if (lower.includes("cart") || lower.includes("checkout")) return ShoppingCart;
+  if (lower.includes("payment") || lower.includes("card")) return CreditCard;
+  if (lower.includes("address")) return MapPin;
+  if (lower.includes("refund") || lower.includes("credit") || lower.includes("billing")) return DollarSign;
+  if (lower.includes("readiness") || lower.includes("account") || lower.includes("inspect")) return UserCheck;
   if (lower.includes("search") || lower.includes("find") || lower.includes("look")) return Search;
   return Package;
 }
@@ -169,6 +177,12 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
     review: "bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700",
     product: "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700",
     order: "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 border-green-200 dark:border-green-700",
+    policy: "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-700",
+    blocker: "bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700",
+    account: "bg-sky-100 dark:bg-sky-900/40 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-700",
+    subscription: "bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-700",
+    payment: "bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-700",
+    refund: "bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-700",
   };
 
   // User message

@@ -14,6 +14,11 @@ interface ChatPanelProps {
   messagesEndRef: RefObject<HTMLDivElement>;
   onResendAction?: (query: string) => void;
   onClarificationSubmit?: (action: string, parameters: Record<string, any>) => void;
+  title?: string;
+  emptyTitle?: string;
+  emptyDescription?: string;
+  documentLabel?: string;
+  documentTypeColors?: Record<string, string>;
 }
 
 export function ChatPanel({
@@ -25,6 +30,11 @@ export function ChatPanel({
   messagesEndRef,
   onResendAction,
   onClarificationSubmit,
+  title = "AI Assistant",
+  emptyTitle = "Start a conversation by typing a message below",
+  emptyDescription = "Attach products, reviews, or coupons for context-aware responses",
+  documentLabel = "Documents",
+  documentTypeColors,
 }: ChatPanelProps) {
   const [showAllDocs, setShowAllDocs] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
@@ -59,6 +69,13 @@ export function ChatPanel({
     review: "bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300",
     product: "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300",
     order: "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300",
+    policy: "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300",
+    blocker: "bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300",
+    account: "bg-sky-100 dark:bg-sky-900/40 text-sky-700 dark:text-sky-300",
+    subscription: "bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300",
+    payment: "bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-300",
+    refund: "bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300",
+    ...(documentTypeColors || {}),
   };
 
   // Document detail modal
@@ -178,7 +195,7 @@ export function ChatPanel({
                   <div className="p-1.5 rounded-lg bg-blue-500/10">
                     <MessageSquare className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                   </div>
-                  <span className="text-sm font-bold text-gray-800 dark:text-gray-200">AI Assistant</span>
+                  <span className="text-sm font-bold text-gray-800 dark:text-gray-200">{title}</span>
                   {allDocuments.length > 0 && (
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-600 dark:text-purple-400">
                       {allDocuments.length} doc{allDocuments.length !== 1 ? "s" : ""}
@@ -261,10 +278,10 @@ export function ChatPanel({
                       <div className="flex flex-col items-center justify-center h-full text-center py-8">
                         <MessageSquare className="h-12 w-12 text-muted-foreground/30 mb-4" />
                         <p className="text-muted-foreground">
-                          Start a conversation by typing a message below
+                          {emptyTitle}
                         </p>
                         <p className="text-sm text-muted-foreground/70 mt-2">
-                          Attach products, reviews, or coupons for context-aware responses
+                          {emptyDescription}
                         </p>
                       </div>
                     ) : (
@@ -297,7 +314,7 @@ export function ChatPanel({
                           <div className="flex items-center gap-1.5">
                             <FileText className="h-3 w-3 text-purple-500" />
                             <span className="text-[10px] font-bold text-gray-600 dark:text-gray-300">
-                              Documents
+                              {documentLabel}
                             </span>
                           </div>
                           <button

@@ -9,7 +9,7 @@ import Landing2 from "./pages/Landing2";
 import NotFound from "./pages/NotFound";
 import Documentation from "./pages/Documentation";
 import Demos from "./pages/Demos";
-import SubscriptionManagementHub from "./pages/demos/SubscriptionManagementHub";
+import AIFabricAccountResolver from "./pages/demos/AIFabricAccountResolver";
 import SmartFAQAssistant from "./pages/demos/SmartFAQAssistant";
 import DocumentIntelligenceHub from "./pages/demos/DocumentIntelligenceHub";
 import ProductDiscoveryEngine from "./pages/demos/ProductDiscoveryEngine";
@@ -115,7 +115,8 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/landing2" element={<Landing2 />} />
             <Route path="/demos" element={<Demos />} />
-            <Route path="/demos/subscription-management-hub" element={<SubscriptionManagementHub />} />
+            <Route path="/demos/ai-fabric-account-resolver" element={<AIFabricAccountResolver />} />
+            <Route path="/demos/subscription-management-hub" element={<AIFabricAccountResolver />} />
             <Route path="/demos/smart-faq-assistant" element={<SmartFAQAssistant />} />
             <Route path="/demos/document-intelligence-hub" element={<DocumentIntelligenceHub />} />
             <Route path="/demos/product-discovery-engine" element={<ProductDiscoveryEngine />} />
