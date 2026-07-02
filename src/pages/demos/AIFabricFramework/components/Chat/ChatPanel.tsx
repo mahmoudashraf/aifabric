@@ -10,10 +10,10 @@ interface ChatPanelProps {
   onClose: () => void;
   messages: ChatMessageType[];
   isLoading: boolean;
-  onConfirmation: (action: "confirm" | "deny", data?: any) => void;
+  onConfirmation: (action: "confirm" | "deny", data?: unknown) => void;
   messagesEndRef: RefObject<HTMLDivElement>;
   onResendAction?: (query: string) => void;
-  onClarificationSubmit?: (action: string, parameters: Record<string, any>) => void;
+  onClarificationSubmit?: (action: string, parameters: Record<string, unknown>) => void;
   title?: string;
   emptyTitle?: string;
   emptyDescription?: string;
