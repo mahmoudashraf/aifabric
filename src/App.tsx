@@ -11,6 +11,7 @@ import Documentation from "./pages/Documentation";
 import Demos from "./pages/Demos";
 import AIFabricAccountResolver from "./pages/demos/AIFabricAccountResolver";
 import AIFabricBehaviorSignals from "./pages/demos/AIFabricBehaviorSignals";
+import AIFabricTenantGuard from "./pages/demos/AIFabricTenantGuard";
 import SmartFAQAssistant from "./pages/demos/SmartFAQAssistant";
 import DocumentIntelligenceHub from "./pages/demos/DocumentIntelligenceHub";
 import ProductDiscoveryEngine from "./pages/demos/ProductDiscoveryEngine";
@@ -122,6 +123,7 @@ const App = () => (
             <Route path="/demos/product-discovery-engine" element={<ProductDiscoveryEngine />} />
             <Route path="/demos/ai-fabric-behavior-signals" element={<AIFabricBehaviorSignals />} />
             <Route path="/demos/team-sentiment-tracker" element={<AIFabricBehaviorSignals />} />
+            <Route path="/demos/ai-fabric-tenant-guard" element={<AIFabricTenantGuard />} />
             <Route path="/demos/code-documentation-search" element={<CodeDocumentationSearch />} />
             <Route path="/demos/meeting-notes-analyzer" element={<MeetingNotesAnalyzer />} />
             <Route path="/demos/ai-fabric-framework" element={<AIFabricFramework />} />

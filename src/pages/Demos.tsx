@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, CreditCard, MessageSquare, TrendingUp, Shield, Zap, HelpCircle, Search, Bot, FileText, Upload, ShoppingBag, Users, Heart, Smile, Activity, Code, Calendar, ListTodo, Database } from "lucide-react";
+import { ArrowRight, Sparkles, CreditCard, MessageSquare, TrendingUp, Shield, Zap, HelpCircle, Search, Bot, FileText, Upload, ShoppingBag, Users, Heart, Smile, Activity, Code, Calendar, ListTodo, Database, Lock } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
@@ -119,6 +119,25 @@ const demos = [
       { value: "Live", label: "Backend API" },
     ],
     link: "/demos/ai-fabric-behavior-signals",
+  },
+  {
+    id: "ai-fabric-tenant-guard",
+    title: "AI Fabric Tenant Guard",
+    description: "Live tenant isolation demo with scoped retrieval, role-aware catalog visibility, guarded actions, and tenant deletion evidence.",
+    icon: Lock,
+    status: "featured" as const,
+    features: [
+      { icon: Shield, label: "Tenant Isolation" },
+      { icon: Search, label: "Scoped Retrieval" },
+      { icon: Users, label: "Role-Aware Catalog" },
+      { icon: Lock, label: "Guarded Actions" },
+    ],
+    stats: [
+      { value: "3", label: "Tenant Contexts" },
+      { value: "6", label: "Knowledge Docs" },
+      { value: "Live", label: "Backend API" },
+    ],
+    link: "/demos/ai-fabric-tenant-guard",
   },
   {
     id: "code-documentation-search",
