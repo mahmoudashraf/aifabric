@@ -37,6 +37,7 @@ const configuredResolverBaseUrl =
 
 const ACCOUNT_RESOLVER_BASE_URL = configuredResolverBaseUrl.replace(/\/$/, "");
 const ACCOUNT_RESOLVER_API_BASE_URL = `${ACCOUNT_RESOLVER_BASE_URL}/api`;
+const DEMO_BUILD_MARKER = "account-resolver-overlay-fix-2026-07-02";
 
 type ApiStatus = "loading" | "connected" | "offline";
 
@@ -940,7 +941,7 @@ const AIFabricAccountResolver = () => {
   const SelectedIcon = selectedVisual.icon;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" data-demo-build={DEMO_BUILD_MARKER}>
       <Navbar />
 
       <main className="pt-24 pb-44">
