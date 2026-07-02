@@ -1229,8 +1229,8 @@ const AIFabricAccountResolver = () => {
       />
 
       <div
-        className={`fixed bottom-0 left-0 right-0 z-40 bg-gradient-to-t from-background via-background/95 to-transparent px-3 pb-4 pt-8 transition-opacity sm:px-4 sm:pb-6 ${
-          isChatExpanded ? "pointer-events-none opacity-0" : "opacity-100"
+        className={`fixed bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background/95 to-transparent px-3 pb-4 pt-8 transition-opacity sm:px-4 sm:pb-6 ${
+          isChatExpanded ? "pointer-events-none z-20 opacity-0" : "z-40 opacity-100"
         }`}
       >
         <div className="mx-auto max-w-4xl space-y-2">
