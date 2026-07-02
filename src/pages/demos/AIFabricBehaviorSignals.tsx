@@ -31,7 +31,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const configuredBehaviorBaseUrl =
   import.meta.env.VITE_BEHAVIOR_SIGNALS_API_URL ||
-  "https://ai-fabric-behavior-signals.46.224.145.148.sslip.io";
+  "https://behavior-churn-signals.46.224.145.148.sslip.io";
 
 const BEHAVIOR_BASE_URL = configuredBehaviorBaseUrl.replace(/\/$/, "");
 const BEHAVIOR_API_URL = `${BEHAVIOR_BASE_URL}/api/behavior-demo`;
