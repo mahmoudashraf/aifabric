@@ -856,43 +856,10 @@ const AIFabricAccountResolver = () => {
   );
 
   const runSelectedScenario = useCallback(() => {
-    if (selectedScenario.id === "ready-account") {
-      startManualAction("inspect_account_readiness");
-      return;
-    }
-    if (selectedScenario.id === "missing-payment") {
-      startManualAction("update_payment_method");
-      return;
-    }
-    if (selectedScenario.id === "missing-address") {
-      startManualAction("update_address");
-      return;
-    }
-    if (selectedScenario.id === "refund-request") {
-      startManualAction("request_refund");
-      return;
-    }
-    startManualAction("inspect_account_readiness");
-  }, [selectedScenario.id, startManualAction]);
+    sendResolverQuery(selectedScenario.suggestedPrompt);
+  }, [selectedScenario.suggestedPrompt, sendResolverQuery]);
 
   const handlePromptClick = (prompt: string) => {
-    const lower = prompt.toLowerCase();
-    if (lower.includes("payment")) {
-      startManualAction("update_payment_method");
-      return;
-    }
-    if (lower.includes("address")) {
-      startManualAction("update_address");
-      return;
-    }
-    if (lower.includes("credit") || lower.includes("refund")) {
-      startManualAction("request_refund");
-      return;
-    }
-    if (lower.includes("inspect") || lower.includes("continue") || lower.includes("blocker")) {
-      startManualAction("inspect_account_readiness");
-      return;
-    }
     sendResolverQuery(prompt);
   };
 
