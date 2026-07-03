@@ -30,6 +30,7 @@ export const ActionResultRenderer = ({
 
     const status = String(item.status).toUpperCase();
     const resolutionType = String(item.resolutionType).toUpperCase();
+    const explanation = typeof item.policyExplanation === "string" ? item.policyExplanation.trim() : "";
     const isCredit = resolutionType === "ACCOUNT_CREDIT";
     const limit = isCredit ? "$100" : "$50";
     const subject = isCredit ? "account-credit" : "refund";
@@ -38,7 +39,7 @@ export const ActionResultRenderer = ({
       return {
         positive: true,
         title: "Policy decision",
-        description: `Auto-approved under the small ${subject} policy (${limit} or less).`,
+        description: explanation || `Auto-approved under the small ${subject} policy (${limit} or less).`,
       };
     }
 
@@ -46,7 +47,7 @@ export const ActionResultRenderer = ({
       return {
         positive: false,
         title: "Policy decision",
-        description: `Routed to review because this ${subject} is above the ${limit} auto-approval limit.`,
+        description: explanation || `Routed to review because this ${subject} is above the ${limit} auto-approval limit.`,
       };
     }
 
