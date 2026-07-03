@@ -841,13 +841,14 @@ const AIFabricAccountResolver = () => {
       setIsChatLoading(true);
 
       try {
-        const responseData = await apiJson<unknown>("/subscriptions/query/actions/execute", {
+        const responseData = await apiJson<unknown>("/subscriptions/query/actions/confirm", {
           method: "POST",
           body: JSON.stringify({
             action: payload.action,
             params: payload.params,
             userId: String(selectedScenario.userId),
             sessionId: sessionIdRef.current,
+            conversationId: conversationIdRef.current,
             confirmed: true,
           }),
         });
@@ -985,6 +986,16 @@ const AIFabricAccountResolver = () => {
       }
 
       const message = `${formatActionName(confirmedPayload.action)} was rejected. No account changes were made.`;
+      apiJson<unknown>("/subscriptions/query/actions/confirm", {
+        method: "POST",
+        body: JSON.stringify({
+          action: confirmedPayload.action,
+          userId: String(selectedScenario.userId),
+          sessionId: sessionIdRef.current,
+          conversationId: conversationIdRef.current,
+          confirmed: false,
+        }),
+      }).catch(() => undefined);
       setChatMessages((previous) => [
         ...previous,
         {
