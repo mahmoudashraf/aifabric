@@ -660,6 +660,7 @@ const AIFabricAccountResolver = () => {
             userId: String(selectedScenario.userId),
             sessionId: sessionIdRef.current,
             conversationId: conversationIdRef.current,
+            mode: "resolver",
             position: "resolver",
           }),
         });
