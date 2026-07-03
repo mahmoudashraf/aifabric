@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle2, Paperclip, Search, Sparkles, Star } from "lucide-react";
+import { AlertTriangle, CheckCircle2, CreditCard, MapPin, Paperclip, ReceiptText, Search, Sparkles, Star } from "lucide-react";
 
 import { formatFieldName, formatFieldValue } from "../utils";
 
@@ -20,6 +20,139 @@ export const ActionResultRenderer = ({
   isAttached?: (itemId: string) => boolean;
 }) => {
   if (!data) return null;
+
+  const isRecord = (value: any): value is Record<string, any> => typeof value === "object" && value !== null && !Array.isArray(value);
+
+  const compactActionName = (action: string) =>
+    action
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase())
+      .trim();
+
+  const firstRecord = (...values: any[]) => values.find(isRecord) || {};
+  const resultRecord = isRecord(data) ? firstRecord(data.result, data.actionResult) : {};
+  const resultData = firstRecord(resultRecord.data, data?.resultData);
+  const readiness = firstRecord(data?.readiness, resultData.readiness, resultRecord.readiness);
+  const params = firstRecord(data?.params, data?.providedParameters);
+  const actionName = typeof data?.action === "string" ? data.action : "";
+  const isResolverAction =
+    Boolean(actionName && ["inspect_account_readiness", "update_payment_method", "update_address", "request_refund"].includes(actionName)) ||
+    typeof readiness.canContinue === "boolean";
+
+  const getActionMessage = () => {
+    if (typeof resultRecord.message === "string" && resultRecord.message.trim()) return resultRecord.message;
+    if (typeof data.message === "string" && data.message.trim()) return data.message;
+    if (actionName) return `${compactActionName(actionName)} completed.`;
+    return "Action completed.";
+  };
+
+  const renderStatusPill = (label: string, positive: boolean) => (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-bold ${
+        positive
+          ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
+          : "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-700 dark:bg-amber-900/30 dark:text-amber-300"
+      }`}
+    >
+      {positive ? <CheckCircle2 className="h-3 w-3" /> : <AlertTriangle className="h-3 w-3" />}
+      {label}
+    </span>
+  );
+
+  const renderSummaryRow = (label: string, value: any) => {
+    if (value === null || value === undefined || value === "") return null;
+    return (
+      <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-900">
+        <div className="text-[10px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</div>
+        <div className="mt-0.5 text-sm font-semibold text-slate-900 dark:text-slate-100">{formatFieldValue(value)}</div>
+      </div>
+    );
+  };
+
+  const renderResolverActionSummary = () => {
+    const canContinue = typeof readiness.canContinue === "boolean" ? readiness.canContinue : undefined;
+    const blockers = Array.isArray(readiness.blockers) ? readiness.blockers : [];
+    const recommendedActions = Array.isArray(readiness.recommendedActions) ? readiness.recommendedActions : [];
+    const last4 = resultData.last4 || params.last4;
+    const verified = typeof resultData.verified === "boolean" ? resultData.verified : undefined;
+    const addressParts = [params.streetAddress, params.city, params.state, params.postalCode, params.country].filter(Boolean);
+    const refundAmount = resultData.amount ?? params.amount;
+    const refundStatus = resultData.status || resultData.refundStatus;
+    const resolutionType = resultData.resolutionType || params.resolutionType;
+
+    const Icon =
+      actionName === "update_payment_method"
+        ? CreditCard
+        : actionName === "update_address"
+          ? MapPin
+          : actionName === "request_refund"
+            ? ReceiptText
+            : CheckCircle2;
+
+    return (
+      <div className="mt-3">
+        <Card
+          className="overflow-hidden border-2 border-emerald-200 bg-white/80 shadow-sm dark:border-emerald-800 dark:bg-slate-900/80"
+          style={{
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+          }}
+        >
+          <CardContent className="p-0">
+            <div className="border-b border-emerald-100 bg-emerald-50 px-4 py-3 dark:border-emerald-800 dark:bg-emerald-900/25">
+              <div className="flex items-start gap-3">
+                <div className="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-white">
+                  <Icon className="h-4 w-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-bold text-emerald-950 dark:text-emerald-100">
+                    {actionName ? compactActionName(actionName) : "Resolver Action"}
+                  </div>
+                  <p className="mt-1 text-sm leading-relaxed text-emerald-900 dark:text-emerald-200">{getActionMessage()}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-3 p-4">
+              <div className="flex flex-wrap gap-2">
+                {renderStatusPill(resultRecord.success === false ? "Needs attention" : "Completed", resultRecord.success !== false)}
+                {canContinue !== undefined && renderStatusPill(canContinue ? "Account ready" : "Still blocked", canContinue)}
+                {verified !== undefined && renderStatusPill(verified ? "Payment verified" : "Payment unverified", verified)}
+              </div>
+
+              <div className="grid gap-2 sm:grid-cols-2">
+                {actionName === "update_payment_method" && renderSummaryRow("Payment method", last4 ? `Card ending in ${last4}` : undefined)}
+                {actionName === "update_address" && renderSummaryRow("Billing address", addressParts.join(", "))}
+                {actionName === "request_refund" && renderSummaryRow("Resolution", resolutionType ? compactActionName(String(resolutionType)) : undefined)}
+                {actionName === "request_refund" &&
+                  renderSummaryRow("Amount", typeof refundAmount === "number" ? `$${refundAmount.toFixed(2)}` : refundAmount)}
+                {actionName === "request_refund" && renderSummaryRow("Status", refundStatus)}
+                {recommendedActions.length > 0 &&
+                  renderSummaryRow("Next resolver action", compactActionName(String(recommendedActions[0])))}
+              </div>
+
+              {blockers.length > 0 ? (
+                <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-900/25 dark:text-amber-100">
+                  <div className="mb-1 flex items-center gap-2 font-bold">
+                    <AlertTriangle className="h-4 w-4" />
+                    Remaining blockers
+                  </div>
+                  <ul className="space-y-1 pl-1">
+                    {blockers.slice(0, 3).map((blocker: any, index: number) => (
+                      <li key={blocker.code || index}>{blocker.message || blocker.code || "Account blocker remains."}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : canContinue ? (
+                <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm font-semibold text-emerald-800 dark:border-emerald-800 dark:bg-emerald-900/25 dark:text-emerald-100">
+                  No remaining blockers. The account can continue.
+                </div>
+              ) : null}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  };
 
   // Check if item looks like a product (has name/title and price or imageUrl) - handle different casing
   const isProductLike = (item: any) => {
@@ -238,6 +371,10 @@ export const ActionResultRenderer = ({
 
   // Handle objects
   if (typeof data === "object" && data !== null) {
+    if (isResolverAction) {
+      return renderResolverActionSummary();
+    }
+
     // Check if object has array-like properties
     const arrayKeys = Object.keys(data).filter((key) => Array.isArray(data[key]));
 
@@ -323,4 +460,3 @@ export const ActionResultRenderer = ({
 
   return <p className="mt-3 text-xs text-muted-foreground">{formatFieldValue(data)}</p>;
 };
-
