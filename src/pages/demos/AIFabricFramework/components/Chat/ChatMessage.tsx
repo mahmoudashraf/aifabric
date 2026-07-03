@@ -67,6 +67,25 @@ function getActionIcon(actionType: string) {
   return Package;
 }
 
+const hasMeaningfulValue = (value: unknown) => {
+  if (value === null || value === undefined) return false;
+  if (typeof value === "string") return value.trim() !== "";
+  if (Array.isArray(value)) return value.length > 0;
+  return true;
+};
+
+const isPublicClarificationParam = (metadata: any, key: string) => {
+  const schemas = metadata?.parameterSchemas;
+  if (!schemas || typeof schemas !== "object") return true;
+  const schema =
+    schemas[key] ||
+    Object.entries(schemas).find(([schemaKey]) => schemaKey.toLowerCase() === key.toLowerCase())?.[1];
+  if (!schema || typeof schema !== "object") return true;
+  if ((schema as any).askUser === false) return false;
+  const visibility = String((schema as any).visibility || "").trim().toUpperCase();
+  return !["INTERNAL", "SECRET", "SYSTEM"].includes(visibility);
+};
+
 // Match max-mode getResultStyles pattern
 function getAiStyles(resultType?: string) {
   switch (resultType) {
@@ -428,17 +447,14 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
               const missingParams: string[] = data?.missingRequiredParameters || [];
               const providedParams: Record<string, any> = data?.providedParameters || {};
               const actionName: string = data?.action || "";
-              const hasForm = missingParams.length > 0 || Object.keys(providedParams).length > 0;
+              const metadata = data?.metadata;
+              const askableMissingParams = missingParams.filter((key) => isPublicClarificationParam(metadata, key));
+              const hasForm = askableMissingParams.length > 0;
 
               // Initialize form values from providedParameters on first render
               const getFormValues = () => {
                 const vals: Record<string, string> = { ...clarificationValues };
-                for (const key of Object.keys(providedParams)) {
-                  if (!(key in vals)) {
-                    vals[key] = providedParams[key] != null && providedParams[key] !== "" ? String(providedParams[key]) : "";
-                  }
-                }
-                for (const key of missingParams) {
+                for (const key of askableMissingParams) {
                   if (!(key in vals)) {
                     vals[key] = providedParams[key] != null && providedParams[key] !== "" ? String(providedParams[key]) : "";
                   }
@@ -447,16 +463,12 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
               };
               const formValues = getFormValues();
 
-              const isMissing = (key: string) => missingParams.includes(key);
+              const isMissing = (key: string) => askableMissingParams.includes(key);
               const hasProvidedValue = (key: string) => providedParams[key] != null && providedParams[key] !== "" && !isMissing(key);
 
-              // All form fields: missing first, then provided
-              const allKeys = [
-                ...missingParams,
-                ...Object.keys(providedParams).filter((k) => !missingParams.includes(k)),
-              ];
+              const allKeys = askableMissingParams;
 
-              const canSubmit = missingParams.every((key) => {
+              const canSubmit = allKeys.every((key) => {
                 const val = clarificationValues[key] ?? formValues[key];
                 return val && val.trim() !== "";
               });
@@ -467,7 +479,9 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
 
               const handleSubmit = () => {
                 if (!canSubmit || clarificationSubmitted || !onClarificationSubmit) return;
-                const finalValues: Record<string, any> = {};
+                const finalValues: Record<string, any> = Object.fromEntries(
+                  Object.entries(providedParams).filter(([, value]) => hasMeaningfulValue(value)),
+                );
                 for (const key of allKeys) {
                   const val = clarificationValues[key] ?? formValues[key];
                   // Try to preserve original types (number)
