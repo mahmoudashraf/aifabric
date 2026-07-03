@@ -79,6 +79,30 @@ export const ActionResultRenderer = ({
     const refundAmount = resultData.amount ?? params.amount;
     const refundStatus = resultData.status || resultData.refundStatus;
     const resolutionType = resultData.resolutionType || params.resolutionType;
+    const refundPolicyDecision = (() => {
+      if (actionName !== "request_refund" || !refundStatus || !resolutionType) return null;
+      const status = String(refundStatus).toUpperCase();
+      const type = String(resolutionType).toUpperCase();
+      const isCredit = type === "ACCOUNT_CREDIT";
+      const limit = isCredit ? "$100" : "$50";
+      const subject = isCredit ? "account-credit" : "refund";
+
+      if (status === "APPROVED") {
+        return {
+          positive: true,
+          text: `Auto-approved under the small ${subject} policy (${limit} or less).`,
+        };
+      }
+
+      if (status === "PENDING_REVIEW") {
+        return {
+          positive: false,
+          text: `Routed to review because this ${subject} is above the ${limit} auto-approval limit.`,
+        };
+      }
+
+      return null;
+    })();
 
     const Icon =
       actionName === "update_payment_method"
@@ -129,6 +153,22 @@ export const ActionResultRenderer = ({
                 {recommendedActions.length > 0 &&
                   renderSummaryRow("Next resolver action", compactActionName(String(recommendedActions[0])))}
               </div>
+
+              {refundPolicyDecision && (
+                <div
+                  className={`rounded-lg border p-3 text-sm font-semibold ${
+                    refundPolicyDecision.positive
+                      ? "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-900/25 dark:text-emerald-100"
+                      : "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-800 dark:bg-amber-900/25 dark:text-amber-100"
+                  }`}
+                >
+                  <div className="mb-1 flex items-center gap-2">
+                    {refundPolicyDecision.positive ? <CheckCircle2 className="h-4 w-4" /> : <AlertTriangle className="h-4 w-4" />}
+                    Policy decision
+                  </div>
+                  <p className="text-sm font-medium leading-relaxed">{refundPolicyDecision.text}</p>
+                </div>
+              )}
 
               {blockers.length > 0 ? (
                 <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-900/25 dark:text-amber-100">

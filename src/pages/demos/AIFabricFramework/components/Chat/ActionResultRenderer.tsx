@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { CheckCircle2, ChevronDown, Paperclip, Search, Sparkles, Star } from "lucide-react";
+import { AlertTriangle, CheckCircle2, ChevronDown, Paperclip, Search, Sparkles, Star } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,6 +23,57 @@ export const ActionResultRenderer = ({
   const handleExpand = onExpand ?? ((count: number) => setLocalExpandedCount(count));
 
   if (!data) return null;
+
+  const refundPolicyDecision = (item: any) => {
+    if (typeof item !== "object" || item === null || Array.isArray(item)) return null;
+    if (!item.status || !item.resolutionType || item.amount === undefined || !item.refundRequestId) return null;
+
+    const status = String(item.status).toUpperCase();
+    const resolutionType = String(item.resolutionType).toUpperCase();
+    const isCredit = resolutionType === "ACCOUNT_CREDIT";
+    const limit = isCredit ? "$100" : "$50";
+    const subject = isCredit ? "account-credit" : "refund";
+
+    if (status === "APPROVED") {
+      return {
+        positive: true,
+        title: "Policy decision",
+        description: `Auto-approved under the small ${subject} policy (${limit} or less).`,
+      };
+    }
+
+    if (status === "PENDING_REVIEW") {
+      return {
+        positive: false,
+        title: "Policy decision",
+        description: `Routed to review because this ${subject} is above the ${limit} auto-approval limit.`,
+      };
+    }
+
+    return null;
+  };
+
+  const renderRefundPolicyDecision = (item: any) => {
+    const decision = refundPolicyDecision(item);
+    if (!decision) return null;
+    const Icon = decision.positive ? CheckCircle2 : AlertTriangle;
+
+    return (
+      <div
+        className={`mt-3 rounded-lg border p-3 text-xs ${
+          decision.positive
+            ? "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-900/25 dark:text-emerald-100"
+            : "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-800 dark:bg-amber-900/25 dark:text-amber-100"
+        }`}
+      >
+        <div className="mb-1 flex items-center gap-2 font-bold">
+          <Icon className="h-3.5 w-3.5" />
+          {decision.title}
+        </div>
+        <p className="leading-relaxed">{decision.description}</p>
+      </div>
+    );
+  };
 
   // Check if item looks like a product (has name/title and price or imageUrl)
   const isProductLike = (item: any) => {
@@ -147,6 +198,7 @@ export const ActionResultRenderer = ({
                     </span>
                   </div>
                 ))}
+              {renderRefundPolicyDecision(item)}
             </div>
           ) : (
             <p className="text-foreground">{formatFieldValue(item)}</p>
@@ -278,6 +330,7 @@ export const ActionResultRenderer = ({
                   <span className="text-foreground text-right flex-1 font-medium">{formatFieldValue(value)}</span>
                 </div>
               ))}
+              {renderRefundPolicyDecision(data)}
             </div>
           </CardContent>
         </Card>
