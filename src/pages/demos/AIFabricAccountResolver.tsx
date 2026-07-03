@@ -37,7 +37,7 @@ const configuredResolverBaseUrl =
 
 const ACCOUNT_RESOLVER_BASE_URL = configuredResolverBaseUrl.replace(/\/$/, "");
 const ACCOUNT_RESOLVER_API_BASE_URL = `${ACCOUNT_RESOLVER_BASE_URL}/api`;
-const DEMO_BUILD_MARKER = "account-resolver-overlay-fix-2026-07-02";
+const DEMO_BUILD_MARKER = "account-resolver-confirm-payload-2026-07-03";
 
 type ApiStatus = "loading" | "connected" | "offline";
 
@@ -103,6 +103,11 @@ interface ManualResolverAction {
   subscriptionId?: string;
   params: JsonRecord;
   requiresConfirmation: boolean;
+}
+
+interface ConfirmedActionPayload {
+  action: string;
+  params: JsonRecord;
 }
 
 function asRecord(value: unknown): JsonRecord {
@@ -225,6 +230,19 @@ function createChatResult(type: ResultType, message: string, data?: unknown, suc
       message,
       data,
     },
+  };
+}
+
+function confirmedActionPayloadFromData(data: unknown): ConfirmedActionPayload | null {
+  const record = asRecord(data);
+  const action = asString(record.action);
+  if (!action) return null;
+
+  const providedParameters = asRecord(record.providedParameters);
+  const legacyParams = asRecord(record.params);
+  return {
+    action,
+    params: Object.keys(providedParameters).length > 0 ? providedParameters : legacyParams,
   };
 }
 
@@ -816,6 +834,78 @@ const AIFabricAccountResolver = () => {
     [policies, refreshReadiness, selectedScenario.userId, toast],
   );
 
+  const executeConfirmedActionPayload = useCallback(
+    async (payload: ConfirmedActionPayload) => {
+      setPendingManualAction(null);
+      setIsChatExpanded(true);
+      setIsChatLoading(true);
+
+      try {
+        const responseData = await apiJson<unknown>("/subscriptions/query/actions/execute", {
+          method: "POST",
+          body: JSON.stringify({
+            action: payload.action,
+            params: payload.params,
+            userId: String(selectedScenario.userId),
+            sessionId: sessionIdRef.current,
+            confirmed: true,
+          }),
+        });
+
+        const responseRecord = asRecord(responseData);
+        const actionData = asRecord(responseRecord.data);
+        const updatedReadiness = actionData.readiness as AccountReadiness | undefined;
+        if (updatedReadiness) {
+          setReadiness(updatedReadiness);
+        } else {
+          await refreshReadiness(selectedScenario.userId, true);
+        }
+
+        const success = responseRecord.success !== false;
+        const message = asString(responseRecord.message, `${formatActionName(payload.action)} completed.`);
+        const resultType: ResultType = success ? "ACTION_EXECUTED" : "ERROR";
+        const msgId = `${Date.now()}-confirmed-ai`;
+        const aiMessage: ChatMessage = {
+          id: msgId,
+          type: "ai",
+          content: message,
+          timestamp: new Date().toISOString(),
+          resultType,
+          result: createChatResult(resultType, message, {
+            action: payload.action,
+            params: payload.params,
+            result: responseData,
+            readiness: updatedReadiness,
+          }, success),
+          documents: buildDocuments({ data: { readiness: updatedReadiness } }, msgId, policies),
+        };
+
+        setChatMessages((previous) => [...previous, aiMessage]);
+        setApiStatus("connected");
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "The confirmed resolver action failed.";
+        const aiMessage: ChatMessage = {
+          id: `${Date.now()}-confirmed-error`,
+          type: "ai",
+          content: message,
+          timestamp: new Date().toISOString(),
+          resultType: "ERROR",
+          result: createChatResult("ERROR", message, undefined, false),
+        };
+
+        setChatMessages((previous) => [...previous, aiMessage]);
+        toast({
+          title: "Resolver action failed",
+          description: message,
+          variant: "destructive",
+        });
+      } finally {
+        setIsChatLoading(false);
+      }
+    },
+    [policies, refreshReadiness, selectedScenario.userId, toast],
+  );
+
   const startManualAction = useCallback(
     async (actionName: string) => {
       const manualAction = await manualActionFor(actionName);
@@ -864,7 +954,7 @@ const AIFabricAccountResolver = () => {
     sendResolverQuery(prompt);
   };
 
-  const handleConfirmation = (action: "confirm" | "deny") => {
+  const handleConfirmation = (action: "confirm" | "deny", data?: unknown) => {
     if (pendingManualAction) {
       if (action === "confirm") {
         executeManualAction(pendingManualAction);
@@ -882,6 +972,28 @@ const AIFabricAccountResolver = () => {
           timestamp: new Date().toISOString(),
           resultType: "ACTION_DENIED",
           result: createChatResult("ACTION_DENIED", message, { action: pendingManualAction.name }, false),
+        },
+      ]);
+      return;
+    }
+
+    const confirmedPayload = confirmedActionPayloadFromData(data);
+    if (confirmedPayload) {
+      if (action === "confirm") {
+        executeConfirmedActionPayload(confirmedPayload);
+        return;
+      }
+
+      const message = `${formatActionName(confirmedPayload.action)} was rejected. No account changes were made.`;
+      setChatMessages((previous) => [
+        ...previous,
+        {
+          id: `${Date.now()}-ai-denied`,
+          type: "ai",
+          content: message,
+          timestamp: new Date().toISOString(),
+          resultType: "ACTION_DENIED",
+          result: createChatResult("ACTION_DENIED", message, { action: confirmedPayload.action }, false),
         },
       ]);
       return;
