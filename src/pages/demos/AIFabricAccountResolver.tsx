@@ -37,7 +37,9 @@ const configuredResolverBaseUrl =
 
 const ACCOUNT_RESOLVER_BASE_URL = configuredResolverBaseUrl.replace(/\/$/, "");
 const ACCOUNT_RESOLVER_API_BASE_URL = `${ACCOUNT_RESOLVER_BASE_URL}/api`;
-const DEMO_BUILD_MARKER = "account-resolver-confirm-payload-2026-07-03";
+const DEMO_BUILD_MARKER = "account-resolver-chat-history-2026-07-03";
+const MAX_CHAT_HISTORY_MESSAGES = 6;
+const MAX_CHAT_HISTORY_MESSAGE_CHARS = 600;
 
 type ApiStatus = "loading" | "connected" | "offline";
 
@@ -108,6 +110,11 @@ interface ManualResolverAction {
 interface ConfirmedActionPayload {
   action: string;
   params: JsonRecord;
+}
+
+interface ResolverChatHistoryMessage {
+  role: "user" | "assistant";
+  content: string;
 }
 
 function asRecord(value: unknown): JsonRecord {
@@ -254,6 +261,47 @@ function normalizeMessage(value: unknown): string {
   } catch {
     return String(value);
   }
+}
+
+function compactText(value: string, maxChars = MAX_CHAT_HISTORY_MESSAGE_CHARS): string {
+  const compacted = value.replace(/\s+/g, " ").trim();
+  if (compacted.length <= maxChars) return compacted;
+  return `${compacted.slice(0, Math.max(0, maxChars - 3))}...`;
+}
+
+function messageTextForHistory(message: ChatMessage): string {
+  const parts = [message.content];
+  const result = message.result;
+
+  if (result?.smartSuggestion?.query) {
+    parts.push(`Smart suggestion: ${result.smartSuggestion.query}`);
+  }
+
+  const nextStepQueries = (result?.nextSteps || [])
+    .map((step) => step.query)
+    .filter(Boolean)
+    .slice(0, 2);
+  if (nextStepQueries.length > 0) {
+    parts.push(`Next steps: ${nextStepQueries.join(" | ")}`);
+  }
+
+  if (message.resultType === "CONFIRMATION_REQUIRED") {
+    const payload = asRecord(result?.sanitizedPayload.data);
+    const action = asString(payload.action);
+    parts.push(`Pending confirmation${action ? ` for ${action}` : ""}.`);
+  }
+
+  return compactText(parts.filter(Boolean).join("\n"));
+}
+
+function buildResolverChatHistory(messages: ChatMessage[]): ResolverChatHistoryMessage[] {
+  return messages
+    .slice(-MAX_CHAT_HISTORY_MESSAGES)
+    .map((message) => ({
+      role: message.type === "user" ? "user" : "assistant",
+      content: messageTextForHistory(message),
+    }))
+    .filter((message) => message.content.length > 0);
 }
 
 async function apiJson<T>(path: string, init?: RequestInit): Promise<T> {
@@ -658,6 +706,7 @@ const AIFabricAccountResolver = () => {
       const queryToSend = (queryOverride || chatQuery).trim();
       if (!queryToSend || isChatLoading) return;
 
+      const historyMessages = buildResolverChatHistory(chatMessages);
       const userMessage: ChatMessage = {
         id: `${Date.now()}-user`,
         type: "user",
@@ -680,6 +729,7 @@ const AIFabricAccountResolver = () => {
             conversationId: conversationIdRef.current,
             mode: "resolver",
             position: "resolver",
+            historyMessages: historyMessages.length > 0 ? historyMessages : undefined,
           }),
         });
 
@@ -733,7 +783,7 @@ const AIFabricAccountResolver = () => {
         setIsChatLoading(false);
       }
     },
-    [chatQuery, isChatLoading, policies, refreshReadiness, selectedScenario.userId, toast],
+    [chatMessages, chatQuery, isChatLoading, policies, refreshReadiness, selectedScenario.userId, toast],
   );
 
   const executeManualAction = useCallback(
