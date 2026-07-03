@@ -79,7 +79,6 @@ export const ActionResultRenderer = ({
     const refundAmount = resultData.amount ?? params.amount;
     const refundStatus = resultData.status || resultData.refundStatus;
     const resolutionType = resultData.resolutionType || params.resolutionType;
-    const policyExplanation = typeof resultData.policyExplanation === "string" ? resultData.policyExplanation.trim() : "";
     const refundPolicyDecision = (() => {
       if (actionName !== "request_refund" || !refundStatus || !resolutionType) return null;
       const status = String(refundStatus).toUpperCase();
@@ -91,14 +90,14 @@ export const ActionResultRenderer = ({
       if (status === "APPROVED") {
         return {
           positive: true,
-          text: policyExplanation || `Auto-approved under the small ${subject} policy (${limit} or less).`,
+          text: `Auto-approved under the small ${subject} policy (${limit} or less).`,
         };
       }
 
       if (status === "PENDING_REVIEW") {
         return {
           positive: false,
-          text: policyExplanation || `Routed to review because this ${subject} is above the ${limit} auto-approval limit.`,
+          text: `Routed to review because this ${subject} is above the ${limit} auto-approval limit.`,
         };
       }
 
