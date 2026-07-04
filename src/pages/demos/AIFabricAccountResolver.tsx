@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   Sparkles,
   UserCheck,
+  X,
   XCircle,
   Zap,
 } from "lucide-react";
@@ -512,6 +513,7 @@ const AIFabricAccountResolver = () => {
   const [chatQuery, setChatQuery] = useState(FALLBACK_SCENARIOS[1].suggestedPrompt);
   const [isChatExpanded, setIsChatExpanded] = useState(false);
   const [isChatLoading, setIsChatLoading] = useState(false);
+  const [showPromptSuggestions, setShowPromptSuggestions] = useState(true);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLTextAreaElement>(null);
@@ -1140,18 +1142,31 @@ const AIFabricAccountResolver = () => {
         className="fixed bottom-0 left-0 right-0 z-40 bg-gradient-to-t from-background via-background/95 to-transparent px-3 pb-4 pt-8 sm:px-4 sm:pb-6"
       >
         <div className="mx-auto max-w-4xl space-y-2">
-          <div className="flex gap-2 overflow-x-auto pb-1">
-            {quickPrompts.map((prompt) => (
+          {showPromptSuggestions && (
+            <div className="flex items-center gap-2">
+              <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {quickPrompts.map((prompt) => (
+                  <button
+                    key={prompt}
+                    onClick={() => handlePromptClick(prompt)}
+                    disabled={isChatLoading}
+                    className="shrink-0 rounded-full border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground disabled:opacity-50"
+                  >
+                    {prompt}
+                  </button>
+                ))}
+              </div>
               <button
-                key={prompt}
-                onClick={() => handlePromptClick(prompt)}
-                disabled={isChatLoading}
-                className="shrink-0 rounded-full border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground disabled:opacity-50"
+                type="button"
+                aria-label="Hide prompt suggestions"
+                title="Hide prompt suggestions"
+                onClick={() => setShowPromptSuggestions(false)}
+                className="mb-1 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border bg-background text-muted-foreground shadow-sm transition-colors hover:border-primary/40 hover:text-foreground"
               >
-                {prompt}
+                <X className="h-4 w-4" />
               </button>
-            ))}
-          </div>
+            </div>
+          )}
 
           <div className="flex items-center gap-2 md:gap-3">
             <div className="relative flex-1">
