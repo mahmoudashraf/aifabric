@@ -681,8 +681,17 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
                 transition={{ delay: 0.2 }}
                 className="mt-4"
               >
-                <div className="rounded-xl border-2 border-amber-200 dark:border-amber-700 bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 overflow-hidden">
-                  <div className="px-3 py-2 bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-800/30 dark:to-yellow-800/30 flex items-center gap-2">
+                <div className="relative rounded-xl border-2 border-amber-200 bg-gradient-to-br from-amber-50 to-yellow-50 shadow-sm dark:border-amber-700 dark:from-amber-900/20 dark:to-yellow-900/20">
+                  <button
+                    type="button"
+                    aria-label="Dismiss smart suggestion"
+                    title="Dismiss smart suggestion"
+                    onClick={() => setIsSmartSuggestionDismissed(true)}
+                    className="absolute right-2 top-2 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-amber-400 bg-white text-amber-950 shadow-md transition-colors hover:bg-amber-100 dark:border-amber-500 dark:bg-amber-950 dark:text-amber-50 dark:hover:bg-amber-900"
+                  >
+                    <X className="h-[18px] w-[18px] stroke-[3]" />
+                  </button>
+                  <div className="flex items-center gap-2 rounded-t-xl bg-gradient-to-r from-amber-100 to-yellow-100 px-3 py-2 pr-12 dark:from-amber-800/30 dark:to-yellow-800/30">
                     <div className="p-1 rounded-md bg-amber-500/20">
                       <Lightbulb className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
                     </div>
@@ -690,15 +699,6 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
                     <span className="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300">
                       {Math.round((smartSuggestion!.confidence ?? 0) * 100)}% confidence
                     </span>
-                    <button
-                      type="button"
-                      aria-label="Dismiss smart suggestion"
-                      title="Dismiss smart suggestion"
-                      onClick={() => setIsSmartSuggestionDismissed(true)}
-                      className="ml-1 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-amber-300 bg-white/90 text-amber-900 shadow-sm transition-colors hover:bg-amber-100 hover:text-amber-950 dark:border-amber-600 dark:bg-amber-950/80 dark:text-amber-100 dark:hover:bg-amber-900"
-                    >
-                      <X className="h-4 w-4 stroke-[2.5]" />
-                    </button>
                   </div>
                   <div className="p-3 space-y-2">
                     {smartSuggestion!.query && (
