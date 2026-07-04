@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { MaxModeWidget } from "@/lib/max-mode-widget/max-mode-widget.esm.js";
 import "@/lib/max-mode-widget/style.css";
 import { API_AUTH_HEADERS, API_BASE_URL, CRUD_API_BASE_URL } from "@/pages/demos/AIFabricFramework/constants";
+import { AI_SHOPPING_EXPERIENCE_ROUTE } from "@/pages/demos/AIFabricFramework/routes";
 
 const MaxAIMode = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -14,7 +15,7 @@ const MaxAIMode = () => {
 
   const handleClose = () => {
     setIsOpen(false);
-    navigate("/demos/ai-fabric-framework");
+    navigate(AI_SHOPPING_EXPERIENCE_ROUTE);
   };
 
   return (

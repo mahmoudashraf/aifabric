@@ -16,6 +16,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { Product, ProductFormData } from "../../types";
+import { shoppingProductRoute } from "../../routes";
 
 interface ProductsTabProps {
   products: Product[];
@@ -192,7 +193,7 @@ function ProductCard({
               size="sm"
               onClick={(e) => {
                 e.stopPropagation();
-                navigate(`/demos/ai-fabric-framework/product/${product.id}`);
+                navigate(shoppingProductRoute(product.id));
               }}
               className="gap-1 bg-background/90 hover:bg-background border border-primary/30 shadow-lg"
               title="View Details"

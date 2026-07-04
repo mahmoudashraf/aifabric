@@ -1,16 +1,17 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, CreditCard, MessageSquare, TrendingUp, Shield, Zap, HelpCircle, Search, Bot, FileText, Upload, ShoppingBag, Users, Heart, Smile, Activity, Code, Calendar, ListTodo, Database, Lock } from "lucide-react";
+import { ArrowRight, Sparkles, CreditCard, MessageSquare, TrendingUp, Shield, Zap, HelpCircle, Search, Bot, FileText, Upload, ShoppingBag, Users, Heart, Smile, Activity, Code, Calendar, ListTodo, Lock } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
+import { AI_SHOPPING_EXPERIENCE_ROUTE } from "./demos/AIFabricFramework/routes";
 
 const demos = [
   {
-    id: "ai-fabric-framework",
-    title: "AI Fabric Framework - Live API",
-    description: "Complete AI-powered framework demonstration with real API endpoints - product management, semantic search, conversational AI, and orchestrated chat experiences.",
-    icon: Database,
+    id: "ai-shopping-experience",
+    title: "AI Shopping Experience",
+    description: "Live AI Fabric commerce demo with product management, semantic search, conversational shopping, cart actions, and orchestrated chat experiences.",
+    icon: ShoppingBag,
     status: "featured" as const,
     features: [
       { icon: Search, label: "Semantic Search" },
@@ -23,7 +24,7 @@ const demos = [
       { value: "99.9%", label: "API Uptime" },
       { value: "<100ms", label: "Response Time" },
     ],
-    link: "/demos/ai-fabric-framework",
+    link: AI_SHOPPING_EXPERIENCE_ROUTE,
   },
   {
     id: "ai-fabric-account-resolver",

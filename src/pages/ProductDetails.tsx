@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, Star, ShoppingCart, Loader2, Package, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { CRUD_API_BASE_URL } from "@/pages/demos/AIFabricFramework/constants";
+import {
+  AI_SHOPPING_EXPERIENCE_ROUTE,
+  LEGACY_AI_FABRIC_FRAMEWORK_ROUTE,
+} from "@/pages/demos/AIFabricFramework/routes";
 
 interface Product {
   id: string;
@@ -34,7 +38,11 @@ interface Review {
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+  const productsRoute = location.pathname.startsWith(LEGACY_AI_FABRIC_FRAMEWORK_ROUTE)
+    ? LEGACY_AI_FABRIC_FRAMEWORK_ROUTE
+    : AI_SHOPPING_EXPERIENCE_ROUTE;
 
   const [product, setProduct] = useState<Product | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -125,7 +133,7 @@ export default function ProductDetails() {
               <p className="text-muted-foreground mb-4">
                 The product you're looking for doesn't exist.
               </p>
-              <Button onClick={() => navigate("/demos/ai-fabric-framework")}>
+              <Button onClick={() => navigate(productsRoute)}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Products
               </Button>
@@ -147,7 +155,7 @@ export default function ProductDetails() {
         <div className="mb-6">
           <Button
             variant="ghost"
-            onClick={() => navigate("/demos/ai-fabric-framework")}
+            onClick={() => navigate(productsRoute)}
             className="mb-4 -ml-2"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />

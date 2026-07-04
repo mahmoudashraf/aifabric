@@ -24,6 +24,8 @@ import {
 } from "./components";
 import { API_AUTH_HEADERS, API_BASE_URL, CRUD_API_BASE_URL } from "./constants";
 
+const AI_SHOPPING_EXPERIENCE_BUILD_MARKER = "ai-shopping-experience-route-2026-07-04";
+
 export default function AIFabricFramework() {
   const [isWidgetOpen, setIsWidgetOpen] = useState(false);
 
@@ -52,7 +54,10 @@ export default function AIFabricFramework() {
   }, [chat.chatMessages]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+    <div
+      className="min-h-screen bg-gradient-to-b from-background to-muted/20"
+      data-demo-build={AI_SHOPPING_EXPERIENCE_BUILD_MARKER}
+    >
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 pb-[180px] sm:pb-32">
         {/* Header with migration controls */}
         <Header
