@@ -25,6 +25,7 @@ import {
   ShoppingCart,
   Star,
   UserCheck,
+  X,
   XCircle,
   Zap,
 } from "lucide-react";
@@ -185,6 +186,7 @@ interface ChatMessageProps {
 
 export function ChatMessage({ message, onConfirmation, onResendAction, onNextStepClick, onClarificationSubmit }: ChatMessageProps) {
   const [isSuggestionExpanded, setIsSuggestionExpanded] = useState(false);
+  const [isSmartSuggestionDismissed, setIsSmartSuggestionDismissed] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
   const [clarificationValues, setClarificationValues] = useState<Record<string, string>>({});
   const [clarificationEditingField, setClarificationEditingField] = useState<string | null>(null);
@@ -291,7 +293,11 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
   const content = normalizeContent(message.content);
   const smartSuggestion = message.result?.smartSuggestion;
   const nextSteps = message.result?.nextSteps;
-  const hasSmartSuggestion = smartSuggestion && (smartSuggestion.response || smartSuggestion.query || (smartSuggestion.documents && smartSuggestion.documents.length > 0));
+  const hasSmartSuggestion = !isSmartSuggestionDismissed && smartSuggestion && (
+    smartSuggestion.response ||
+    smartSuggestion.query ||
+    (smartSuggestion.documents && smartSuggestion.documents.length > 0)
+  );
 
   return (
     <>
@@ -684,6 +690,14 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
                     <span className="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300">
                       {Math.round((smartSuggestion!.confidence ?? 0) * 100)}% confidence
                     </span>
+                    <button
+                      type="button"
+                      aria-label="Dismiss smart suggestion"
+                      onClick={() => setIsSmartSuggestionDismissed(true)}
+                      className="ml-1 rounded-md p-1 text-amber-700 transition-colors hover:bg-amber-500/20 hover:text-amber-900 dark:text-amber-300 dark:hover:text-amber-100"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
                   </div>
                   <div className="p-3 space-y-2">
                     {smartSuggestion!.query && (
