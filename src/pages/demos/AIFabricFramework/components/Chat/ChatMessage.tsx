@@ -693,10 +693,11 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
                     <button
                       type="button"
                       aria-label="Dismiss smart suggestion"
+                      title="Dismiss smart suggestion"
                       onClick={() => setIsSmartSuggestionDismissed(true)}
-                      className="ml-1 rounded-md p-1 text-amber-700 transition-colors hover:bg-amber-500/20 hover:text-amber-900 dark:text-amber-300 dark:hover:text-amber-100"
+                      className="ml-1 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border border-amber-300 bg-white/90 text-amber-900 shadow-sm transition-colors hover:bg-amber-100 hover:text-amber-950 dark:border-amber-600 dark:bg-amber-950/80 dark:text-amber-100 dark:hover:bg-amber-900"
                     >
-                      <X className="h-3.5 w-3.5" />
+                      <X className="h-4 w-4 stroke-[2.5]" />
                     </button>
                   </div>
                   <div className="p-3 space-y-2">
