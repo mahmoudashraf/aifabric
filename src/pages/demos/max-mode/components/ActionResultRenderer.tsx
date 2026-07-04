@@ -33,10 +33,12 @@ export const ActionResultRenderer = ({
   const resultRecord = isRecord(data) ? firstRecord(data.result, data.actionResult) : {};
   const resultData = firstRecord(resultRecord.data, data?.resultData);
   const readiness = firstRecord(data?.readiness, resultData.readiness, resultRecord.readiness);
+  const accountProfile = firstRecord(data?.accountProfile, resultData.accountProfile, resultRecord.accountProfile);
   const params = firstRecord(data?.params, data?.providedParameters);
   const actionName = typeof data?.action === "string" ? data.action : "";
   const isResolverAction =
-    Boolean(actionName && ["inspect_account_readiness", "update_payment_method", "update_address", "request_refund"].includes(actionName)) ||
+    Boolean(actionName && ["get_account_profile", "update_payment_method", "update_address", "request_refund"].includes(actionName)) ||
+    Object.keys(accountProfile).length > 0 ||
     typeof readiness.canContinue === "boolean";
 
   const getActionMessage = () => {
@@ -79,6 +81,9 @@ export const ActionResultRenderer = ({
     const refundAmount = resultData.amount ?? params.amount;
     const refundStatus = resultData.status || resultData.refundStatus;
     const resolutionType = resultData.resolutionType || params.resolutionType;
+    const subscription = firstRecord(accountProfile.subscription);
+    const paymentMethod = firstRecord(accountProfile.paymentMethod);
+    const billingAddress = firstRecord(accountProfile.billingAddress);
 
     const Icon =
       actionName === "update_payment_method"
@@ -87,6 +92,8 @@ export const ActionResultRenderer = ({
           ? MapPin
           : actionName === "request_refund"
             ? ReceiptText
+            : actionName === "get_account_profile"
+              ? Search
             : CheckCircle2;
 
     return (
@@ -126,6 +133,25 @@ export const ActionResultRenderer = ({
                 {actionName === "request_refund" &&
                   renderSummaryRow("Amount", typeof refundAmount === "number" ? `$${refundAmount.toFixed(2)}` : refundAmount)}
                 {actionName === "request_refund" && renderSummaryRow("Status", refundStatus)}
+                {actionName === "get_account_profile" && renderSummaryRow("Subscription", subscription.status)}
+                {actionName === "get_account_profile" &&
+                  renderSummaryRow(
+                    "Payment method",
+                    paymentMethod.present
+                      ? paymentMethod.verified
+                        ? "Verified"
+                        : "Unverified"
+                      : "Missing",
+                  )}
+                {actionName === "get_account_profile" &&
+                  renderSummaryRow(
+                    "Billing address",
+                    billingAddress.present
+                      ? billingAddress.validated
+                        ? "Validated"
+                        : "Unvalidated"
+                      : "Missing",
+                  )}
                 {recommendedActions.length > 0 &&
                   renderSummaryRow("Next resolver action", compactActionName(String(recommendedActions[0])))}
               </div>

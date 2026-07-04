@@ -37,7 +37,7 @@ const configuredResolverBaseUrl =
 
 const ACCOUNT_RESOLVER_BASE_URL = configuredResolverBaseUrl.replace(/\/$/, "");
 const ACCOUNT_RESOLVER_API_BASE_URL = `${ACCOUNT_RESOLVER_BASE_URL}/api`;
-const DEMO_BUILD_MARKER = "account-resolver-confirm-through-chat-2026-07-03";
+const DEMO_BUILD_MARKER = "account-resolver-profile-policy-reasoning-2026-07-04";
 const MAX_CHAT_HISTORY_MESSAGES = 6;
 const MAX_CHAT_HISTORY_MESSAGE_CHARS = 600;
 
@@ -81,7 +81,7 @@ interface AccountReadiness {
 
 type JsonRecord = Record<string, unknown>;
 type ResolverActionName =
-  | "inspect_account_readiness"
+  | "get_account_profile"
   | "update_payment_method"
   | "update_address"
   | "request_refund"
@@ -219,7 +219,7 @@ function formatActionName(action: string) {
 
 function resolverActionPrompt(action: string): string {
   const prompts: Record<ResolverActionName, string> = {
-    inspect_account_readiness: "Inspect this account readiness and explain every blocker.",
+    get_account_profile: "Review my account profile and the account policies, then explain any blockers and the safest next step.",
     update_payment_method: "I want to update my payment method with my Visa ending 4242.",
     update_address: "I want to update my billing address.",
     request_refund: "Create a $25 account credit for the billing issue.",
@@ -449,8 +449,8 @@ const AIFabricAccountResolver = () => {
   const quickPrompts = useMemo(() => {
     const scenarioPrompt = selectedScenario.suggestedPrompt;
     const common = [
-      "Inspect this account readiness and explain every blocker.",
-      "Resolve the blocker using the safest available action.",
+      "Review my account profile and the account policies, then explain any blockers and the safest next step.",
+      "Use my account profile and policies to resolve the blocker using the safest available action.",
       "Can this user continue using the app and place an order?",
     ];
 
@@ -467,7 +467,6 @@ const AIFabricAccountResolver = () => {
 
   const readinessStats = useMemo(() => {
     const blockers = readiness?.blockers.length ?? 0;
-    const actions = readiness?.recommendedActions.length ?? 0;
     return [
       {
         label: "Can continue",
@@ -480,12 +479,12 @@ const AIFabricAccountResolver = () => {
         tone: blockers === 0 ? "text-emerald-700" : "text-amber-700",
       },
       {
-        label: "Actions",
-        value: String(actions),
-        tone: actions === 0 ? "text-slate-700" : "text-blue-700",
+        label: "Policies",
+        value: String(policies.length),
+        tone: policies.length === 0 ? "text-slate-700" : "text-blue-700",
       },
     ];
-  }, [readiness]);
+  }, [policies.length, readiness]);
 
   const refreshReadiness = useCallback(
     async (userId: number, silent = false) => {
@@ -737,7 +736,7 @@ const AIFabricAccountResolver = () => {
               </Badge>
               <h1 className="text-3xl font-bold tracking-normal md:text-4xl">AI Fabric Account Resolver</h1>
               <p className="mt-2 text-muted-foreground">
-                Resolve blocked accounts with policy-aware readiness checks, confirmed actions, and live natural-language orchestration.
+                Resolve blocked accounts with profile-aware policy reasoning, confirmed actions, and live natural-language orchestration.
               </p>
             </div>
 
@@ -755,7 +754,7 @@ const AIFabricAccountResolver = () => {
               <Button
                 variant="outline"
                 size="sm"
-                    onClick={() => seedDemo(selectedScenario)}
+                onClick={() => seedDemo(selectedScenario)}
                 disabled={isSeeding}
                 className="gap-2"
               >
@@ -915,18 +914,29 @@ const AIFabricAccountResolver = () => {
                 <div className="rounded-lg border bg-card p-4">
                   <div className="mb-3 flex items-center gap-2">
                     <Zap className="h-4 w-4 text-blue-600" />
-                    <h3 className="text-sm font-bold">Resolver Actions</h3>
+                    <h3 className="text-sm font-bold">AI Resolution</h3>
                   </div>
 
                   <div className="space-y-2">
-                    {(readiness?.recommendedActions.length ? readiness.recommendedActions : ["inspect_account_readiness"]).map((action) => (
+                    {[
+                      {
+                        key: "profile-review",
+                        label: "Review Account Profile",
+                        prompt: resolverActionPrompt("get_account_profile"),
+                      },
+                      {
+                        key: "safe-resolution",
+                        label: "Resolve Safest Next Step",
+                        prompt: "Use my account profile and policies to identify the blocker and start the safest available resolution.",
+                      },
+                    ].map((item) => (
                       <button
-                        key={action}
-                        onClick={() => sendResolverQuery(resolverActionPrompt(action))}
+                        key={item.key}
+                        onClick={() => sendResolverQuery(item.prompt)}
                         disabled={isChatLoading}
                         className="flex w-full items-center justify-between rounded-lg border bg-background px-3 py-2 text-left transition-colors hover:border-primary/40 hover:bg-muted/40 disabled:cursor-not-allowed disabled:opacity-60"
                       >
-                        <span className="text-sm font-semibold">{formatActionName(action)}</span>
+                        <span className="text-sm font-semibold">{item.label}</span>
                         <Send className="h-3.5 w-3.5 text-muted-foreground" />
                       </button>
                     ))}
@@ -1000,7 +1010,7 @@ const AIFabricAccountResolver = () => {
         onClarificationSubmit={handleClarificationSubmit}
         title="Account Resolver"
         emptyTitle="Ask AI Fabric to inspect or resolve this account"
-        emptyDescription="Use the scenario prompts to test readiness checks, policies, confirmations, and write actions."
+        emptyDescription="Use the scenario prompts to test profile reasoning, policies, confirmations, and write actions."
         documentLabel="Policies"
         documentTypeColors={documentTypeColors}
       />
