@@ -37,7 +37,7 @@ const configuredResolverBaseUrl =
 
 const ACCOUNT_RESOLVER_BASE_URL = configuredResolverBaseUrl.replace(/\/$/, "");
 const ACCOUNT_RESOLVER_API_BASE_URL = `${ACCOUNT_RESOLVER_BASE_URL}/api`;
-const DEMO_BUILD_MARKER = "account-resolver-session-scoped-personas-2026-07-04";
+const DEMO_BUILD_MARKER = "account-resolver-reopenable-chat-2026-07-04";
 const DEMO_SESSION_STORAGE_KEY = "ai-fabric-account-resolver-demo-session-v1";
 const MAX_CHAT_HISTORY_MESSAGES = 6;
 const MAX_CHAT_HISTORY_MESSAGE_CHARS = 600;
@@ -809,6 +809,10 @@ const AIFabricAccountResolver = () => {
     sendResolverQuery(prompt);
   };
 
+  const openChatPanel = () => {
+    setIsChatExpanded(true);
+  };
+
   const handleConfirmation = (action: "confirm" | "deny", _data?: unknown) => {
     const confirmationQuery =
       action === "confirm"
@@ -1133,9 +1137,7 @@ const AIFabricAccountResolver = () => {
       />
 
       <div
-        className={`fixed bottom-0 left-0 right-0 bg-gradient-to-t from-background via-background/95 to-transparent px-3 pb-4 pt-8 transition-opacity sm:px-4 sm:pb-6 ${
-          isChatExpanded ? "pointer-events-none z-20 opacity-0" : "z-40 opacity-100"
-        }`}
+        className="fixed bottom-0 left-0 right-0 z-40 bg-gradient-to-t from-background via-background/95 to-transparent px-3 pb-4 pt-8 sm:px-4 sm:pb-6"
       >
         <div className="mx-auto max-w-4xl space-y-2">
           <div className="flex gap-2 overflow-x-auto pb-1">
@@ -1157,6 +1159,8 @@ const AIFabricAccountResolver = () => {
                 ref={chatInputRef}
                 value={chatQuery}
                 onChange={(event) => setChatQuery(event.target.value)}
+                onClick={openChatPanel}
+                onFocus={openChatPanel}
                 onKeyDown={handleInputKeyDown}
                 placeholder="Ask the resolver to inspect blockers, update payment, set address, cancel, or resolve a refund..."
                 className="min-h-[64px] resize-none rounded-2xl border-0 bg-white/90 pb-4 pl-4 pr-14 pt-4 text-base shadow-lg backdrop-blur-sm transition-all focus:shadow-xl dark:bg-gray-800/90 md:min-h-[80px]"
