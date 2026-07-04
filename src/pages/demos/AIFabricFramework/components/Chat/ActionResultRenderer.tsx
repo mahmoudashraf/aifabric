@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { CheckCircle2, ChevronDown, Paperclip, Search, Sparkles, Star } from "lucide-react";
+import { AlertTriangle, CheckCircle2, ChevronDown, CreditCard, MapPin, Paperclip, ReceiptText, Search, Sparkles, Star } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,6 +23,167 @@ export const ActionResultRenderer = ({
   const handleExpand = onExpand ?? ((count: number) => setLocalExpandedCount(count));
 
   if (!data) return null;
+
+  const isRecord = (value: any): value is Record<string, any> => typeof value === "object" && value !== null && !Array.isArray(value);
+  const firstRecord = (...values: any[]) => values.find(isRecord) || {};
+  const resultData = isRecord(data) ? data : {};
+  const readiness = firstRecord(resultData.readiness);
+  const accountProfile = firstRecord(resultData.accountProfile);
+  const blockers = Array.isArray(readiness.blockers) ? readiness.blockers : [];
+  const canContinue = typeof readiness.canContinue === "boolean" ? readiness.canContinue : undefined;
+
+  const compactActionName = (action: string) =>
+    action
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase())
+      .trim();
+
+  const hasKey = (key: string) => Object.prototype.hasOwnProperty.call(resultData, key);
+
+  const inferResolverActionName = () => {
+    if (Object.keys(accountProfile).length > 0) return "get_account_profile";
+    if (hasKey("refundRequestId") || hasKey("resolutionType") || hasKey("policyDecision")) return "request_refund";
+    if (hasKey("paymentType") || hasKey("last4") || hasKey("verified")) return "update_payment_method";
+    if (hasKey("addressType") || hasKey("isValidated")) return "update_address";
+    if (hasKey("planName") && hasKey("status")) return "subscribe";
+    return "";
+  };
+
+  const resolverActionName = isRecord(data) ? inferResolverActionName() : "";
+
+  const renderStatusPill = (label: string, positive: boolean) => (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-bold ${
+        positive
+          ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
+          : "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-700 dark:bg-amber-900/30 dark:text-amber-300"
+      }`}
+    >
+      {positive ? <CheckCircle2 className="h-3 w-3" /> : <AlertTriangle className="h-3 w-3" />}
+      {label}
+    </span>
+  );
+
+  const renderSummaryRow = (label: string, value: any) => {
+    if (value === null || value === undefined || value === "") return null;
+    return (
+      <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-900">
+        <div className="text-[10px] font-bold uppercase tracking-wide text-slate-500 dark:text-slate-400">{label}</div>
+        <div className="mt-0.5 text-sm font-semibold text-slate-900 dark:text-slate-100">{formatFieldValue(value)}</div>
+      </div>
+    );
+  };
+
+  const renderResolverActionSummary = () => {
+    const Icon =
+      resolverActionName === "update_payment_method"
+        ? CreditCard
+        : resolverActionName === "update_address"
+          ? MapPin
+          : resolverActionName === "request_refund"
+            ? ReceiptText
+            : Search;
+
+    const last4 = resultData.last4;
+    const paymentVerified = typeof resultData.verified === "boolean" ? resultData.verified : undefined;
+    const addressValidated =
+      typeof resultData.isValidated === "boolean"
+        ? resultData.isValidated
+        : typeof resultData.isValidated === "string"
+          ? resultData.isValidated.toLowerCase() === "true"
+          : undefined;
+    const subscription = firstRecord(accountProfile.subscription);
+    const paymentMethod = firstRecord(accountProfile.paymentMethod);
+    const billingAddress = firstRecord(accountProfile.billingAddress);
+
+    return (
+      <div className="mt-3">
+        <Card
+          className="overflow-hidden border-2 border-emerald-200 bg-white/80 shadow-sm dark:border-emerald-800 dark:bg-slate-900/80"
+          style={{
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+          }}
+        >
+          <CardContent className="p-0">
+            <div className="border-b border-emerald-100 bg-emerald-50 px-4 py-3 dark:border-emerald-800 dark:bg-emerald-900/25">
+              <div className="flex items-start gap-3">
+                <div className="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-emerald-600 text-white">
+                  <Icon className="h-4 w-4" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-bold text-emerald-950 dark:text-emerald-100">
+                    {compactActionName(resolverActionName)}
+                  </div>
+                  <p className="mt-1 text-sm leading-relaxed text-emerald-900 dark:text-emerald-200">
+                    {resolverActionName === "get_account_profile"
+                      ? "Current account facts loaded for policy reasoning."
+                      : "The account action completed successfully."}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-3 p-4">
+              <div className="flex flex-wrap gap-2">
+                {renderStatusPill("Completed", true)}
+                {canContinue !== undefined && renderStatusPill(canContinue ? "Account ready" : "Still blocked", canContinue)}
+                {paymentVerified !== undefined && renderStatusPill(paymentVerified ? "Payment verified" : "Payment unverified", paymentVerified)}
+                {addressValidated !== undefined && renderStatusPill(addressValidated ? "Address validated" : "Address unvalidated", addressValidated)}
+              </div>
+
+              <div className="grid gap-2 sm:grid-cols-2">
+                {resolverActionName === "update_payment_method" &&
+                  renderSummaryRow("Payment method", last4 ? `Card ending in ${last4}` : "Stored card updated")}
+                {resolverActionName === "update_address" && renderSummaryRow("Address type", resultData.addressType || "Billing")}
+                {resolverActionName === "request_refund" &&
+                  renderSummaryRow("Resolution", resultData.resolutionType ? compactActionName(String(resultData.resolutionType)) : undefined)}
+                {resolverActionName === "request_refund" && renderSummaryRow("Status", resultData.status)}
+                {resolverActionName === "request_refund" && renderSummaryRow("Amount", resultData.amount)}
+                {resolverActionName === "request_refund" && renderSummaryRow("Reason", resultData.reason)}
+                {resolverActionName === "get_account_profile" && renderSummaryRow("Subscription", subscription.status)}
+                {resolverActionName === "get_account_profile" &&
+                  renderSummaryRow("Plan", [subscription.plan?.name, subscription.plan?.tier].filter(Boolean).join(" / "))}
+                {resolverActionName === "get_account_profile" &&
+                  renderSummaryRow(
+                    "Payment method",
+                    paymentMethod.present ? (paymentMethod.verified ? "Verified" : "Unverified") : "Missing"
+                  )}
+                {resolverActionName === "get_account_profile" &&
+                  renderSummaryRow(
+                    "Billing address",
+                    billingAddress.present ? (billingAddress.validated ? "Validated" : "Unvalidated") : "Missing"
+                  )}
+                {resolverActionName === "subscribe" && renderSummaryRow("Plan", resultData.planName)}
+                {resolverActionName === "subscribe" && renderSummaryRow("Status", resultData.status)}
+              </div>
+
+              {blockers.length > 0 ? (
+                <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-900/25 dark:text-amber-100">
+                  <div className="mb-1 flex items-center gap-2 font-bold">
+                    <AlertTriangle className="h-4 w-4" />
+                    Remaining blockers
+                  </div>
+                  <ul className="space-y-1 pl-1">
+                    {blockers.slice(0, 3).map((blocker: any, index: number) => (
+                      <li key={blocker.code || index}>{blocker.message || blocker.code || "Account blocker remains."}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : canContinue ? (
+                <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm font-semibold text-emerald-800 dark:border-emerald-800 dark:bg-emerald-900/25 dark:text-emerald-100">
+                  No remaining blockers. The account can continue.
+                </div>
+              ) : null}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  };
+
+  if (resolverActionName) {
+    return renderResolverActionSummary();
+  }
 
   // Check if item looks like a product (has name/title and price or imageUrl)
   const isProductLike = (item: any) => {
