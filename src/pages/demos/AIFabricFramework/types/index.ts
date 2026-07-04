@@ -225,6 +225,16 @@ export interface DemoReadiness {
     present: boolean;
     vectorCount: number;
     provider?: string;
+    searchFilterMode?: string;
+    scanFilterMode?: string;
+    retrievalProof?: {
+      checked: boolean;
+      found: boolean;
+      method?: string;
+      sampleVectorId?: string | null;
+      sampleEntityId?: string | null;
+      warning?: string | null;
+    };
     warning?: string;
   }>;
   indexingQueueSize?: number;

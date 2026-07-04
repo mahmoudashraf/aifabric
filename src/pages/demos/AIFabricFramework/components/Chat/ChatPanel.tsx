@@ -189,7 +189,7 @@ export function ChatPanel({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 100, scale: 0.95 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed bottom-0 sm:bottom-24 left-0 sm:left-4 right-0 sm:right-4 max-w-full sm:max-w-4xl mx-auto bg-background border-0 sm:border rounded-none sm:rounded-2xl shadow-2xl z-40 max-h-[calc(100vh-80px)] sm:max-h-[70vh] flex flex-col"
+              className="fixed bottom-0 sm:bottom-24 left-0 sm:left-4 right-0 sm:right-4 max-w-full sm:max-w-4xl mx-auto bg-background border-0 sm:border rounded-none sm:rounded-2xl shadow-2xl z-50 max-h-[calc(100vh-80px)] sm:max-h-[70vh] flex flex-col"
             >
               {/* Header */}
               <div className="flex items-center justify-between p-3 border-b bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-t-2xl">
@@ -306,7 +306,7 @@ export function ChatPanel({
                         {isLoading && <LoadingMessage />}
                       </>
                     )}
-                    <div ref={messagesEndRef} />
+                    <div ref={messagesEndRef} className="h-48 sm:h-44" aria-hidden="true" />
                   </div>
 
                   {/* Right documents panel - desktop only */}

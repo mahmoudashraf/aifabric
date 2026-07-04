@@ -180,7 +180,7 @@ export function useChat() {
   const handleChatQuery = useCallback(async (queryOverride?: string, optionsOrFromSuggestion?: ChatQueryOptions | boolean) => {
     const options = typeof optionsOrFromSuggestion === "object" ? optionsOrFromSuggestion : {};
     const queryToUse = queryOverride || chatQuery;
-    if (!queryToUse.trim()) return;
+    if (!queryToUse.trim()) return undefined;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -211,7 +211,7 @@ export function useChat() {
       resolvedPosition = "search";
       resolvedMode = "navigator";
     }
-    if (currentMode === "navigator_deep") {
+    if (!options.mode && currentMode === "navigator_deep") {
       resolvedMode = "navigator_deep";
     }
 
@@ -346,12 +346,14 @@ export function useChat() {
       };
 
       setChatMessages((prev) => [...prev, aiMessage]);
+      return aiMessage;
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to process your query. Please try again.",
         variant: "destructive",
       });
+      return undefined;
     } finally {
       setIsLoading(false);
     }

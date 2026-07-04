@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Package, Receipt, FileText, Star, Tag, Code, Activity, MessageCircle, ShoppingCart, Database, Headphones } from "lucide-react";
+import { Package, Receipt, FileText, Star, Tag, Code, Activity, MessageCircle, ShoppingCart, Database, Headphones, FileSearch } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Widget library
@@ -15,6 +15,7 @@ import {
   ChatPanel,
   ChatInput,
   DemoEvidencePanel,
+  RagJourneyPanel,
   ProductsTab,
   CartTab,
   OrdersTab,
@@ -27,8 +28,10 @@ import {
   shoppingActionProjections,
 } from "./components";
 import { API_AUTH_HEADERS, API_BASE_URL, CRUD_API_BASE_URL } from "./constants";
+import type { RagJourneySeedStage } from "./constants/ragJourney";
+import type { ChatPosition } from "./types";
 
-const AI_SHOPPING_EXPERIENCE_BUILD_MARKER = "ai-shopping-experience-route-2026-07-04";
+const AI_SHOPPING_EXPERIENCE_BUILD_MARKER = "ai-shopping-experience-rag-journey-2026-07-05";
 
 export default function AIFabricFramework() {
   const [isWidgetOpen, setIsWidgetOpen] = useState(false);
@@ -83,6 +86,7 @@ export default function AIFabricFramework() {
     if (value === "reviews") chat.setPosition("product_detail", "navigator_deep");
     if (value === "coupons") chat.setPosition("cart", "cart_assistant");
     if (value === "support") chat.setPosition("support", "navigator");
+    if (value === "rag-journey") chat.setPosition("search", "navigator");
     if (value === "evidence" || value === "api" || value === "verification") chat.setPosition("landing", "navigator");
   };
 
@@ -94,6 +98,39 @@ export default function AIFabricFramework() {
   const handleSupportAI = (query: string) => {
     chat.setPosition("support", "navigator");
     chat.handleChatQuery(query, { position: "support", mode: "navigator" });
+  };
+
+  const isMigrationRunning =
+    migration.stockFill.isRunning ||
+    migration.policyMigration.isRunning ||
+    migration.reviewMigration.isRunning ||
+    migration.couponMigration.isRunning ||
+    migration.ticketMigration.isRunning ||
+    migration.isClearing;
+
+  const migrationRunningLabel =
+    migration.stockFill.currentItem ||
+    migration.policyMigration.currentItem ||
+    migration.reviewMigration.currentItem ||
+    migration.couponMigration.currentItem ||
+    migration.ticketMigration.currentItem ||
+    (migration.isClearing ? "Resetting demo data..." : "");
+
+  const handleRagJourneySeedStage = async (stage: RagJourneySeedStage) => {
+    const onComplete = () => {
+      refreshCommerceData();
+    };
+    if (stage === "products") return migration.handleFillStock(onComplete);
+    if (stage === "reviews") return migration.handleMigrateReviews(onComplete);
+    if (stage === "policies") return migration.handleMigratePolicies(onComplete);
+    if (stage === "coupons") return migration.handleMigrateCoupons(onComplete);
+    if (stage === "tickets") return migration.handleMigrateTickets(onComplete);
+    return migration.handleSeedFull(onComplete);
+  };
+
+  const handleRagJourneyPrompt = async (prompt: string, position: ChatPosition) => {
+    chat.setPosition(position, "navigator");
+    return chat.handleChatQuery(prompt, { position, mode: "navigator" });
   };
 
   return (
@@ -149,7 +186,7 @@ export default function AIFabricFramework() {
 
         {/* Main content tabs */}
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 mb-4 sm:mb-6 h-auto sm:h-10">
+          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-11 mb-4 sm:mb-6 h-auto sm:h-10">
             <TabsTrigger value="products" className="gap-2">
               <Package className="h-4 w-4" />
               <span className="hidden sm:inline">Products</span>
@@ -177,6 +214,10 @@ export default function AIFabricFramework() {
             <TabsTrigger value="support" className="gap-2">
               <Headphones className="h-4 w-4" />
               <span className="hidden sm:inline">Support</span>
+            </TabsTrigger>
+            <TabsTrigger value="rag-journey" className="gap-2">
+              <FileSearch className="h-4 w-4" />
+              <span className="hidden sm:inline">RAG Journey</span>
             </TabsTrigger>
             <TabsTrigger value="evidence" className="gap-2">
               <Database className="h-4 w-4" />
@@ -272,6 +313,23 @@ export default function AIFabricFramework() {
               isLoading={entities.isLoadingTickets}
               onRefresh={() => entities.loadTickets(chat.userId)}
               onAskAI={handleSupportAI}
+            />
+          </TabsContent>
+
+          <TabsContent value="rag-journey">
+            <RagJourneyPanel
+              readiness={migration.readiness}
+              health={migration.health}
+              isRunning={isMigrationRunning || chat.isLoading}
+              runningLabel={migrationRunningLabel}
+              onRefresh={() => migration.refreshReadiness(refreshCommerceData)}
+              onReset={() =>
+                migration.handleClearData(() => {
+                  refreshCommerceData();
+                })
+              }
+              onSeedStage={handleRagJourneySeedStage}
+              onRunPrompt={handleRagJourneyPrompt}
             />
           </TabsContent>
 
