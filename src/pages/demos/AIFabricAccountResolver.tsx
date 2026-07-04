@@ -37,7 +37,8 @@ const configuredResolverBaseUrl =
 
 const ACCOUNT_RESOLVER_BASE_URL = configuredResolverBaseUrl.replace(/\/$/, "");
 const ACCOUNT_RESOLVER_API_BASE_URL = `${ACCOUNT_RESOLVER_BASE_URL}/api`;
-const DEMO_BUILD_MARKER = "account-resolver-profile-policy-reasoning-2026-07-04";
+const DEMO_BUILD_MARKER = "account-resolver-session-scoped-personas-2026-07-04";
+const DEMO_SESSION_STORAGE_KEY = "ai-fabric-account-resolver-demo-session-v1";
 const MAX_CHAT_HISTORY_MESSAGES = 6;
 const MAX_CHAT_HISTORY_MESSAGE_CHARS = 600;
 
@@ -60,10 +61,24 @@ interface ResolutionPolicy {
 
 interface ResolverScenario {
   id: string;
-  userId: number;
+  userId: string;
+  subscriptionId?: string | null;
+  baseUserId?: number | null;
   title: string;
   description: string;
   suggestedPrompt: string;
+}
+
+interface DemoSessionResponse {
+  sessionId: string;
+  scenarios: ResolverScenario[];
+  readiness?: Record<string, AccountReadiness>;
+}
+
+interface StoredDemoSession {
+  sessionId: string;
+  scenarios: ResolverScenario[];
+  createdAt: string;
 }
 
 interface AccountReadiness {
@@ -149,21 +164,24 @@ const FALLBACK_POLICIES: ResolutionPolicy[] = [
 const FALLBACK_SCENARIOS: ResolverScenario[] = [
   {
     id: "ready-account",
-    userId: 91,
+    userId: "91",
+    baseUserId: 91,
     title: "Ready account",
     description: "Active subscription, validated address, and verified payment method.",
     suggestedPrompt: "Can I continue using the app and make an order?",
   },
   {
     id: "missing-payment",
-    userId: 92,
+    userId: "92",
+    baseUserId: 92,
     title: "Missing payment method",
     description: "Checkout is blocked by a missing payment method.",
     suggestedPrompt: "Why can't I place an order? If payment is missing, add my Visa ending 4242.",
   },
   {
     id: "missing-address",
-    userId: 93,
+    userId: "93",
+    baseUserId: 93,
     title: "Missing billing address",
     description: "Checkout is blocked by a missing billing address.",
     suggestedPrompt:
@@ -171,7 +189,8 @@ const FALLBACK_SCENARIOS: ResolverScenario[] = [
   },
   {
     id: "refund-request",
-    userId: 94,
+    userId: "94",
+    baseUserId: 94,
     title: "Refund or account credit",
     description: "The account is usable, but needs a governed billing resolution.",
     suggestedPrompt: "I was charged after a support incident. Please give me a $25 account credit.",
@@ -211,6 +230,10 @@ const documentTypeColors = {
 
 function newSessionId(scenarioId: string) {
   return `account-resolver-${scenarioId}-${Date.now()}`;
+}
+
+function personaLabel(scenario: ResolverScenario) {
+  return scenario.baseUserId ? `Persona ${scenario.baseUserId}` : "Session user";
 }
 
 function formatActionName(action: string) {
@@ -297,6 +320,55 @@ async function apiJson<T>(path: string, init?: RequestInit): Promise<T> {
   }
 
   return response.json();
+}
+
+function readStoredDemoSession(): StoredDemoSession | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(DEMO_SESSION_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as StoredDemoSession;
+    if (!parsed.sessionId || !Array.isArray(parsed.scenarios) || parsed.scenarios.length === 0) {
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function storeDemoSession(sessionId: string, scenarios: ResolverScenario[]) {
+  if (typeof window === "undefined") return;
+  try {
+    const stored: StoredDemoSession = {
+      sessionId,
+      scenarios,
+      createdAt: new Date().toISOString(),
+    };
+    window.localStorage.setItem(DEMO_SESSION_STORAGE_KEY, JSON.stringify(stored));
+  } catch {
+    // Storage is a convenience for refresh persistence; the live session can still run without it.
+  }
+}
+
+async function createRemoteDemoSession(seedKey: string): Promise<DemoSessionResponse> {
+  return apiJson<DemoSessionResponse>("/account-resolver/demo/sessions", {
+    method: "POST",
+    body: JSON.stringify({
+      sessionId: newSessionId(seedKey),
+    }),
+  });
+}
+
+function readinessPathForScenario(scenario: ResolverScenario) {
+  if (scenario.subscriptionId) {
+    return `/account-resolver/subscriptions/${encodeURIComponent(scenario.subscriptionId)}/readiness`;
+  }
+  return `/account-resolver/users/${encodeURIComponent(String(scenario.userId))}/readiness`;
+}
+
+function fetchReadinessForScenario(scenario: ResolverScenario) {
+  return apiJson<AccountReadiness>(readinessPathForScenario(scenario));
 }
 
 function unwrapResultData(raw: ResolverOrchestrationResponse) {
@@ -487,10 +559,10 @@ const AIFabricAccountResolver = () => {
   }, [policies.length, readiness]);
 
   const refreshReadiness = useCallback(
-    async (userId: number, silent = false) => {
+    async (scenario: ResolverScenario, silent = false) => {
       if (!silent) setIsRefreshing(true);
       try {
-        const data = await apiJson<AccountReadiness>(`/account-resolver/users/${userId}/readiness`);
+        const data = await fetchReadinessForScenario(scenario);
         setReadiness(data);
         setApiStatus("connected");
         return data;
@@ -511,24 +583,35 @@ const AIFabricAccountResolver = () => {
     [toast],
   );
 
-  const seedDemo = useCallback(
-    async (scenario: ResolverScenario, showToast = true) => {
+  const resetDemoSession = useCallback(
+    async (scenario = selectedScenario, showToast = true) => {
       setIsSeeding(true);
       try {
-        const seeded = await apiJson<Record<string, AccountReadiness>>("/account-resolver/demo/seed", {
-          method: "POST",
-        });
+        const created = await createRemoteDemoSession(scenario.id);
+        const nextScenarios = created.scenarios.length ? created.scenarios : FALLBACK_SCENARIOS;
+        const preferred = nextScenarios.find((item) => item.id === scenario.id) || nextScenarios[0];
+
+        storeDemoSession(created.sessionId, nextScenarios);
+        setScenarios(nextScenarios);
+        setSelectedScenario(preferred);
+        setChatQuery(preferred.suggestedPrompt);
+        setChatMessages([]);
+        setIsChatExpanded(false);
+        sessionIdRef.current = created.sessionId;
+        conversationIdRef.current = `resolver-${created.sessionId}-${preferred.id}-${Date.now()}`;
         setApiStatus("connected");
-        const scenarioReadiness = seeded[scenario.id] || null;
+
+        const scenarioReadiness = created.readiness?.[preferred.id] || null;
         if (scenarioReadiness) {
           setReadiness(scenarioReadiness);
         } else {
-          await refreshReadiness(scenario.userId, true);
+          const liveReadiness = await fetchReadinessForScenario(preferred);
+          setReadiness(liveReadiness);
         }
         if (showToast) {
           toast({
-            title: "Demo scenarios seeded",
-            description: "Resolver users 91-94 are ready for the live walkthrough.",
+            title: "Your demo session was reset",
+            description: "Fresh resolver personas were created for this browser only.",
           });
         }
       } catch (error) {
@@ -544,7 +627,7 @@ const AIFabricAccountResolver = () => {
         setIsSeeding(false);
       }
     },
-    [refreshReadiness, toast],
+    [selectedScenario, toast],
   );
 
   useEffect(() => {
@@ -553,24 +636,59 @@ const AIFabricAccountResolver = () => {
     async function loadDemo() {
       setApiStatus("loading");
       try {
-        const [remoteScenarios, remotePolicies] = await Promise.all([
-          apiJson<ResolverScenario[]>("/account-resolver/scenarios"),
-          apiJson<ResolutionPolicy[]>("/account-resolver/policies"),
-        ]);
+        const remotePolicies = await apiJson<ResolutionPolicy[]>("/account-resolver/policies");
         if (!mounted) return;
 
-        const nextScenarios = remoteScenarios.length ? remoteScenarios : FALLBACK_SCENARIOS;
         const nextPolicies = remotePolicies.length ? remotePolicies : FALLBACK_POLICIES;
+        let stored = readStoredDemoSession();
+        let freshReadiness: Record<string, AccountReadiness> | undefined;
+        if (!stored) {
+          const created = await createRemoteDemoSession("initial");
+          const createdScenarios = created.scenarios.length ? created.scenarios : FALLBACK_SCENARIOS;
+          storeDemoSession(created.sessionId, createdScenarios);
+          stored = {
+            sessionId: created.sessionId,
+            scenarios: createdScenarios,
+            createdAt: new Date().toISOString(),
+          };
+          freshReadiness = created.readiness;
+        }
+
+        if (!mounted) return;
+
+        const nextScenarios = stored.scenarios.length ? stored.scenarios : FALLBACK_SCENARIOS;
         const preferred = nextScenarios.find((scenario) => scenario.id === "missing-payment") || nextScenarios[0];
 
         setScenarios(nextScenarios);
         setPolicies(nextPolicies);
         setSelectedScenario(preferred);
         setChatQuery(preferred.suggestedPrompt);
-        sessionIdRef.current = newSessionId(preferred.id);
-        conversationIdRef.current = `resolver-${sessionIdRef.current}`;
+        sessionIdRef.current = stored.sessionId;
+        conversationIdRef.current = `resolver-${stored.sessionId}-${preferred.id}-${Date.now()}`;
         setApiStatus("connected");
-        await seedDemo(preferred, false);
+        if (freshReadiness?.[preferred.id]) {
+          setReadiness(freshReadiness[preferred.id]);
+        }
+
+        try {
+          const liveReadiness = await fetchReadinessForScenario(preferred);
+          if (mounted) setReadiness(liveReadiness);
+        } catch {
+          const recovered = await createRemoteDemoSession("recovered");
+          const recoveredScenarios = recovered.scenarios.length ? recovered.scenarios : FALLBACK_SCENARIOS;
+          const recoveredPreferred =
+            recoveredScenarios.find((scenario) => scenario.id === preferred.id) ||
+            recoveredScenarios.find((scenario) => scenario.id === "missing-payment") ||
+            recoveredScenarios[0];
+          storeDemoSession(recovered.sessionId, recoveredScenarios);
+          if (!mounted) return;
+          setScenarios(recoveredScenarios);
+          setSelectedScenario(recoveredPreferred);
+          setChatQuery(recoveredPreferred.suggestedPrompt);
+          sessionIdRef.current = recovered.sessionId;
+          conversationIdRef.current = `resolver-${recovered.sessionId}-${recoveredPreferred.id}-${Date.now()}`;
+          setReadiness(recovered.readiness?.[recoveredPreferred.id] || null);
+        }
       } catch (error) {
         if (!mounted) return;
         setApiStatus("offline");
@@ -584,16 +702,15 @@ const AIFabricAccountResolver = () => {
     return () => {
       mounted = false;
     };
-  }, [seedDemo]);
+  }, []);
 
   const selectScenario = async (scenario: ResolverScenario) => {
     setSelectedScenario(scenario);
     setChatQuery(scenario.suggestedPrompt);
     setChatMessages([]);
     setIsChatExpanded(false);
-    sessionIdRef.current = newSessionId(scenario.id);
-    conversationIdRef.current = `resolver-${sessionIdRef.current}`;
-    const seededReadiness = await refreshReadiness(scenario.userId, true);
+    conversationIdRef.current = `resolver-${sessionIdRef.current}-${scenario.id}-${Date.now()}`;
+    const seededReadiness = await refreshReadiness(scenario, true);
     if (!seededReadiness && apiStatus !== "connected") {
       setReadiness(null);
     }
@@ -649,7 +766,7 @@ const AIFabricAccountResolver = () => {
         if (responseReadiness) {
           setReadiness(responseReadiness);
         } else {
-          await refreshReadiness(selectedScenario.userId, true);
+          await refreshReadiness(selectedScenario, true);
         }
         setApiStatus("connected");
       } catch (error) {
@@ -681,7 +798,7 @@ const AIFabricAccountResolver = () => {
         setIsChatLoading(false);
       }
     },
-    [chatMessages, chatQuery, isChatLoading, policies, refreshReadiness, selectedScenario.userId, toast],
+    [chatMessages, chatQuery, isChatLoading, policies, refreshReadiness, selectedScenario, toast],
   );
 
   const runSelectedScenario = useCallback(() => {
@@ -754,12 +871,12 @@ const AIFabricAccountResolver = () => {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => seedDemo(selectedScenario)}
+                onClick={() => resetDemoSession(selectedScenario)}
                 disabled={isSeeding}
                 className="gap-2"
               >
                 {isSeeding ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-                Seed scenarios
+                Reset my demo
               </Button>
             </div>
           </div>
@@ -771,7 +888,7 @@ const AIFabricAccountResolver = () => {
               <div className="mb-3 flex items-center justify-between">
                 <div>
                   <h2 className="text-sm font-bold">Scenario Queue</h2>
-                  <p className="text-xs text-muted-foreground">Seeded users 91-94</p>
+                  <p className="text-xs text-muted-foreground">Private browser session</p>
                 </div>
                 <UserCheck className="h-4 w-4 text-muted-foreground" />
               </div>
@@ -800,7 +917,7 @@ const AIFabricAccountResolver = () => {
                           <div className="flex items-center gap-2">
                             <span className="truncate text-sm font-semibold">{scenario.title}</span>
                             <span className="rounded bg-background/70 px-1.5 py-0.5 text-[10px] font-bold">
-                              {scenario.userId}
+                              {scenario.baseUserId || "Session"}
                             </span>
                           </div>
                           <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{scenario.description}</p>
@@ -822,7 +939,7 @@ const AIFabricAccountResolver = () => {
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
                         <h2 className="text-xl font-bold">{selectedScenario.title}</h2>
-                        <Badge variant="outline">User {selectedScenario.userId}</Badge>
+                        <Badge variant="outline">{personaLabel(selectedScenario)}</Badge>
                       </div>
                       <p className="mt-1 text-sm text-muted-foreground">{selectedScenario.description}</p>
                     </div>
@@ -831,7 +948,7 @@ const AIFabricAccountResolver = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => refreshReadiness(selectedScenario.userId)}
+                    onClick={() => refreshReadiness(selectedScenario)}
                     disabled={isRefreshing}
                     className="gap-2"
                   >
@@ -1051,7 +1168,7 @@ const AIFabricAccountResolver = () => {
 
               <div className="absolute bottom-2 right-2 flex items-center gap-1.5">
                 <Badge variant="outline" className="hidden rounded-full bg-white/80 text-[10px] md:inline-flex">
-                  User {selectedScenario.userId}
+                  {personaLabel(selectedScenario)}
                 </Badge>
                 <Button
                   size="icon"
