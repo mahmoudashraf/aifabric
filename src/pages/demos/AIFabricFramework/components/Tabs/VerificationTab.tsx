@@ -55,7 +55,7 @@ const ENDPOINT_GROUPS: EndpointGroup[] = [
       {
         name: "Runtime Vector Probe",
         method: "GET",
-        url: `${RUNTIME_BASE}/api/runtime/vector-search?vectorSpace=product&query=wireless%20headphones&limit=3&threshold=0`,
+        url: `${RUNTIME_BASE}/api/runtime/vector-search?vectorSpace=product&q=wireless%20headphones&limit=3&threshold=0`,
       },
       {
         name: "Clear Demo Data",
