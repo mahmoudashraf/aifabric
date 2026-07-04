@@ -1,5 +1,18 @@
 import { API_BASE_URL, CRUD_API_BASE_URL, API_AUTH_HEADERS, ADMIN_API_HEADERS } from "../constants";
-import type { Product, Policy, Review, Coupon, Conversation, ConversationDetail, ChatPosition, ChatMode } from "../types";
+import type {
+  Cart,
+  Product,
+  Policy,
+  Review,
+  Coupon,
+  SupportTicket,
+  Conversation,
+  ConversationDetail,
+  ChatPosition,
+  ChatMode,
+  DemoHealth,
+  DemoReadiness,
+} from "../types";
 
 function readCount(data: any, ...keys: string[]): number {
   for (const key of keys) {
@@ -131,8 +144,8 @@ export async function sendChatQuery(
   position?: ChatPosition,
   mode?: ChatMode,
 ): Promise<any> {
-  // Only send mode explicitly for navigator_deep and cart_assistant
-  const explicitMode = (mode === "navigator_deep" || mode === "cart_assistant") ? mode : undefined;
+  // Let backend map position to mode unless the UI explicitly selected a specialized mode.
+  const explicitMode = (mode === "navigator_deep" || mode === "cart_assistant" || mode === "executor") ? mode : undefined;
 
   const response = await fetch(`${API_BASE_URL}/chat/query`, {
     method: "POST",
@@ -151,6 +164,87 @@ export async function sendChatQuery(
     const error = await response.text();
     throw new Error(error || "Failed to process chat query");
   }
+  return response.json();
+}
+
+// Demo readiness/control API
+export async function fetchDemoReadiness(): Promise<DemoReadiness> {
+  const response = await fetch(`${CRUD_API_BASE_URL}/demo/readiness`);
+  if (!response.ok) throw new Error("Failed to fetch demo readiness");
+  return response.json();
+}
+
+export async function fetchDemoHealth(): Promise<DemoHealth> {
+  const response = await fetch(`${CRUD_API_BASE_URL}/demo/health`);
+  if (!response.ok) throw new Error("Failed to fetch demo health");
+  return response.json();
+}
+
+export async function seedDemoStage(stage: "products" | "reviews" | "policies" | "coupons" | "tickets" | "full"): Promise<any> {
+  const response = await fetch(`${CRUD_API_BASE_URL}/demo/stages/${stage}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(error || `Failed to seed ${stage}`);
+  }
+  return response.json();
+}
+
+export async function resetDemoData(): Promise<any> {
+  const response = await fetch(`${CRUD_API_BASE_URL}/demo/reset`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      confirm: true,
+      clearVectors: true,
+      clearIndexingQueue: true,
+    }),
+  });
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(error || "Failed to reset demo data");
+  }
+  return response.json();
+}
+
+// Cart API
+export async function fetchActiveCart(userId: string): Promise<Cart> {
+  const response = await fetch(`${CRUD_API_BASE_URL}/carts/active?userId=${encodeURIComponent(userId)}`);
+  if (!response.ok) throw new Error("Failed to fetch active cart");
+  return response.json();
+}
+
+export async function addCartItem(userId: string, sku: string, quantity = 1): Promise<Cart> {
+  const response = await fetch(`${CRUD_API_BASE_URL}/carts/active/items`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId, sku, quantity }),
+  });
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(error || "Failed to add item to cart");
+  }
+  return response.json();
+}
+
+export async function removeCartItem(userId: string, sku: string): Promise<Cart> {
+  const params = new URLSearchParams({ userId, sku });
+  const response = await fetch(`${CRUD_API_BASE_URL}/carts/active/items?${params.toString()}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) throw new Error("Failed to remove cart item");
+  return response.json();
+}
+
+export async function applyCartCoupon(userId: string, code: string): Promise<Cart> {
+  const response = await fetch(`${CRUD_API_BASE_URL}/carts/active/coupon`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId, code }),
+  });
+  if (!response.ok) throw new Error("Failed to apply coupon");
   return response.json();
 }
 
@@ -309,6 +403,12 @@ export async function createCoupon(coupon: Partial<Coupon>): Promise<Coupon> {
 }
 
 // Support Tickets API
+export async function fetchTickets(userId: string, limit = 50): Promise<SupportTicket[]> {
+  const response = await fetch(`${CRUD_API_BASE_URL}/tickets?userId=${encodeURIComponent(userId)}&limit=${limit}`);
+  if (!response.ok) throw new Error("Failed to fetch support tickets");
+  return response.json();
+}
+
 export async function createTicket(ticket: { userId: string; issueType: string; description: string }): Promise<any> {
   const response = await fetch(`${CRUD_API_BASE_URL}/tickets`, {
     method: "POST",

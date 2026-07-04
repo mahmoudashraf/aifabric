@@ -28,6 +28,7 @@ interface HeaderProps {
   onMigrateReviews: () => void;
   onMigrateCoupons: () => void;
   onMigrateTickets: () => void;
+  onSeedFull: () => void;
   onClearData: () => void;
 }
 
@@ -43,6 +44,7 @@ export function Header({
   onMigrateReviews,
   onMigrateCoupons,
   onMigrateTickets,
+  onSeedFull,
   onClearData,
 }: HeaderProps) {
   const isAnyMigrationRunning =
@@ -136,6 +138,20 @@ export function Header({
             <span className="hidden sm:inline">Tickets</span>
           </Button>
           <Button
+            variant="outline"
+            size="sm"
+            onClick={onSeedFull}
+            disabled={isAnyMigrationRunning}
+            className="text-xs sm:text-sm"
+          >
+            {stockFill.isRunning ? (
+              <Loader2 className="h-4 w-4 sm:mr-2 animate-spin" />
+            ) : (
+              <Zap className="h-4 w-4 sm:mr-2" />
+            )}
+            <span className="hidden sm:inline">Full</span>
+          </Button>
+          <Button
             variant="destructive"
             size="sm"
             onClick={onClearData}
@@ -194,15 +210,15 @@ export function Header({
         <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 mb-3 sm:mb-4 rounded-full bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-orange-500/10 border border-purple-500/20">
           <Zap className="h-3 w-3 sm:h-4 sm:w-4 text-purple-500" />
           <span className="text-xs sm:text-sm font-medium bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 bg-clip-text text-transparent">
-            Next Generation AI Commerce
+          Live AI Fabric Commerce
           </span>
         </div>
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-black bg-gradient-to-r from-purple-600 via-pink-500 to-orange-500 bg-clip-text text-transparent mb-3 sm:mb-4 tracking-tight px-2">
           AI Shopping Experience
         </h1>
         <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed px-4">
-          Welcome to the future of ecommerce. Chat with AI, discover products through natural conversations,
-          and experience intelligent shopping like never before.
+          Stage product, policy, review, coupon, and ticket evidence, then test AI Fabric shopping flows
+          through chat, RAG, and confirmed actions.
         </p>
       </div>
     </div>

@@ -1,13 +1,7 @@
 import { useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import * as api from "../utils/api";
-import {
-  SAMPLE_PRODUCTS,
-  SAMPLE_POLICIES,
-  SAMPLE_REVIEWS,
-  SAMPLE_COUPONS,
-  SAMPLE_TICKETS,
-} from "../constants";
+import type { DemoHealth, DemoReadiness } from "../types";
 
 export interface MigrationProgress {
   isRunning: boolean;
@@ -25,6 +19,9 @@ export function useMigration() {
     currentItem: "",
   });
   const [migratedProductIds, setMigratedProductIds] = useState<string[]>([]);
+  const [readiness, setReadiness] = useState<DemoReadiness | null>(null);
+  const [health, setHealth] = useState<DemoHealth | null>(null);
+  const [lastStageResult, setLastStageResult] = useState<any>(null);
 
   // Policy migration state
   const [policyMigration, setPolicyMigration] = useState<MigrationProgress>({
@@ -60,189 +57,128 @@ export function useMigration() {
   // Clearing state
   const [isClearing, setIsClearing] = useState(false);
 
+  const loadReadiness = useCallback(async () => {
+    try {
+      const data = await api.fetchDemoReadiness();
+      setReadiness(data);
+      setPolicyCount(data.counts?.policies || 0);
+      setReviewCount(data.counts?.reviews || 0);
+      setCouponCount(data.counts?.coupons || 0);
+      return data;
+    } catch (error) {
+      console.error("Failed to load demo readiness:", error);
+      return null;
+    }
+  }, []);
+
+  const loadHealth = useCallback(async () => {
+    try {
+      const data = await api.fetchDemoHealth();
+      setHealth(data);
+      if (data.readiness) {
+        setReadiness(data.readiness);
+      }
+      return data;
+    } catch (error) {
+      console.error("Failed to load demo health:", error);
+      return null;
+    }
+  }, []);
+
+  const refreshReadiness = useCallback(async (onComplete?: () => void) => {
+    await Promise.all([loadReadiness(), loadHealth()]);
+    onComplete?.();
+  }, [loadHealth, loadReadiness]);
+
   // Fill stock with sample products
   const handleFillStock = useCallback(async (onComplete?: () => void) => {
-    setStockFill({ isRunning: true, progress: 0, currentItem: "Creating products in parallel..." });
-
-    const results = await Promise.allSettled(
-      SAMPLE_PRODUCTS.map((product) => api.createProduct(product))
-    );
-
-    let successCount = 0;
-    let failCount = 0;
-    const newProductIds: string[] = [];
-
-    results.forEach((result) => {
-      if (result.status === "fulfilled") {
-        successCount++;
-        if (result.value?.id) {
-          newProductIds.push(result.value.id);
-        }
-      } else {
-        failCount++;
-        console.error("Product creation failed:", result.reason);
-      }
-    });
-
-    setMigratedProductIds(newProductIds);
-    setStockFill({ isRunning: false, progress: 100, currentItem: "" });
-
-    toast({
-      title: "Stock Fill Complete",
-      description: `Successfully added ${successCount} products.${failCount > 0 ? ` Failed: ${failCount}` : ""}`,
-    });
-
-    onComplete?.();
-  }, [toast]);
+    setStockFill({ isRunning: true, progress: 20, currentItem: "Seeding product catalog evidence..." });
+    try {
+      const result = await api.seedDemoStage("products");
+      setLastStageResult(result);
+      setMigratedProductIds([]);
+      setStockFill({ isRunning: false, progress: 100, currentItem: "" });
+      toast({ title: "Product Evidence Ready", description: "Product catalog stage is seeded from the backend." });
+      await refreshReadiness(onComplete);
+    } catch (error) {
+      setStockFill({ isRunning: false, progress: 0, currentItem: "" });
+      toast({ title: "Product Seed Failed", description: "Could not seed product evidence.", variant: "destructive" });
+    }
+  }, [refreshReadiness, toast]);
 
   // Migrate policies
   const handleMigratePolicies = useCallback(async (onComplete?: () => void) => {
-    setPolicyMigration({ isRunning: true, progress: 0, currentItem: "Creating policies in parallel..." });
-
-    const results = await Promise.allSettled(
-      SAMPLE_POLICIES.map((policy) => api.createPolicy(policy))
-    );
-
-    let successCount = 0;
-    let failCount = 0;
-
-    results.forEach((result) => {
-      if (result.status === "fulfilled") {
-        successCount++;
-      } else {
-        failCount++;
-        console.error("Policy creation failed:", result.reason);
-      }
-    });
-
-    setPolicyMigration({ isRunning: false, progress: 100, currentItem: "" });
-
-    toast({
-      title: "Policy Migration Complete",
-      description: `Successfully added ${successCount} policies.${failCount > 0 ? ` Failed: ${failCount}` : ""}`,
-    });
-
-    onComplete?.();
-  }, [toast]);
+    setPolicyMigration({ isRunning: true, progress: 35, currentItem: "Seeding commerce policies..." });
+    try {
+      const result = await api.seedDemoStage("policies");
+      setLastStageResult(result);
+      setPolicyMigration({ isRunning: false, progress: 100, currentItem: "" });
+      toast({ title: "Policy Evidence Ready", description: "Shopping policies are available for RAG answers." });
+      await refreshReadiness(onComplete);
+    } catch (error) {
+      setPolicyMigration({ isRunning: false, progress: 0, currentItem: "" });
+      toast({ title: "Policy Seed Failed", description: "Could not seed policies.", variant: "destructive" });
+    }
+  }, [refreshReadiness, toast]);
 
   // Migrate reviews
   const handleMigrateReviews = useCallback(async (onComplete?: () => void) => {
-    if (migratedProductIds.length === 0) {
-      // Fetch existing products to get IDs
-      try {
-        const products = await api.fetchProducts(100);
-        if (products.length === 0) {
-          toast({
-            title: "Cannot Migrate Reviews",
-            description: "Please fill stock first to create products for reviews.",
-            variant: "destructive",
-          });
-          return;
-        }
-        setMigratedProductIds(products.map((p) => p.id));
-      } catch (error) {
-        toast({
-          title: "Error",
-          description: "Failed to fetch products for review migration.",
-          variant: "destructive",
-        });
-        return;
-      }
+    setReviewMigration({ isRunning: true, progress: 35, currentItem: "Seeding product review evidence..." });
+    try {
+      const result = await api.seedDemoStage("reviews");
+      setLastStageResult(result);
+      setReviewMigration({ isRunning: false, progress: 100, currentItem: "" });
+      toast({ title: "Review Evidence Ready", description: "Product review evidence is available for comparisons." });
+      await refreshReadiness(onComplete);
+    } catch (error) {
+      setReviewMigration({ isRunning: false, progress: 0, currentItem: "" });
+      toast({ title: "Review Seed Failed", description: "Could not seed product reviews.", variant: "destructive" });
     }
-
-    setReviewMigration({ isRunning: true, progress: 0, currentItem: "Creating reviews in parallel..." });
-
-    const productIds = migratedProductIds.length > 0 ? migratedProductIds : [];
-    const reviewsWithProductIds = SAMPLE_REVIEWS.map((review, index) => ({
-      ...review,
-      productId: productIds[index % productIds.length] || null,
-    }));
-
-    const results = await Promise.allSettled(
-      reviewsWithProductIds.map((review) => api.createReview(review))
-    );
-
-    let successCount = 0;
-    let failCount = 0;
-
-    results.forEach((result) => {
-      if (result.status === "fulfilled") {
-        successCount++;
-      } else {
-        failCount++;
-        console.error("Review creation failed:", result.reason);
-      }
-    });
-
-    setReviewMigration({ isRunning: false, progress: 100, currentItem: "" });
-
-    toast({
-      title: "Review Migration Complete",
-      description: `Successfully added ${successCount} reviews.${failCount > 0 ? ` Failed: ${failCount}` : ""}`,
-    });
-
-    onComplete?.();
-  }, [migratedProductIds, toast]);
+  }, [refreshReadiness, toast]);
 
   // Migrate coupons
   const handleMigrateCoupons = useCallback(async (onComplete?: () => void) => {
-    setCouponMigration({ isRunning: true, progress: 0, currentItem: "Creating coupons in parallel..." });
-
-    const results = await Promise.allSettled(
-      SAMPLE_COUPONS.map((coupon) => api.createCoupon(coupon))
-    );
-
-    let successCount = 0;
-    let failCount = 0;
-
-    results.forEach((result) => {
-      if (result.status === "fulfilled") {
-        successCount++;
-      } else {
-        failCount++;
-        console.error("Coupon creation failed:", result.reason);
-      }
-    });
-
-    setCouponMigration({ isRunning: false, progress: 100, currentItem: "" });
-
-    toast({
-      title: "Coupon Migration Complete",
-      description: `Successfully added ${successCount} coupons.${failCount > 0 ? ` Failed: ${failCount}` : ""}`,
-    });
-
-    onComplete?.();
-  }, [toast]);
+    setCouponMigration({ isRunning: true, progress: 35, currentItem: "Seeding coupon scenarios..." });
+    try {
+      const result = await api.seedDemoStage("coupons");
+      setLastStageResult(result);
+      setCouponMigration({ isRunning: false, progress: 100, currentItem: "" });
+      toast({ title: "Coupon Evidence Ready", description: "Coupon scenarios are available." });
+      await refreshReadiness(onComplete);
+    } catch (error) {
+      setCouponMigration({ isRunning: false, progress: 0, currentItem: "" });
+      toast({ title: "Coupon Seed Failed", description: "Could not seed coupons.", variant: "destructive" });
+    }
+  }, [refreshReadiness, toast]);
 
   // Migrate tickets
   const handleMigrateTickets = useCallback(async (onComplete?: () => void) => {
-    setTicketMigration({ isRunning: true, progress: 0, currentItem: "Creating tickets in parallel..." });
+    setTicketMigration({ isRunning: true, progress: 35, currentItem: "Seeding support ticket scenarios..." });
+    try {
+      const result = await api.seedDemoStage("tickets");
+      setLastStageResult(result);
+      setTicketMigration({ isRunning: false, progress: 100, currentItem: "" });
+      toast({ title: "Support Scenarios Ready", description: "Support ticket fixtures are available." });
+      await refreshReadiness(onComplete);
+    } catch (error) {
+      setTicketMigration({ isRunning: false, progress: 0, currentItem: "" });
+      toast({ title: "Ticket Seed Failed", description: "Could not seed support tickets.", variant: "destructive" });
+    }
+  }, [refreshReadiness, toast]);
 
-    const results = await Promise.allSettled(
-      SAMPLE_TICKETS.map((ticket) => api.createTicket(ticket))
-    );
-
-    let successCount = 0;
-    let failCount = 0;
-
-    results.forEach((result) => {
-      if (result.status === "fulfilled") {
-        successCount++;
-      } else {
-        failCount++;
-        console.error("Ticket creation failed:", result.reason);
-      }
-    });
-
-    setTicketMigration({ isRunning: false, progress: 100, currentItem: "" });
-
-    toast({
-      title: "Ticket Migration Complete",
-      description: `Successfully added ${successCount} support tickets.${failCount > 0 ? ` Failed: ${failCount}` : ""}`,
-    });
-
-    onComplete?.();
-  }, [toast]);
+  const handleSeedFull = useCallback(async (onComplete?: () => void) => {
+    setStockFill({ isRunning: true, progress: 20, currentItem: "Seeding full demo dataset..." });
+    try {
+      const result = await api.seedDemoStage("full");
+      setLastStageResult(result);
+      setStockFill({ isRunning: false, progress: 100, currentItem: "" });
+      toast({ title: "Full Demo Ready", description: "Products, reviews, policies, coupons, and tickets are seeded." });
+      await refreshReadiness(onComplete);
+    } catch (error) {
+      setStockFill({ isRunning: false, progress: 0, currentItem: "" });
+      toast({ title: "Full Seed Failed", description: "Could not seed the full demo dataset.", variant: "destructive" });
+    }
+  }, [refreshReadiness, toast]);
 
   // Clear all data
   const handleClearData = useCallback(async (onComplete?: () => void) => {
@@ -253,18 +189,20 @@ export function useMigration() {
     setIsClearing(true);
 
     try {
-      await api.clearAllData();
+      const result = await api.resetDemoData();
+      setLastStageResult(result);
       setMigratedProductIds([]);
       setPolicyCount(0);
       setReviewCount(0);
       setCouponCount(0);
+      setReadiness(null);
 
       toast({
         title: "Data Cleared",
         description: "All data has been cleared successfully.",
       });
 
-      onComplete?.();
+      await refreshReadiness(onComplete);
     } catch (error) {
       toast({
         title: "Error",
@@ -274,22 +212,22 @@ export function useMigration() {
     } finally {
       setIsClearing(false);
     }
-  }, [toast]);
+  }, [refreshReadiness, toast]);
 
   // Load counts
   const loadPolicyCount = useCallback(async () => {
     try {
-      const count = await api.fetchPolicyCount();
-      setPolicyCount(count);
+      const data = await loadReadiness();
+      if (data) setPolicyCount(data.counts?.policies || 0);
     } catch (error) {
       console.error("Failed to load policy count:", error);
     }
-  }, []);
+  }, [loadReadiness]);
 
   const loadReviewCount = useCallback(async () => {
     try {
-      const count = await api.fetchReviewCount();
-      setReviewCount(count);
+      const data = await loadReadiness();
+      if (data) setReviewCount(data.counts?.reviews || 0);
     } catch (error) {
       // Fallback: fetch reviews and count
       try {
@@ -299,16 +237,16 @@ export function useMigration() {
         console.error("Failed to load review count");
       }
     }
-  }, []);
+  }, [loadReadiness]);
 
   const loadCouponCount = useCallback(async () => {
     try {
-      const count = await api.fetchCouponCount();
-      setCouponCount(count);
+      const data = await loadReadiness();
+      if (data) setCouponCount(data.counts?.coupons || 0);
     } catch (error) {
       console.error("Failed to load coupon count:", error);
     }
-  }, []);
+  }, [loadReadiness]);
 
   return {
     // State
@@ -317,6 +255,9 @@ export function useMigration() {
     reviewMigration,
     couponMigration,
     ticketMigration,
+    readiness,
+    health,
+    lastStageResult,
     isClearing,
     migratedProductIds,
     policyCount,
@@ -329,7 +270,11 @@ export function useMigration() {
     handleMigrateReviews,
     handleMigrateCoupons,
     handleMigrateTickets,
+    handleSeedFull,
     handleClearData,
+    loadReadiness,
+    loadHealth,
+    refreshReadiness,
     loadPolicyCount,
     loadReviewCount,
     loadCouponCount,

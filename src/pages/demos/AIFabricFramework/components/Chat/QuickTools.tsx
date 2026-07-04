@@ -1,4 +1,4 @@
-import { ShoppingCart, Search, Package, Sparkles } from "lucide-react";
+import { Headphones, ShoppingCart, Search, Package, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { ActionTag } from "../../types";
@@ -22,9 +22,25 @@ export function QuickTools({ activeTag, onToolClick }: QuickToolsProps) {
       id: "cart",
       type: "cart" as const,
       label: "My Cart",
-      query: "Action: view_cart",
+      query: "Show my active cart.",
       icon: ShoppingCart,
       color: "bg-green-500/10 text-green-600 border-green-500/30",
+    },
+    {
+      id: "checkout",
+      type: "checkout" as const,
+      label: "Checkout",
+      query: "Review my cart and tell me what is needed to check out.",
+      icon: CreditCard,
+      color: "bg-orange-500/10 text-orange-600 border-orange-500/30",
+    },
+    {
+      id: "support",
+      type: "support" as const,
+      label: "Support",
+      query: "Help me resolve an issue with an order or shopping question.",
+      icon: Headphones,
+      color: "bg-slate-500/10 text-slate-600 border-slate-500/30",
     },
     {
       id: "browse",

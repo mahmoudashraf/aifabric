@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Package, Receipt, FileText, Star, Tag, Code, Activity, MessageCircle } from "lucide-react";
+import { Package, Receipt, FileText, Star, Tag, Code, Activity, MessageCircle, ShoppingCart, Database, Headphones } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Widget library
@@ -7,20 +7,24 @@ import { MaxModeWidget } from "@/lib/max-mode-widget/max-mode-widget.esm.js";
 import "@/lib/max-mode-widget/style.css";
 
 // Hooks
-import { useChat, useProducts, useMigration, useDataEntities } from "./hooks";
+import { useChat, useProducts, useMigration, useDataEntities, useCart } from "./hooks";
 
 // Components
 import {
   Header,
   ChatPanel,
   ChatInput,
+  DemoEvidencePanel,
   ProductsTab,
+  CartTab,
   OrdersTab,
   PoliciesTab,
   ReviewsTab,
   CouponsTab,
+  SupportTab,
   ApiTab,
   VerificationTab,
+  shoppingActionProjections,
 } from "./components";
 import { API_AUTH_HEADERS, API_BASE_URL, CRUD_API_BASE_URL } from "./constants";
 
@@ -28,21 +32,27 @@ const AI_SHOPPING_EXPERIENCE_BUILD_MARKER = "ai-shopping-experience-route-2026-0
 
 export default function AIFabricFramework() {
   const [isWidgetOpen, setIsWidgetOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("products");
 
   // Initialize hooks
   const chat = useChat();
   const products = useProducts();
   const migration = useMigration();
   const entities = useDataEntities();
+  const cart = useCart(chat.userId);
 
   // Load initial data
   useEffect(() => {
     products.loadProducts();
     products.loadProductCount();
-    entities.loadOrders();
+    entities.loadOrders(chat.userId);
     entities.loadPolicies();
     entities.loadReviews();
     entities.loadCoupons();
+    entities.loadTickets(chat.userId);
+    cart.loadCart();
+    migration.loadReadiness();
+    migration.loadHealth();
     migration.loadPolicyCount();
     migration.loadReviewCount();
     migration.loadCouponCount();
@@ -52,6 +62,39 @@ export default function AIFabricFramework() {
   useEffect(() => {
     chat.scrollToBottom();
   }, [chat.chatMessages]);
+
+  const refreshCommerceData = () => {
+    products.loadProducts();
+    products.loadProductCount();
+    entities.loadOrders(chat.userId);
+    entities.loadPolicies();
+    entities.loadReviews();
+    entities.loadCoupons();
+    entities.loadTickets(chat.userId);
+    cart.loadCart();
+  };
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    if (value === "products") chat.setPosition("catalog", "navigator");
+    if (value === "cart") chat.setPosition("cart", "cart_assistant");
+    if (value === "orders") chat.setPosition("orders", "cart_assistant");
+    if (value === "policies") chat.setPosition("support", "navigator_deep");
+    if (value === "reviews") chat.setPosition("product_detail", "navigator_deep");
+    if (value === "coupons") chat.setPosition("cart", "cart_assistant");
+    if (value === "support") chat.setPosition("support", "navigator");
+    if (value === "evidence" || value === "api" || value === "verification") chat.setPosition("landing", "navigator");
+  };
+
+  const handleCartAI = (query: string) => {
+    chat.setPosition("cart", "cart_assistant");
+    chat.handleChatQuery(query, { position: "cart", mode: "cart_assistant" });
+  };
+
+  const handleSupportAI = (query: string) => {
+    chat.setPosition("support", "navigator");
+    chat.handleChatQuery(query, { position: "support", mode: "navigator" });
+  };
 
   return (
     <div
@@ -92,23 +135,28 @@ export default function AIFabricFramework() {
             })
           }
           onMigrateTickets={() => migration.handleMigrateTickets()}
+          onSeedFull={() =>
+            migration.handleSeedFull(() => {
+              refreshCommerceData();
+            })
+          }
           onClearData={() =>
             migration.handleClearData(() => {
-              products.loadProducts();
-              products.loadProductCount();
-              entities.loadPolicies();
-              entities.loadReviews();
-              entities.loadCoupons();
+              refreshCommerceData();
             })
           }
         />
 
         {/* Main content tabs */}
-        <Tabs defaultValue="products" className="w-full">
-          <TabsList className="grid w-full grid-cols-7 mb-4 sm:mb-6 h-auto sm:h-10">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 lg:grid-cols-10 mb-4 sm:mb-6 h-auto sm:h-10">
             <TabsTrigger value="products" className="gap-2">
               <Package className="h-4 w-4" />
               <span className="hidden sm:inline">Products</span>
+            </TabsTrigger>
+            <TabsTrigger value="cart" className="gap-2">
+              <ShoppingCart className="h-4 w-4" />
+              <span className="hidden sm:inline">Cart</span>
             </TabsTrigger>
             <TabsTrigger value="orders" className="gap-2">
               <Receipt className="h-4 w-4" />
@@ -125,6 +173,14 @@ export default function AIFabricFramework() {
             <TabsTrigger value="coupons" className="gap-2">
               <Tag className="h-4 w-4" />
               <span className="hidden sm:inline">Coupons</span>
+            </TabsTrigger>
+            <TabsTrigger value="support" className="gap-2">
+              <Headphones className="h-4 w-4" />
+              <span className="hidden sm:inline">Support</span>
+            </TabsTrigger>
+            <TabsTrigger value="evidence" className="gap-2">
+              <Database className="h-4 w-4" />
+              <span className="hidden sm:inline">Evidence</span>
             </TabsTrigger>
             <TabsTrigger value="api" className="gap-2">
               <Code className="h-4 w-4" />
@@ -156,6 +212,21 @@ export default function AIFabricFramework() {
               onAddProduct={products.handleAddProduct}
               onEditProduct={products.handleEditProduct}
               onDeleteProduct={products.handleDeleteProduct}
+            />
+          </TabsContent>
+
+          <TabsContent value="cart">
+            <CartTab
+              cart={cart.cart}
+              isLoading={cart.isLoadingCart}
+              onRefresh={cart.loadCart}
+              onRemoveItem={(sku) => {
+                cart.removeItem(sku).then(() => {
+                  entities.loadOrders(chat.userId);
+                });
+              }}
+              onApplyCoupon={(code) => cart.applyCoupon(code)}
+              onAskAI={handleCartAI}
             />
           </TabsContent>
 
@@ -195,6 +266,67 @@ export default function AIFabricFramework() {
             />
           </TabsContent>
 
+          <TabsContent value="support">
+            <SupportTab
+              tickets={entities.tickets}
+              isLoading={entities.isLoadingTickets}
+              onRefresh={() => entities.loadTickets(chat.userId)}
+              onAskAI={handleSupportAI}
+            />
+          </TabsContent>
+
+          <TabsContent value="evidence">
+            <DemoEvidencePanel
+              readiness={migration.readiness}
+              health={migration.health}
+              lastStageResult={migration.lastStageResult}
+              stockFill={migration.stockFill}
+              policyMigration={migration.policyMigration}
+              reviewMigration={migration.reviewMigration}
+              couponMigration={migration.couponMigration}
+              ticketMigration={migration.ticketMigration}
+              isClearing={migration.isClearing}
+              onRefresh={() => {
+                migration.refreshReadiness(refreshCommerceData);
+              }}
+              onSeedProducts={() =>
+                migration.handleFillStock(() => {
+                  refreshCommerceData();
+                })
+              }
+              onSeedReviews={() =>
+                migration.handleMigrateReviews(() => {
+                  refreshCommerceData();
+                })
+              }
+              onSeedPolicies={() =>
+                migration.handleMigratePolicies(() => {
+                  refreshCommerceData();
+                })
+              }
+              onSeedCoupons={() =>
+                migration.handleMigrateCoupons(() => {
+                  refreshCommerceData();
+                })
+              }
+              onSeedTickets={() =>
+                migration.handleMigrateTickets(() => {
+                  refreshCommerceData();
+                })
+              }
+              onSeedFull={() =>
+                migration.handleSeedFull(() => {
+                  refreshCommerceData();
+                })
+              }
+              onReset={() =>
+                migration.handleClearData(() => {
+                  refreshCommerceData();
+                })
+              }
+            />
+          </TabsContent>
+
           <TabsContent value="api">
             <ApiTab
               productCount={products.productCount}
@@ -220,6 +352,7 @@ export default function AIFabricFramework() {
         messagesEndRef={chat.messagesEndRef}
         onResendAction={chat.handleResendAction}
         onClarificationSubmit={chat.handleClarificationSubmit}
+        actionProjections={shoppingActionProjections}
       />
 
       {/* Max Mode Widget floating launcher */}

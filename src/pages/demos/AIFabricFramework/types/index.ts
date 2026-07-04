@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 export interface Product {
   id: string;
   sku: string;
@@ -85,7 +87,7 @@ export interface Document {
   score?: number;
 }
 
-export type ChatPosition = "landing" | "catalog" | "search" | "cart";
+export type ChatPosition = "landing" | "catalog" | "search" | "product_detail" | "cart" | "checkout" | "orders" | "support";
 export type ChatMode = "navigator" | "navigator_deep" | "cart_assistant" | "executor";
 
 export interface ChatMessage {
@@ -169,6 +171,17 @@ export interface Coupon {
   updatedAt?: string;
 }
 
+export interface SupportTicket {
+  id?: string | number;
+  userId: string;
+  issueType: string;
+  description: string;
+  orderNumber?: string | null;
+  status?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface ProductFormData {
   sku: string;
   name: string;
@@ -188,9 +201,91 @@ export interface MigrationState {
 
 export interface ActionTag {
   id: string;
-  type: "search" | "cart" | "browse" | "action";
+  type: "search" | "cart" | "browse" | "checkout" | "support" | "action";
   label: string;
   query: string;
   icon?: string;
   timestamp?: string;
+}
+
+export interface DemoReadiness {
+  ready: boolean;
+  stage: string;
+  stageNumber: number;
+  counts: {
+    products?: number;
+    reviews?: number;
+    policies?: number;
+    coupons?: number;
+    tickets?: number;
+    [key: string]: number | undefined;
+  };
+  vectorSpaces?: Record<string, {
+    name: string;
+    present: boolean;
+    vectorCount: number;
+    provider?: string;
+    warning?: string;
+  }>;
+  indexingQueueSize?: number;
+  nextRecommendedStep?: string;
+  warnings?: string[];
+  checkedAt?: string;
+}
+
+export interface DemoHealth {
+  app: string;
+  version: string;
+  aiFabricVersion?: string;
+  commit?: string;
+  buildTime?: string;
+  checkedAt?: string;
+  demoControlsEnabled?: boolean;
+  chatSessionEnabled?: boolean;
+  ragEnabled?: boolean;
+  dataSyncEnabled?: boolean;
+  vectorProvider?: string;
+  readiness?: DemoReadiness;
+}
+
+export interface CartItem {
+  id?: string | number;
+  sku: string;
+  productName?: string;
+  quantity: number;
+  unitPrice?: number;
+  totalPrice?: number;
+}
+
+export interface Cart {
+  id?: string | number;
+  userId?: string;
+  status?: string;
+  couponCode?: string | null;
+  subtotal?: number;
+  discount?: number;
+  total?: number;
+  currency?: string;
+  items?: CartItem[];
+}
+
+export interface ActionProjectionInput {
+  data: any;
+  messageId: string;
+}
+
+export interface DemoActionProjection {
+  id: string;
+  canRender: (input: ActionProjectionInput) => boolean;
+  render: (input: ActionProjectionInput) => ReactNode;
+}
+
+export interface ActionProjectionInput {
+  data: any;
+  messageId: string;
+}
+
+export interface DemoActionProjection {
+  canRender: (input: ActionProjectionInput) => boolean;
+  render: (input: ActionProjectionInput) => ReactNode;
 }

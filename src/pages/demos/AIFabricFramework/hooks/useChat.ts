@@ -2,8 +2,14 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useMaxModeContextOptional } from "@/contexts/MaxModeContext";
 import * as api from "../utils/api";
-import { DEFAULT_USER_ID, DEFAULT_SESSION_ID } from "../constants";
+import { getShoppingDemoIdentity } from "../utils/demoIdentity";
 import type { ChatMessage, Product, Review, Coupon, Conversation, ActionTag, ChatPosition, ChatMode, Document } from "../types";
+
+interface ChatQueryOptions {
+  fromSuggestion?: boolean;
+  position?: ChatPosition;
+  mode?: ChatMode;
+}
 
 export function useChat() {
   const { toast } = useToast();
@@ -37,6 +43,9 @@ export function useChat() {
   const isSuggestionQueryRef = useRef(false);
 
   // Refs
+  const identityRef = useRef(getShoppingDemoIdentity());
+  const userId = identityRef.current.userId;
+  const sessionId = identityRef.current.sessionId;
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLTextAreaElement>(null);
   const isUserFocusRef = useRef(false);
@@ -74,8 +83,11 @@ export function useChat() {
       }
 
       // Update position if we have attachments
-      if (products.length > 0 || reviews.length > 0 || coupons.length > 0) {
+      if (coupons.length > 0) {
         setCurrentPosition("cart");
+        setCurrentMode("navigator");
+      } else if (products.length > 0 || reviews.length > 0) {
+        setCurrentPosition("product_detail");
         setCurrentMode("navigator");
       }
     }
@@ -84,12 +96,12 @@ export function useChat() {
   // Load conversations
   const loadConversations = useCallback(async () => {
     try {
-      const data = await api.fetchConversations(DEFAULT_USER_ID);
+      const data = await api.fetchConversations(userId);
       setConversations(data);
     } catch (error) {
       console.error("Failed to load conversations:", error);
     }
-  }, []);
+  }, [userId]);
 
   // Fetch suggestions based on all attachments (products, reviews, coupons)
   const fetchSuggestions = useCallback(async (
@@ -110,8 +122,8 @@ export function useChat() {
     setIsLoadingSuggestions(true);
     try {
       const data = await api.fetchSuggestions(
-        DEFAULT_USER_ID,
-        DEFAULT_SESSION_ID,
+        userId,
+        sessionId,
         productsToUse,
         reviewsToUse,
         couponsToUse
@@ -123,7 +135,7 @@ export function useChat() {
     } finally {
       setIsLoadingSuggestions(false);
     }
-  }, [attachedProducts, attachedReviews, attachedCoupons]);
+  }, [attachedProducts, attachedReviews, attachedCoupons, sessionId, userId]);
 
   // Helper to extract documents from API response
   const extractDocuments = useCallback((data: any, messageId: string): Document[] => {
@@ -131,6 +143,7 @@ export function useChat() {
     const seenIds = new Set<string>();
 
     const addDoc = (raw: any) => {
+      if (!raw || typeof raw !== "object") return;
       const id = raw.id || raw._id || `doc-${seenIds.size}`;
       if (seenIds.has(id)) return;
       seenIds.add(id);
@@ -146,28 +159,26 @@ export function useChat() {
       });
     };
 
-    // From result.data.documents
-    if (data.result?.sanitizedPayload?.data?.documents) {
-      (data.result.sanitizedPayload.data.documents as any[]).forEach(addDoc);
-    }
+    const addDocs = (items: unknown, fromSuggestion = false) => {
+      if (!Array.isArray(items)) return;
+      items.forEach((raw: any) => addDoc(fromSuggestion ? { ...raw, _fromSuggestion: true } : raw));
+    };
 
-    // From ragResponse.documents
-    if (data.ragResponse?.documents) {
-      (data.ragResponse.documents as any[]).forEach(addDoc);
-    }
-
-    // From smartSuggestion.documents
-    if (data.result?.smartSuggestion?.documents) {
-      (data.result.smartSuggestion.documents as any[]).forEach((raw: any) => {
-        addDoc({ ...raw, _fromSuggestion: true });
-      });
-    }
+    addDocs(data.result?.sanitizedPayload?.data?.documents);
+    addDocs(data.result?.sanitizedPayload?.data?.ragResponse?.documents);
+    addDocs(data.result?.data?.documents);
+    addDocs(data.result?.data?.ragResponse?.documents);
+    addDocs(data.result?.smartSuggestion?.documents, true);
+    addDocs(data.result?.sanitizedPayload?.data?.smartSuggestion?.documents, true);
+    addDocs(data.ragResponse?.documents);
+    addDocs(data.documents);
 
     return docs;
   }, []);
 
   // Handle chat query
-  const handleChatQuery = useCallback(async (queryOverride?: string, fromSuggestion?: boolean) => {
+  const handleChatQuery = useCallback(async (queryOverride?: string, optionsOrFromSuggestion?: ChatQueryOptions | boolean) => {
+    const options = typeof optionsOrFromSuggestion === "object" ? optionsOrFromSuggestion : {};
     const queryToUse = queryOverride || chatQuery;
     if (!queryToUse.trim()) return;
 
@@ -189,8 +200,8 @@ export function useChat() {
     setIsChatExpanded(true);
 
     // Use current position/mode — position is always set, mode defaults
-    const position = currentPosition;
-    const mode = currentMode;
+    const position = options.position || currentPosition;
+    const mode = options.mode || currentMode;
 
     // Override: search tag forces navigator, deep mode overrides everything
     let resolvedPosition = position;
@@ -277,8 +288,8 @@ export function useChat() {
 
       const data = await api.sendChatQuery(
         queryToUse,
-        DEFAULT_USER_ID,
-        DEFAULT_SESSION_ID,
+        userId,
+        sessionId,
         currentConversationId || undefined,
         attachmentsWithMetadata.length > 0 ? attachmentsWithMetadata : undefined,
         resolvedPosition,
@@ -344,7 +355,7 @@ export function useChat() {
     } finally {
       setIsLoading(false);
     }
-  }, [chatQuery, attachedProducts, attachedReviews, attachedCoupons, currentConversationId, currentPosition, currentMode, activeTag, extractDocuments, toast]);
+  }, [chatQuery, attachedProducts, attachedReviews, attachedCoupons, currentConversationId, currentPosition, currentMode, activeTag, extractDocuments, sessionId, toast, userId]);
 
   // Handle confirmation action
   const handleConfirmationAction = useCallback(
@@ -367,15 +378,17 @@ export function useChat() {
       try {
         const data = await api.sendChatQuery(
           confirmationQuery,
-          DEFAULT_USER_ID,
-          DEFAULT_SESSION_ID,
+          userId,
+          sessionId,
           currentConversationId || undefined,
           attachedProducts.length > 0
             ? attachedProducts.map((p) => ({
                 type: "product",
                 metadata: { id: p.id, sku: p.sku, category: p.category, imageUrl: p.imageUrl },
               }))
-            : undefined
+            : undefined,
+          currentPosition,
+          currentMode,
         );
 
         let messageContent: unknown = "";
@@ -424,7 +437,7 @@ export function useChat() {
         setIsLoading(false);
       }
     },
-    [attachedProducts, currentConversationId, extractDocuments, toast]
+    [attachedProducts, currentConversationId, currentMode, currentPosition, extractDocuments, sessionId, toast, userId]
   );
 
   // Fetch suggestions for specific attachments (products, reviews, coupons)
@@ -444,8 +457,8 @@ export function useChat() {
     setIsLoadingSuggestions(true);
     try {
       const data = await api.fetchSuggestions(
-        DEFAULT_USER_ID,
-        DEFAULT_SESSION_ID,
+        userId,
+        sessionId,
         products,
         reviewsToUse,
         couponsToUse
@@ -457,7 +470,7 @@ export function useChat() {
     } finally {
       setIsLoadingSuggestions(false);
     }
-  }, [attachedReviews, attachedCoupons]);
+  }, [attachedReviews, attachedCoupons, sessionId, userId]);
 
   // Helper to build combined attachments for MaxMode sync
   const buildMaxModeAttachments = useCallback((
@@ -481,8 +494,8 @@ export function useChat() {
     const newProducts = [...attachedProducts, product];
     setAttachedProducts(newProducts);
 
-    // Set position to cart when product is attached
-    setCurrentPosition("cart");
+    // Product attachments are product-detail context; cart mode is reserved for active-cart questions.
+    setCurrentPosition("product_detail");
     setCurrentMode("navigator");
 
     // Sync with MaxMode state
@@ -520,8 +533,7 @@ export function useChat() {
 
     const newReviews = [...attachedReviews, review];
     setAttachedReviews(newReviews);
-    // Set position to cart when review is attached
-    setCurrentPosition("cart");
+    setCurrentPosition("product_detail");
     setCurrentMode("navigator");
 
     // Sync with MaxMode state
@@ -632,8 +644,8 @@ export function useChat() {
       try {
         const data = await api.sendChatQuery(
           query,
-          DEFAULT_USER_ID,
-          DEFAULT_SESSION_ID,
+          userId,
+          sessionId,
           currentConversationId || undefined,
           attachedProducts.length > 0
             ? attachedProducts.map((p) => ({
@@ -695,7 +707,7 @@ export function useChat() {
         setIsLoading(false);
       }
     },
-    [attachedProducts, currentConversationId, currentPosition, currentMode, extractDocuments, toast]
+    [attachedProducts, currentConversationId, currentPosition, currentMode, extractDocuments, sessionId, toast, userId]
   );
 
   // Handle tag submission (for cart and browse actions)
@@ -716,15 +728,30 @@ export function useChat() {
     // Clear active tag
     setActiveTag(null);
 
+    const tagPosition =
+      tag.type === "cart" ? "cart"
+      : tag.type === "checkout" ? "checkout"
+      : tag.type === "support" ? "support"
+      : tag.type === "browse" ? "catalog"
+      : currentPosition;
+    const tagMode =
+      tag.type === "cart" ? "cart_assistant"
+      : tag.type === "checkout" ? "executor"
+      : tag.type === "support" ? "navigator"
+      : currentMode;
+
+    setCurrentPosition(tagPosition);
+    setCurrentMode(tagMode);
+
     try {
       const data = await api.sendChatQuery(
         tag.query,
-        DEFAULT_USER_ID,
-        DEFAULT_SESSION_ID,
+        userId,
+        sessionId,
         currentConversationId || undefined,
         undefined,
-        currentPosition,
-        currentMode
+        tagPosition,
+        tagMode
       );
 
       if (data.conversationId && !currentConversationId) {
@@ -776,7 +803,7 @@ export function useChat() {
     } finally {
       setIsLoading(false);
     }
-  }, [currentConversationId, currentPosition, currentMode, extractDocuments, toast]);
+  }, [currentConversationId, currentPosition, currentMode, extractDocuments, sessionId, toast, userId]);
 
   return {
     // State
@@ -794,6 +821,8 @@ export function useChat() {
     currentPosition,
     currentMode,
     activeTag,
+    userId,
+    sessionId,
 
     // Refs
     messagesEndRef,

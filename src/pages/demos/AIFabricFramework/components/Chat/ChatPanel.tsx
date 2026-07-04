@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, FileText, MessageSquare, Star, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChatMessage, LoadingMessage } from "./ChatMessage";
-import type { ChatMessage as ChatMessageType, Document } from "../../types";
+import type { ChatMessage as ChatMessageType, DemoActionProjection, Document } from "../../types";
 
 interface ChatPanelProps {
   isExpanded: boolean;
@@ -19,6 +19,7 @@ interface ChatPanelProps {
   emptyDescription?: string;
   documentLabel?: string;
   documentTypeColors?: Record<string, string>;
+  actionProjections?: DemoActionProjection[];
 }
 
 export function ChatPanel({
@@ -35,6 +36,7 @@ export function ChatPanel({
   emptyDescription = "Attach products, reviews, or coupons for context-aware responses",
   documentLabel = "Documents",
   documentTypeColors,
+  actionProjections,
 }: ChatPanelProps) {
   const [showAllDocs, setShowAllDocs] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
@@ -298,6 +300,7 @@ export function ChatPanel({
                             onResendAction={onResendAction}
                             onNextStepClick={onResendAction}
                             onClarificationSubmit={onClarificationSubmit}
+                            actionProjections={actionProjections}
                           />
                         ))}
                         {isLoading && <LoadingMessage />}

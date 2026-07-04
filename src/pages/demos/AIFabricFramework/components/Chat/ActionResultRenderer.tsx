@@ -6,23 +6,31 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 import { formatFieldName, formatFieldValue } from "../../utils/formatters";
+import type { DemoActionProjection } from "../../types";
 
 export const ActionResultRenderer = ({
   data,
   messageId,
   expandedCount: expandedCountProp,
   onExpand,
+  projections,
 }: {
   data: any;
   messageId: string;
   expandedCount?: number;
   onExpand?: (count: number) => void;
+  projections?: DemoActionProjection[];
 }) => {
   const [localExpandedCount, setLocalExpandedCount] = useState(6);
   const expandedCount = expandedCountProp ?? localExpandedCount;
   const handleExpand = onExpand ?? ((count: number) => setLocalExpandedCount(count));
 
   if (!data) return null;
+
+  const projection = projections?.find((candidate) => candidate.canRender({ data, messageId }));
+  if (projection) {
+    return <>{projection.render({ data, messageId })}</>;
+  }
 
   const isRecord = (value: any): value is Record<string, any> => typeof value === "object" && value !== null && !Array.isArray(value);
   const firstRecord = (...values: any[]) => values.find(isRecord) || {};

@@ -76,7 +76,7 @@ export function ChatInput({
       return;
     }
 
-    if (tag.type === "cart") {
+    if (tag.type === "cart" || tag.type === "checkout" || tag.type === "support") {
       if (onTagSubmit) {
         onTagSubmit(tag);
       }

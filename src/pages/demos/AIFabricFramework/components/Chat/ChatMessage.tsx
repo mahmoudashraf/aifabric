@@ -35,7 +35,7 @@ import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
 
 import { ActionResultRenderer } from "./ActionResultRenderer";
-import type { ChatMessage as ChatMessageType, Document } from "../../types";
+import type { ChatMessage as ChatMessageType, DemoActionProjection, Document } from "../../types";
 
 const normalizeContent = (value: unknown): string => {
   if (typeof value === "string") return value;
@@ -182,9 +182,17 @@ interface ChatMessageProps {
   onResendAction?: (query: string) => void;
   onNextStepClick?: (query: string) => void;
   onClarificationSubmit?: (action: string, parameters: Record<string, any>) => void;
+  actionProjections?: DemoActionProjection[];
 }
 
-export function ChatMessage({ message, onConfirmation, onResendAction, onNextStepClick, onClarificationSubmit }: ChatMessageProps) {
+export function ChatMessage({
+  message,
+  onConfirmation,
+  onResendAction,
+  onNextStepClick,
+  onClarificationSubmit,
+  actionProjections,
+}: ChatMessageProps) {
   const [isSuggestionExpanded, setIsSuggestionExpanded] = useState(false);
   const [isSmartSuggestionDismissed, setIsSmartSuggestionDismissed] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
@@ -341,6 +349,7 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
               <ActionResultRenderer
                 data={message.result.sanitizedPayload.data.actionResult.data}
                 messageId={message.id}
+                projections={actionProjections}
               />
             )}
 
@@ -351,6 +360,7 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
               <ActionResultRenderer
                 data={message.result.sanitizedPayload.data}
                 messageId={message.id}
+                projections={actionProjections}
               />
             )}
 
@@ -362,6 +372,7 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
               <ActionResultRenderer
                 data={message.result.sanitizedPayload.data}
                 messageId={message.id}
+                projections={actionProjections}
               />
             )}
 
@@ -665,6 +676,7 @@ export function ChatMessage({ message, onConfirmation, onResendAction, onNextSte
                           <ActionResultRenderer
                             data={subResult.data.actionResult.data}
                             messageId={`${message.id}-sub-${idx}`}
+                            projections={actionProjections}
                           />
                         )}
                       </div>

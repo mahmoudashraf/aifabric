@@ -1,8 +1,7 @@
 import { useState, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import * as api from "../utils/api";
-import { DEFAULT_USER_ID } from "../constants";
-import type { Policy, Review, Coupon, Order } from "../types";
+import type { Policy, Review, Coupon, Order, SupportTicket } from "../types";
 
 export function useDataEntities() {
   const { toast } = useToast();
@@ -24,8 +23,12 @@ export function useDataEntities() {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [isLoadingCoupons, setIsLoadingCoupons] = useState(false);
 
+  // Support tickets state
+  const [tickets, setTickets] = useState<SupportTicket[]>([]);
+  const [isLoadingTickets, setIsLoadingTickets] = useState(false);
+
   // Load orders
-  const loadOrders = useCallback(async (userId = DEFAULT_USER_ID) => {
+  const loadOrders = useCallback(async (userId: string) => {
     setIsLoadingOrders(true);
     try {
       const data = await api.fetchOrders(userId);
@@ -115,6 +118,19 @@ export function useDataEntities() {
     }
   }, [toast]);
 
+  // Load support tickets
+  const loadTickets = useCallback(async (userId: string, limit = 50) => {
+    setIsLoadingTickets(true);
+    try {
+      const data = await api.fetchTickets(userId, limit);
+      setTickets(data);
+    } catch (error) {
+      console.error("Failed to load support tickets:", error);
+    } finally {
+      setIsLoadingTickets(false);
+    }
+  }, []);
+
   return {
     // Orders
     orders,
@@ -138,5 +154,10 @@ export function useDataEntities() {
     coupons,
     isLoadingCoupons,
     loadCoupons,
+
+    // Support tickets
+    tickets,
+    isLoadingTickets,
+    loadTickets,
   };
 }
