@@ -80,11 +80,15 @@ interface AccountReadiness {
 }
 
 type JsonRecord = Record<string, unknown>;
-type ManualActionName =
+type ResolverActionName =
   | "inspect_account_readiness"
   | "update_payment_method"
   | "update_address"
-  | "request_refund";
+  | "request_refund"
+  | "subscribe"
+  | "cancel_subscription"
+  | "upgrade_subscription"
+  | "downgrade_subscription";
 
 interface ResolverOrchestrationResponse {
   type?: ResultType | string;
@@ -96,15 +100,6 @@ interface ResolverOrchestrationResponse {
   sanitizedPayload?: JsonRecord;
   ragResponse?: unknown;
   readiness?: AccountReadiness;
-}
-
-interface ManualResolverAction {
-  name: ManualActionName;
-  label: string;
-  confirmationMessage: string;
-  subscriptionId?: string;
-  params: JsonRecord;
-  requiresConfirmation: boolean;
 }
 
 interface ResolverChatHistoryMessage {
@@ -222,17 +217,18 @@ function formatActionName(action: string) {
   return action.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
-function createChatResult(type: ResultType, message: string, data?: unknown, success = true): ChatResult {
-  return {
-    type,
-    success,
-    sanitizedPayload: {
-      type,
-      success,
-      message,
-      data,
-    },
+function resolverActionPrompt(action: string): string {
+  const prompts: Record<ResolverActionName, string> = {
+    inspect_account_readiness: "Inspect this account readiness and explain every blocker.",
+    update_payment_method: "I want to update my payment method with my Visa ending 4242.",
+    update_address: "I want to update my billing address.",
+    request_refund: "Create a $25 account credit for the billing issue.",
+    subscribe: "Subscribe me to the Pro plan with monthly billing.",
+    cancel_subscription: "Cancel my current subscription.",
+    upgrade_subscription: "Upgrade my subscription to the Enterprise plan.",
+    downgrade_subscription: "Downgrade my subscription to the Basic plan.",
   };
+  return prompts[action as ResolverActionName] || `Help me with ${formatActionName(action).toLowerCase()}.`;
 }
 
 function normalizeMessage(value: unknown): string {
@@ -444,7 +440,6 @@ const AIFabricAccountResolver = () => {
   const [chatQuery, setChatQuery] = useState(FALLBACK_SCENARIOS[1].suggestedPrompt);
   const [isChatExpanded, setIsChatExpanded] = useState(false);
   const [isChatLoading, setIsChatLoading] = useState(false);
-  const [pendingManualAction, setPendingManualAction] = useState<ManualResolverAction | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<HTMLTextAreaElement>(null);
@@ -551,84 +546,6 @@ const AIFabricAccountResolver = () => {
       }
     },
     [refreshReadiness, toast],
-  );
-
-  const resolveSubscriptionId = useCallback(async () => {
-    if (readiness?.subscriptionId) {
-      return readiness.subscriptionId;
-    }
-    const refreshed = await refreshReadiness(selectedScenario.userId, true);
-    return refreshed?.subscriptionId || undefined;
-  }, [readiness?.subscriptionId, refreshReadiness, selectedScenario.userId]);
-
-  const manualActionFor = useCallback(
-    async (actionName: string): Promise<ManualResolverAction | null> => {
-      if (actionName === "inspect_account_readiness") {
-        return {
-          name: "inspect_account_readiness",
-          label: "Inspect Account Readiness",
-          confirmationMessage: "Inspect this account readiness and explain current blockers.",
-          params: { userId: selectedScenario.userId },
-          requiresConfirmation: false,
-        };
-      }
-
-      const subscriptionId = await resolveSubscriptionId();
-      if (!subscriptionId) {
-        toast({
-          title: "No active subscription",
-          description: "Seed or refresh the selected scenario before running this resolver action.",
-          variant: "destructive",
-        });
-        return null;
-      }
-
-      if (actionName === "update_payment_method") {
-        return {
-          name: "update_payment_method",
-          label: "Update Payment Method",
-          confirmationMessage: "Use Visa ending in 4242 as the verified payment method for this account?",
-          subscriptionId,
-          params: { type: "CARD", provider: "Visa", last4: "4242" },
-          requiresConfirmation: true,
-        };
-      }
-
-      if (actionName === "update_address") {
-        return {
-          name: "update_address",
-          label: "Update Billing Address",
-          confirmationMessage: "Set the billing address to 101 Market St, San Francisco, CA 94105, USA?",
-          subscriptionId,
-          params: {
-            streetAddress: "101 Market St",
-            city: "San Francisco",
-            state: "CA",
-            postalCode: "94105",
-            country: "USA",
-          },
-          requiresConfirmation: true,
-        };
-      }
-
-      if (actionName === "request_refund") {
-        return {
-          name: "request_refund",
-          label: "Create Account Credit",
-          confirmationMessage: "Create a $25 account credit for the reported billing issue?",
-          subscriptionId,
-          params: {
-            amount: 25,
-            reason: "Support incident billing issue",
-            resolutionType: "ACCOUNT_CREDIT",
-          },
-          requiresConfirmation: true,
-        };
-      }
-
-      return null;
-    },
-    [resolveSubscriptionId, selectedScenario.userId, toast],
   );
 
   useEffect(() => {
@@ -768,144 +685,6 @@ const AIFabricAccountResolver = () => {
     [chatMessages, chatQuery, isChatLoading, policies, refreshReadiness, selectedScenario.userId, toast],
   );
 
-  const executeManualAction = useCallback(
-    async (manualAction: ManualResolverAction) => {
-      setPendingManualAction(null);
-      setIsChatExpanded(true);
-      setIsChatLoading(true);
-
-      try {
-        let responseData: unknown;
-        let updatedReadiness: AccountReadiness | null = null;
-
-        if (manualAction.name === "inspect_account_readiness") {
-          updatedReadiness = await refreshReadiness(selectedScenario.userId, true);
-          responseData = updatedReadiness;
-        } else if (manualAction.name === "update_payment_method" && manualAction.subscriptionId) {
-          responseData = await apiJson<unknown>(
-            `/account-resolver/subscriptions/${manualAction.subscriptionId}/payment-method`,
-            {
-              method: "POST",
-              body: JSON.stringify(manualAction.params),
-            },
-          );
-          updatedReadiness = asRecord(responseData).readiness as AccountReadiness | null;
-        } else if (manualAction.name === "update_address" && manualAction.subscriptionId) {
-          responseData = await apiJson<AccountReadiness>(
-            `/account-resolver/subscriptions/${manualAction.subscriptionId}/billing-address`,
-            {
-              method: "PUT",
-              body: JSON.stringify(manualAction.params),
-            },
-          );
-          updatedReadiness = responseData as AccountReadiness;
-        } else if (manualAction.name === "request_refund" && manualAction.subscriptionId) {
-          responseData = await apiJson<unknown>(
-            `/account-resolver/subscriptions/${manualAction.subscriptionId}/refund`,
-            {
-              method: "POST",
-              body: JSON.stringify(manualAction.params),
-            },
-          );
-          updatedReadiness = await refreshReadiness(selectedScenario.userId, true);
-        } else {
-          throw new Error(`Action ${manualAction.name} is missing required account context.`);
-        }
-
-        if (updatedReadiness) {
-          setReadiness(updatedReadiness);
-        }
-
-        const message =
-          manualAction.name === "inspect_account_readiness"
-            ? updatedReadiness?.canContinue
-              ? "Account is ready to continue."
-              : "Account has blockers that need resolution."
-            : `${manualAction.label} completed.`;
-        const msgId = `${Date.now()}-manual-ai`;
-        const data = {
-          action: manualAction.name,
-          params: manualAction.params,
-          result: responseData,
-          readiness: updatedReadiness,
-        };
-
-        const aiMessage: ChatMessage = {
-          id: msgId,
-          type: "ai",
-          content: message,
-          timestamp: new Date().toISOString(),
-          resultType: "ACTION_EXECUTED",
-          result: createChatResult("ACTION_EXECUTED", message, data),
-          documents: buildDocuments({ data: { readiness: updatedReadiness } }, msgId, policies),
-        };
-
-        setChatMessages((previous) => [...previous, aiMessage]);
-        setApiStatus("connected");
-      } catch (error) {
-        const message = error instanceof Error ? error.message : "The resolver action failed.";
-        const aiMessage: ChatMessage = {
-          id: `${Date.now()}-manual-error`,
-          type: "ai",
-          content: message,
-          timestamp: new Date().toISOString(),
-          resultType: "ERROR",
-          result: createChatResult("ERROR", message, undefined, false),
-        };
-
-        setChatMessages((previous) => [...previous, aiMessage]);
-        toast({
-          title: "Resolver action failed",
-          description: message,
-          variant: "destructive",
-        });
-      } finally {
-        setIsChatLoading(false);
-      }
-    },
-    [policies, refreshReadiness, selectedScenario.userId, toast],
-  );
-
-  const startManualAction = useCallback(
-    async (actionName: string) => {
-      const manualAction = await manualActionFor(actionName);
-      if (!manualAction || isChatLoading) return;
-
-      const userMessage: ChatMessage = {
-        id: `${Date.now()}-manual-user`,
-        type: "user",
-        content: `Action: ${manualAction.name}`,
-        timestamp: new Date().toISOString(),
-      };
-
-      setChatMessages((previous) => [...previous, userMessage]);
-      setIsChatExpanded(true);
-
-      if (!manualAction.requiresConfirmation) {
-        await executeManualAction(manualAction);
-        return;
-      }
-
-      setPendingManualAction(manualAction);
-      const aiMessage: ChatMessage = {
-        id: `${Date.now()}-manual-confirmation`,
-        type: "ai",
-        content: manualAction.confirmationMessage,
-        timestamp: new Date().toISOString(),
-        resultType: "CONFIRMATION_REQUIRED",
-        result: createChatResult("CONFIRMATION_REQUIRED", manualAction.confirmationMessage, {
-          action: manualAction.name,
-          confirmationRequired: true,
-          confirmationMessage: manualAction.confirmationMessage,
-          params: manualAction.params,
-        }),
-      };
-
-      setChatMessages((previous) => [...previous, aiMessage]);
-    },
-    [executeManualAction, isChatLoading, manualActionFor],
-  );
-
   const runSelectedScenario = useCallback(() => {
     sendResolverQuery(selectedScenario.suggestedPrompt);
   }, [selectedScenario.suggestedPrompt, sendResolverQuery]);
@@ -915,28 +694,6 @@ const AIFabricAccountResolver = () => {
   };
 
   const handleConfirmation = (action: "confirm" | "deny", _data?: unknown) => {
-    if (pendingManualAction) {
-      if (action === "confirm") {
-        executeManualAction(pendingManualAction);
-        return;
-      }
-
-      const message = `${pendingManualAction.label} was rejected. No account changes were made.`;
-      setPendingManualAction(null);
-      setChatMessages((previous) => [
-        ...previous,
-        {
-          id: `${Date.now()}-manual-denied`,
-          type: "ai",
-          content: message,
-          timestamp: new Date().toISOString(),
-          resultType: "ACTION_DENIED",
-          result: createChatResult("ACTION_DENIED", message, { action: pendingManualAction.name }, false),
-        },
-      ]);
-      return;
-    }
-
     const confirmationQuery =
       action === "confirm"
         ? "Yes, confirm and execute the pending account resolver action."
@@ -1165,8 +922,9 @@ const AIFabricAccountResolver = () => {
                     {(readiness?.recommendedActions.length ? readiness.recommendedActions : ["inspect_account_readiness"]).map((action) => (
                       <button
                         key={action}
-                        onClick={() => startManualAction(action)}
-                        className="flex w-full items-center justify-between rounded-lg border bg-background px-3 py-2 text-left transition-colors hover:border-primary/40 hover:bg-muted/40"
+                        onClick={() => sendResolverQuery(resolverActionPrompt(action))}
+                        disabled={isChatLoading}
+                        className="flex w-full items-center justify-between rounded-lg border bg-background px-3 py-2 text-left transition-colors hover:border-primary/40 hover:bg-muted/40 disabled:cursor-not-allowed disabled:opacity-60"
                       >
                         <span className="text-sm font-semibold">{formatActionName(action)}</span>
                         <Send className="h-3.5 w-3.5 text-muted-foreground" />
