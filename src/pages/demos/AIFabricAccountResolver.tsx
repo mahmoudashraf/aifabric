@@ -1144,6 +1144,15 @@ const AIFabricAccountResolver = () => {
         <div className="mx-auto max-w-4xl space-y-2">
           {showPromptSuggestions && (
             <div className="flex items-center gap-2">
+              <button
+                type="button"
+                aria-label="Hide prompt suggestions"
+                title="Hide prompt suggestions"
+                onClick={() => setShowPromptSuggestions(false)}
+                className="mb-1 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border bg-background text-muted-foreground shadow-sm transition-colors hover:border-primary/40 hover:text-foreground"
+              >
+                <X className="h-4 w-4" />
+              </button>
               <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {quickPrompts.map((prompt) => (
                   <button
@@ -1156,15 +1165,6 @@ const AIFabricAccountResolver = () => {
                   </button>
                 ))}
               </div>
-              <button
-                type="button"
-                aria-label="Hide prompt suggestions"
-                title="Hide prompt suggestions"
-                onClick={() => setShowPromptSuggestions(false)}
-                className="mb-1 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full border bg-background text-muted-foreground shadow-sm transition-colors hover:border-primary/40 hover:text-foreground"
-              >
-                <X className="h-4 w-4" />
-              </button>
             </div>
           )}
 
