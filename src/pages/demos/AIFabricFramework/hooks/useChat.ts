@@ -9,6 +9,7 @@ interface ChatQueryOptions {
   fromSuggestion?: boolean;
   position?: ChatPosition;
   mode?: ChatMode;
+  silent?: boolean;
 }
 
 export function useChat() {
@@ -197,7 +198,9 @@ export function useChat() {
     const currentAttachedCoupons = attachedCoupons;
     setChatQuery("");
     setIsLoading(true);
-    setIsChatExpanded(true);
+    if (!options.silent) {
+      setIsChatExpanded(true);
+    }
 
     // Use current position/mode — position is always set, mode defaults
     const position = options.position || currentPosition;

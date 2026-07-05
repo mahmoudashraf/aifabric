@@ -130,7 +130,7 @@ export default function AIFabricFramework() {
 
   const handleRagJourneyPrompt = async (prompt: string, position: ChatPosition) => {
     chat.setPosition(position, "navigator");
-    return chat.handleChatQuery(prompt, { position, mode: "navigator" });
+    return chat.handleChatQuery(prompt, { position, mode: "navigator", silent: true });
   };
 
   return (
@@ -138,7 +138,7 @@ export default function AIFabricFramework() {
       className="min-h-screen bg-gradient-to-b from-background to-muted/20"
       data-demo-build={AI_SHOPPING_EXPERIENCE_BUILD_MARKER}
     >
-      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 pb-[180px] sm:pb-32">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 pb-[300px] sm:pb-56">
         {/* Header with migration controls */}
         <Header
           stockFill={migration.stockFill}
