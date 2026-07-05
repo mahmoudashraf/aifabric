@@ -45,7 +45,7 @@ export const RAG_JOURNEY_PROMPTS: Record<RagJourneyPromptKey, RagJourneyPrompt> 
   return_policy: {
     key: "return_policy",
     label: "Return policy",
-    text: "Can I return a gaming laptop if I opened it?",
+    text: "Using only indexed store policies, can I return a gaming laptop if I opened it? If the policy does not specify this, say it is not specified.",
     position: "support",
   },
   discount_search: {
