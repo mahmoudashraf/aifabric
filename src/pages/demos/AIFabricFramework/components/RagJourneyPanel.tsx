@@ -375,11 +375,22 @@ export function RagJourneyPanel({
           <CardContent className="space-y-4">
             <div className="rounded-lg border bg-background p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
+                <div className="min-w-0 flex-1">
                   <div className="text-sm font-semibold">{selectedPrompt.label}</div>
                   <p className="mt-2 text-sm leading-6 text-muted-foreground">{selectedPrompt.text}</p>
                 </div>
-                <Badge variant="outline">{selectedPrompt.position}</Badge>
+                <div className="flex shrink-0 items-center gap-2">
+                  <Badge variant="outline">{selectedPrompt.position}</Badge>
+                  <Button
+                    size="sm"
+                    onClick={() => runPrompt(selectedPromptKey)}
+                    disabled={isRunning || !!runningPromptKey}
+                    className="gap-2"
+                  >
+                    {runningPromptKey === selectedPromptKey ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
+                    Run
+                  </Button>
+                </div>
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 {Object.values(RAG_JOURNEY_PROMPTS).map((prompt) => (
@@ -397,15 +408,10 @@ export function RagJourneyPanel({
             </div>
 
             <div className="grid gap-2 sm:grid-cols-2">
-              <Button onClick={() => runPrompt(selectedPromptKey)} disabled={isRunning || !!runningPromptKey} className="gap-2">
-                {runningPromptKey === selectedPromptKey ? <Loader2 className="h-4 w-4 animate-spin" /> : <Play className="h-4 w-4" />}
-                Run AI Prompt
-              </Button>
               <Button
-                variant="outline"
                 onClick={() => runPrompt(currentStagePrompt.key)}
                 disabled={isRunning || !!runningPromptKey}
-                className="gap-2"
+                className="h-12 gap-2 sm:col-span-2"
               >
                 {runningPromptKey === currentStagePrompt.key ? <Loader2 className="h-4 w-4 animate-spin" /> : <Activity className="h-4 w-4" />}
                 Run Stage Prompt

@@ -4,6 +4,7 @@ export type RagJourneyStageKey = "empty" | "products" | "reviews" | "policies" |
 export type RagJourneySeedStage = "products" | "reviews" | "policies" | "coupons" | "tickets" | "full";
 export type RagJourneyPromptKey =
   | "gaming_laptop_analysis"
+  | "review_guided_comparison"
   | "return_policy"
   | "discount_search"
   | "cart_action"
@@ -34,6 +35,12 @@ export const RAG_JOURNEY_PROMPTS: Record<RagJourneyPromptKey, RagJourneyPrompt> 
     label: "Gaming laptop analysis",
     text: "Find high performance laptops for gaming and analyze results.",
     position: "search",
+  },
+  review_guided_comparison: {
+    key: "review_guided_comparison",
+    label: "Review comparison",
+    text: "Compare high-performance gaming laptops using customer reviews. Highlight strengths, complaints, and best fit.",
+    position: "product_detail",
   },
   return_policy: {
     key: "return_policy",
@@ -95,7 +102,7 @@ export const RAG_JOURNEY_STAGES: RagJourneyStage[] = [
     dataLabel: "Products and reviews",
     seedStage: "reviews",
     expectedVectorSpaces: ["product", "review"],
-    promptKeys: ["gaming_laptop_analysis"],
+    promptKeys: ["review_guided_comparison"],
   },
   {
     key: "policies",
