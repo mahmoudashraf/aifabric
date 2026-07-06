@@ -639,7 +639,6 @@ export default function AIFabricAgenticUI() {
         addedEventTypes: result.events.slice(-5).reverse().map((event) => event.eventType),
       });
       await refreshDashboard();
-      await composeUi(selectedScenario.userId);
       toast({
         title: "Recovery events recorded",
         description: "Positive raw app events were added and behavior analysis was rerun.",
