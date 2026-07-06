@@ -529,6 +529,7 @@ export default function AIFabricAgenticUI() {
   const [isLoading, setIsLoading] = useState(true);
   const [isComposing, setIsComposing] = useState(false);
   const [isRecovering, setIsRecovering] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
 
   const selectedScenario = useMemo(
     () => dashboard.scenarios.find((scenario) => scenario.userId === selectedUserId) || dashboard.scenarios[0],
@@ -573,6 +574,7 @@ export default function AIFabricAgenticUI() {
   const createSession = useCallback(
     async (resetFirst = false) => {
       setIsLoading(true);
+      setIsResetting(resetFirst);
       setRecoveryComparison(null);
       try {
         if (resetFirst) {
@@ -603,6 +605,7 @@ export default function AIFabricAgenticUI() {
         });
       } finally {
         setIsLoading(false);
+        setIsResetting(false);
       }
     },
     [composeUi, sessionId, toast]
@@ -690,12 +693,26 @@ export default function AIFabricAgenticUI() {
               >
                 {apiStatus === "connected" ? "Connected" : apiStatus === "offline" ? "Offline" : "Loading"}
               </Badge>
-              <Button variant="outline" onClick={() => void createSession(true)} disabled={isLoading || isComposing}>
+              <Button variant="outline" onClick={() => void createSession(true)} disabled={isLoading || isComposing || isResetting}>
                 {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
                 Reset session
               </Button>
             </div>
           </div>
+
+          {isResetting ? (
+            <div className="fixed inset-0 z-40 flex items-center justify-center bg-background/90 backdrop-blur-sm">
+              <div className="rounded-xl border border-amber-200 bg-white/90 px-6 py-5 shadow-lg">
+                <div className="flex items-center gap-3">
+                  <Loader2 className="h-5 w-5 animate-spin text-amber-600" />
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">Resetting demo session</p>
+                    <p className="text-xs text-muted-foreground">Preparing clean scenario data, rebuilding insights, and refreshing the UI.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : null}
 
           <div className="grid gap-6 xl:grid-cols-[300px_minmax(0,1fr)_330px]">
             <aside className="rounded-lg border bg-card p-4 shadow-sm">
