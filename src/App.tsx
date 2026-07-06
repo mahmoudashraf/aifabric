@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import Documentation from "./pages/Documentation";
 import Demos from "./pages/Demos";
 import AIFabricAccountResolver from "./pages/demos/AIFabricAccountResolver";
+import AIFabricAgenticUI from "./pages/demos/AIFabricAgenticUI";
 import AIFabricBehaviorSignals from "./pages/demos/AIFabricBehaviorSignals";
 import AIFabricTenantGuard from "./pages/demos/AIFabricTenantGuard";
 import SmartFAQAssistant from "./pages/demos/SmartFAQAssistant";
@@ -125,6 +126,7 @@ const App = () => (
             <Route path="/demos/smart-faq-assistant" element={<SmartFAQAssistant />} />
             <Route path="/demos/document-intelligence-hub" element={<DocumentIntelligenceHub />} />
             <Route path="/demos/product-discovery-engine" element={<ProductDiscoveryEngine />} />
+            <Route path="/demos/ai-fabric-agentic-ui" element={<AIFabricAgenticUI />} />
             <Route path="/demos/ai-fabric-behavior-signals" element={<AIFabricBehaviorSignals />} />
             <Route path="/demos/team-sentiment-tracker" element={<AIFabricBehaviorSignals />} />
             <Route path="/demos/ai-fabric-tenant-guard" element={<AIFabricTenantGuard />} />
