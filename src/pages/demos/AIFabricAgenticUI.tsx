@@ -641,7 +641,7 @@ export default function AIFabricAgenticUI() {
       await refreshDashboard();
       toast({
         title: "Recovery events recorded",
-        description: "Positive raw app events were added and behavior analysis was rerun.",
+        description: "Positive raw app events were added. Click \"Run user behaviour analysis\" to recompose AI insight.",
       });
     } catch (error) {
       toast({
