@@ -25,7 +25,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 
 const configuredBehaviorBaseUrl =
@@ -161,6 +160,20 @@ interface BehaviorScenarioResult {
   retentionOfferPreview: RetentionOfferDemoResult;
 }
 
+interface AppEventField {
+  key: string;
+  label: string;
+  value: string;
+}
+
+interface AppEventTemplate {
+  eventType: string;
+  label: string;
+  source: string;
+  description: string;
+  fields: AppEventField[];
+}
+
 const EMPTY_DASHBOARD: BehaviorDemoDashboard = {
   scenarios: [],
   insights: [],
@@ -225,6 +238,65 @@ const pipelineSteps = [
     detail: "The app maps evidence to support, escalation, expansion, check-in, or retention offer.",
   },
 ];
+
+const rawAppEventTemplates: Record<string, AppEventTemplate> = {
+  "billing-cancellation-risk": {
+    eventType: "PAYMENT_FAILED",
+    label: "Renewal payment failed",
+    source: "billing-service",
+    description: "A billing system emitted a failed renewal payment event for this account.",
+    fields: [
+      { key: "reason", label: "Failure reason", value: "card_declined" },
+      { key: "invoiceStatus", label: "Invoice status", value: "past_due" },
+      { key: "renewalAttempt", label: "Renewal attempt", value: "2" },
+      { key: "gateway", label: "Gateway", value: "stripe" },
+    ],
+  },
+  "expansion-ready-account": {
+    eventType: "SEAT_ADDED",
+    label: "Seats added",
+    source: "billing-service",
+    description: "An account admin added seats through the billing system.",
+    fields: [
+      { key: "count", label: "Seats added", value: "8" },
+      { key: "plan", label: "Plan", value: "enterprise" },
+      { key: "channel", label: "Channel", value: "admin_console" },
+    ],
+  },
+  "onboarding-friction": {
+    eventType: "HELP_CENTER_SEARCH",
+    label: "Help search without resolution",
+    source: "help-center",
+    description: "A user searched support content while trying to complete setup.",
+    fields: [
+      { key: "query", label: "Search query", value: "invite team members" },
+      { key: "resultsClicked", label: "Results clicked", value: "0" },
+      { key: "sessionMinutes", label: "Session minutes", value: "12" },
+    ],
+  },
+  "release-regression": {
+    eventType: "FEATURE_ERROR",
+    label: "Dashboard feature error",
+    source: "frontend-telemetry",
+    description: "Client telemetry recorded a dashboard error after a release.",
+    fields: [
+      { key: "feature", label: "Feature", value: "dashboard" },
+      { key: "code", label: "Error code", value: "REPORT_WIDGET_TIMEOUT" },
+      { key: "releaseVersion", label: "Release version", value: "2026.07.dashboard" },
+    ],
+  },
+  "silent-churn": {
+    eventType: "NO_LOGIN_14D",
+    label: "No login window",
+    source: "usage-analytics",
+    description: "Usage analytics recorded that the user has not logged in for 14 days.",
+    fields: [
+      { key: "days", label: "Days without login", value: "14" },
+      { key: "previousWeeklyLogins", label: "Previous weekly logins", value: "9" },
+      { key: "currentWeeklyLogins", label: "Current weekly logins", value: "0" },
+    ],
+  },
+};
 
 async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(`${BEHAVIOR_API_URL}${path}`, {
@@ -323,6 +395,34 @@ function providerPosture(health: BehaviorDemoHealth | null): {
   };
 }
 
+function appEventTemplateFor(scenario: DemoScenarioSummary): AppEventTemplate {
+  return rawAppEventTemplates[scenario.id] || {
+    eventType: scenario.defaultSignalType,
+    label: formatLabel(scenario.defaultSignalType),
+    source: "application",
+    description: "The product application emitted a structured behavior event.",
+    fields: [
+      { key: "category", label: "Category", value: scenario.defaultSignalType.toLowerCase() },
+      { key: "scenario", label: "Scenario", value: scenario.id },
+    ],
+  };
+}
+
+function defaultEventDraft(scenario: DemoScenarioSummary): Record<string, string> {
+  return appEventTemplateFor(scenario).fields.reduce<Record<string, string>>((draft, field) => {
+    draft[field.key] = field.value;
+    return draft;
+  }, {});
+}
+
+function eventPayload(template: AppEventTemplate | null, draft: Record<string, string>): Record<string, string> {
+  if (!template) return {};
+  return template.fields.reduce<Record<string, string>>((payload, field) => {
+    payload[field.key] = draft[field.key] ?? field.value;
+    return payload;
+  }, {});
+}
+
 function parseEventData(data: string): string {
   try {
     const parsed = JSON.parse(data) as Record<string, unknown>;
@@ -357,7 +457,7 @@ export default function AIFabricBehaviorSignals() {
   const [selectedUserId, setSelectedUserId] = useState("");
   const [scenarioResult, setScenarioResult] = useState<BehaviorScenarioResult | null>(null);
   const [offerResult, setOfferResult] = useState<RetentionOfferDemoResult | null>(null);
-  const [customSignal, setCustomSignal] = useState("");
+  const [appEventDraft, setAppEventDraft] = useState<Record<string, string>>({});
   const [apiStatus, setApiStatus] = useState<ApiStatus>("loading");
   const [isLoading, setIsLoading] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -367,6 +467,14 @@ export default function AIFabricBehaviorSignals() {
   const selectedScenario = useMemo(
     () => dashboard.scenarios.find((scenario) => scenario.userId === selectedUserId) || dashboard.scenarios[0],
     [dashboard.scenarios, selectedUserId]
+  );
+  const selectedAppEventTemplate = useMemo(
+    () => (selectedScenario ? appEventTemplateFor(selectedScenario) : null),
+    [selectedScenario]
+  );
+  const selectedAppEventPayload = useMemo(
+    () => eventPayload(selectedAppEventTemplate, appEventDraft),
+    [appEventDraft, selectedAppEventTemplate]
   );
 
   const selectedInsight = scenarioResult?.insight || selectedScenario?.insight || null;
@@ -393,7 +501,7 @@ export default function AIFabricBehaviorSignals() {
       return next.scenarios[0]?.userId || "";
     });
     if (next.scenarios[0]) {
-      setCustomSignal((current) => current || next.scenarios[0].defaultSignalMessage);
+      setAppEventDraft((current) => Object.keys(current).length ? current : defaultEventDraft(next.scenarios[0]));
     }
   }, []);
 
@@ -425,7 +533,7 @@ export default function AIFabricBehaviorSignals() {
           response.dashboard.scenarios[0];
         if (first) {
           setSelectedUserId(first.userId);
-          setCustomSignal(first.defaultSignalMessage);
+          setAppEventDraft(defaultEventDraft(first));
         }
         await fetchHealth();
         setApiStatus("connected");
@@ -462,7 +570,7 @@ export default function AIFabricBehaviorSignals() {
           session.dashboard.scenarios[0];
         if (first) {
           setSelectedUserId(first.userId);
-          setCustomSignal(first.defaultSignalMessage);
+          setAppEventDraft(defaultEventDraft(first));
         }
         setApiStatus("connected");
       } catch {
@@ -489,7 +597,7 @@ export default function AIFabricBehaviorSignals() {
       const result = await apiRequest<BehaviorScenarioResult>(`/scenarios/${userId}/analyze`, { method: "POST" });
       setScenarioResult(result);
       setSelectedUserId(userId);
-      setCustomSignal(result.scenario.defaultSignalMessage);
+      setAppEventDraft(defaultEventDraft(result.scenario));
       await refreshDashboard();
       await fetchHealth();
       setApiStatus("connected");
@@ -510,13 +618,14 @@ export default function AIFabricBehaviorSignals() {
     setIsRecording(true);
     setOfferResult(null);
     try {
-      const message = customSignal.trim() || selectedScenario.defaultSignalMessage;
+      const template = appEventTemplateFor(selectedScenario);
+      const payload = eventPayload(template, appEventDraft);
       const result = await apiRequest<BehaviorScenarioResult>(`/scenarios/${selectedScenario.userId}/signals`, {
         method: "POST",
         body: JSON.stringify({
-          eventType: selectedScenario.defaultSignalType,
-          eventData: { message },
-          source: "ai-fabric-dev-demo",
+          eventType: template.eventType,
+          eventData: payload,
+          source: template.source,
         }),
       });
       setScenarioResult(result);
@@ -524,13 +633,13 @@ export default function AIFabricBehaviorSignals() {
       await refreshDashboard();
       await fetchHealth();
       toast({
-        title: "Signal recorded",
-        description: `${selectedScenario.defaultSignalType} was added and analyzed.`,
+        title: "App event recorded",
+        description: `${template.eventType} was added and analyzed.`,
       });
     } catch (error) {
       toast({
         title: "Signal failed",
-        description: error instanceof Error ? error.message : "Unable to record the behavior signal.",
+        description: error instanceof Error ? error.message : "Unable to record the app event.",
         variant: "destructive",
       });
     } finally {
@@ -567,7 +676,7 @@ export default function AIFabricBehaviorSignals() {
 
   const selectScenario = (scenario: DemoScenarioSummary) => {
     setSelectedUserId(scenario.userId);
-    setCustomSignal(scenario.defaultSignalMessage);
+    setAppEventDraft(defaultEventDraft(scenario));
     setScenarioResult(null);
     setOfferResult(null);
   };
@@ -825,19 +934,52 @@ export default function AIFabricBehaviorSignals() {
                       </div>
 
                       <div className="space-y-3">
-                        <div className="text-xs font-bold uppercase text-muted-foreground">Inject New Signal</div>
-                        <Textarea
-                          value={customSignal}
-                          onChange={(event) => setCustomSignal(event.target.value)}
-                          className="min-h-[132px] resize-none"
-                          placeholder={selectedScenario.defaultSignalMessage}
-                        />
+                        <div className="text-xs font-bold uppercase text-muted-foreground">Record App Event</div>
+                        {selectedAppEventTemplate && (
+                          <div className="rounded-lg border bg-card p-3">
+                            <div className="flex flex-wrap items-start justify-between gap-2">
+                              <div>
+                                <div className="text-sm font-semibold">{selectedAppEventTemplate.label}</div>
+                                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                                  {selectedAppEventTemplate.description}
+                                </p>
+                              </div>
+                              <Badge variant="outline" className="bg-muted/40 text-[11px]">
+                                {selectedAppEventTemplate.eventType}
+                              </Badge>
+                            </div>
+                            <div className="mt-3 space-y-2">
+                              {selectedAppEventTemplate.fields.map((field) => (
+                                <label key={field.key} className="block">
+                                  <span className="mb-1 block text-[11px] font-bold uppercase text-muted-foreground">
+                                    {field.label}
+                                  </span>
+                                  <input
+                                    value={appEventDraft[field.key] ?? field.value}
+                                    onChange={(event) =>
+                                      setAppEventDraft((current) => ({
+                                        ...current,
+                                        [field.key]: event.target.value,
+                                      }))
+                                    }
+                                    className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                                  />
+                                </label>
+                              ))}
+                            </div>
+                            <div className="mt-3 rounded-md bg-muted/50 p-2 font-mono text-[11px] text-muted-foreground">
+                              <div>{`eventType: ${selectedAppEventTemplate.eventType}`}</div>
+                              <div>{`source: ${selectedAppEventTemplate.source}`}</div>
+                              <div className="break-all">{`eventData: ${JSON.stringify(selectedAppEventPayload)}`}</div>
+                            </div>
+                          </div>
+                        )}
                         <div className="rounded-lg border bg-muted/20 p-3 text-xs text-muted-foreground">
-                          This records a real event for your session user, then re-runs AI Fabric behavior analysis.
+                          This writes the same typed event shape an application would emit, then re-runs AI Fabric behavior analysis.
                         </div>
                         <Button className="w-full gap-2" onClick={recordSignal} disabled={isRecording}>
                           {isRecording ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-                          Record signal
+                          Record app event
                         </Button>
                       </div>
                     </div>
