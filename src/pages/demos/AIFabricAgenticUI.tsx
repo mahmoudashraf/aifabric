@@ -186,6 +186,59 @@ const componentTone: Record<string, string> = {
   NEXT_BEST_ACTIONS: "border-purple-200 bg-purple-50/80",
 };
 
+const homeModuleCopy: Record<string, { title: string; description: string; badge: string }> = {
+  RISK_SUMMARY_CARD: {
+    title: "Account status banner",
+    description: "The home page headline adapts when the account looks healthy, confused, blocked, or at risk.",
+    badge: "Status",
+  },
+  RECOMMENDED_ACTION_CARD: {
+    title: "Personalized next step",
+    description: "A single useful action chosen from the user's current behavior signals.",
+    badge: "Next",
+  },
+  EVENT_TIMELINE: {
+    title: "Why this page changed",
+    description: "Shows the recent behavior signals that explain why these home modules appeared.",
+    badge: "Evidence",
+  },
+  RETENTION_OFFER_PANEL: {
+    title: "Retention offer",
+    description: "Weak or churning users can see a safe recovery offer instead of a generic dashboard.",
+    badge: "Save",
+  },
+  EXPANSION_NUDGE_CARD: {
+    title: "Upgrade recommendation",
+    description: "Loyal or growing users can see a relevant upgrade path based on positive usage.",
+    badge: "Upgrade",
+  },
+  PRODUCT_ESCALATION_PANEL: {
+    title: "Service recovery update",
+    description: "Users affected by product errors can see incident help instead of normal promotional content.",
+    badge: "Issue",
+  },
+  ADOPTION_HELP_PANEL: {
+    title: "Quick setup shortcuts",
+    description: "Confused users get direct shortcuts to the exact setup actions they appear to need.",
+    badge: "Shortcut",
+  },
+  MONITORING_CARD: {
+    title: "Engagement watch",
+    description: "Users with declining activity get a lightweight check-in module before they disappear.",
+    badge: "Watch",
+  },
+  HEALTH_SCORE_CARD: {
+    title: "Activity points",
+    description: "Highly interactive users can see progress, rewards, or status earned from active usage.",
+    badge: "Points",
+  },
+  NEXT_BEST_ACTIONS: {
+    title: "Smart shortcuts",
+    description: "The home page exposes fewer, more useful shortcuts when the user's behavior shows intent.",
+    badge: "Shortcut",
+  },
+};
+
 const scenarioIcons: Record<string, LucideIcon> = {
   "billing-cancellation-risk": CircleAlert,
   "expansion-ready-account": TrendingUp,
@@ -284,9 +337,18 @@ function compactTime(value: string | null | undefined): string {
   return Number.isNaN(date.getTime()) ? value : date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
 
+function homeCopy(component: AgenticUiComponent): { title: string; description: string; badge: string } {
+  return homeModuleCopy[component.type] || {
+    title: component.title || formatLabel(component.type),
+    description: component.rationale || "Personalized module selected from the user's behavior insight.",
+    badge: "Module",
+  };
+}
+
 function ComponentShell({ component, children }: { component: AgenticUiComponent; children: React.ReactNode }) {
   const Icon = componentIcons[component.type] || LayoutDashboard;
   const wide = component.type === "EVENT_TIMELINE" || component.type === "NEXT_BEST_ACTIONS";
+  const copy = homeCopy(component);
   return (
     <article
       className={`rounded-lg border p-5 shadow-sm ${componentTone[component.type] || "border-border bg-card"} ${
@@ -299,12 +361,12 @@ function ComponentShell({ component, children }: { component: AgenticUiComponent
             <Icon className="h-5 w-5" />
           </div>
           <div className="min-w-0">
-            <h3 className="text-lg font-semibold leading-tight text-foreground">{component.title}</h3>
-            <p className="mt-1 text-sm text-muted-foreground">{component.rationale}</p>
+            <h3 className="text-lg font-semibold leading-tight text-foreground">{copy.title}</h3>
+            <p className="mt-1 text-sm text-muted-foreground">{copy.description}</p>
           </div>
         </div>
         <Badge variant="secondary" className="shrink-0">
-          {component.priority}
+          {copy.badge}
         </Badge>
       </div>
       {children}
@@ -329,12 +391,12 @@ function RiskSummaryCard({ component }: { component: AgenticUiComponent }) {
       <div className="space-y-3">
         <div>
           <div className="mb-2 flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Churn risk</span>
+            <span className="text-muted-foreground">Attention level</span>
             <span className="font-semibold text-rose-700">{churn}%</span>
           </div>
           <Progress value={churn} className="h-2" />
         </div>
-        <MetricRow label="Segment" value={formatLabel(stringProp(props, "segment"))} />
+        <MetricRow label="Current state" value={formatLabel(stringProp(props, "segment"))} />
         <MetricRow label="Sentiment" value={formatLabel(stringProp(props, "sentiment"))} />
         <MetricRow label="Trend" value={formatLabel(stringProp(props, "trend"))} />
         <p className="rounded-lg bg-white/70 p-3 text-sm text-muted-foreground">{stringProp(props, "churnReason", "No churn reason available.")}</p>
@@ -344,22 +406,17 @@ function RiskSummaryCard({ component }: { component: AgenticUiComponent }) {
 }
 
 function RecommendedActionCard({ component }: { component: AgenticUiComponent }) {
-  const evidenceIds = stringListProp(component.props, "evidenceIds");
   return (
     <ComponentShell component={component}>
       <div className="space-y-3">
-        <MetricRow label="Action family" value={formatLabel(stringProp(component.props, "actionFamily"))} />
+        <MetricRow label="Suggestion type" value={formatLabel(stringProp(component.props, "actionFamily"))} />
         <p className="rounded-lg bg-white/70 p-3 text-sm font-medium text-foreground">
           {stringProp(component.props, "recommendation", "No recommendation available.")}
         </p>
         <p className="text-sm text-muted-foreground">{stringProp(component.props, "policyExplanation", "")}</p>
-        <div className="flex flex-wrap gap-2">
-          {evidenceIds.map((id) => (
-            <Badge key={id} variant="outline" className="bg-white/70">
-              {id}
-            </Badge>
-          ))}
-        </div>
+        <Badge variant="outline" className="bg-white/70">
+          Grounded in recent account behavior
+        </Badge>
       </div>
     </ComponentShell>
   );
@@ -373,7 +430,7 @@ function EventTimeline({ component }: { component: AgenticUiComponent }) {
         {events.length ? (
           events.map((event, index) => (
             <div key={`${displayValue(event.type)}-${index}`} className="grid min-w-0 gap-2 rounded-lg bg-white/75 p-3 md:grid-cols-[minmax(0,150px)_minmax(0,1fr)_90px]">
-              <div className="min-w-0 break-words font-semibold text-foreground">{displayValue(event.type)}</div>
+              <div className="min-w-0 break-words font-semibold text-foreground">{formatLabel(displayValue(event.type))}</div>
               <div className="min-w-0 break-words text-sm text-muted-foreground">{displayValue(event.summary)}</div>
               <div className="text-right text-xs text-muted-foreground">{compactTime(displayValue(event.timestamp))}</div>
             </div>
@@ -391,12 +448,12 @@ function RetentionOfferPanel({ component }: { component: AgenticUiComponent }) {
   return (
     <ComponentShell component={component}>
       <div className="space-y-3">
-        <MetricRow label="Discount" value={`${numberProp(component.props, "discountPercent")}%`} />
-        <MetricRow label="Confirmation required" value={booleanProp(component.props, "confirmationRequired")} />
+        <MetricRow label="Available support" value={`${numberProp(component.props, "discountPercent")}%`} />
+        <MetricRow label="Review required" value={booleanProp(component.props, "confirmationRequired")} />
         <p className="rounded-lg bg-white/75 p-3 text-sm text-foreground">{stringProp(component.props, "confirmationMessage", "")}</p>
         <div className="grid gap-2 sm:grid-cols-2">
-          <MetricRow label="Policy decision" value={data.policyDecision} />
-          <MetricRow label="Max discount" value={data.maxDiscountPercent ? `${data.maxDiscountPercent}%` : "Policy bound"} />
+          <MetricRow label="Decision" value={formatLabel(displayValue(data.policyDecision))} />
+          <MetricRow label="Support limit" value={data.maxDiscountPercent ? `${data.maxDiscountPercent}%` : "Policy bound"} />
         </div>
       </div>
     </ComponentShell>
@@ -407,10 +464,10 @@ function ExpansionNudgeCard({ component }: { component: AgenticUiComponent }) {
   return (
     <ComponentShell component={component}>
       <div className="space-y-3">
-        <MetricRow label="Customer" value={stringProp(component.props, "customerName")} />
-        <MetricRow label="Plan" value={formatLabel(stringProp(component.props, "planId"))} />
+        <MetricRow label="For this user" value={stringProp(component.props, "customerName")} />
+        <MetricRow label="Current plan" value={formatLabel(stringProp(component.props, "planId"))} />
         <p className="rounded-lg bg-white/75 p-3 text-sm font-medium text-emerald-800">
-          {stringProp(component.props, "recommendation", "Route to expansion follow-up.")}
+          {stringProp(component.props, "recommendation", "Show an upgrade path because this user is active and growing.")}
         </p>
       </div>
     </ComponentShell>
@@ -421,15 +478,11 @@ function ProductEscalationPanel({ component }: { component: AgenticUiComponent }
   return (
     <ComponentShell component={component}>
       <div className="space-y-3">
-        <MetricRow label="Customer" value={stringProp(component.props, "customerName")} />
+        <MetricRow label="Affected user" value={stringProp(component.props, "customerName")} />
         <p className="rounded-lg bg-white/75 p-3 text-sm text-foreground">{stringProp(component.props, "policyExplanation", "")}</p>
-        <div className="flex flex-wrap gap-2">
-          {stringListProp(component.props, "evidenceIds").map((id) => (
-            <Badge key={id} variant="outline" className="bg-white/70">
-              {id}
-            </Badge>
-          ))}
-        </div>
+        <Badge variant="outline" className="bg-white/70">
+          Based on recent product-error behavior
+        </Badge>
       </div>
     </ComponentShell>
   );
@@ -439,8 +492,8 @@ function AdoptionHelpPanel({ component }: { component: AgenticUiComponent }) {
   return (
     <ComponentShell component={component}>
       <div className="space-y-3">
-        <MetricRow label="Customer" value={stringProp(component.props, "customerName")} />
-        <MetricRow label="Support tickets" value={numberProp(component.props, "supportTickets")} />
+        <MetricRow label="For this user" value={stringProp(component.props, "customerName")} />
+        <MetricRow label="Help signals" value={numberProp(component.props, "supportTickets")} />
         <p className="rounded-lg bg-white/75 p-3 text-sm text-foreground">{stringProp(component.props, "operatorGoal", "")}</p>
       </div>
     </ComponentShell>
@@ -451,9 +504,9 @@ function MonitoringCard({ component }: { component: AgenticUiComponent }) {
   return (
     <ComponentShell component={component}>
       <div className="space-y-3">
-        <MetricRow label="Customer" value={stringProp(component.props, "customerName")} />
-        <MetricRow label="Usage drop" value={`${numberProp(component.props, "usageDropPercent")}%`} />
-        <MetricRow label="Action family" value={formatLabel(stringProp(component.props, "actionFamily"))} />
+        <MetricRow label="For this user" value={stringProp(component.props, "customerName")} />
+        <MetricRow label="Activity change" value={`${numberProp(component.props, "usageDropPercent")}% drop`} />
+        <MetricRow label="Suggested module" value={formatLabel(stringProp(component.props, "actionFamily"))} />
       </div>
     </ComponentShell>
   );
@@ -467,8 +520,8 @@ function HealthScoreCard({ component }: { component: AgenticUiComponent }) {
       <div className="space-y-3">
         <div className="text-5xl font-bold text-emerald-700">{score}</div>
         <Progress value={score} className="h-2" />
-        <MetricRow label="Sentiment" value={formatLabel(stringProp(component.props, "sentiment"))} />
-        <MetricRow label="Confidence" value={`${percent(numberProp(component.props, "confidence"))}%`} />
+        <MetricRow label="User mood" value={formatLabel(stringProp(component.props, "sentiment"))} />
+        <MetricRow label="Reward confidence" value={`${percent(numberProp(component.props, "confidence"))}%`} />
       </div>
     </ComponentShell>
   );
@@ -485,7 +538,7 @@ function NextBestActions({ component }: { component: AgenticUiComponent }) {
             <span>{recommendation}</span>
           </div>
         ))}
-        <MetricRow label="Action family" value={formatLabel(stringProp(component.props, "actionFamily"))} />
+        <MetricRow label="Shortcut set" value={formatLabel(stringProp(component.props, "actionFamily"))} />
       </div>
     </ComponentShell>
   );
@@ -878,7 +931,7 @@ export default function AIFabricAgenticUI() {
                   {activeEvidence?.eventTypes?.length ? (
                     activeEvidence.eventTypes.map((type) => (
                       <Badge key={type} variant="outline" className="bg-background">
-                        {type}
+                        {formatLabel(type)}
                         <span className="ml-1 text-muted-foreground">{activeEvidence.eventTypeCounts?.[type] || 0}</span>
                       </Badge>
                     ))
@@ -903,16 +956,16 @@ export default function AIFabricAgenticUI() {
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">LLM returned components</p>
-                  <Badge variant="secondary">{activePlan?.allowedComponentTypes?.length || 0} allowed</Badge>
+                  <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">AI selected home modules</p>
+                  <Badge variant="secondary">{activeComponents.length} shown</Badge>
                 </div>
                 {activeComponents.map((component) => (
                   <div key={`plan-${component.id}`} className="rounded-lg border bg-background p-3">
                     <div className="flex items-center justify-between gap-3">
-                      <p className="truncate text-sm font-semibold">{component.type}</p>
-                      <Badge variant="outline">{component.priority}</Badge>
+                      <p className="truncate text-sm font-semibold">{homeCopy(component).title}</p>
+                      <Badge variant="outline">{homeCopy(component).badge}</Badge>
                     </div>
-                    <p className="mt-1 text-xs text-muted-foreground">{component.rationale}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{homeCopy(component).description}</p>
                   </div>
                 ))}
               </div>
