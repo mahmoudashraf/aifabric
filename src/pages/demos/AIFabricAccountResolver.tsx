@@ -9,6 +9,7 @@ import {
   CreditCard,
   DollarSign,
   FileText,
+  Info,
   Loader2,
   MapPin,
   MessageSquare,
@@ -31,8 +32,6 @@ import { useToast } from "@/hooks/use-toast";
 
 import { ChatPanel } from "./AIFabricFramework/components/Chat/ChatPanel";
 import type { ChatMessage, ChatResult, Document, ResultType } from "./AIFabricFramework/types";
-import { DemoBackendArchitecture } from "./components/DemoBackendArchitecture";
-import { demoBackendArchitectures } from "./components/demoBackendArchitectures";
 
 const configuredResolverBaseUrl =
   import.meta.env.VITE_ACCOUNT_RESOLVER_API_URL ||
@@ -826,6 +825,12 @@ const AIFabricAccountResolver = () => {
                 )}
                 {apiStatus === "connected" ? "API connected" : apiStatus === "loading" ? "Connecting" : "API offline"}
               </Badge>
+              <Button asChild variant="outline" size="sm" className="gap-2">
+                <Link to="/demos/ai-fabric-account-resolver/about">
+                  <Info className="h-4 w-4" />
+                  About this demo
+                </Link>
+              </Button>
               <Button
                 variant="outline"
                 size="sm"
@@ -1072,7 +1077,6 @@ const AIFabricAccountResolver = () => {
             </div>
           </div>
 
-          <DemoBackendArchitecture architecture={demoBackendArchitectures.accountResolver} className="mt-6" />
         </section>
       </main>
 

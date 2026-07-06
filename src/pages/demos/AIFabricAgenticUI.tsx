@@ -7,6 +7,7 @@ import {
   CircleAlert,
   Clock3,
   CreditCard,
+  Info,
   LayoutDashboard,
   ListChecks,
   Loader2,
@@ -28,8 +29,6 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { DemoBackendArchitecture } from "./components/DemoBackendArchitecture";
-import { demoBackendArchitectures } from "./components/demoBackendArchitectures";
 
 const configuredBehaviorBaseUrl =
   import.meta.env.VITE_BEHAVIOR_SIGNALS_API_URL ||
@@ -773,6 +772,12 @@ export default function AIFabricAgenticUI() {
               >
                 {apiStatus === "connected" ? "Connected" : apiStatus === "offline" ? "Offline" : "Loading"}
               </Badge>
+              <Button asChild variant="outline">
+                <Link to="/demos/ai-fabric-behavior-signals/about">
+                  <Info className="mr-2 h-4 w-4" />
+                  About this demo
+                </Link>
+              </Button>
               <Button variant="outline" onClick={() => void createSession(true)} disabled={isLoading || isComposing || isResetting}>
                 {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
                 Reset session
@@ -1013,7 +1018,6 @@ export default function AIFabricAgenticUI() {
             </aside>
           </div>
 
-          <DemoBackendArchitecture architecture={demoBackendArchitectures.behaviorSignals} className="mt-6" />
         </section>
       </main>
 

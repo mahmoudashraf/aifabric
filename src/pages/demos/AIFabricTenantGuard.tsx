@@ -9,6 +9,7 @@ import {
   Database,
   Eye,
   FileText,
+  Info,
   KeyRound,
   Loader2,
   Lock,
@@ -26,8 +27,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { DemoBackendArchitecture } from "./components/DemoBackendArchitecture";
-import { demoBackendArchitectures } from "./components/demoBackendArchitectures";
 
 const configuredTenantGuardBaseUrl =
   import.meta.env.VITE_TENANT_GUARD_API_URL ||
@@ -486,6 +485,12 @@ export default function AIFabricTenantGuard() {
             </div>
 
             <div className="flex flex-wrap gap-3">
+              <Button asChild variant="outline">
+                <Link to="/demos/ai-fabric-tenant-guard/about">
+                  <Info className="mr-2 h-4 w-4" />
+                  About this demo
+                </Link>
+              </Button>
               <Button variant="outline" onClick={() => loadDashboard()} disabled={isLoading}>
                 <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
                 Refresh
@@ -712,7 +717,6 @@ export default function AIFabricTenantGuard() {
           </Card>
         </div>
 
-        <DemoBackendArchitecture architecture={demoBackendArchitectures.tenantGuard} className="mt-6" />
       </main>
 
       <Footer />

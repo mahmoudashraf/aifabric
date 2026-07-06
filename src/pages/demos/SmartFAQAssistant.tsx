@@ -29,8 +29,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { DemoBackendArchitecture } from "./components/DemoBackendArchitecture";
-import { demoBackendArchitectures } from "./components/demoBackendArchitectures";
 
 // Mock FAQ data
 const faqArticles = [
@@ -611,10 +609,6 @@ const SmartFAQAssistant = () => {
               </div>
             </CardContent>
           </Card>
-        </section>
-
-        <section className="container mx-auto px-4 py-6">
-          <DemoBackendArchitecture architecture={demoBackendArchitectures.smartFaq} />
         </section>
 
         {/* Stats */}

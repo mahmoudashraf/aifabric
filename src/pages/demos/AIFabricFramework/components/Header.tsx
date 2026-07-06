@@ -9,10 +9,12 @@ import {
   Trash2,
   Loader2,
   Zap,
+  Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MigrationProgress } from "./MigrationProgress";
 import type { MigrationProgress as MigrationProgressType } from "../hooks/useMigration";
+import { AI_SHOPPING_EXPERIENCE_ABOUT_ROUTE } from "../routes";
 
 interface HeaderProps {
   // Migration states
@@ -59,12 +61,20 @@ export function Header({
     <div className="mb-6 sm:mb-8">
       {/* Navigation */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
-        <Link to="/">
-          <Button variant="ghost" size="sm">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
-          </Button>
-        </Link>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link to="/">
+            <Button variant="ghost" size="sm">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back
+            </Button>
+          </Link>
+          <Link to={AI_SHOPPING_EXPERIENCE_ABOUT_ROUTE}>
+            <Button variant="outline" size="sm">
+              <Info className="h-4 w-4 mr-2" />
+              About this demo
+            </Button>
+          </Link>
+        </div>
 
         <div className="flex items-center gap-2 flex-wrap justify-start sm:justify-end w-full sm:w-auto">
           <Button

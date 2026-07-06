@@ -13,16 +13,20 @@ import AIFabricAccountResolver from "./pages/demos/AIFabricAccountResolver";
 import AIFabricAgenticUI from "./pages/demos/AIFabricAgenticUI";
 import AIFabricBehaviorSignals from "./pages/demos/AIFabricBehaviorSignals";
 import AIFabricTenantGuard from "./pages/demos/AIFabricTenantGuard";
+import DemoAboutPage from "./pages/demos/DemoAboutPage";
 import SmartFAQAssistant from "./pages/demos/SmartFAQAssistant";
 import DocumentIntelligenceHub from "./pages/demos/DocumentIntelligenceHub";
 import ProductDiscoveryEngine from "./pages/demos/ProductDiscoveryEngine";
 import CodeDocumentationSearch from "./pages/demos/CodeDocumentationSearch";
 import MeetingNotesAnalyzer from "./pages/demos/MeetingNotesAnalyzer";
 import AIFabricFramework from "./pages/demos/AIFabricFramework";
+import { demoBackendArchitectures } from "./pages/demos/components/demoBackendArchitectures";
 import MaxAIMode from "./pages/MaxAIMode";
 import ProductDetails from "./pages/ProductDetails";
 import {
+  AI_SHOPPING_EXPERIENCE_ABOUT_ROUTE,
   AI_SHOPPING_EXPERIENCE_ROUTE,
+  LEGACY_AI_FABRIC_FRAMEWORK_ABOUT_ROUTE,
   LEGACY_AI_FABRIC_FRAMEWORK_ROUTE,
 } from "./pages/demos/AIFabricFramework/routes";
 import OrchestratorStory from "./pages/docs/OrchestratorStory";
@@ -121,21 +125,66 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/landing2" element={<Landing2 />} />
             <Route path="/demos" element={<Demos />} />
+            <Route
+              path="/demos/ai-fabric-account-resolver/about"
+              element={
+                <DemoAboutPage
+                  architecture={demoBackendArchitectures.accountResolver}
+                  demoLabel="AI Fabric Account Resolver"
+                  demoPath="/demos/ai-fabric-account-resolver"
+                />
+              }
+            />
+            <Route path="/demos/subscription-management-hub/about" element={<Navigate to="/demos/ai-fabric-account-resolver/about" replace />} />
             <Route path="/demos/ai-fabric-account-resolver" element={<AIFabricAccountResolver />} />
             <Route path="/demos/subscription-management-hub" element={<AIFabricAccountResolver />} />
             <Route path="/demos/smart-faq-assistant" element={<SmartFAQAssistant />} />
             <Route path="/demos/document-intelligence-hub" element={<DocumentIntelligenceHub />} />
             <Route path="/demos/product-discovery-engine" element={<ProductDiscoveryEngine />} />
             <Route path="/demos/ai-fabric-agentic-ui" element={<Navigate to="/demos/ai-fabric-behavior-signals/agentic-ui" replace />} />
+            <Route path="/demos/ai-fabric-agentic-ui/about" element={<Navigate to="/demos/ai-fabric-behavior-signals/about" replace />} />
+            <Route path="/demos/ai-fabric-behavior-signals/agentic-ui/about" element={<Navigate to="/demos/ai-fabric-behavior-signals/about" replace />} />
             <Route path="/demos/ai-fabric-behavior-signals/agentic-ui" element={<AIFabricAgenticUI />} />
+            <Route
+              path="/demos/ai-fabric-behavior-signals/about"
+              element={
+                <DemoAboutPage
+                  architecture={demoBackendArchitectures.behaviorSignals}
+                  demoLabel="AI Fabric Behavior Signals"
+                  demoPath="/demos/ai-fabric-behavior-signals"
+                />
+              }
+            />
             <Route path="/demos/ai-fabric-behavior-signals" element={<AIFabricBehaviorSignals />} />
+            <Route path="/demos/team-sentiment-tracker/about" element={<Navigate to="/demos/ai-fabric-behavior-signals/about" replace />} />
             <Route path="/demos/team-sentiment-tracker" element={<AIFabricBehaviorSignals />} />
+            <Route
+              path="/demos/ai-fabric-tenant-guard/about"
+              element={
+                <DemoAboutPage
+                  architecture={demoBackendArchitectures.tenantGuard}
+                  demoLabel="AI Fabric Tenant Guard"
+                  demoPath="/demos/ai-fabric-tenant-guard"
+                />
+              }
+            />
             <Route path="/demos/ai-fabric-tenant-guard" element={<AIFabricTenantGuard />} />
             <Route path="/demos/code-documentation-search" element={<CodeDocumentationSearch />} />
             <Route path="/demos/meeting-notes-analyzer" element={<MeetingNotesAnalyzer />} />
+            <Route
+              path={AI_SHOPPING_EXPERIENCE_ABOUT_ROUTE}
+              element={
+                <DemoAboutPage
+                  architecture={demoBackendArchitectures.shopping}
+                  demoLabel="AI Shopping Experience"
+                  demoPath={AI_SHOPPING_EXPERIENCE_ROUTE}
+                />
+              }
+            />
             <Route path={AI_SHOPPING_EXPERIENCE_ROUTE} element={<AIFabricFramework />} />
             <Route path={`${AI_SHOPPING_EXPERIENCE_ROUTE}/maxAI-Mode`} element={<AIFabricFramework />} />
             <Route path={`${AI_SHOPPING_EXPERIENCE_ROUTE}/product/:id`} element={<ProductDetails />} />
+            <Route path={LEGACY_AI_FABRIC_FRAMEWORK_ABOUT_ROUTE} element={<Navigate to={AI_SHOPPING_EXPERIENCE_ABOUT_ROUTE} replace />} />
             <Route path={LEGACY_AI_FABRIC_FRAMEWORK_ROUTE} element={<AIFabricFramework />} />
             <Route path={`${LEGACY_AI_FABRIC_FRAMEWORK_ROUTE}/maxAI-Mode`} element={<AIFabricFramework />} />
             <Route path={`${LEGACY_AI_FABRIC_FRAMEWORK_ROUTE}/product/:id`} element={<ProductDetails />} />

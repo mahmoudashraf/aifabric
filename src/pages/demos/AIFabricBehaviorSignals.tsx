@@ -7,6 +7,7 @@ import {
   BarChart3,
   CheckCircle2,
   Database,
+  Info,
   LayoutDashboard,
   Loader2,
   RefreshCw,
@@ -27,8 +28,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
-import { DemoBackendArchitecture } from "./components/DemoBackendArchitecture";
-import { demoBackendArchitectures } from "./components/demoBackendArchitectures";
 
 const configuredBehaviorBaseUrl =
   import.meta.env.VITE_BEHAVIOR_SIGNALS_API_URL ||
@@ -731,6 +730,12 @@ export default function AIFabricBehaviorSignals() {
 
             <div className="flex flex-wrap gap-2">
               <Button asChild variant="outline" className="gap-2">
+                <Link to="/demos/ai-fabric-behavior-signals/about">
+                  <Info className="h-4 w-4" />
+                  About this demo
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="gap-2">
                 <Link to="/demos/ai-fabric-behavior-signals/agentic-ui">
                   <LayoutDashboard className="h-4 w-4" />
                   Preview user home
@@ -1096,7 +1101,6 @@ export default function AIFabricBehaviorSignals() {
             </Card>
           </div>
 
-          <DemoBackendArchitecture architecture={demoBackendArchitectures.behaviorSignals} className="mt-6" />
         </section>
       </main>
 
