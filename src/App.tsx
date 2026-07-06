@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { MaxModeProvider } from "@/contexts/MaxModeContext";
 import Index from "./pages/Index";
 import Landing2 from "./pages/Landing2";
@@ -126,7 +126,8 @@ const App = () => (
             <Route path="/demos/smart-faq-assistant" element={<SmartFAQAssistant />} />
             <Route path="/demos/document-intelligence-hub" element={<DocumentIntelligenceHub />} />
             <Route path="/demos/product-discovery-engine" element={<ProductDiscoveryEngine />} />
-            <Route path="/demos/ai-fabric-agentic-ui" element={<AIFabricAgenticUI />} />
+            <Route path="/demos/ai-fabric-agentic-ui" element={<Navigate to="/demos/ai-fabric-behavior-signals/agentic-ui" replace />} />
+            <Route path="/demos/ai-fabric-behavior-signals/agentic-ui" element={<AIFabricAgenticUI />} />
             <Route path="/demos/ai-fabric-behavior-signals" element={<AIFabricBehaviorSignals />} />
             <Route path="/demos/team-sentiment-tracker" element={<AIFabricBehaviorSignals />} />
             <Route path="/demos/ai-fabric-tenant-guard" element={<AIFabricTenantGuard />} />

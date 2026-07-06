@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, CreditCard, MessageSquare, TrendingUp, Shield, Zap, HelpCircle, Search, Bot, FileText, Upload, ShoppingBag, Users, Heart, Smile, Activity, Code, Calendar, ListTodo, Lock, LayoutDashboard } from "lucide-react";
+import { ArrowRight, Sparkles, CreditCard, MessageSquare, TrendingUp, Shield, Zap, HelpCircle, Search, Bot, FileText, Upload, ShoppingBag, Users, Heart, Smile, Activity, Code, Calendar, ListTodo, Lock } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
@@ -112,7 +112,7 @@ const demos = [
       { icon: Activity, label: "Behavior Analytics" },
       { icon: Smile, label: "6-Level Sentiment" },
       { icon: TrendingUp, label: "Trend Detection" },
-      { icon: Shield, label: "Confirmed Actions" },
+      { icon: Sparkles, label: "Agentic Home Preview" },
     ],
     stats: [
       { value: "3", label: "Real Scenarios" },
@@ -120,25 +120,6 @@ const demos = [
       { value: "Live", label: "Backend API" },
     ],
     link: "/demos/ai-fabric-behavior-signals",
-  },
-  {
-    id: "ai-fabric-agentic-ui",
-    title: "AI Fabric Agentic UI",
-    description: "Live behavior demo where AI Fabric returns a structured component plan and the page adapts to the selected user's insight.",
-    icon: LayoutDashboard,
-    status: "featured" as const,
-    features: [
-      { icon: Sparkles, label: "AI UI Plan" },
-      { icon: Activity, label: "Behavior Insight" },
-      { icon: Shield, label: "Safe Registry" },
-      { icon: LayoutDashboard, label: "Dynamic Layout" },
-    ],
-    stats: [
-      { value: "10", label: "Component Types" },
-      { value: "JSON", label: "Structured Plan" },
-      { value: "Live", label: "Backend API" },
-    ],
-    link: "/demos/ai-fabric-agentic-ui",
   },
   {
     id: "ai-fabric-tenant-guard",

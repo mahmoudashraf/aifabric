@@ -7,6 +7,7 @@ import {
   BarChart3,
   CheckCircle2,
   Database,
+  LayoutDashboard,
   Loader2,
   RefreshCw,
   Send,
@@ -727,6 +728,12 @@ export default function AIFabricBehaviorSignals() {
             </div>
 
             <div className="flex flex-wrap gap-2">
+              <Button asChild variant="outline" className="gap-2">
+                <Link to="/demos/ai-fabric-behavior-signals/agentic-ui">
+                  <LayoutDashboard className="h-4 w-4" />
+                  Preview user home
+                </Link>
+              </Button>
               <Button variant="outline" className="gap-2" onClick={() => refreshDashboard()} disabled={isLoading}>
                 <RefreshCw className="h-4 w-4" />
                 Refresh

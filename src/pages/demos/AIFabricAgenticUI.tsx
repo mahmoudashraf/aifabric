@@ -35,7 +35,7 @@ const configuredBehaviorBaseUrl =
 
 const BEHAVIOR_BASE_URL = configuredBehaviorBaseUrl.replace(/\/$/, "");
 const BEHAVIOR_API_URL = `${BEHAVIOR_BASE_URL}/api/behavior-demo`;
-const SESSION_STORAGE_KEY = "ai-fabric-agentic-ui-session-v1";
+const SESSION_STORAGE_KEY = "ai-fabric-behavior-signals-session-v2";
 
 type ApiStatus = "loading" | "connected" | "offline";
 
@@ -212,7 +212,7 @@ async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T
 
 function getOrCreateSessionId(): string {
   if (typeof window === "undefined") {
-    return "agentic-ui-browser-session";
+    return "behavior-browser-session";
   }
   const existing = window.localStorage.getItem(SESSION_STORAGE_KEY);
   if (existing) {
@@ -222,7 +222,7 @@ function getOrCreateSessionId(): string {
     typeof window.crypto?.randomUUID === "function"
       ? window.crypto.randomUUID().slice(0, 8)
       : Math.random().toString(36).slice(2, 10);
-  const sessionId = `agentic-ui-${suffix}`;
+  const sessionId = `browser-${suffix}`;
   window.localStorage.setItem(SESSION_STORAGE_KEY, sessionId);
   return sessionId;
 }
@@ -369,12 +369,12 @@ function EventTimeline({ component }: { component: AgenticUiComponent }) {
   const events = objectListProp(component.props, "events");
   return (
     <ComponentShell component={component}>
-      <div className="space-y-3">
+      <div className="max-h-[420px] space-y-3 overflow-y-auto pr-1">
         {events.length ? (
           events.map((event, index) => (
-            <div key={`${displayValue(event.type)}-${index}`} className="grid gap-3 rounded-lg bg-white/75 p-3 md:grid-cols-[150px_minmax(0,1fr)_90px]">
-              <div className="font-semibold text-foreground">{displayValue(event.type)}</div>
-              <div className="min-w-0 text-sm text-muted-foreground">{displayValue(event.summary)}</div>
+            <div key={`${displayValue(event.type)}-${index}`} className="grid min-w-0 gap-2 rounded-lg bg-white/75 p-3 md:grid-cols-[minmax(0,150px)_minmax(0,1fr)_90px]">
+              <div className="min-w-0 break-words font-semibold text-foreground">{displayValue(event.type)}</div>
+              <div className="min-w-0 break-words text-sm text-muted-foreground">{displayValue(event.summary)}</div>
               <div className="text-right text-xs text-muted-foreground">{compactTime(displayValue(event.timestamp))}</div>
             </div>
           ))
@@ -553,8 +553,8 @@ export default function AIFabricAgenticUI() {
       } catch (error) {
         setApiStatus("offline");
         toast({
-          title: "Agentic UI composition failed",
-          description: error instanceof Error ? error.message : "Unable to compose the UI from behavior insight.",
+          title: "Home preview composition failed",
+          description: error instanceof Error ? error.message : "Unable to compose home modules from behavior insight.",
           variant: "destructive",
         });
         return null;
@@ -641,7 +641,7 @@ export default function AIFabricAgenticUI() {
       await refreshDashboard();
       toast({
         title: "Recovery events recorded",
-        description: "Positive raw app events were added. Click \"Run user behaviour analysis\" to recompose AI insight.",
+        description: "Positive raw app events were added. Click \"Refresh user insight\" to recompose the home preview.",
       });
     } catch (error) {
       toast({
@@ -663,20 +663,20 @@ export default function AIFabricAgenticUI() {
 
       <main className="pt-24 pb-16">
         <section className="container mx-auto px-4">
-          <Link to="/demos" className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">
+          <Link to="/demos/ai-fabric-behavior-signals" className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">
             <ArrowLeft className="h-4 w-4" />
-            Back to demos
+            Back to Behavior Signals
           </Link>
 
           <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
               <Badge variant="secondary" className="mb-4">
                 <Sparkles className="mr-1 h-3 w-3" />
-                Live AI Fabric real app
+                Behavior Signals subpage
               </Badge>
-              <h1 className="text-4xl font-bold tracking-tight md:text-5xl">AI Fabric Agentic UI</h1>
+              <h1 className="text-4xl font-bold tracking-tight md:text-5xl">Behavior-driven home preview</h1>
               <p className="mt-3 text-lg text-muted-foreground">
-                User insight becomes a structured component plan, and the page renders the chosen components from a safe registry.
+                The same Behavior Signals users feed an LLM component plan, then this page previews which home modules each user should see.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
@@ -705,8 +705,8 @@ export default function AIFabricAgenticUI() {
                 <div className="flex items-center gap-3">
                   <Loader2 className="h-5 w-5 animate-spin text-amber-600" />
                   <div>
-                    <p className="text-sm font-semibold text-foreground">Resetting demo session</p>
-                    <p className="text-xs text-muted-foreground">Preparing clean scenario data, rebuilding insights, and refreshing the UI.</p>
+                    <p className="text-sm font-semibold text-foreground">Resetting Behavior Signals session</p>
+                    <p className="text-xs text-muted-foreground">Preparing the same users, rebuilding insights, and refreshing the home preview.</p>
                   </div>
                 </div>
               </div>
@@ -716,8 +716,8 @@ export default function AIFabricAgenticUI() {
           <div className="grid gap-6 xl:grid-cols-[300px_minmax(0,1fr)_330px]">
             <aside className="rounded-lg border bg-card p-4 shadow-sm">
               <div className="mb-4">
-                <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">User insight source</p>
-                <h2 className="mt-1 text-xl font-semibold">Behavior scenarios</h2>
+                <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Same behavior session</p>
+                <h2 className="mt-1 text-xl font-semibold">Current users</h2>
               </div>
               <div className="space-y-3">
                 {dashboard.scenarios.map((scenario) => {
@@ -757,13 +757,15 @@ export default function AIFabricAgenticUI() {
               <div className="border-b p-5">
                 <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                   <div>
-                    <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Rendered from AI component plan</p>
+                    <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">User home preview from AI component plan</p>
                     <h2 className="mt-1 text-2xl font-bold">{agenticResponse?.customerName || selectedScenario?.customerName || "Customer"}</h2>
-                    <p className="mt-2 text-sm text-muted-foreground">{activePlan?.summary || "Waiting for the AI Fabric component plan."}</p>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      {activePlan?.summary || "Run behavior analysis to preview the user's behavior-aware home modules."}
+                    </p>
                   </div>
                   <Button onClick={() => selectedScenario && void composeUi(selectedScenario.userId)} disabled={!selectedScenario || isComposing}>
                     {isComposing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-                    Run user behaviour analysis
+                    Refresh user insight
                   </Button>
                 </div>
                 {canRunRecoveryExperiment && (
@@ -776,7 +778,7 @@ export default function AIFabricAgenticUI() {
                     </div>
                     <Button onClick={() => void recordPositiveRecovery()} disabled={isRecovering || isComposing} className="bg-emerald-600 hover:bg-emerald-700">
                       {isRecovering ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <TrendingUp className="mr-2 h-4 w-4" />}
-                      Add recovery events
+                      Record recovery events
                     </Button>
                   </div>
                 )}
@@ -787,7 +789,7 @@ export default function AIFabricAgenticUI() {
                   <div className="flex min-h-[420px] items-center justify-center rounded-lg border border-dashed">
                     <div className="text-center">
                       <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
-                      <p className="mt-3 text-sm text-muted-foreground">Composing the first UI plan...</p>
+                      <p className="mt-3 text-sm text-muted-foreground">Loading behavior users and composing the first home preview...</p>
                     </div>
                   </div>
                 ) : (
@@ -892,7 +894,7 @@ export default function AIFabricAgenticUI() {
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Returned list</p>
+                    <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">LLM returned components</p>
                   <Badge variant="secondary">{activePlan?.allowedComponentTypes?.length || 0} allowed</Badge>
                 </div>
                 {activeComponents.map((component) => (
