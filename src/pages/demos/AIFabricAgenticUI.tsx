@@ -92,6 +92,21 @@ interface DemoSessionResponse {
   dashboard: BehaviorDemoDashboard;
 }
 
+interface BehaviorEventSummary {
+  id: number | null;
+  userId: string;
+  eventType: string;
+  eventTimestamp: string;
+  eventData: string;
+  source: string | null;
+}
+
+interface BehaviorScenarioResult {
+  scenario: DemoScenarioSummary;
+  insight: InsightSummary | null;
+  events: BehaviorEventSummary[];
+}
+
 interface AgenticUiComponent {
   id: string;
   type: string;
@@ -112,12 +127,26 @@ interface AgenticUiPlan {
   components: AgenticUiComponent[];
 }
 
+interface AgenticUiEvidence {
+  eventCount: number;
+  eventTypes: string[];
+  eventTypeCounts: Record<string, number>;
+  recentEvents: Array<Record<string, unknown>>;
+}
+
 interface AgenticUiResponse {
   userId: string;
   accountId: string;
   customerName: string;
   scenario: DemoScenarioSummary;
+  evidence: AgenticUiEvidence;
   plan: AgenticUiPlan;
+}
+
+interface RecoveryComparison {
+  before: InsightSummary | null;
+  after: InsightSummary | null;
+  addedEventTypes: string[];
 }
 
 const EMPTY_DASHBOARD: BehaviorDemoDashboard = {
@@ -495,14 +524,19 @@ export default function AIFabricAgenticUI() {
   const [dashboard, setDashboard] = useState<BehaviorDemoDashboard>(EMPTY_DASHBOARD);
   const [selectedUserId, setSelectedUserId] = useState("");
   const [agenticResponse, setAgenticResponse] = useState<AgenticUiResponse | null>(null);
+  const [recoveryComparison, setRecoveryComparison] = useState<RecoveryComparison | null>(null);
   const [apiStatus, setApiStatus] = useState<ApiStatus>("loading");
   const [isLoading, setIsLoading] = useState(true);
   const [isComposing, setIsComposing] = useState(false);
+  const [isRecovering, setIsRecovering] = useState(false);
 
   const selectedScenario = useMemo(
     () => dashboard.scenarios.find((scenario) => scenario.userId === selectedUserId) || dashboard.scenarios[0],
     [dashboard.scenarios, selectedUserId]
   );
+  const activeInsight = agenticResponse?.scenario.insight || selectedScenario?.insight || null;
+  const activeEvidence = agenticResponse?.evidence || null;
+  const canRunRecoveryExperiment = selectedScenario?.id === "billing-cancellation-risk";
 
   const composeUi = useCallback(
     async (userId: string) => {
@@ -514,6 +548,7 @@ export default function AIFabricAgenticUI() {
         setAgenticResponse(response);
         setSelectedUserId(userId);
         setApiStatus("connected");
+        return response;
       } catch (error) {
         setApiStatus("offline");
         toast({
@@ -521,6 +556,7 @@ export default function AIFabricAgenticUI() {
           description: error instanceof Error ? error.message : "Unable to compose the UI from behavior insight.",
           variant: "destructive",
         });
+        return null;
       } finally {
         setIsComposing(false);
       }
@@ -528,9 +564,16 @@ export default function AIFabricAgenticUI() {
     [toast]
   );
 
+  const refreshDashboard = useCallback(async () => {
+    const next = await apiRequest<BehaviorDemoDashboard>(`/dashboard?sessionId=${encodeURIComponent(sessionId)}`);
+    setDashboard(next);
+    return next;
+  }, [sessionId]);
+
   const createSession = useCallback(
     async (resetFirst = false) => {
       setIsLoading(true);
+      setRecoveryComparison(null);
       try {
         if (resetFirst) {
           await apiRequest("/reset", {
@@ -571,7 +614,42 @@ export default function AIFabricAgenticUI() {
 
   const handleScenarioSelect = (scenario: DemoScenarioSummary) => {
     setSelectedUserId(scenario.userId);
+    setRecoveryComparison(null);
     void composeUi(scenario.userId);
+  };
+
+  const recordPositiveRecovery = async () => {
+    if (!selectedScenario) return;
+    setIsRecovering(true);
+    const before = activeInsight;
+    try {
+      const result = await apiRequest<BehaviorScenarioResult>(
+        `/scenarios/${encodeURIComponent(selectedScenario.userId)}/positive-recovery`,
+        {
+          method: "POST",
+          body: JSON.stringify({}),
+        }
+      );
+      setRecoveryComparison({
+        before,
+        after: result.insight,
+        addedEventTypes: result.events.slice(-5).map((event) => event.eventType),
+      });
+      await refreshDashboard();
+      await composeUi(selectedScenario.userId);
+      toast({
+        title: "Recovery events recorded",
+        description: "Positive raw app events were added and behavior analysis was rerun.",
+      });
+    } catch (error) {
+      toast({
+        title: "Recovery event run failed",
+        description: error instanceof Error ? error.message : "Unable to record positive recovery events.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRecovering(false);
+    }
   };
 
   const activePlan = agenticResponse?.plan;
@@ -672,6 +750,20 @@ export default function AIFabricAgenticUI() {
                     Compose UI
                   </Button>
                 </div>
+                {canRunRecoveryExperiment && (
+                  <div className="mt-4 flex flex-col gap-3 rounded-lg border border-emerald-200 bg-emerald-50 p-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-emerald-900">Positive recovery event case</p>
+                      <p className="mt-1 text-sm text-emerald-800">
+                        Add successful payment, usage recovery, feature usage, login, and positive feedback events to this churning account.
+                      </p>
+                    </div>
+                    <Button onClick={() => void recordPositiveRecovery()} disabled={isRecovering || isComposing} className="bg-emerald-600 hover:bg-emerald-700">
+                      {isRecovering ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <TrendingUp className="mr-2 h-4 w-4" />}
+                      Add recovery events
+                    </Button>
+                  </div>
+                )}
               </div>
 
               <div className="p-5">
@@ -683,10 +775,48 @@ export default function AIFabricAgenticUI() {
                     </div>
                   </div>
                 ) : (
-                  <div className="grid gap-4 lg:grid-cols-2">
-                    {activeComponents.map((component) => (
-                      <div key={component.id}>{renderAgenticComponent(component)}</div>
-                    ))}
+                  <div className="space-y-4">
+                    {recoveryComparison && canRunRecoveryExperiment && (
+                      <div className="rounded-lg border border-emerald-200 bg-emerald-50/70 p-5">
+                        <div className="mb-4 flex items-start justify-between gap-4">
+                          <div>
+                            <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">Analytics reaction</p>
+                            <h3 className="mt-1 text-xl font-semibold text-foreground">Churn insight after positive events</h3>
+                          </div>
+                          <Badge className="bg-emerald-600 text-white">Rerun</Badge>
+                        </div>
+                        <div className="grid gap-3 md:grid-cols-2">
+                          <div className="rounded-lg bg-white/75 p-4">
+                            <p className="text-sm font-semibold text-muted-foreground">Before</p>
+                            <div className="mt-3 grid gap-2">
+                              <MetricRow label="Churn risk" value={`${percent(recoveryComparison.before?.churnRisk)}%`} />
+                              <MetricRow label="Sentiment" value={formatLabel(recoveryComparison.before?.sentimentLabel)} />
+                              <MetricRow label="Trend" value={formatLabel(recoveryComparison.before?.trend)} />
+                            </div>
+                          </div>
+                          <div className="rounded-lg bg-white/75 p-4">
+                            <p className="text-sm font-semibold text-muted-foreground">After</p>
+                            <div className="mt-3 grid gap-2">
+                              <MetricRow label="Churn risk" value={`${percent(recoveryComparison.after?.churnRisk)}%`} />
+                              <MetricRow label="Sentiment" value={formatLabel(recoveryComparison.after?.sentimentLabel)} />
+                              <MetricRow label="Trend" value={formatLabel(recoveryComparison.after?.trend)} />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {recoveryComparison.addedEventTypes.map((type, index) => (
+                            <Badge key={`${type}-${index}`} variant="outline" className="border-emerald-200 bg-white text-emerald-800">
+                              {type}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    <div className="grid gap-4 lg:grid-cols-2">
+                      {activeComponents.map((component) => (
+                        <div key={component.id}>{renderAgenticComponent(component)}</div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
@@ -708,6 +838,38 @@ export default function AIFabricAgenticUI() {
                 <MetricRow label="Model" value={activePlan?.model || "unknown"} />
                 <MetricRow label="Attempts" value={activePlan?.attempts ?? 0} />
                 <MetricRow label="Components" value={activeComponents.length} />
+              </div>
+
+              <Separator className="my-5" />
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Insight event evidence</p>
+                  <Badge variant="secondary">{activeEvidence?.eventCount || 0} events</Badge>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {activeEvidence?.eventTypes?.length ? (
+                    activeEvidence.eventTypes.map((type) => (
+                      <Badge key={type} variant="outline" className="bg-background">
+                        {type}
+                        <span className="ml-1 text-muted-foreground">{activeEvidence.eventTypeCounts?.[type] || 0}</span>
+                      </Badge>
+                    ))
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No event evidence loaded yet.</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  {(activeEvidence?.recentEvents || []).slice(-4).map((event, index) => (
+                    <div key={`${displayValue(event.type)}-${index}`} className="rounded-lg border bg-background p-2 text-xs">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-semibold text-foreground">{displayValue(event.type)}</span>
+                        <span className="text-muted-foreground">{displayValue(event.source)}</span>
+                      </div>
+                      <p className="mt-1 line-clamp-2 text-muted-foreground">{displayValue(event.summary)}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <Separator className="my-5" />
