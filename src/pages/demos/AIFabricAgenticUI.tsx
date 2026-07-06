@@ -636,7 +636,7 @@ export default function AIFabricAgenticUI() {
       setRecoveryComparison({
         before,
         after: result.insight,
-        addedEventTypes: result.events.slice(-5).map((event) => event.eventType),
+        addedEventTypes: result.events.slice(-5).reverse().map((event) => event.eventType),
       });
       await refreshDashboard();
       await composeUi(selectedScenario.userId);
@@ -764,7 +764,7 @@ export default function AIFabricAgenticUI() {
                   </div>
                   <Button onClick={() => selectedScenario && void composeUi(selectedScenario.userId)} disabled={!selectedScenario || isComposing}>
                     {isComposing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-                    Compose UI
+                    Run user behaviour analysis
                   </Button>
                 </div>
                 {canRunRecoveryExperiment && (
@@ -877,7 +877,7 @@ export default function AIFabricAgenticUI() {
                   )}
                 </div>
                 <div className="space-y-2">
-                  {(activeEvidence?.recentEvents || []).slice(-4).map((event, index) => (
+                  {(activeEvidence?.recentEvents || []).slice(-4).reverse().map((event, index) => (
                     <div key={`${displayValue(event.type)}-${index}`} className="rounded-lg border bg-background p-2 text-xs">
                       <div className="flex items-center justify-between gap-2">
                         <span className="font-semibold text-foreground">{displayValue(event.type)}</span>
