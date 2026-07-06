@@ -159,80 +159,78 @@ const EMPTY_DASHBOARD: BehaviorDemoDashboard = {
 };
 
 const componentIcons: Record<string, LucideIcon> = {
-  RISK_SUMMARY_CARD: CircleAlert,
-  RECOMMENDED_ACTION_CARD: ListChecks,
-  EVENT_TIMELINE: Clock3,
-  RETENTION_OFFER_PANEL: CreditCard,
-  EXPANSION_NUDGE_CARD: TrendingUp,
-  SUPPORT_ESCALATION_PANEL: MessageSquareText,
-  PRODUCT_ESCALATION_PANEL: Zap,
-  ADOPTION_HELP_PANEL: UserRound,
-  MONITORING_CARD: Activity,
-  HEALTH_SCORE_CARD: ShieldCheck,
-  NEXT_BEST_ACTIONS: Sparkles,
+  ACCOUNT_STATUS_BANNER: CircleAlert,
+  PERSONALIZED_NEXT_STEP: ListChecks,
+  BEHAVIOR_EVIDENCE_FEED: Clock3,
+  RETENTION_OFFER: CreditCard,
+  UPGRADE_RECOMMENDATION: TrendingUp,
+  SERVICE_RECOVERY_UPDATE: Zap,
+  QUICK_SETUP_SHORTCUTS: UserRound,
+  ENGAGEMENT_WATCH: Activity,
+  ACTIVITY_POINTS: ShieldCheck,
+  SMART_SHORTCUTS: Sparkles,
 };
 
 const componentTone: Record<string, string> = {
-  RISK_SUMMARY_CARD: "border-rose-200 bg-rose-50/70",
-  RECOMMENDED_ACTION_CARD: "border-blue-200 bg-blue-50/70",
-  EVENT_TIMELINE: "border-slate-200 bg-slate-50/80",
-  RETENTION_OFFER_PANEL: "border-amber-200 bg-amber-50/80",
-  EXPANSION_NUDGE_CARD: "border-emerald-200 bg-emerald-50/80",
-  SUPPORT_ESCALATION_PANEL: "border-violet-200 bg-violet-50/80",
-  PRODUCT_ESCALATION_PANEL: "border-orange-200 bg-orange-50/80",
-  ADOPTION_HELP_PANEL: "border-cyan-200 bg-cyan-50/80",
-  MONITORING_CARD: "border-sky-200 bg-sky-50/80",
-  HEALTH_SCORE_CARD: "border-green-200 bg-green-50/80",
-  NEXT_BEST_ACTIONS: "border-purple-200 bg-purple-50/80",
+  ACCOUNT_STATUS_BANNER: "border-rose-200 bg-rose-50/70",
+  PERSONALIZED_NEXT_STEP: "border-blue-200 bg-blue-50/70",
+  BEHAVIOR_EVIDENCE_FEED: "border-slate-200 bg-slate-50/80",
+  RETENTION_OFFER: "border-amber-200 bg-amber-50/80",
+  UPGRADE_RECOMMENDATION: "border-emerald-200 bg-emerald-50/80",
+  SERVICE_RECOVERY_UPDATE: "border-orange-200 bg-orange-50/80",
+  QUICK_SETUP_SHORTCUTS: "border-cyan-200 bg-cyan-50/80",
+  ENGAGEMENT_WATCH: "border-sky-200 bg-sky-50/80",
+  ACTIVITY_POINTS: "border-green-200 bg-green-50/80",
+  SMART_SHORTCUTS: "border-purple-200 bg-purple-50/80",
 };
 
 const homeModuleCopy: Record<string, { title: string; description: string; badge: string }> = {
-  RISK_SUMMARY_CARD: {
+  ACCOUNT_STATUS_BANNER: {
     title: "Account status banner",
     description: "The home page headline adapts when the account looks healthy, confused, blocked, or at risk.",
     badge: "Status",
   },
-  RECOMMENDED_ACTION_CARD: {
+  PERSONALIZED_NEXT_STEP: {
     title: "Personalized next step",
     description: "A single useful action chosen from the user's current behavior signals.",
     badge: "Next",
   },
-  EVENT_TIMELINE: {
+  BEHAVIOR_EVIDENCE_FEED: {
     title: "Why this page changed",
     description: "Shows the recent behavior signals that explain why these home modules appeared.",
     badge: "Evidence",
   },
-  RETENTION_OFFER_PANEL: {
+  RETENTION_OFFER: {
     title: "Retention offer",
     description: "Weak or churning users can see a safe recovery offer instead of a generic dashboard.",
     badge: "Save",
   },
-  EXPANSION_NUDGE_CARD: {
+  UPGRADE_RECOMMENDATION: {
     title: "Upgrade recommendation",
     description: "Loyal or growing users can see a relevant upgrade path based on positive usage.",
     badge: "Upgrade",
   },
-  PRODUCT_ESCALATION_PANEL: {
+  SERVICE_RECOVERY_UPDATE: {
     title: "Service recovery update",
     description: "Users affected by product errors can see incident help instead of normal promotional content.",
     badge: "Issue",
   },
-  ADOPTION_HELP_PANEL: {
+  QUICK_SETUP_SHORTCUTS: {
     title: "Quick setup shortcuts",
     description: "Confused users get direct shortcuts to the exact setup actions they appear to need.",
     badge: "Shortcut",
   },
-  MONITORING_CARD: {
+  ENGAGEMENT_WATCH: {
     title: "Engagement watch",
     description: "Users with declining activity get a lightweight check-in module before they disappear.",
     badge: "Watch",
   },
-  HEALTH_SCORE_CARD: {
+  ACTIVITY_POINTS: {
     title: "Activity points",
     description: "Highly interactive users can see progress, rewards, or status earned from active usage.",
     badge: "Points",
   },
-  NEXT_BEST_ACTIONS: {
+  SMART_SHORTCUTS: {
     title: "Smart shortcuts",
     description: "The home page exposes fewer, more useful shortcuts when the user's behavior shows intent.",
     badge: "Shortcut",
@@ -337,8 +335,35 @@ function compactTime(value: string | null | undefined): string {
   return Number.isNaN(date.getTime()) ? value : date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
 
+function normalizeComponentType(type: string | null | undefined): string {
+  switch ((type || "").trim().toUpperCase().replace(/[-\s]+/g, "_")) {
+    case "RISK_SUMMARY_CARD":
+      return "ACCOUNT_STATUS_BANNER";
+    case "RECOMMENDED_ACTION_CARD":
+      return "PERSONALIZED_NEXT_STEP";
+    case "EVENT_TIMELINE":
+      return "BEHAVIOR_EVIDENCE_FEED";
+    case "RETENTION_OFFER_PANEL":
+      return "RETENTION_OFFER";
+    case "EXPANSION_NUDGE_CARD":
+      return "UPGRADE_RECOMMENDATION";
+    case "PRODUCT_ESCALATION_PANEL":
+      return "SERVICE_RECOVERY_UPDATE";
+    case "ADOPTION_HELP_PANEL":
+      return "QUICK_SETUP_SHORTCUTS";
+    case "MONITORING_CARD":
+      return "ENGAGEMENT_WATCH";
+    case "HEALTH_SCORE_CARD":
+      return "ACTIVITY_POINTS";
+    case "NEXT_BEST_ACTIONS":
+      return "SMART_SHORTCUTS";
+    default:
+      return (type || "").trim().toUpperCase();
+  }
+}
+
 function homeCopy(component: AgenticUiComponent): { title: string; description: string; badge: string } {
-  return homeModuleCopy[component.type] || {
+  return homeModuleCopy[normalizeComponentType(component.type)] || {
     title: component.title || formatLabel(component.type),
     description: component.rationale || "Personalized module selected from the user's behavior insight.",
     badge: "Module",
@@ -346,12 +371,13 @@ function homeCopy(component: AgenticUiComponent): { title: string; description: 
 }
 
 function ComponentShell({ component, children }: { component: AgenticUiComponent; children: React.ReactNode }) {
-  const Icon = componentIcons[component.type] || LayoutDashboard;
-  const wide = component.type === "EVENT_TIMELINE" || component.type === "NEXT_BEST_ACTIONS";
+  const normalizedType = normalizeComponentType(component.type);
+  const Icon = componentIcons[normalizedType] || LayoutDashboard;
+  const wide = normalizedType === "BEHAVIOR_EVIDENCE_FEED" || normalizedType === "SMART_SHORTCUTS";
   const copy = homeCopy(component);
   return (
     <article
-      className={`rounded-lg border p-5 shadow-sm ${componentTone[component.type] || "border-border bg-card"} ${
+      className={`rounded-lg border p-5 shadow-sm ${componentTone[normalizedType] || "border-border bg-card"} ${
         wide ? "lg:col-span-2" : ""
       }`}
     >
@@ -545,26 +571,26 @@ function NextBestActions({ component }: { component: AgenticUiComponent }) {
 }
 
 function renderAgenticComponent(component: AgenticUiComponent) {
-  switch (component.type) {
-    case "RISK_SUMMARY_CARD":
+  switch (normalizeComponentType(component.type)) {
+    case "ACCOUNT_STATUS_BANNER":
       return <RiskSummaryCard component={component} />;
-    case "RECOMMENDED_ACTION_CARD":
+    case "PERSONALIZED_NEXT_STEP":
       return <RecommendedActionCard component={component} />;
-    case "EVENT_TIMELINE":
+    case "BEHAVIOR_EVIDENCE_FEED":
       return <EventTimeline component={component} />;
-    case "RETENTION_OFFER_PANEL":
+    case "RETENTION_OFFER":
       return <RetentionOfferPanel component={component} />;
-    case "EXPANSION_NUDGE_CARD":
+    case "UPGRADE_RECOMMENDATION":
       return <ExpansionNudgeCard component={component} />;
-    case "PRODUCT_ESCALATION_PANEL":
+    case "SERVICE_RECOVERY_UPDATE":
       return <ProductEscalationPanel component={component} />;
-    case "ADOPTION_HELP_PANEL":
+    case "QUICK_SETUP_SHORTCUTS":
       return <AdoptionHelpPanel component={component} />;
-    case "MONITORING_CARD":
+    case "ENGAGEMENT_WATCH":
       return <MonitoringCard component={component} />;
-    case "HEALTH_SCORE_CARD":
+    case "ACTIVITY_POINTS":
       return <HealthScoreCard component={component} />;
-    case "NEXT_BEST_ACTIONS":
+    case "SMART_SHORTCUTS":
       return <NextBestActions component={component} />;
     default:
       return null;
@@ -888,7 +914,8 @@ export default function AIFabricAgenticUI() {
                         <div
                           key={component.id}
                           className={
-                            component.type === "EVENT_TIMELINE" || component.type === "NEXT_BEST_ACTIONS"
+                            normalizeComponentType(component.type) === "BEHAVIOR_EVIDENCE_FEED" ||
+                            normalizeComponentType(component.type) === "SMART_SHORTCUTS"
                               ? "lg:col-span-2"
                               : undefined
                           }
