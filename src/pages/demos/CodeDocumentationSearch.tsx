@@ -26,6 +26,8 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { DemoBackendArchitecture } from "./components/DemoBackendArchitecture";
+import { demoBackendArchitectures } from "./components/demoBackendArchitectures";
 
 interface CodeDoc {
   id: string;
@@ -535,6 +537,10 @@ const CodeDocumentationSearch = () => {
               </Card>
             </TabsContent>
           </Tabs>
+        </section>
+
+        <section className="container mx-auto px-4 pb-12">
+          <DemoBackendArchitecture architecture={demoBackendArchitectures.codeSearch} />
         </section>
       </main>
 

@@ -27,6 +27,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
+import { DemoBackendArchitecture } from "./components/DemoBackendArchitecture";
+import { demoBackendArchitectures } from "./components/demoBackendArchitectures";
 
 const configuredBehaviorBaseUrl =
   import.meta.env.VITE_BEHAVIOR_SIGNALS_API_URL ||
@@ -1093,6 +1095,8 @@ export default function AIFabricBehaviorSignals() {
               </CardContent>
             </Card>
           </div>
+
+          <DemoBackendArchitecture architecture={demoBackendArchitectures.behaviorSignals} className="mt-6" />
         </section>
       </main>
 

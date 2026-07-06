@@ -30,6 +30,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DemoBackendArchitecture } from "./components/DemoBackendArchitecture";
+import { demoBackendArchitectures } from "./components/demoBackendArchitectures";
 
 // Sample products data
 const sampleProducts = [
@@ -702,6 +704,10 @@ const ProductDiscoveryEngine = () => {
               </Card>
             </TabsContent>
           </Tabs>
+        </section>
+
+        <section className="container mx-auto px-4 pb-12">
+          <DemoBackendArchitecture architecture={demoBackendArchitectures.productDiscovery} />
         </section>
       </main>
 

@@ -26,6 +26,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { DemoBackendArchitecture } from "./components/DemoBackendArchitecture";
+import { demoBackendArchitectures } from "./components/demoBackendArchitectures";
 
 const configuredTenantGuardBaseUrl =
   import.meta.env.VITE_TENANT_GUARD_API_URL ||
@@ -709,6 +711,8 @@ export default function AIFabricTenantGuard() {
             </CardContent>
           </Card>
         </div>
+
+        <DemoBackendArchitecture architecture={demoBackendArchitectures.tenantGuard} className="mt-6" />
       </main>
 
       <Footer />

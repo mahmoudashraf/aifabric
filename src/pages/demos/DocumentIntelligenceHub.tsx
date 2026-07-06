@@ -34,6 +34,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { DemoBackendArchitecture } from "./components/DemoBackendArchitecture";
+import { demoBackendArchitectures } from "./components/demoBackendArchitectures";
 
 // Mock document data
 const documents = [
@@ -686,6 +688,10 @@ const DocumentIntelligenceHub = () => {
               </div>
             </CardContent>
           </Card>
+        </section>
+
+        <section className="container mx-auto px-4 py-6">
+          <DemoBackendArchitecture architecture={demoBackendArchitectures.documentHub} />
         </section>
 
         {/* Stats */}

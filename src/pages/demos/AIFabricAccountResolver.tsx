@@ -31,6 +31,8 @@ import { useToast } from "@/hooks/use-toast";
 
 import { ChatPanel } from "./AIFabricFramework/components/Chat/ChatPanel";
 import type { ChatMessage, ChatResult, Document, ResultType } from "./AIFabricFramework/types";
+import { DemoBackendArchitecture } from "./components/DemoBackendArchitecture";
+import { demoBackendArchitectures } from "./components/demoBackendArchitectures";
 
 const configuredResolverBaseUrl =
   import.meta.env.VITE_ACCOUNT_RESOLVER_API_URL ||
@@ -1069,6 +1071,8 @@ const AIFabricAccountResolver = () => {
               </div>
             </div>
           </div>
+
+          <DemoBackendArchitecture architecture={demoBackendArchitectures.accountResolver} className="mt-6" />
         </section>
       </main>
 

@@ -30,6 +30,8 @@ import {
 import { API_AUTH_HEADERS, API_BASE_URL, CRUD_API_BASE_URL } from "./constants";
 import type { RagJourneySeedStage } from "./constants/ragJourney";
 import type { ChatPosition } from "./types";
+import { DemoBackendArchitecture } from "../components/DemoBackendArchitecture";
+import { demoBackendArchitectures } from "../components/demoBackendArchitectures";
 
 const AI_SHOPPING_EXPERIENCE_BUILD_MARKER = "ai-shopping-experience-rag-journey-2026-07-05";
 
@@ -398,6 +400,8 @@ export default function AIFabricFramework() {
             <VerificationTab />
           </TabsContent>
         </Tabs>
+
+        <DemoBackendArchitecture architecture={demoBackendArchitectures.shopping} className="mt-6" />
       </div>
 
       {/* Chat panel */}

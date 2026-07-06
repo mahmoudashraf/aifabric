@@ -28,6 +28,8 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import { DemoBackendArchitecture } from "./components/DemoBackendArchitecture";
+import { demoBackendArchitectures } from "./components/demoBackendArchitectures";
 
 const configuredBehaviorBaseUrl =
   import.meta.env.VITE_BEHAVIOR_SIGNALS_API_URL ||
@@ -1010,6 +1012,8 @@ export default function AIFabricAgenticUI() {
               </div>
             </aside>
           </div>
+
+          <DemoBackendArchitecture architecture={demoBackendArchitectures.behaviorSignals} className="mt-6" />
         </section>
       </main>
 
