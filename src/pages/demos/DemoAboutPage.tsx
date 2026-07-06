@@ -38,8 +38,8 @@ export default function DemoAboutPage({ architecture, demoLabel, demoPath }: Dem
                 </Badge>
                 <h1 className="text-3xl font-bold tracking-normal md:text-5xl">{demoLabel}</h1>
                 <p className="mt-4 text-base leading-7 text-muted-foreground md:text-lg">
-                  How this public UI connects to the real AI Fabric backend, which modules it exercises,
-                  and where the runtime data, providers, actions, and request flow live.
+                  Developer map for the deployed demo: request flow, backend app, Docker entry point,
+                  AI Fabric modules, provider wiring, API routes, and the code files to inspect first.
                 </p>
               </div>
 

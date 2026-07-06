@@ -8,11 +8,32 @@ export interface DemoBackendArchitectureConfig {
   publicBackend?: string;
   uiRoutes: string[];
   summary: string;
+  diagram?: DemoArchitectureStage[];
+  developer?: DemoDeveloperDetails;
   dependencies: string[];
   modules: string[];
   aiSurface: string[];
   providers: string[];
   flow: string[];
+}
+
+export type DemoArchitectureStageTone = "ui" | "api" | "framework" | "rag" | "provider" | "storage" | "guard";
+
+export interface DemoArchitectureStage {
+  title: string;
+  subtitle: string;
+  tone: DemoArchitectureStageTone;
+  items: string[];
+}
+
+export interface DemoDeveloperDetails {
+  sourcePath: string;
+  dockerfilePath: string;
+  healthEndpoint: string;
+  primaryEndpoints: string[];
+  localRun: string[];
+  envVars: string[];
+  codeHotspots: string[];
 }
 
 export const demoBackendArchitectures = {
@@ -25,6 +46,77 @@ export const demoBackendArchitectures = {
     uiRoutes: ["/demos/ai-shopping-experience", "/demos/ai-fabric-framework"],
     summary:
       "A Spring Boot commerce runtime that owns product/cart/order APIs and uses AI Fabric for chat orchestration, staged RAG readiness, local actions, confirmations, and runtime data sync.",
+    diagram: [
+      {
+        title: "React demo UI",
+        subtitle: "ai-fabric.dev",
+        tone: "ui",
+        items: ["RAG journey controls", "Commerce tabs and cart", "Chat widget positions"],
+      },
+      {
+        title: "Commerce API",
+        subtitle: "Spring Boot app",
+        tone: "api",
+        items: ["/api/chat/query", "/api/demo/stages/{stage}", "/api/products and /api/carts"],
+      },
+      {
+        title: "AI Fabric runtime",
+        subtitle: "Curated commerce",
+        tone: "framework",
+        items: ["Mode resolver", "Chat-session memory", "Intent, actions, confirmations"],
+      },
+      {
+        title: "RAG and indexing",
+        subtitle: "Evidence pipeline",
+        tone: "rag",
+        items: ["@AICapable products, policies, reviews", "@AIProcess data sync", "Lucene vector spaces"],
+      },
+      {
+        title: "Providers and state",
+        subtitle: "Runtime backing",
+        tone: "provider",
+        items: ["Spring AI OpenAI", "H2 commerce data", "Local smoke provider"],
+      },
+    ],
+    developer: {
+      sourcePath: "examples/real-apps/chat-capabilities-demo",
+      dockerfilePath: "examples/real-apps/chat-capabilities-demo/Dockerfile",
+      healthEndpoint: "GET /api/demo/health",
+      primaryEndpoints: [
+        "POST /api/chat/query",
+        "POST /api/chat/suggestions",
+        "GET /api/chat/conversations",
+        "GET /api/demo/readiness",
+        "POST /api/demo/stages/{stage}",
+        "POST /api/demo/reset",
+        "GET /api/runtime/vector-search",
+      ],
+      localRun: [
+        "mvn -pl examples/real-apps/chat-capabilities-demo spring-boot:run",
+        "Use OPENAI_ENABLED=true with OpenAI model and embedding variables for live AI.",
+        "Use the demo controls API key when calling stage/reset endpoints outside the UI.",
+      ],
+      envVars: [
+        "PORT",
+        "OPENAI_ENABLED",
+        "OPENAI_API_KEY",
+        "OPENAI_MODEL",
+        "OPENAI_EMBEDDING_MODEL",
+        "OPENAI_EMBEDDING_DIMENSIONS",
+        "AI_DATA_SYNC_ENABLED",
+        "APP_ADMIN_API_KEY",
+        "CORS_ALLOWED_ORIGINS",
+      ],
+      codeHotspots: [
+        "web/ChatController.java",
+        "web/CommerceModeResolver.java",
+        "demo/web/DemoController.java",
+        "catalog/domain/Product.java",
+        "policies/domain/Policy.java",
+        "cart/action/AddToCartActionHandler.java",
+        "cart/action/CheckoutCartActionHandler.java",
+      ],
+    },
     dependencies: [
       "Spring Boot Web, Data JPA, Validation, Actuator, OpenAPI, H2, and Lombok.",
       "smoke-support for deployment metadata and no-key smoke checks.",
@@ -66,6 +158,75 @@ export const demoBackendArchitectures = {
     uiRoutes: ["/demos/ai-fabric-account-resolver"],
     summary:
       "A current-account resolver where AI Fabric reads factual profile state, retrieves policy evidence, explains blockers, and proposes governed account actions.",
+    diagram: [
+      {
+        title: "Resolver UI",
+        subtitle: "Session-scoped personas",
+        tone: "ui",
+        items: ["Scenario queue", "Natural chat", "Confirmation cards"],
+      },
+      {
+        title: "Account API",
+        subtitle: "Spring Boot app",
+        tone: "api",
+        items: ["/api/subscriptions/query", "/api/account-resolver/demo/sessions", "/api/account-resolver/users/{userId}/readiness"],
+      },
+      {
+        title: "AI Fabric resolver",
+        subtitle: "Iterative orchestration",
+        tone: "framework",
+        items: ["Chat-session memory", "Current-account target guard", "Action facts and policies"],
+      },
+      {
+        title: "Actions and RAG",
+        subtitle: "Governed resolution",
+        tone: "rag",
+        items: ["get_account_profile", "Payment, address, refund, plan actions", "Policy and plan vector lookup"],
+      },
+      {
+        title: "Providers and state",
+        subtitle: "Live backend",
+        tone: "provider",
+        items: ["Spring AI OpenAI", "Lucene policy vectors", "H2 session users"],
+      },
+    ],
+    developer: {
+      sourcePath: "examples/real-apps/ai-fabric-account-resolver",
+      dockerfilePath: "examples/real-apps/ai-fabric-account-resolver/Dockerfile",
+      healthEndpoint: "GET /api/account-resolver/health",
+      primaryEndpoints: [
+        "POST /api/subscriptions/query",
+        "POST /api/account-resolver/demo/sessions",
+        "GET /api/account-resolver/policies",
+        "GET /api/account-resolver/users/{userId}/readiness",
+        "POST /api/account-resolver/subscriptions/{subscriptionId}/payment-method",
+        "POST /api/account-resolver/subscriptions/{subscriptionId}/refund",
+        "POST /api/demo/indexing/reindex/plans",
+      ],
+      localRun: [
+        "mvn -pl examples/real-apps/ai-fabric-account-resolver spring-boot:run",
+        "Run with OPENAI_ENABLED=true for live natural-language orchestration.",
+        "Use /api/account-resolver/demo/sessions to isolate browser sessions before testing writes.",
+      ],
+      envVars: [
+        "PORT",
+        "OPENAI_ENABLED",
+        "OPENAI_API_KEY",
+        "OPENAI_MODEL",
+        "OPENAI_EMBEDDING_MODEL",
+        "OPENAI_EMBEDDING_DIMENSIONS",
+        "CORS_ALLOWED_ORIGINS",
+      ],
+      codeHotspots: [
+        "controller/NaturalLanguageController.java",
+        "controller/AccountResolverController.java",
+        "service/AccountResolutionService.java",
+        "action/handler/GetAccountProfileActionHandler.java",
+        "action/handler/UpdatePaymentMethodActionHandler.java",
+        "action/handler/RequestRefundActionHandler.java",
+        "ai/ResolverAccountOwnedTargetResolutionStep.java",
+      ],
+    },
     dependencies: [
       "Spring Boot Web, Data JPA, Validation, Actuator, H2/PostgreSQL drivers, and Lombok.",
       "smoke-support for build metadata and release smoke support.",
@@ -106,6 +267,72 @@ export const demoBackendArchitectures = {
     uiRoutes: ["/demos/ai-fabric-behavior-signals", "/demos/ai-fabric-behavior-signals/agentic-ui"],
     summary:
       "A behavior analytics runtime that turns raw app events into churn/sentiment insights, governed retention actions, and an LLM-selected user home preview.",
+    diagram: [
+      {
+        title: "Behavior UI",
+        subtitle: "Operator and home preview",
+        tone: "ui",
+        items: ["Scenario sessions", "Raw event recording", "Agentic UI preview"],
+      },
+      {
+        title: "Behavior API",
+        subtitle: "Spring Boot app",
+        tone: "api",
+        items: ["/api/behavior-demo/dashboard", "/api/behavior-demo/scenarios/{userId}/analyze", "/api/behavior-demo/scenarios/{userId}/agentic-ui"],
+      },
+      {
+        title: "Event provider",
+        subtitle: "AI Fabric SPI",
+        tone: "storage",
+        items: ["DbExternalEventProvider", "AppBehaviorEvent rows", "Session-scoped demo users"],
+      },
+      {
+        title: "AI Fabric behavior",
+        subtitle: "Insight engine",
+        tone: "framework",
+        items: ["BehaviorAnalysisService", "Sentiment and churn insight", "Persisted recommendations"],
+      },
+      {
+        title: "LLM and actions",
+        subtitle: "User experience control",
+        tone: "provider",
+        items: ["Spring AI OpenAI", "Retention offer preview", "Allowlisted component plan"],
+      },
+    ],
+    developer: {
+      sourcePath: "examples/real-apps/behavior-churn-signals",
+      dockerfilePath: "examples/real-apps/behavior-churn-signals/Dockerfile",
+      healthEndpoint: "GET /api/behavior-demo/health",
+      primaryEndpoints: [
+        "POST /api/behavior-demo/sessions",
+        "GET /api/behavior-demo/dashboard",
+        "POST /api/behavior-demo/scenarios/{userId}/analyze",
+        "POST /api/behavior-demo/scenarios/{userId}/signals",
+        "POST /api/behavior-demo/scenarios/{userId}/positive-recovery",
+        "POST /api/behavior-demo/scenarios/{userId}/agentic-ui",
+        "POST /api/behavior-demo/scenarios/{userId}/retention-offer",
+      ],
+      localRun: [
+        "mvn -pl examples/real-apps/behavior-churn-signals spring-boot:run",
+        "Run with OpenAI variables for real LLM-generated insights.",
+        "Use /api/behavior-demo/sessions to clone isolated demo users per browser session.",
+      ],
+      envVars: [
+        "PORT",
+        "OPENAI_ENABLED",
+        "OPENAI_API_KEY",
+        "OPENAI_MODEL",
+        "CORS_ALLOWED_ORIGINS",
+      ],
+      codeHotspots: [
+        "web/BehaviorDemoController.java",
+        "service/BehaviorDemoScenarioService.java",
+        "spi/DbExternalEventProvider.java",
+        "service/AgenticUiComposerService.java",
+        "service/RetentionStudioService.java",
+        "ai/BehaviorLocalLlmProvider.java",
+      ],
+    },
     dependencies: [
       "Spring Boot Web, Data JPA, Validation, Actuator, H2, and Lombok.",
       "smoke-support for shared health and deployment metadata.",
@@ -137,6 +364,64 @@ export const demoBackendArchitectures = {
     uiRoutes: ["/demos/ai-fabric-tenant-guard"],
     summary:
       "A deterministic tenant-boundary proof that shows scoped retrieval, role-aware catalog visibility, guarded actions, and tenant deletion evidence.",
+    diagram: [
+      {
+        title: "Tenant Guard UI",
+        subtitle: "Boundary proof",
+        tone: "ui",
+        items: ["Tenant search comparison", "Guarded write preview", "Deletion evidence"],
+      },
+      {
+        title: "Demo API",
+        subtitle: "Spring Boot app",
+        tone: "api",
+        items: ["/api/tenant-guard-demo/dashboard", "/api/tenant-guard-demo/compare", "/api/tenant-guard-demo/actions/execute"],
+      },
+      {
+        title: "Governance logic",
+        subtitle: "AI Fabric guardrails",
+        tone: "guard",
+        items: ["Tenant metadata scope", "Role and access mode checks", "Confirmation enforcement"],
+      },
+      {
+        title: "Knowledge service",
+        subtitle: "Inspectable records",
+        tone: "storage",
+        items: ["KnowledgeDocument rows", "tenantId visibility", "Tenant delete evidence ids"],
+      },
+      {
+        title: "Runtime proof",
+        subtitle: "Deterministic demo",
+        tone: "provider",
+        items: ["No live LLM required", "In-memory reset data", "Smoke/local provider ids"],
+      },
+    ],
+    developer: {
+      sourcePath: "examples/real-apps/tenant-knowledge-portal",
+      dockerfilePath: "examples/real-apps/tenant-knowledge-portal/Dockerfile",
+      healthEndpoint: "GET /api/tenant-guard-demo/dashboard",
+      primaryEndpoints: [
+        "GET /api/tenant-guard-demo/dashboard",
+        "POST /api/tenant-guard-demo/reset",
+        "GET /api/tenant-guard-demo/compare",
+        "POST /api/tenant-guard-demo/actions/execute",
+        "POST /api/tenant-guard-demo/tenants/delete",
+        "GET /api/tenant-knowledge/search",
+        "GET /api/tenant-knowledge/catalog",
+      ],
+      localRun: [
+        "mvn -pl examples/real-apps/tenant-knowledge-portal spring-boot:run",
+        "Use dashboard and compare endpoints to prove tenant scoping before write/delete tests.",
+        "No external LLM key is required for this deterministic governance demo.",
+      ],
+      envVars: ["PORT", "CORS_ALLOWED_ORIGINS"],
+      codeHotspots: [
+        "web/TenantGuardDemoController.java",
+        "web/TenantKnowledgeController.java",
+        "service/TenantKnowledgeService.java",
+        "src/main/resources/application.yml",
+      ],
+    },
     dependencies: [
       "Spring Boot Web, Actuator, and Lombok.",
       "smoke-support for shared build metadata.",
