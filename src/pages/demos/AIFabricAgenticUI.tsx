@@ -832,7 +832,16 @@ export default function AIFabricAgenticUI() {
                     )}
                     <div className="grid gap-4 lg:grid-cols-2">
                       {activeComponents.map((component) => (
-                        <div key={component.id}>{renderAgenticComponent(component)}</div>
+                        <div
+                          key={component.id}
+                          className={
+                            component.type === "EVENT_TIMELINE" || component.type === "NEXT_BEST_ACTIONS"
+                              ? "lg:col-span-2"
+                              : undefined
+                          }
+                        >
+                          {renderAgenticComponent(component)}
+                        </div>
                       ))}
                     </div>
                   </div>
