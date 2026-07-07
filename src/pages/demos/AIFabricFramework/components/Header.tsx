@@ -230,6 +230,14 @@ export function Header({
           Stage product, policy, review, coupon, and ticket evidence, then test AI Fabric shopping flows
           through chat, RAG, and confirmed actions.
         </p>
+        <div className="mt-4 flex justify-center">
+          <Link to={AI_SHOPPING_EXPERIENCE_ABOUT_ROUTE}>
+            <Button size="sm" className="gap-2 shadow-md">
+              <Info className="h-4 w-4" />
+              About this demo
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   );
