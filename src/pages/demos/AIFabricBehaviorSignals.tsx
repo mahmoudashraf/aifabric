@@ -163,6 +163,12 @@ interface BehaviorScenarioResult {
   retentionOfferPreview: RetentionOfferDemoResult;
 }
 
+interface RecoveryComparison {
+  before: InsightSummary | null;
+  after: InsightSummary | null;
+  addedEventTypes: string[];
+}
+
 interface AppEventField {
   key: string;
   label: string;
@@ -466,7 +472,9 @@ export default function AIFabricBehaviorSignals() {
   const [pageLoadingMode, setPageLoadingMode] = useState<PageLoadingMode>("initializing");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [isRecovering, setIsRecovering] = useState(false);
   const [isOffering, setIsOffering] = useState(false);
+  const [recoveryComparison, setRecoveryComparison] = useState<RecoveryComparison | null>(null);
 
   const selectedScenario = useMemo(
     () => dashboard.scenarios.find((scenario) => scenario.userId === selectedUserId) || dashboard.scenarios[0],
@@ -521,6 +529,7 @@ export default function AIFabricBehaviorSignals() {
       setPageLoadingMode(resetFirst ? "resetting" : "initializing");
       setScenarioResult(null);
       setOfferResult(null);
+      setRecoveryComparison(null);
       try {
         if (resetFirst) {
           await apiRequest<ResetResult>("/reset", {
@@ -601,6 +610,7 @@ export default function AIFabricBehaviorSignals() {
     if (!userId) return;
     setIsAnalyzing(true);
     setOfferResult(null);
+    setRecoveryComparison(null);
     try {
       const result = await apiRequest<BehaviorScenarioResult>(`/scenarios/${userId}/analyze`, { method: "POST" });
       setScenarioResult(result);
@@ -625,6 +635,7 @@ export default function AIFabricBehaviorSignals() {
     if (!selectedScenario) return;
     setIsRecording(true);
     setOfferResult(null);
+    setRecoveryComparison(null);
     try {
       const template = appEventTemplateFor(selectedScenario);
       const payload = eventPayload(template, appEventDraft);
@@ -652,6 +663,43 @@ export default function AIFabricBehaviorSignals() {
       });
     } finally {
       setIsRecording(false);
+    }
+  };
+
+  const recordPositiveRecovery = async () => {
+    if (!selectedScenario) return;
+    setIsRecovering(true);
+    setOfferResult(null);
+    const before = selectedInsight;
+    try {
+      const result = await apiRequest<BehaviorScenarioResult>(
+        `/scenarios/${selectedScenario.userId}/positive-recovery`,
+        { method: "POST" }
+      );
+      setScenarioResult(result);
+      setSelectedUserId(result.scenario.userId);
+      setAppEventDraft(defaultEventDraft(result.scenario));
+      setRecoveryComparison({
+        before,
+        after: result.insight,
+        addedEventTypes: result.events.slice(-5).reverse().map((event) => event.eventType),
+      });
+      await refreshDashboard();
+      await fetchHealth();
+      setApiStatus("connected");
+      toast({
+        title: "Recovery events recorded",
+        description: "Positive raw app events were added and AI Fabric behavior analysis was refreshed.",
+      });
+    } catch (error) {
+      setApiStatus("offline");
+      toast({
+        title: "Recovery event run failed",
+        description: error instanceof Error ? error.message : "Unable to record positive recovery events.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsRecovering(false);
     }
   };
 
@@ -687,6 +735,7 @@ export default function AIFabricBehaviorSignals() {
     setAppEventDraft(defaultEventDraft(scenario));
     setScenarioResult(null);
     setOfferResult(null);
+    setRecoveryComparison(null);
   };
 
   return (
@@ -879,10 +928,21 @@ export default function AIFabricBehaviorSignals() {
                       {selectedScenario?.useCase || "Select a scenario to analyze behavior signals."}
                     </p>
                   </div>
-                  <Button className="gap-2" onClick={() => analyzeScenario()} disabled={!selectedScenario || isAnalyzing}>
-                    {isAnalyzing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Activity className="h-4 w-4" />}
-                    Run analysis
-                  </Button>
+                  <div className="flex flex-wrap gap-2">
+                    <Button className="gap-2" onClick={() => analyzeScenario()} disabled={!selectedScenario || isAnalyzing || isRecovering}>
+                      {isAnalyzing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Activity className="h-4 w-4" />}
+                      Run analysis
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="gap-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800"
+                      onClick={recordPositiveRecovery}
+                      disabled={!selectedScenario || isRecovering || isAnalyzing}
+                    >
+                      {isRecovering ? <Loader2 className="h-4 w-4 animate-spin" /> : <TrendingUp className="h-4 w-4" />}
+                      Record recovery events
+                    </Button>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -930,6 +990,50 @@ export default function AIFabricBehaviorSignals() {
                         <ProofValue label="Model" value={selectedInsight?.model || health?.provider || "not analyzed"} />
                       </div>
                     </div>
+
+                    {recoveryComparison ? (
+                      <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+                        <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
+                          <div>
+                            <div className="flex items-center gap-2 text-sm font-semibold text-emerald-900">
+                              <TrendingUp className="h-4 w-4" />
+                              Recovery events impact
+                            </div>
+                            <p className="mt-1 text-xs leading-relaxed text-emerald-800">
+                              The backend added positive raw app events, then returned a refreshed AI Fabric behavior insight.
+                            </p>
+                          </div>
+                          <Badge variant="outline" className="border-emerald-200 bg-white/80 text-emerald-800">
+                            {recoveryComparison.addedEventTypes.length} events added
+                          </Badge>
+                        </div>
+                        <div className="grid gap-3 md:grid-cols-2">
+                          <div className="rounded-md border border-emerald-200 bg-white/70 p-3">
+                            <div className="mb-2 text-xs font-bold uppercase text-muted-foreground">Before recovery</div>
+                            <div className="grid gap-2 sm:grid-cols-3">
+                              <ProofValue label="Churn" value={`${percent(recoveryComparison.before?.churnRisk)}%`} />
+                              <ProofValue label="Sentiment" value={formatLabel(recoveryComparison.before?.sentimentLabel)} />
+                              <ProofValue label="Trend" value={formatLabel(recoveryComparison.before?.trend)} />
+                            </div>
+                          </div>
+                          <div className="rounded-md border border-emerald-200 bg-white/70 p-3">
+                            <div className="mb-2 text-xs font-bold uppercase text-muted-foreground">After recovery</div>
+                            <div className="grid gap-2 sm:grid-cols-3">
+                              <ProofValue label="Churn" value={`${percent(recoveryComparison.after?.churnRisk)}%`} />
+                              <ProofValue label="Sentiment" value={formatLabel(recoveryComparison.after?.sentimentLabel)} />
+                              <ProofValue label="Trend" value={formatLabel(recoveryComparison.after?.trend)} />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {recoveryComparison.addedEventTypes.map((eventType) => (
+                            <Badge key={eventType} variant="outline" className="border-emerald-200 bg-white/80 text-emerald-800">
+                              {eventType}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
 
                     <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px]">
                       <div className="space-y-2">
