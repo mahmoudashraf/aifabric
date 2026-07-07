@@ -145,6 +145,7 @@ interface AgenticUiResponse {
 }
 
 interface RecoveryComparison {
+  kind: "recovery" | "churn-risk";
   before: InsightSummary | null;
   after: InsightSummary | null;
   addedEventTypes: string[];
@@ -610,6 +611,7 @@ export default function AIFabricAgenticUI() {
   const [isLoading, setIsLoading] = useState(true);
   const [isComposing, setIsComposing] = useState(false);
   const [isRecovering, setIsRecovering] = useState(false);
+  const [isDeteriorating, setIsDeteriorating] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
 
   const selectedScenario = useMemo(
@@ -619,6 +621,7 @@ export default function AIFabricAgenticUI() {
   const activeInsight = agenticResponse?.scenario.insight || selectedScenario?.insight || null;
   const activeEvidence = agenticResponse?.evidence || null;
   const canRunRecoveryExperiment = selectedScenario?.id === "billing-cancellation-risk";
+  const canRunChurnRiskExperiment = Boolean(selectedScenario && selectedScenario.id !== "billing-cancellation-risk");
 
   const composeUi = useCallback(
     async (userId: string) => {
@@ -722,6 +725,7 @@ export default function AIFabricAgenticUI() {
         }
       );
       setRecoveryComparison({
+        kind: "recovery",
         before,
         after: result.insight,
         addedEventTypes: result.events.slice(-5).reverse().map((event) => event.eventType),
@@ -743,8 +747,58 @@ export default function AIFabricAgenticUI() {
     }
   };
 
+  const recordNegativeChurnSignals = async () => {
+    if (!selectedScenario) return;
+    setIsDeteriorating(true);
+    const before = activeInsight;
+    try {
+      const result = await apiRequest<BehaviorScenarioResult>(
+        `/scenarios/${encodeURIComponent(selectedScenario.userId)}/negative-churn`,
+        {
+          method: "POST",
+          body: JSON.stringify({}),
+        }
+      );
+      setRecoveryComparison({
+        kind: "churn-risk",
+        before,
+        after: result.insight,
+        addedEventTypes: result.events.slice(-5).reverse().map((event) => event.eventType),
+      });
+      await refreshDashboard();
+      await composeUi(result.scenario.userId);
+      toast({
+        title: "Churn-risk events recorded",
+        description: "Negative raw app events were added and the AI home preview was recomposed.",
+      });
+    } catch (error) {
+      setCompositionError(error instanceof Error ? error.message : "Unable to record churn-risk events.");
+      toast({
+        title: "Churn-risk event run failed",
+        description: error instanceof Error ? error.message : "Unable to record churn-risk events.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeteriorating(false);
+    }
+  };
+
   const activePlan = agenticResponse?.plan;
   const activeComponents = activePlan?.components || [];
+  const comparisonIsChurnRisk = recoveryComparison?.kind === "churn-risk";
+  const comparisonClasses = comparisonIsChurnRisk
+    ? {
+        shell: "border-rose-200 bg-rose-50/70",
+        label: "text-rose-700",
+        badge: "bg-rose-600 text-white",
+        chip: "border-rose-200 bg-white text-rose-800",
+      }
+    : {
+        shell: "border-emerald-200 bg-emerald-50/70",
+        label: "text-emerald-700",
+        badge: "bg-emerald-600 text-white",
+        chip: "border-emerald-200 bg-white text-emerald-800",
+      };
 
   return (
     <div className="min-h-screen bg-background">
@@ -787,7 +841,7 @@ export default function AIFabricAgenticUI() {
                   About this demo
                 </Link>
               </Button>
-              <Button variant="outline" onClick={() => void createSession(true)} disabled={isLoading || isComposing || isResetting}>
+              <Button variant="outline" onClick={() => void createSession(true)} disabled={isLoading || isComposing || isResetting || isRecovering || isDeteriorating}>
                 {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}
                 Reset session
               </Button>
@@ -858,7 +912,7 @@ export default function AIFabricAgenticUI() {
                       {activePlan?.summary || "Run behavior analysis to preview the user's behavior-aware home modules."}
                     </p>
                   </div>
-                  <Button onClick={() => selectedScenario && void composeUi(selectedScenario.userId)} disabled={!selectedScenario || isComposing}>
+                  <Button onClick={() => selectedScenario && void composeUi(selectedScenario.userId)} disabled={!selectedScenario || isComposing || isRecovering || isDeteriorating}>
                     {isComposing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
                     Refresh user insight
                   </Button>
@@ -871,9 +925,23 @@ export default function AIFabricAgenticUI() {
                         Add successful payment, usage recovery, feature usage, login, and positive feedback events to this churning account.
                       </p>
                     </div>
-                    <Button onClick={() => void recordPositiveRecovery()} disabled={isRecovering || isComposing} className="bg-emerald-600 hover:bg-emerald-700">
+                    <Button onClick={() => void recordPositiveRecovery()} disabled={isRecovering || isDeteriorating || isComposing} className="bg-emerald-600 hover:bg-emerald-700">
                       {isRecovering ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <TrendingUp className="mr-2 h-4 w-4" />}
                       Record recovery events
+                    </Button>
+                  </div>
+                )}
+                {canRunChurnRiskExperiment && (
+                  <div className="mt-4 flex flex-col gap-3 rounded-lg border border-rose-200 bg-rose-50 p-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-rose-900">Negative churn-risk event case</p>
+                      <p className="mt-1 text-sm text-rose-800">
+                        Add payment failure, usage drop, complaint, no-login, and cancel-intent events to see this user become at risk.
+                      </p>
+                    </div>
+                    <Button onClick={() => void recordNegativeChurnSignals()} disabled={isRecovering || isDeteriorating || isComposing} className="bg-rose-600 hover:bg-rose-700">
+                      {isDeteriorating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <TrendingDown className="mr-2 h-4 w-4" />}
+                      Record churn-risk events
                     </Button>
                   </div>
                 )}
@@ -902,14 +970,16 @@ export default function AIFabricAgenticUI() {
 	                  </div>
 	                ) : (
 	                  <div className="space-y-4">
-                    {recoveryComparison && canRunRecoveryExperiment && (
-                      <div className="rounded-lg border border-emerald-200 bg-emerald-50/70 p-5">
+                    {recoveryComparison && (
+                      <div className={`rounded-lg border p-5 ${comparisonClasses.shell}`}>
                         <div className="mb-4 flex items-start justify-between gap-4">
                           <div>
-                            <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">Analytics reaction</p>
-                            <h3 className="mt-1 text-xl font-semibold text-foreground">Churn insight after positive events</h3>
+                            <p className={`text-sm font-semibold uppercase tracking-wide ${comparisonClasses.label}`}>Analytics reaction</p>
+                            <h3 className="mt-1 text-xl font-semibold text-foreground">
+                              {comparisonIsChurnRisk ? "Churn insight after negative events" : "Churn insight after positive events"}
+                            </h3>
                           </div>
-                          <Badge className="bg-emerald-600 text-white">Rerun</Badge>
+                          <Badge className={comparisonClasses.badge}>Rerun</Badge>
                         </div>
                         <div className="grid gap-3 md:grid-cols-2">
                           <div className="rounded-lg bg-white/75 p-4">
@@ -931,7 +1001,7 @@ export default function AIFabricAgenticUI() {
                         </div>
                         <div className="mt-4 flex flex-wrap gap-2">
                           {recoveryComparison.addedEventTypes.map((type, index) => (
-                            <Badge key={`${type}-${index}`} variant="outline" className="border-emerald-200 bg-white text-emerald-800">
+                            <Badge key={`${type}-${index}`} variant="outline" className={comparisonClasses.chip}>
                               {type}
                             </Badge>
                           ))}

@@ -147,6 +147,7 @@ interface BehaviorScenarioResult {
 }
 
 interface RecoveryComparison {
+  kind: "recovery" | "churn-risk";
   before: InsightSummary | null;
   after: InsightSummary | null;
   addedEventTypes: string[];
@@ -440,6 +441,7 @@ export default function AIFabricBehaviorSignals() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [isRecovering, setIsRecovering] = useState(false);
+  const [isDeteriorating, setIsDeteriorating] = useState(false);
   const [recordedEventsByUser, setRecordedEventsByUser] = useState<Record<string, BehaviorEventSummary[]>>({});
   const [recoveryComparison, setRecoveryComparison] = useState<RecoveryComparison | null>(null);
 
@@ -663,6 +665,7 @@ export default function AIFabricBehaviorSignals() {
       setSelectedUserId(result.scenario.userId);
       setAppEventDraft(defaultEventDraft(result.scenario));
       setRecoveryComparison({
+        kind: "recovery",
         before,
         after: result.insight,
         addedEventTypes: result.events.slice(-5).reverse().map((event) => event.eventType),
@@ -692,6 +695,50 @@ export default function AIFabricBehaviorSignals() {
     }
   };
 
+  const recordNegativeChurnSignals = async () => {
+    if (!selectedScenario) return;
+    setIsDeteriorating(true);
+    setAnalysisError(null);
+    const before = selectedInsight;
+    try {
+      const result = await apiRequest<BehaviorScenarioResult>(
+        `/scenarios/${selectedScenario.userId}/negative-churn`,
+        { method: "POST" }
+      );
+      setScenarioResult(result);
+      setSelectedUserId(result.scenario.userId);
+      setAppEventDraft(defaultEventDraft(result.scenario));
+      setRecoveryComparison({
+        kind: "churn-risk",
+        before,
+        after: result.insight,
+        addedEventTypes: result.events.slice(-5).reverse().map((event) => event.eventType),
+      });
+      setRecordedEventsByUser((current) => ({
+        ...current,
+        [result.scenario.userId]: [...result.events].reverse(),
+      }));
+      await refreshDashboard();
+      await fetchHealth();
+      setApiStatus("connected");
+      toast({
+        title: "Churn-risk events recorded",
+        description: "Negative raw app events were added and AI Fabric behavior analysis was refreshed.",
+      });
+    } catch (error) {
+      setApiStatus("offline");
+      setScenarioResult(null);
+      setAnalysisError(error instanceof Error ? error.message : "Unable to record churn-risk events.");
+      toast({
+        title: "Churn-risk event run failed",
+        description: error instanceof Error ? error.message : "Unable to record churn-risk events.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeteriorating(false);
+    }
+  };
+
   const selectScenario = (scenario: DemoScenarioSummary) => {
     setSelectedUserId(scenario.userId);
     setAppEventDraft(defaultEventDraft(scenario));
@@ -699,6 +746,23 @@ export default function AIFabricBehaviorSignals() {
     setRecoveryComparison(null);
     setAnalysisError(null);
   };
+
+  const comparisonIsChurnRisk = recoveryComparison?.kind === "churn-risk";
+  const comparisonClasses = comparisonIsChurnRisk
+    ? {
+        shell: "border-rose-200 bg-rose-50",
+        text: "text-rose-900",
+        detail: "text-rose-800",
+        badge: "border-rose-200 bg-white/80 text-rose-800",
+        panel: "border-rose-200 bg-white/70",
+      }
+    : {
+        shell: "border-emerald-200 bg-emerald-50",
+        text: "text-emerald-900",
+        detail: "text-emerald-800",
+        badge: "border-emerald-200 bg-white/80 text-emerald-800",
+        panel: "border-emerald-200 bg-white/70",
+      };
 
   return (
     <div className="min-h-screen bg-background">
@@ -891,7 +955,7 @@ export default function AIFabricBehaviorSignals() {
                     </p>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <Button className="gap-2" onClick={() => analyzeScenario()} disabled={!selectedScenario || isAnalyzing || isRecovering}>
+                    <Button className="gap-2" onClick={() => analyzeScenario()} disabled={!selectedScenario || isAnalyzing || isRecovering || isDeteriorating}>
                       {isAnalyzing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Activity className="h-4 w-4" />}
                       Run user behavior analysis
                     </Button>
@@ -899,10 +963,19 @@ export default function AIFabricBehaviorSignals() {
                       variant="outline"
                       className="gap-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800"
                       onClick={recordPositiveRecovery}
-                      disabled={!selectedScenario || isRecovering || isAnalyzing}
+                      disabled={!selectedScenario || isRecovering || isAnalyzing || isDeteriorating}
                     >
                       {isRecovering ? <Loader2 className="h-4 w-4 animate-spin" /> : <TrendingUp className="h-4 w-4" />}
                       Record recovery events
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="gap-2 border-rose-200 text-rose-700 hover:bg-rose-50 hover:text-rose-800"
+                      onClick={recordNegativeChurnSignals}
+                      disabled={!selectedScenario || isRecovering || isAnalyzing || isDeteriorating}
+                    >
+                      {isDeteriorating ? <Loader2 className="h-4 w-4 animate-spin" /> : <TrendingDown className="h-4 w-4" />}
+                      Record churn-risk events
                     </Button>
                   </div>
                 </div>
@@ -954,32 +1027,38 @@ export default function AIFabricBehaviorSignals() {
                     </div>
 
                     {recoveryComparison ? (
-                      <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+                      <div className={`rounded-lg border p-4 ${comparisonClasses.shell}`}>
                         <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
                           <div>
-                            <div className="flex items-center gap-2 text-sm font-semibold text-emerald-900">
-                              <TrendingUp className="h-4 w-4" />
-                              Recovery events impact
+                            <div className={`flex items-center gap-2 text-sm font-semibold ${comparisonClasses.text}`}>
+                              {comparisonIsChurnRisk ? <TrendingDown className="h-4 w-4" /> : <TrendingUp className="h-4 w-4" />}
+                              {comparisonIsChurnRisk ? "Churn-risk events impact" : "Recovery events impact"}
                             </div>
-                            <p className="mt-1 text-xs leading-relaxed text-emerald-800">
-                              The backend added positive raw app events, then returned a refreshed AI Fabric behavior insight.
+                            <p className={`mt-1 text-xs leading-relaxed ${comparisonClasses.detail}`}>
+                              {comparisonIsChurnRisk
+                                ? "The backend added negative raw app events, then returned a refreshed AI Fabric behavior insight."
+                                : "The backend added positive raw app events, then returned a refreshed AI Fabric behavior insight."}
                             </p>
                           </div>
-                          <Badge variant="outline" className="border-emerald-200 bg-white/80 text-emerald-800">
+                          <Badge variant="outline" className={comparisonClasses.badge}>
                             {recoveryComparison.addedEventTypes.length} events added
                           </Badge>
                         </div>
                         <div className="grid gap-3 md:grid-cols-2">
-                          <div className="rounded-md border border-emerald-200 bg-white/70 p-3">
-                            <div className="mb-2 text-xs font-bold uppercase text-muted-foreground">Before recovery</div>
+                          <div className={`rounded-md border p-3 ${comparisonClasses.panel}`}>
+                            <div className="mb-2 text-xs font-bold uppercase text-muted-foreground">
+                              {comparisonIsChurnRisk ? "Before churn-risk events" : "Before recovery"}
+                            </div>
                             <div className="grid gap-2 sm:grid-cols-3">
                               <ProofValue label="Churn" value={`${percent(recoveryComparison.before?.churnRisk)}%`} />
                               <ProofValue label="Sentiment" value={formatLabel(recoveryComparison.before?.sentimentLabel)} />
                               <ProofValue label="Trend" value={formatLabel(recoveryComparison.before?.trend)} />
                             </div>
                           </div>
-                          <div className="rounded-md border border-emerald-200 bg-white/70 p-3">
-                            <div className="mb-2 text-xs font-bold uppercase text-muted-foreground">After recovery</div>
+                          <div className={`rounded-md border p-3 ${comparisonClasses.panel}`}>
+                            <div className="mb-2 text-xs font-bold uppercase text-muted-foreground">
+                              {comparisonIsChurnRisk ? "After churn-risk events" : "After recovery"}
+                            </div>
                             <div className="grid gap-2 sm:grid-cols-3">
                               <ProofValue label="Churn" value={`${percent(recoveryComparison.after?.churnRisk)}%`} />
                               <ProofValue label="Sentiment" value={formatLabel(recoveryComparison.after?.sentimentLabel)} />
@@ -989,7 +1068,7 @@ export default function AIFabricBehaviorSignals() {
                         </div>
                         <div className="mt-3 flex flex-wrap gap-2">
                           {recoveryComparison.addedEventTypes.map((eventType) => (
-                            <Badge key={eventType} variant="outline" className="border-emerald-200 bg-white/80 text-emerald-800">
+                            <Badge key={eventType} variant="outline" className={comparisonClasses.badge}>
                               {eventType}
                             </Badge>
                           ))}
@@ -1064,7 +1143,7 @@ export default function AIFabricBehaviorSignals() {
                         <div className="rounded-lg border bg-muted/20 p-3 text-xs text-muted-foreground">
                           This writes the same typed event shape an application would emit. AI analysis only runs when you choose it.
                         </div>
-                        <Button className="w-full gap-2" onClick={recordSignal} disabled={isRecording || isAnalyzing || isRecovering}>
+                        <Button className="w-full gap-2" onClick={recordSignal} disabled={isRecording || isAnalyzing || isRecovering || isDeteriorating}>
                           {isRecording ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                           Record app event
                         </Button>
