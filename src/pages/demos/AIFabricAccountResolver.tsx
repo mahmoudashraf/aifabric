@@ -32,6 +32,7 @@ import { useToast } from "@/hooks/use-toast";
 
 import { ChatPanel } from "./AIFabricFramework/components/Chat/ChatPanel";
 import type { ChatMessage, ChatResult, Document, ResultType } from "./AIFabricFramework/types";
+import { DemoFullPageLoader } from "./components/DemoFullPageLoader";
 
 const configuredResolverBaseUrl =
   import.meta.env.VITE_ACCOUNT_RESOLVER_API_URL ||
@@ -43,6 +44,7 @@ const DEMO_BUILD_MARKER = "account-resolver-server-chat-session-2026-07-04";
 const DEMO_SESSION_STORAGE_KEY = "ai-fabric-account-resolver-demo-session-v1";
 
 type ApiStatus = "loading" | "connected" | "offline";
+type PageLoadingMode = "initializing" | "resetting" | null;
 
 interface AccountBlocker {
   code: string;
@@ -461,6 +463,7 @@ const AIFabricAccountResolver = () => {
   const [readiness, setReadiness] = useState<AccountReadiness | null>(null);
   const [isSeeding, setIsSeeding] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [pageLoadingMode, setPageLoadingMode] = useState<PageLoadingMode>("initializing");
 
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatQuery, setChatQuery] = useState(FALLBACK_SCENARIOS[1].suggestedPrompt);
@@ -541,6 +544,7 @@ const AIFabricAccountResolver = () => {
   const resetDemoSession = useCallback(
     async (scenario = selectedScenario, showToast = true) => {
       setIsSeeding(true);
+      setPageLoadingMode("resetting");
       try {
         const created = await createRemoteDemoSession(scenario.id);
         const nextScenarios = created.scenarios.length ? created.scenarios : FALLBACK_SCENARIOS;
@@ -580,6 +584,7 @@ const AIFabricAccountResolver = () => {
         }
       } finally {
         setIsSeeding(false);
+        setPageLoadingMode(null);
       }
     },
     [selectedScenario, toast],
@@ -590,6 +595,7 @@ const AIFabricAccountResolver = () => {
 
     async function loadDemo() {
       setApiStatus("loading");
+      setPageLoadingMode("initializing");
       try {
         const remotePolicies = await apiJson<ResolutionPolicy[]>("/account-resolver/policies");
         if (!mounted) return;
@@ -649,6 +655,8 @@ const AIFabricAccountResolver = () => {
         setApiStatus("offline");
         setScenarios(FALLBACK_SCENARIOS);
         setPolicies(FALLBACK_POLICIES);
+      } finally {
+        if (mounted) setPageLoadingMode(null);
       }
     }
 
@@ -791,6 +799,21 @@ const AIFabricAccountResolver = () => {
   return (
     <div className="min-h-screen bg-background" data-demo-build={DEMO_BUILD_MARKER}>
       <Navbar />
+      {pageLoadingMode ? (
+        <DemoFullPageLoader
+          title={pageLoadingMode === "resetting" ? "Resetting your account resolver session" : "Preparing your account resolver session"}
+          description={
+            pageLoadingMode === "resetting"
+              ? "Clearing the current browser personas, creating fresh account scenarios, and loading policy-aware readiness before the page becomes interactive."
+              : "Creating or recovering an isolated Account Resolver session, loading policies, and preparing the selected account state."
+          }
+          steps={
+            pageLoadingMode === "resetting"
+              ? ["Create fresh session personas", "Restore account blockers and policies", "Load readiness for the selected scenario"]
+              : ["Load resolver policies", "Create or recover browser session", "Fetch selected account readiness"]
+          }
+        />
+      ) : null}
 
       <main className="pt-24 pb-44">
         <section className="container mx-auto px-4 py-5">

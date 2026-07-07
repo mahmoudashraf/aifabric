@@ -29,6 +29,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import { DemoFullPageLoader } from "./components/DemoFullPageLoader";
 
 const configuredBehaviorBaseUrl =
   import.meta.env.VITE_BEHAVIOR_SIGNALS_API_URL ||
@@ -785,6 +786,7 @@ export default function AIFabricAgenticUI() {
 
   const activePlan = agenticResponse?.plan;
   const activeComponents = activePlan?.components || [];
+  const pageLoadingMode = isLoading ? (isResetting ? "resetting" : "initializing") : null;
   const comparisonIsChurnRisk = recoveryComparison?.kind === "churn-risk";
   const comparisonClasses = comparisonIsChurnRisk
     ? {
@@ -803,6 +805,21 @@ export default function AIFabricAgenticUI() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
+      {pageLoadingMode ? (
+        <DemoFullPageLoader
+          title={pageLoadingMode === "resetting" ? "Resetting Behavior Signals session" : "Preparing Behavior Signals home preview"}
+          description={
+            pageLoadingMode === "resetting"
+              ? "Clearing the isolated behavior session, recreating demo users, rebuilding AI insights, and recomposing the home preview."
+              : "Creating the behavior session, loading current users, and asking AI Fabric to compose the first home preview before the page becomes interactive."
+          }
+          steps={
+            pageLoadingMode === "resetting"
+              ? ["Delete current session data", "Clone seeded behavior users", "Run analysis and compose home modules"]
+              : ["Create browser session", "Load behavior scenarios", "Compose AI-selected home modules"]
+          }
+        />
+      ) : null}
 
       <main className="pt-24 pb-16">
         <section className="container mx-auto px-4">
@@ -847,20 +864,6 @@ export default function AIFabricAgenticUI() {
               </Button>
             </div>
           </div>
-
-          {isResetting ? (
-            <div className="fixed inset-0 z-40 flex items-center justify-center bg-background/90 backdrop-blur-sm">
-              <div className="rounded-xl border border-amber-200 bg-white/90 px-6 py-5 shadow-lg">
-                <div className="flex items-center gap-3">
-                  <Loader2 className="h-5 w-5 animate-spin text-amber-600" />
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">Resetting Behavior Signals session</p>
-                    <p className="text-xs text-muted-foreground">Preparing the same users, rebuilding insights, and refreshing the home preview.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : null}
 
           <div className="grid gap-6 xl:grid-cols-[300px_minmax(0,1fr)_330px]">
             <aside className="rounded-lg border bg-card p-4 shadow-sm">

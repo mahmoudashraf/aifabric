@@ -27,6 +27,7 @@ import {
   VerificationTab,
   shoppingActionProjections,
 } from "./components";
+import { DemoFullPageLoader } from "../components/DemoFullPageLoader";
 import { API_AUTH_HEADERS, API_BASE_URL, CRUD_API_BASE_URL } from "./constants";
 import type { RagJourneySeedStage } from "./constants/ragJourney";
 import type { ChatPosition } from "./types";
@@ -138,6 +139,17 @@ export default function AIFabricFramework() {
       className="min-h-screen bg-gradient-to-b from-background to-muted/20"
       data-demo-build={AI_SHOPPING_EXPERIENCE_BUILD_MARKER}
     >
+      {migration.isClearing ? (
+        <DemoFullPageLoader
+          title="Resetting AI Shopping demo evidence"
+          description="Clearing the staged RAG evidence and refreshing the product, policy, review, coupon, ticket, cart, and readiness views before the page becomes interactive."
+          steps={[
+            "Clear staged demo data",
+            "Refresh commerce tabs and cart state",
+            "Reload RAG readiness proof",
+          ]}
+        />
+      ) : null}
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 pb-[300px] sm:pb-56">
         {/* Header with migration controls */}
         <Header
