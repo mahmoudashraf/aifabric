@@ -39,6 +39,7 @@ const SESSION_STORAGE_KEY = "ai-fabric-behavior-signals-session-v2";
 const UI_BUILD_MARKER = "behavior-signals-ai-hardening-2026-07-06";
 
 type ApiStatus = "loading" | "connected" | "offline";
+type PageLoadingMode = "initializing" | "resetting" | null;
 
 interface BehaviorDemoHealth {
   app?: string;
@@ -462,6 +463,7 @@ export default function AIFabricBehaviorSignals() {
   const [appEventDraft, setAppEventDraft] = useState<Record<string, string>>({});
   const [apiStatus, setApiStatus] = useState<ApiStatus>("loading");
   const [isLoading, setIsLoading] = useState(true);
+  const [pageLoadingMode, setPageLoadingMode] = useState<PageLoadingMode>("initializing");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [isOffering, setIsOffering] = useState(false);
@@ -516,6 +518,7 @@ export default function AIFabricBehaviorSignals() {
   const createSession = useCallback(
     async (resetFirst = false) => {
       setIsLoading(true);
+      setPageLoadingMode(resetFirst ? "resetting" : "initializing");
       setScenarioResult(null);
       setOfferResult(null);
       try {
@@ -548,6 +551,7 @@ export default function AIFabricBehaviorSignals() {
         });
       } finally {
         setIsLoading(false);
+        setPageLoadingMode(null);
       }
     },
     [applyDashboard, fetchHealth, sessionId, toast]
@@ -557,6 +561,7 @@ export default function AIFabricBehaviorSignals() {
     let cancelled = false;
     const load = async () => {
       setIsLoading(true);
+      setPageLoadingMode("initializing");
       try {
         const [session] = await Promise.all([
           apiRequest<DemoSessionResponse>("/sessions", {
@@ -582,6 +587,7 @@ export default function AIFabricBehaviorSignals() {
       } finally {
         if (!cancelled) {
           setIsLoading(false);
+          setPageLoadingMode(null);
         }
       }
     };
@@ -686,6 +692,7 @@ export default function AIFabricBehaviorSignals() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
+      {pageLoadingMode ? <BehaviorPageLoader mode={pageLoadingMode} /> : null}
 
       <main className="pb-16 pt-24">
         <section className="container mx-auto px-4">
@@ -1105,6 +1112,39 @@ export default function AIFabricBehaviorSignals() {
       </main>
 
       <Footer />
+    </div>
+  );
+}
+
+function BehaviorPageLoader({ mode }: { mode: Exclude<PageLoadingMode, null> }) {
+  const isResetting = mode === "resetting";
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/95 px-4 backdrop-blur-sm">
+      <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 text-center shadow-xl">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
+          <Loader2 className="h-7 w-7 animate-spin" />
+        </div>
+        <h2 className="text-xl font-bold tracking-normal">
+          {isResetting ? "Resetting your demo session" : "Preparing your demo session"}
+        </h2>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          {isResetting
+            ? "Clearing your isolated Behavior Signals user data, reseeding scenarios, and running fresh AI Fabric analysis."
+            : "Creating an isolated Behavior Signals session, seeding demo users, and loading AI Fabric insights before the page becomes interactive."}
+        </p>
+        <div className="mt-5 grid gap-2 text-left text-xs text-muted-foreground">
+          {(isResetting
+            ? ["Delete current session data", "Clone seeded behavior scenarios", "Run user behavior analysis"]
+            : ["Create browser session", "Load behavior scenarios", "Fetch AI insight dashboard"]
+          ).map((step) => (
+            <div key={step} className="flex items-center gap-2 rounded-md bg-muted/40 px-3 py-2">
+              <Activity className="h-3.5 w-3.5 text-primary" />
+              <span>{step}</span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
