@@ -440,6 +440,7 @@ export default function AIFabricBehaviorSignals() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [isRecovering, setIsRecovering] = useState(false);
+  const [recordedEventsByUser, setRecordedEventsByUser] = useState<Record<string, BehaviorEventSummary[]>>({});
   const [recoveryComparison, setRecoveryComparison] = useState<RecoveryComparison | null>(null);
 
   const selectedScenario = useMemo(
@@ -457,7 +458,8 @@ export default function AIFabricBehaviorSignals() {
 
   const selectedInsight = scenarioResult?.insight || selectedScenario?.insight || null;
   const activeReview = scenarioResult?.retentionReview || null;
-  const activeEvents = scenarioResult?.events || [];
+  const recordedEvents = selectedScenario ? recordedEventsByUser[selectedScenario.userId] || [] : [];
+  const activeEvents = scenarioResult?.events ? [...scenarioResult.events].reverse() : recordedEvents;
   const runtimePosture = providerPosture(health);
   const averageChurn = dashboard.insights.length
     ? dashboard.insights.reduce((sum, insight) => sum + (insight.churnRisk ?? 0), 0) / dashboard.insights.length
@@ -493,6 +495,7 @@ export default function AIFabricBehaviorSignals() {
       setIsLoading(true);
       setPageLoadingMode(resetFirst ? "resetting" : "initializing");
       setScenarioResult(null);
+      setRecordedEventsByUser({});
       setRecoveryComparison(null);
       setAnalysisError(null);
       try {
@@ -582,6 +585,10 @@ export default function AIFabricBehaviorSignals() {
     try {
       const result = await apiRequest<BehaviorScenarioResult>(`/scenarios/${userId}/analyze`, { method: "POST" });
       setScenarioResult(result);
+      setRecordedEventsByUser((current) => ({
+        ...current,
+        [result.scenario.userId]: [...result.events].reverse(),
+      }));
       setSelectedUserId(userId);
       setAppEventDraft(defaultEventDraft(result.scenario));
       await refreshDashboard();
@@ -609,7 +616,7 @@ export default function AIFabricBehaviorSignals() {
     try {
       const template = appEventTemplateFor(selectedScenario);
       const payload = eventPayload(template, appEventDraft);
-      const result = await apiRequest<BehaviorScenarioResult>(`/scenarios/${selectedScenario.userId}/signals`, {
+      const event = await apiRequest<BehaviorEventSummary>(`/scenarios/${selectedScenario.userId}/events`, {
         method: "POST",
         body: JSON.stringify({
           eventType: template.eventType,
@@ -617,13 +624,17 @@ export default function AIFabricBehaviorSignals() {
           source: template.source,
         }),
       });
-      setScenarioResult(result);
-      setSelectedUserId(result.scenario.userId);
+      setRecordedEventsByUser((current) => ({
+        ...current,
+        [selectedScenario.userId]: [event, ...(current[selectedScenario.userId] || [])],
+      }));
+      setScenarioResult(null);
+      setSelectedUserId(selectedScenario.userId);
       await refreshDashboard();
       await fetchHealth();
       toast({
         title: "App event recorded",
-        description: `${template.eventType} was added and analyzed.`,
+        description: `${template.eventType} was added. Run user behavior analysis to refresh AI insight.`,
       });
     } catch (error) {
       setScenarioResult(null);
@@ -656,6 +667,10 @@ export default function AIFabricBehaviorSignals() {
         after: result.insight,
         addedEventTypes: result.events.slice(-5).reverse().map((event) => event.eventType),
       });
+      setRecordedEventsByUser((current) => ({
+        ...current,
+        [result.scenario.userId]: [...result.events].reverse(),
+      }));
       await refreshDashboard();
       await fetchHealth();
       setApiStatus("connected");
@@ -878,7 +893,7 @@ export default function AIFabricBehaviorSignals() {
                   <div className="flex flex-wrap gap-2">
                     <Button className="gap-2" onClick={() => analyzeScenario()} disabled={!selectedScenario || isAnalyzing || isRecovering}>
                       {isAnalyzing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Activity className="h-4 w-4" />}
-                      Run analysis
+                      Run user behavior analysis
                     </Button>
                     <Button
                       variant="outline"
@@ -999,7 +1014,7 @@ export default function AIFabricBehaviorSignals() {
                           ))}
                           {!activeEvents.length && (
                             <div className="rounded-lg border border-dashed p-4 text-sm text-muted-foreground">
-                              Run analysis to load event evidence for this account.
+                              Record an app event or run user behavior analysis to load event evidence for this account.
                             </div>
                           )}
                         </div>
@@ -1047,9 +1062,9 @@ export default function AIFabricBehaviorSignals() {
                           </div>
                         )}
                         <div className="rounded-lg border bg-muted/20 p-3 text-xs text-muted-foreground">
-                          This writes the same typed event shape an application would emit, then re-runs AI Fabric behavior analysis.
+                          This writes the same typed event shape an application would emit. AI analysis only runs when you choose it.
                         </div>
-                        <Button className="w-full gap-2" onClick={recordSignal} disabled={isRecording}>
+                        <Button className="w-full gap-2" onClick={recordSignal} disabled={isRecording || isAnalyzing || isRecovering}>
                           {isRecording ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                           Record app event
                         </Button>
