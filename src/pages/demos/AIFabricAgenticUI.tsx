@@ -604,6 +604,7 @@ export default function AIFabricAgenticUI() {
   const [dashboard, setDashboard] = useState<BehaviorDemoDashboard>(EMPTY_DASHBOARD);
   const [selectedUserId, setSelectedUserId] = useState("");
   const [agenticResponse, setAgenticResponse] = useState<AgenticUiResponse | null>(null);
+  const [compositionError, setCompositionError] = useState<string | null>(null);
   const [recoveryComparison, setRecoveryComparison] = useState<RecoveryComparison | null>(null);
   const [apiStatus, setApiStatus] = useState<ApiStatus>("loading");
   const [isLoading, setIsLoading] = useState(true);
@@ -622,6 +623,7 @@ export default function AIFabricAgenticUI() {
   const composeUi = useCallback(
     async (userId: string) => {
       setIsComposing(true);
+      setCompositionError(null);
       try {
         const response = await apiRequest<AgenticUiResponse>(`/scenarios/${encodeURIComponent(userId)}/agentic-ui`, {
           method: "POST",
@@ -632,6 +634,8 @@ export default function AIFabricAgenticUI() {
         return response;
       } catch (error) {
         setApiStatus("offline");
+        setAgenticResponse(null);
+        setCompositionError(error instanceof Error ? error.message : "Unable to compose home modules from behavior insight.");
         toast({
           title: "Home preview composition failed",
           description: error instanceof Error ? error.message : "Unable to compose home modules from behavior insight.",
@@ -656,6 +660,7 @@ export default function AIFabricAgenticUI() {
       setIsLoading(true);
       setIsResetting(resetFirst);
       setRecoveryComparison(null);
+      setCompositionError(null);
       try {
         if (resetFirst) {
           await apiRequest("/reset", {
@@ -678,6 +683,8 @@ export default function AIFabricAgenticUI() {
         setApiStatus("connected");
       } catch (error) {
         setApiStatus("offline");
+        setAgenticResponse(null);
+        setCompositionError(error instanceof Error ? error.message : "Unable to prepare the agentic UI demo.");
         toast({
           title: "Behavior backend is offline",
           description: error instanceof Error ? error.message : "Unable to prepare the agentic UI demo.",
@@ -698,6 +705,7 @@ export default function AIFabricAgenticUI() {
   const handleScenarioSelect = (scenario: DemoScenarioSummary) => {
     setSelectedUserId(scenario.userId);
     setRecoveryComparison(null);
+    setCompositionError(null);
     void composeUi(scenario.userId);
   };
 
@@ -724,6 +732,7 @@ export default function AIFabricAgenticUI() {
         description: "Positive raw app events were added. Click \"Refresh user insight\" to recompose the home preview.",
       });
     } catch (error) {
+      setCompositionError(error instanceof Error ? error.message : "Unable to record positive recovery events.");
       toast({
         title: "Recovery event run failed",
         description: error instanceof Error ? error.message : "Unable to record positive recovery events.",
@@ -870,16 +879,29 @@ export default function AIFabricAgenticUI() {
                 )}
               </div>
 
-              <div className="p-5">
-                {isLoading && !activePlan ? (
-                  <div className="flex min-h-[420px] items-center justify-center rounded-lg border border-dashed">
-                    <div className="text-center">
-                      <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
-                      <p className="mt-3 text-sm text-muted-foreground">Loading behavior users and composing the first home preview...</p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
+	              <div className="p-5">
+	                {isLoading && !activePlan ? (
+	                  <div className="flex min-h-[420px] items-center justify-center rounded-lg border border-dashed">
+	                    <div className="text-center">
+	                      <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
+	                      <p className="mt-3 text-sm text-muted-foreground">Loading behavior users and composing the first home preview...</p>
+	                    </div>
+	                  </div>
+	                ) : compositionError ? (
+	                  <div className="flex min-h-[420px] items-center justify-center rounded-lg border border-rose-200 bg-rose-50 p-6">
+	                    <div className="max-w-xl text-center">
+	                      <CircleAlert className="mx-auto h-9 w-9 text-rose-600" />
+	                      <h3 className="mt-3 text-lg font-semibold text-rose-950">AI component planning failed</h3>
+	                      <p className="mt-2 text-sm text-rose-800">
+	                        No fallback home modules were rendered. Fix the LLM/provider issue, then refresh the user insight.
+	                      </p>
+	                      <pre className="mt-4 whitespace-pre-wrap break-words rounded-lg bg-white/75 p-3 text-left text-xs text-rose-950">
+	                        {compositionError}
+	                      </pre>
+	                    </div>
+	                  </div>
+	                ) : (
+	                  <div className="space-y-4">
                     {recoveryComparison && canRunRecoveryExperiment && (
                       <div className="rounded-lg border border-emerald-200 bg-emerald-50/70 p-5">
                         <div className="mb-4 flex items-start justify-between gap-4">

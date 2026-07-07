@@ -138,29 +138,12 @@ interface RetentionReviewResult {
   policyExplanation: string;
 }
 
-interface RetentionOfferResult {
-  success: boolean;
-  confirmationRequired: boolean;
-  message: string;
-  errorCode: string | null;
-  data: Record<string, unknown>;
-}
-
-interface RetentionOfferDemoResult {
-  userId: string;
-  accountId: string;
-  customerName: string;
-  actionName: string;
-  confirmationMessage: string;
-  result: RetentionOfferResult;
-}
-
 interface BehaviorScenarioResult {
   scenario: DemoScenarioSummary;
   insight: InsightSummary | null;
   events: BehaviorEventSummary[];
   retentionReview: RetentionReviewResult;
-  retentionOfferPreview: RetentionOfferDemoResult;
+  retentionOfferPreview?: null;
 }
 
 interface RecoveryComparison {
@@ -442,22 +425,6 @@ function parseEventData(data: string): string {
   }
 }
 
-function importantActionRows(data: Record<string, unknown>): Array<[string, string]> {
-  const rows: Array<[string, string]> = [];
-  const add = (label: string, key: string, suffix = "") => {
-    const value = data[key];
-    if (value !== undefined && value !== null && typeof value !== "object") {
-      rows.push([label, `${String(value)}${suffix}`]);
-    }
-  };
-  add("Policy decision", "policyDecision");
-  add("Requested discount", "requestedDiscountPercent", "%");
-  add("Approved discount", "discountPercent", "%");
-  add("Auto-approval max", "maxDiscountPercent", "%");
-  add("Offer id", "offerId");
-  return rows;
-}
-
 export default function AIFabricBehaviorSignals() {
   const { toast } = useToast();
   const [sessionId] = useState(getOrCreateSessionId);
@@ -465,7 +432,7 @@ export default function AIFabricBehaviorSignals() {
   const [dashboard, setDashboard] = useState<BehaviorDemoDashboard>(EMPTY_DASHBOARD);
   const [selectedUserId, setSelectedUserId] = useState("");
   const [scenarioResult, setScenarioResult] = useState<BehaviorScenarioResult | null>(null);
-  const [offerResult, setOfferResult] = useState<RetentionOfferDemoResult | null>(null);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [appEventDraft, setAppEventDraft] = useState<Record<string, string>>({});
   const [apiStatus, setApiStatus] = useState<ApiStatus>("loading");
   const [isLoading, setIsLoading] = useState(true);
@@ -473,7 +440,6 @@ export default function AIFabricBehaviorSignals() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [isRecovering, setIsRecovering] = useState(false);
-  const [isOffering, setIsOffering] = useState(false);
   const [recoveryComparison, setRecoveryComparison] = useState<RecoveryComparison | null>(null);
 
   const selectedScenario = useMemo(
@@ -492,7 +458,6 @@ export default function AIFabricBehaviorSignals() {
   const selectedInsight = scenarioResult?.insight || selectedScenario?.insight || null;
   const activeReview = scenarioResult?.retentionReview || null;
   const activeEvents = scenarioResult?.events || [];
-  const preview = offerResult || scenarioResult?.retentionOfferPreview || null;
   const runtimePosture = providerPosture(health);
   const averageChurn = dashboard.insights.length
     ? dashboard.insights.reduce((sum, insight) => sum + (insight.churnRisk ?? 0), 0) / dashboard.insights.length
@@ -528,8 +493,8 @@ export default function AIFabricBehaviorSignals() {
       setIsLoading(true);
       setPageLoadingMode(resetFirst ? "resetting" : "initializing");
       setScenarioResult(null);
-      setOfferResult(null);
       setRecoveryComparison(null);
+      setAnalysisError(null);
       try {
         if (resetFirst) {
           await apiRequest<ResetResult>("/reset", {
@@ -553,6 +518,7 @@ export default function AIFabricBehaviorSignals() {
         setApiStatus("connected");
       } catch (error) {
         setApiStatus("offline");
+        setAnalysisError(error instanceof Error ? error.message : "Unable to connect to the behavior demo backend.");
         toast({
           title: "Behavior demo API is offline",
           description: error instanceof Error ? error.message : "Unable to connect to the behavior demo backend.",
@@ -571,6 +537,7 @@ export default function AIFabricBehaviorSignals() {
     const load = async () => {
       setIsLoading(true);
       setPageLoadingMode("initializing");
+      setAnalysisError(null);
       try {
         const [session] = await Promise.all([
           apiRequest<DemoSessionResponse>("/sessions", {
@@ -589,9 +556,10 @@ export default function AIFabricBehaviorSignals() {
           setAppEventDraft(defaultEventDraft(first));
         }
         setApiStatus("connected");
-      } catch {
+      } catch (error) {
         if (!cancelled) {
           setApiStatus("offline");
+          setAnalysisError(error instanceof Error ? error.message : "Unable to initialize AI Fabric behavior analysis.");
         }
       } finally {
         if (!cancelled) {
@@ -609,8 +577,8 @@ export default function AIFabricBehaviorSignals() {
   const analyzeScenario = async (userId = selectedScenario?.userId) => {
     if (!userId) return;
     setIsAnalyzing(true);
-    setOfferResult(null);
     setRecoveryComparison(null);
+    setAnalysisError(null);
     try {
       const result = await apiRequest<BehaviorScenarioResult>(`/scenarios/${userId}/analyze`, { method: "POST" });
       setScenarioResult(result);
@@ -621,6 +589,8 @@ export default function AIFabricBehaviorSignals() {
       setApiStatus("connected");
     } catch (error) {
       setApiStatus("offline");
+      setScenarioResult(null);
+      setAnalysisError(error instanceof Error ? error.message : "Unable to analyze the behavior scenario.");
       toast({
         title: "Analysis failed",
         description: error instanceof Error ? error.message : "Unable to analyze the behavior scenario.",
@@ -634,8 +604,8 @@ export default function AIFabricBehaviorSignals() {
   const recordSignal = async () => {
     if (!selectedScenario) return;
     setIsRecording(true);
-    setOfferResult(null);
     setRecoveryComparison(null);
+    setAnalysisError(null);
     try {
       const template = appEventTemplateFor(selectedScenario);
       const payload = eventPayload(template, appEventDraft);
@@ -656,6 +626,8 @@ export default function AIFabricBehaviorSignals() {
         description: `${template.eventType} was added and analyzed.`,
       });
     } catch (error) {
+      setScenarioResult(null);
+      setAnalysisError(error instanceof Error ? error.message : "Unable to record the app event.");
       toast({
         title: "Signal failed",
         description: error instanceof Error ? error.message : "Unable to record the app event.",
@@ -669,7 +641,7 @@ export default function AIFabricBehaviorSignals() {
   const recordPositiveRecovery = async () => {
     if (!selectedScenario) return;
     setIsRecovering(true);
-    setOfferResult(null);
+    setAnalysisError(null);
     const before = selectedInsight;
     try {
       const result = await apiRequest<BehaviorScenarioResult>(
@@ -693,6 +665,8 @@ export default function AIFabricBehaviorSignals() {
       });
     } catch (error) {
       setApiStatus("offline");
+      setScenarioResult(null);
+      setAnalysisError(error instanceof Error ? error.message : "Unable to record positive recovery events.");
       toast({
         title: "Recovery event run failed",
         description: error instanceof Error ? error.message : "Unable to record positive recovery events.",
@@ -703,39 +677,12 @@ export default function AIFabricBehaviorSignals() {
     }
   };
 
-  const requestOffer = async (confirmed: boolean) => {
-    if (!selectedScenario) return;
-    setIsOffering(true);
-    try {
-      const result = await apiRequest<RetentionOfferDemoResult>(`/scenarios/${selectedScenario.userId}/retention-offer`, {
-        method: "POST",
-        body: JSON.stringify({
-          discountPercent: selectedScenario.defaultDiscountPercent,
-          confirmed,
-        }),
-      });
-      setOfferResult(result);
-      toast({
-        title: confirmed ? "Retention action executed" : "Confirmation required",
-        description: result.result.message || result.confirmationMessage,
-      });
-    } catch (error) {
-      toast({
-        title: "Retention action failed",
-        description: error instanceof Error ? error.message : "Unable to run the retention action.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsOffering(false);
-    }
-  };
-
   const selectScenario = (scenario: DemoScenarioSummary) => {
     setSelectedUserId(scenario.userId);
     setAppEventDraft(defaultEventDraft(scenario));
     setScenarioResult(null);
-    setOfferResult(null);
     setRecoveryComparison(null);
+    setAnalysisError(null);
   };
 
   return (
@@ -1119,31 +1066,44 @@ export default function AIFabricBehaviorSignals() {
 
             <Card className="border-border/70">
               <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Zap className="h-4 w-4 text-amber-600" />
-                  Governed Action
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {activeReview ? (
-                  <>
-                    <div className={`rounded-lg border p-4 ${riskClass(activeReview.riskCategory)}`}>
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="text-sm font-bold">Recommended action family</div>
-                        <Badge variant="outline" className="bg-white/70">
-                          {formatLabel(activeReview.actionFamily)}
+	                <CardTitle className="flex items-center gap-2 text-base">
+	                  <Zap className="h-4 w-4 text-amber-600" />
+	                  AI Recommendation
+	                </CardTitle>
+	              </CardHeader>
+	              <CardContent className="space-y-4">
+	                {analysisError ? (
+	                  <div className="rounded-lg border border-rose-200 bg-rose-50 p-4 text-sm text-rose-900">
+	                    <div className="mb-2 flex items-center gap-2 font-semibold">
+	                      <AlertTriangle className="h-4 w-4" />
+	                      AI analysis failed
+	                    </div>
+	                    <p className="text-rose-800">
+	                      The demo did not substitute a fallback recommendation. Fix the LLM/provider issue, then run the analysis again.
+	                    </p>
+	                    <pre className="mt-3 whitespace-pre-wrap break-words rounded-md bg-white/70 p-3 text-xs text-rose-950">
+	                      {analysisError}
+	                    </pre>
+	                  </div>
+	                ) : activeReview ? (
+	                  <>
+	                    <div className={`rounded-lg border p-4 ${riskClass(activeReview.riskCategory)}`}>
+	                      <div className="flex items-center justify-between gap-2">
+	                        <div className="text-sm font-bold">AI-selected action family</div>
+	                        <Badge variant="outline" className="bg-white/70">
+	                          {formatLabel(activeReview.actionFamily)}
                         </Badge>
                       </div>
                       <p className="mt-2 text-sm">{activeReview.recommendation}</p>
                     </div>
 
-                    <div className="rounded-lg border bg-card p-4">
-                      <div className="mb-2 flex items-center gap-2 text-sm font-semibold">
-                        <ShieldCheck className="h-4 w-4 text-emerald-600" />
-                        Backend policy explanation
-                      </div>
-                      <p className="text-sm text-muted-foreground">{activeReview.policyExplanation}</p>
-                    </div>
+	                    <div className="rounded-lg border bg-card p-4">
+	                      <div className="mb-2 flex items-center gap-2 text-sm font-semibold">
+	                        <ShieldCheck className="h-4 w-4 text-emerald-600" />
+	                        Validated analytics policy
+	                      </div>
+	                      <p className="text-sm text-muted-foreground">{activeReview.policyExplanation}</p>
+	                    </div>
 
                     <div className="rounded-lg border bg-card p-4">
                       <div className="mb-2 text-xs font-bold uppercase text-muted-foreground">Evidence IDs</div>
@@ -1156,49 +1116,14 @@ export default function AIFabricBehaviorSignals() {
                       </div>
                     </div>
 
-                    {preview && (
-                      <div
-                        className={`rounded-lg border p-4 ${
-                          preview.result.success ? "border-emerald-200 bg-emerald-50" : "border-amber-200 bg-amber-50"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2 font-semibold">
-                          {preview.result.success ? (
-                            <CheckCircle2 className="h-4 w-4 text-emerald-700" />
-                          ) : (
-                            <AlertTriangle className="h-4 w-4 text-amber-700" />
-                          )}
-                          {preview.result.success ? "Action Executed" : "Confirmation Required"}
-                        </div>
-                        <p className="mt-2 text-sm text-muted-foreground">
-                          {preview.result.message || preview.confirmationMessage}
-                        </p>
-                        <div className="mt-3 space-y-2">
-                          {importantActionRows(preview.result.data).map(([label, value]) => (
-                            <div key={label} className="flex items-center justify-between gap-3 rounded-md bg-white/70 px-3 py-2 text-xs">
-                              <span className="font-semibold text-muted-foreground">{label}</span>
-                              <span className="text-right font-medium">{value}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="grid gap-2 sm:grid-cols-2">
-                      <Button variant="outline" className="gap-2" onClick={() => requestOffer(false)} disabled={isOffering}>
-                        {isOffering ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
-                        Preview offer
-                      </Button>
-                      <Button className="gap-2" onClick={() => requestOffer(true)} disabled={isOffering}>
-                        <CheckCircle2 className="h-4 w-4" />
-                        Confirm offer
-                      </Button>
-                    </div>
-                  </>
-                ) : (
-                  <div className="rounded-lg border border-dashed p-5 text-sm text-muted-foreground">
-                    Run a scenario analysis to produce an action recommendation and backend policy explanation.
-                  </div>
+	                    <div className="rounded-lg border bg-muted/20 p-3 text-xs text-muted-foreground">
+	                      This is an operator analytics recommendation. The demo does not show or confirm offers to external users.
+	                    </div>
+	                  </>
+	                ) : (
+	                  <div className="rounded-lg border border-dashed p-5 text-sm text-muted-foreground">
+	                    Run user behavior analysis to produce an AI recommendation and backend policy validation.
+	                  </div>
                 )}
 
                 <div className="rounded-lg border bg-muted/20 p-3">
