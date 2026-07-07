@@ -363,7 +363,7 @@ export const demoBackendArchitectures = {
     publicBackend: "https://ai-fabric-tenant-guard.46.224.145.148.sslip.io",
     uiRoutes: ["/demos/ai-fabric-tenant-guard"],
     summary:
-      "A deterministic tenant-boundary proof that shows scoped retrieval, role-aware catalog visibility, guarded actions, and tenant deletion evidence.",
+      "A deterministic tenant-boundary proof that shows scoped retrieval, role-aware catalog visibility, guarded actions, session-isolated mutation, and tenant deletion evidence.",
     diagram: [
       {
         title: "Tenant Guard UI",
@@ -375,7 +375,7 @@ export const demoBackendArchitectures = {
         title: "Demo API",
         subtitle: "Spring Boot app",
         tone: "api",
-        items: ["/api/tenant-guard-demo/dashboard", "/api/tenant-guard-demo/compare", "/api/tenant-guard-demo/actions/execute"],
+        items: ["/api/demo/health", "/api/tenant-guard-demo/dashboard", "/api/tenant-guard-demo/actions/execute"],
       },
       {
         title: "Governance logic",
@@ -393,14 +393,15 @@ export const demoBackendArchitectures = {
         title: "Runtime proof",
         subtitle: "Deterministic demo",
         tone: "provider",
-        items: ["No live LLM required", "In-memory reset data", "Smoke/local provider ids"],
+        items: ["No live LLM required", "Browser-session scoped state", "Smoke/local provider ids"],
       },
     ],
     developer: {
       sourcePath: "examples/real-apps/tenant-knowledge-portal",
       dockerfilePath: "examples/real-apps/tenant-knowledge-portal/Dockerfile",
-      healthEndpoint: "GET /api/tenant-guard-demo/dashboard",
+      healthEndpoint: "GET /api/demo/health",
       primaryEndpoints: [
+        "GET /api/demo/health",
         "GET /api/tenant-guard-demo/dashboard",
         "POST /api/tenant-guard-demo/reset",
         "GET /api/tenant-guard-demo/compare",
@@ -412,6 +413,7 @@ export const demoBackendArchitectures = {
       localRun: [
         "mvn -pl examples/real-apps/tenant-knowledge-portal spring-boot:run",
         "Use dashboard and compare endpoints to prove tenant scoping before write/delete tests.",
+        "Pass sessionId to isolate browser mutations while testing write/delete paths.",
         "No external LLM key is required for this deterministic governance demo.",
       ],
       envVars: ["PORT", "CORS_ALLOWED_ORIGINS"],
@@ -431,14 +433,16 @@ export const demoBackendArchitectures = {
       "No @AICapable annotations; explicit KnowledgeDocument records make tenant metadata visible and inspectable.",
       "Each document carries tenantId and visibility metadata.",
       "ActionAccessMode models read/write access so role and confirmation decisions are explicit.",
+      "BoundaryProof is produced by the backend so the UI does not infer tenant policy outcomes.",
     ],
     providers: [
       "Smoke/local provider ids through configuration.",
       "Default memory vector setting; this demo mainly proves metadata scope, role checks, and deletion evidence.",
       "In-memory TenantKnowledgeService demo data reset through /api/tenant-guard-demo/reset.",
+      "Browser-session scoped document maps prevent one visitor's delete action from changing another visitor's proof state.",
     ],
     flow: [
-      "The UI loads /api/tenant-guard-demo/dashboard for seeded proof state.",
+      "The UI loads /api/demo/health and /api/tenant-guard-demo/dashboard?sessionId=... for deployed proof state.",
       "/compare runs the same query as tenant A, tenant B, and platform admin.",
       "/actions/execute validates target tenant, role, access mode, and confirmation.",
       "/tenants/delete deletes only the requested tenant documents and returns evidence ids.",

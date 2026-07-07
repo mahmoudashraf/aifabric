@@ -101,6 +101,40 @@ interface TenantDeletionResult {
   errorCode: string | null;
   deletedDocuments: number;
   deletedIds: string[];
+  message: string;
+  policyDecision: string;
+  remainingTenantIds: string[];
+}
+
+interface ProofCheck {
+  id: string;
+  label: string;
+  passed: boolean;
+  evidence: string;
+}
+
+interface BoundaryProof {
+  passed: boolean;
+  summary: string;
+  checks: ProofCheck[];
+}
+
+interface DemoSessionSummary {
+  sessionId: string;
+  isolated: boolean;
+  ttlHours: number;
+}
+
+interface TenantGuardHealth {
+  status: string;
+  service: string;
+  version: string;
+  aiFabricVersion: string;
+  commit: string;
+  branch: string;
+  builtAt: string;
+  startedAt: string;
+  checkedAt: string;
 }
 
 interface TenantGuardDashboard {
@@ -112,6 +146,8 @@ interface TenantGuardDashboard {
   crossTenantDenied: ActionDecision;
   writeActionPreview: ActionDecision;
   deletionPreview: TenantDeletionPreview;
+  boundaryProof: BoundaryProof;
+  session: DemoSessionSummary;
 }
 
 const EMPTY_DASHBOARD: TenantGuardDashboard = {
@@ -158,10 +194,43 @@ const EMPTY_DASHBOARD: TenantGuardDashboard = {
     matchingDocuments: 0,
     documentIds: [],
   },
+  boundaryProof: {
+    passed: false,
+    summary: "",
+    checks: [],
+  },
+  session: {
+    sessionId: "pending",
+    isolated: false,
+    ttlHours: 0,
+  },
 };
 
-async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
-  const response = await fetch(`${TENANT_GUARD_API_URL}${path}`, {
+const TENANT_GUARD_SESSION_STORAGE_KEY = "ai-fabric-tenant-guard-session";
+
+function createSessionId(): string {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return `tenant-guard-${crypto.randomUUID()}`;
+  }
+  return `tenant-guard-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function getOrCreateSessionId(): string {
+  if (typeof window === "undefined") return createSessionId();
+  const existing = window.localStorage.getItem(TENANT_GUARD_SESSION_STORAGE_KEY);
+  if (existing) return existing;
+  const next = createSessionId();
+  window.localStorage.setItem(TENANT_GUARD_SESSION_STORAGE_KEY, next);
+  return next;
+}
+
+function withSession(path: string, sessionId: string): string {
+  const separator = path.includes("?") ? "&" : "?";
+  return `${path}${separator}sessionId=${encodeURIComponent(sessionId)}`;
+}
+
+async function apiRequest<T>(path: string, sessionId: string, options: RequestInit = {}): Promise<T> {
+  const response = await fetch(`${TENANT_GUARD_API_URL}${withSession(path, sessionId)}`, {
     ...options,
     headers: {
       "content-type": "application/json",
@@ -172,6 +241,16 @@ async function apiRequest<T>(path: string, options: RequestInit = {}): Promise<T
   const body = text ? (JSON.parse(text) as T) : (null as T);
   if (!response.ok) {
     throw new Error(`Tenant Guard API ${response.status}: ${text || response.statusText}`);
+  }
+  return body;
+}
+
+async function healthRequest(): Promise<TenantGuardHealth> {
+  const response = await fetch(`${TENANT_GUARD_BASE_URL}/api/demo/health`);
+  const text = await response.text();
+  const body = text ? (JSON.parse(text) as TenantGuardHealth) : (null as unknown as TenantGuardHealth);
+  if (!response.ok) {
+    throw new Error(`Tenant Guard health ${response.status}: ${text || response.statusText}`);
   }
   return body;
 }
@@ -200,6 +279,11 @@ function decisionLabel(decision: ActionDecision | null): string {
   if (decision.success) return "Executed";
   if (decision.confirmationRequired) return "Confirmation required";
   return decision.errorCode || "Denied";
+}
+
+function dataText(data: Record<string, unknown> | null | undefined, key: string): string {
+  const value = data?.[key];
+  return typeof value === "string" ? value : "";
 }
 
 function HitList({ title, hits, empty }: { title: string; hits: KnowledgeHit[]; empty: string }) {
@@ -256,36 +340,40 @@ function CatalogList({ title, summary }: { title: string; summary: CatalogSummar
 
 export default function AIFabricTenantGuard() {
   const { toast } = useToast();
+  const [sessionId] = useState(() => getOrCreateSessionId());
   const [dashboard, setDashboard] = useState<TenantGuardDashboard>(EMPTY_DASHBOARD);
   const [comparison, setComparison] = useState<SearchComparison>(EMPTY_DASHBOARD.defaultComparison);
+  const [health, setHealth] = useState<TenantGuardHealth | null>(null);
   const [query, setQuery] = useState("VPN");
   const [apiStatus, setApiStatus] = useState<ApiStatus>("loading");
   const [isLoading, setIsLoading] = useState(true);
   const [isComparing, setIsComparing] = useState(false);
   const [isActing, setIsActing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [blockingMessage, setBlockingMessage] = useState("Loading Tenant Guard proof state...");
   const [actionResult, setActionResult] = useState<ActionDecision | null>(null);
   const [deleteResult, setDeleteResult] = useState<TenantDeletionResult | null>(null);
 
   const loadDashboard = useCallback(async () => {
-    const next = await apiRequest<TenantGuardDashboard>("/dashboard");
+    const [next, nextHealth] = await Promise.all([
+      apiRequest<TenantGuardDashboard>("/dashboard", sessionId),
+      healthRequest(),
+    ]);
     setDashboard(next);
+    setHealth(nextHealth);
     setComparison(next.defaultComparison);
     setQuery(next.defaultComparison.query);
     setApiStatus("connected");
     return next;
-  }, []);
+  }, [sessionId]);
 
   useEffect(() => {
     let mounted = true;
     setIsLoading(true);
-    apiRequest<TenantGuardDashboard>("/dashboard")
-      .then((next) => {
+    setBlockingMessage("Loading Tenant Guard proof state...");
+    loadDashboard()
+      .then(() => {
         if (!mounted) return;
-        setDashboard(next);
-        setComparison(next.defaultComparison);
-        setQuery(next.defaultComparison.query);
-        setApiStatus("connected");
       })
       .catch((error) => {
         if (!mounted) return;
@@ -302,14 +390,15 @@ export default function AIFabricTenantGuard() {
     return () => {
       mounted = false;
     };
-  }, [toast]);
+  }, [loadDashboard, toast]);
 
   const resetDemo = useCallback(async () => {
     setIsLoading(true);
+    setBlockingMessage("Resetting your isolated Tenant Guard session...");
     setActionResult(null);
     setDeleteResult(null);
     try {
-      const next = await apiRequest<TenantGuardDashboard>("/reset", { method: "POST" });
+      const next = await apiRequest<TenantGuardDashboard>("/reset", sessionId, { method: "POST" });
       setDashboard(next);
       setComparison(next.defaultComparison);
       setQuery(next.defaultComparison.query);
@@ -325,12 +414,12 @@ export default function AIFabricTenantGuard() {
     } finally {
       setIsLoading(false);
     }
-  }, [toast]);
+  }, [sessionId, toast]);
 
   const runCompare = useCallback(async () => {
     setIsComparing(true);
     try {
-      const next = await apiRequest<SearchComparison>(`/compare?q=${encodeURIComponent(query || "VPN")}`);
+      const next = await apiRequest<SearchComparison>(`/compare?q=${encodeURIComponent(query || "VPN")}`, sessionId);
       setComparison(next);
       setApiStatus("connected");
     } catch (error) {
@@ -343,12 +432,12 @@ export default function AIFabricTenantGuard() {
     } finally {
       setIsComparing(false);
     }
-  }, [query, toast]);
+  }, [query, sessionId, toast]);
 
   const runCrossTenantGuard = useCallback(async () => {
     setIsActing(true);
     try {
-      const result = await apiRequest<ActionDecision>("/actions/execute", {
+      const result = await apiRequest<ActionDecision>("/actions/execute", sessionId, {
         method: "POST",
         body: JSON.stringify({
           tenantId: "tenant-a",
@@ -369,12 +458,12 @@ export default function AIFabricTenantGuard() {
     } finally {
       setIsActing(false);
     }
-  }, [toast]);
+  }, [sessionId, toast]);
 
   const previewWriteAction = useCallback(async () => {
     setIsActing(true);
     try {
-      const result = await apiRequest<ActionDecision>("/actions/execute", {
+      const result = await apiRequest<ActionDecision>("/actions/execute", sessionId, {
         method: "POST",
         body: JSON.stringify({
           tenantId: "tenant-a",
@@ -395,12 +484,12 @@ export default function AIFabricTenantGuard() {
     } finally {
       setIsActing(false);
     }
-  }, [toast]);
+  }, [sessionId, toast]);
 
   const confirmWriteAction = useCallback(async () => {
     setIsActing(true);
     try {
-      const result = await apiRequest<ActionDecision>("/actions/execute", {
+      const result = await apiRequest<ActionDecision>("/actions/execute", sessionId, {
         method: "POST",
         body: JSON.stringify({
           tenantId: "tenant-a",
@@ -421,12 +510,12 @@ export default function AIFabricTenantGuard() {
     } finally {
       setIsActing(false);
     }
-  }, [toast]);
+  }, [sessionId, toast]);
 
   const deleteTenant = useCallback(async () => {
     setIsDeleting(true);
     try {
-      const result = await apiRequest<TenantDeletionResult>("/tenants/delete", {
+      const result = await apiRequest<TenantDeletionResult>("/tenants/delete", sessionId, {
         method: "POST",
         body: JSON.stringify({
           tenantId: "platform",
@@ -445,7 +534,7 @@ export default function AIFabricTenantGuard() {
     } finally {
       setIsDeleting(false);
     }
-  }, [loadDashboard, toast]);
+  }, [loadDashboard, sessionId, toast]);
 
   const visibleStatus = useMemo(() => {
     if (apiStatus === "connected") return "API connected";
@@ -453,9 +542,27 @@ export default function AIFabricTenantGuard() {
     return "Connecting";
   }, [apiStatus]);
 
+  const activeActionDecision = actionResult || dashboard.writeActionPreview;
+  const actionPolicyExplanation = dataText(activeActionDecision.data, "policyExplanation");
+  const actionPolicyDecision = dataText(activeActionDecision.data, "policyDecision");
+  const pageBlocked = isLoading || isDeleting;
+
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
+      {pageBlocked ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/90 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-md border border-slate-200 bg-white p-8 text-center shadow-xl">
+            <Loader2 className="mx-auto h-8 w-8 animate-spin text-blue-600" />
+            <p className="mt-4 text-lg font-semibold text-slate-950">
+              {isDeleting ? "Deleting tenant-scoped evidence..." : blockingMessage}
+            </p>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              The backend is preparing an isolated proof state for this browser session.
+            </p>
+          </div>
+        </div>
+      ) : null}
 
       <main className="mx-auto w-full max-w-[1440px] px-6 py-8">
         <div className="mb-8">
@@ -550,6 +657,49 @@ export default function AIFabricTenantGuard() {
           </Card>
         </div>
 
+        <Card className="mt-6">
+          <CardContent className="grid gap-4 p-5 lg:grid-cols-[0.9fr_2fr]">
+            <div className="rounded-md border border-blue-100 bg-blue-50 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase text-blue-700">Session Scope</p>
+                  <p className="mt-2 break-all text-sm font-medium text-slate-950">{dashboard.session.sessionId}</p>
+                </div>
+                <Badge className="border-blue-200 bg-white text-blue-700" variant="outline">
+                  {dashboard.session.isolated ? "isolated" : "canonical"}
+                </Badge>
+              </div>
+              <p className="mt-3 text-sm leading-6 text-slate-700">
+                Mutating demo actions are scoped to this browser session and expire after {dashboard.session.ttlHours || 6} hours.
+              </p>
+            </div>
+            <div className="rounded-md border border-slate-200 bg-white p-4">
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase text-slate-500">Backend Boundary Proof</p>
+                  <p className="mt-1 text-sm text-slate-700">{dashboard.boundaryProof.summary || "Waiting for proof data."}</p>
+                </div>
+                <Badge className={dashboard.boundaryProof.passed ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-rose-200 bg-rose-50 text-rose-700"} variant="outline">
+                  {dashboard.boundaryProof.passed ? "passed" : "needs attention"}
+                </Badge>
+              </div>
+              <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+                {dashboard.boundaryProof.checks.map((check) => (
+                  <div key={check.id} className="rounded-md border border-slate-100 bg-slate-50 px-3 py-2">
+                    <div className="flex items-start gap-2">
+                      {check.passed ? <CheckCircle2 className="mt-0.5 h-4 w-4 text-emerald-600" /> : <XCircle className="mt-0.5 h-4 w-4 text-rose-600" />}
+                      <div>
+                        <p className="text-sm font-medium text-slate-950">{check.label}</p>
+                        <p className="mt-1 text-xs leading-5 text-slate-500">{check.evidence}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <div className="mt-6 grid gap-4 lg:grid-cols-[1.05fr_1.4fr_1fr]">
           <Card>
             <CardHeader>
@@ -617,12 +767,18 @@ export default function AIFabricTenantGuard() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className={`rounded-md border p-4 ${actionTone(actionResult || dashboard.writeActionPreview)}`}>
+              <div className={`rounded-md border p-4 ${actionTone(activeActionDecision)}`}>
                 <div className="mb-2 flex items-center justify-between gap-3">
-                  <span className="text-sm font-semibold">{decisionLabel(actionResult || dashboard.writeActionPreview)}</span>
+                  <span className="text-sm font-semibold">{decisionLabel(activeActionDecision)}</span>
                   <KeyRound className="h-4 w-4" />
                 </div>
-                <p className="text-sm text-slate-700">{(actionResult || dashboard.writeActionPreview).message || "Policy decision ready."}</p>
+                <p className="text-sm text-slate-700">{activeActionDecision.message || "Policy decision ready."}</p>
+                {actionPolicyExplanation ? (
+                  <p className="mt-2 text-xs leading-5 text-slate-600">{actionPolicyExplanation}</p>
+                ) : null}
+                {actionPolicyDecision ? (
+                  <Badge className="mt-3 bg-white" variant="outline">{actionPolicyDecision}</Badge>
+                ) : null}
               </div>
               <div className="grid gap-2">
                 <Button variant="outline" onClick={runCrossTenantGuard} disabled={isActing}>
@@ -687,7 +843,10 @@ export default function AIFabricTenantGuard() {
                   <p className="text-sm font-semibold text-slate-900">
                     {deleteResult.success ? `${deleteResult.deletedDocuments} documents deleted` : deleteResult.errorCode}
                   </p>
-                  <p className="mt-1 text-sm text-slate-600">{deleteResult.deletedIds.join(", ") || "No documents changed."}</p>
+                  <p className="mt-1 text-sm text-slate-600">{deleteResult.message || "No documents changed."}</p>
+                  <p className="mt-2 text-xs text-slate-500">
+                    Deleted: {deleteResult.deletedIds.join(", ") || "none"} · Remaining tenants: {deleteResult.remainingTenantIds?.join(", ") || "unknown"}
+                  </p>
                 </div>
               ) : null}
               <Button onClick={deleteTenant} disabled={isDeleting || apiStatus === "offline"} variant="outline" className="w-full border-rose-200 text-rose-700 hover:bg-rose-50">
@@ -708,6 +867,11 @@ export default function AIFabricTenantGuard() {
               <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
                 <p className="text-xs font-semibold uppercase text-slate-500">Backend</p>
                 <p className="mt-2 break-all text-sm text-slate-700">{TENANT_GUARD_BASE_URL}</p>
+              </div>
+              <div className="mt-3 rounded-md border border-slate-200 bg-white p-4">
+                <p className="text-xs font-semibold uppercase text-slate-500">Deployment</p>
+                <p className="mt-2 break-all text-sm text-slate-700">{health?.commit || "unknown commit"}</p>
+                <p className="mt-1 text-xs text-slate-500">{health?.builtAt || "build metadata pending"}</p>
               </div>
               <div className="mt-3 rounded-md border border-slate-200 bg-white p-4">
                 <p className="text-xs font-semibold uppercase text-slate-500">API Surface</p>
