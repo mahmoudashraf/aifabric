@@ -370,13 +370,13 @@ const ACTION_GUIDES: ActionGuide[] = [
     tone: "border-rose-200 bg-rose-50 text-rose-700",
   },
   {
-    id: "ambiguous-target",
-    label: "Missing target",
+    id: "policy-archive",
+    label: "Policy archive",
     tenantId: "tenant-a",
     role: "ADMIN",
-    prompt: "Remove a document.",
-    expected: "Target required",
-    tone: "border-slate-200 bg-slate-50 text-slate-700",
+    prompt: "Archive the tenant policy.",
+    expected: "Admin confirmation",
+    tone: "border-cyan-200 bg-cyan-50 text-cyan-700",
   },
 ];
 
