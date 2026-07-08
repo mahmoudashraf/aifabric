@@ -37,6 +37,33 @@ const TENANT_GUARD_API_URL = `${TENANT_GUARD_BASE_URL}/api/tenant-guard-demo`;
 
 type ApiStatus = "loading" | "connected" | "offline";
 
+interface TenantPersona {
+  label: string;
+  tenantId: string;
+  role: string;
+  tone: string;
+}
+
+interface RetrievalGuide {
+  id: string;
+  label: string;
+  tenantId: string;
+  role: string;
+  query: string;
+  expected: string;
+  tone: string;
+}
+
+interface ActionGuide {
+  id: string;
+  label: string;
+  tenantId: string;
+  role: string;
+  prompt: string;
+  expected: string;
+  tone: string;
+}
+
 interface TenantGuardScenario {
   id: string;
   tenantId: string;
@@ -277,6 +304,82 @@ const EMPTY_DASHBOARD: TenantGuardDashboard = {
   indexProof: EMPTY_INDEX_PROOF,
 };
 
+const TENANT_PERSONAS: TenantPersona[] = [
+  { label: "Tenant A User", tenantId: "tenant-a", role: "USER", tone: "border-blue-200 bg-blue-50 text-blue-700" },
+  { label: "Tenant A Admin", tenantId: "tenant-a", role: "ADMIN", tone: "border-cyan-200 bg-cyan-50 text-cyan-700" },
+  { label: "Tenant B User", tenantId: "tenant-b", role: "USER", tone: "border-emerald-200 bg-emerald-50 text-emerald-700" },
+  { label: "Platform Admin", tenantId: "platform", role: "ADMIN", tone: "border-violet-200 bg-violet-50 text-violet-700" },
+];
+
+const RETRIEVAL_GUIDES: RetrievalGuide[] = [
+  {
+    id: "tenant-a-vpn",
+    label: "Tenant A VPN",
+    tenantId: "tenant-a",
+    role: "USER",
+    query: "How do I configure VPN?",
+    expected: "Tenant A evidence only",
+    tone: "border-blue-200 bg-blue-50 text-blue-700",
+  },
+  {
+    id: "tenant-b-vpn",
+    label: "Tenant B VPN",
+    tenantId: "tenant-b",
+    role: "USER",
+    query: "How do I configure VPN?",
+    expected: "Tenant B evidence only",
+    tone: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  },
+  {
+    id: "tenant-a-no-leak",
+    label: "Tenant A No-Leak",
+    tenantId: "tenant-a",
+    role: "USER",
+    query: "How often does Tenant B rotate hardware keys?",
+    expected: "No Tenant B leakage",
+    tone: "border-rose-200 bg-rose-50 text-rose-700",
+  },
+  {
+    id: "platform-broad",
+    label: "Platform Evidence",
+    tenantId: "platform",
+    role: "ADMIN",
+    query: "How often does Tenant B rotate hardware keys?",
+    expected: "Broader admin evidence",
+    tone: "border-violet-200 bg-violet-50 text-violet-700",
+  },
+];
+
+const ACTION_GUIDES: ActionGuide[] = [
+  {
+    id: "same-tenant-confirm",
+    label: "Same-tenant archive",
+    tenantId: "tenant-a",
+    role: "ADMIN",
+    prompt: "Archive our VPN setup document.",
+    expected: "Confirmation required",
+    tone: "border-amber-200 bg-amber-50 text-amber-700",
+  },
+  {
+    id: "cross-tenant-denied",
+    label: "Cross-tenant archive",
+    tenantId: "tenant-a",
+    role: "USER",
+    prompt: "Archive the Tenant B VPN document.",
+    expected: "Denied by policy",
+    tone: "border-rose-200 bg-rose-50 text-rose-700",
+  },
+  {
+    id: "ambiguous-target",
+    label: "Ambiguous target",
+    tenantId: "tenant-a",
+    role: "ADMIN",
+    prompt: "Archive that document.",
+    expected: "Target required",
+    tone: "border-slate-200 bg-slate-50 text-slate-700",
+  },
+];
+
 function normalizeDashboard(dashboard: TenantGuardDashboard): TenantGuardDashboard {
   return {
     ...EMPTY_DASHBOARD,
@@ -364,6 +467,11 @@ function decisionLabel(decision: ActionDecision | null): string {
   if (decision.success) return "Executed";
   if (decision.confirmationRequired) return "Confirmation required";
   return decision.errorCode || "Denied";
+}
+
+function actorLabel(tenantId: string, role: string): string {
+  const match = TENANT_PERSONAS.find((persona) => persona.tenantId === tenantId && persona.role === role);
+  return match ? match.label : `${tenantId} / ${role}`;
 }
 
 function dataText(data: Record<string, unknown> | null | undefined, key: string): string {
@@ -684,15 +792,15 @@ export default function AIFabricTenantGuard() {
     }
   }, [sessionId, toast]);
 
-  const runAiFabricQuery = useCallback(async () => {
+  const runTenantQuery = useCallback(async (tenantId: string, role: string, queryText: string) => {
     setIsQueryingRag(true);
     try {
       const response = await apiRequest<TenantRagResponse>("/query", sessionId, {
         method: "POST",
         body: JSON.stringify({
-          tenantId: ragTenantId,
-          role: ragRole,
-          query: ragQuery,
+          tenantId,
+          role,
+          query: queryText,
           limit: 5,
         }),
       });
@@ -712,7 +820,27 @@ export default function AIFabricTenantGuard() {
     } finally {
       setIsQueryingRag(false);
     }
-  }, [ragQuery, ragRole, ragTenantId, sessionId, toast]);
+  }, [sessionId, toast]);
+
+  const runAiFabricQuery = useCallback(async () => {
+    await runTenantQuery(ragTenantId, ragRole, ragQuery);
+  }, [ragQuery, ragRole, ragTenantId, runTenantQuery]);
+
+  const runGuidedRetrievalScenario = useCallback(async (guide: RetrievalGuide) => {
+    setRagTenantId(guide.tenantId);
+    setRagRole(guide.role);
+    setRagQuery(guide.query);
+    setRagResponse(null);
+    await runTenantQuery(guide.tenantId, guide.role, guide.query);
+  }, [runTenantQuery]);
+
+  const selectActionScenario = useCallback((guide: ActionGuide) => {
+    setRagTenantId(guide.tenantId);
+    setRagRole(guide.role);
+    setNlActionPrompt(guide.prompt);
+    setNlActionResult(null);
+    setActionResult(null);
+  }, []);
 
   const visibleStatus = useMemo(() => {
     if (apiStatus === "connected") return "API connected";
@@ -720,6 +848,7 @@ export default function AIFabricTenantGuard() {
     return "Connecting";
   }, [apiStatus]);
 
+  const activeActorLabel = useMemo(() => actorLabel(ragTenantId, ragRole), [ragRole, ragTenantId]);
   const activeActionDecision = actionResult || dashboard.writeActionPreview;
   const actionPolicyExplanation = dataText(activeActionDecision.data, "policyExplanation");
   const actionPolicyDecision = dataText(activeActionDecision.data, "policyDecision");
@@ -885,32 +1014,58 @@ export default function AIFabricTenantGuard() {
               <div>
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <ShieldCheck className="h-5 w-5 text-blue-600" />
-                  AI Fabric Indexed Retrieval
+                  Tenant-Safe AI Retrieval
                 </CardTitle>
                 <p className="mt-2 text-sm leading-6 text-slate-600">
-                  Real vector search with tenant/session metadata filters, then backend verification before evidence is shown.
+                  Real vector search with tenant/session metadata filters, LLM generation, citations, and backend boundary checks.
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
                 <Button variant="outline" onClick={seedAiIndex} disabled={isSeedingIndex || apiStatus === "offline"}>
                   {isSeedingIndex ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Database className="mr-2 h-4 w-4" />}
-                  Seed AI index
+                  Refresh AI index
                 </Button>
                 <Button onClick={runAiFabricQuery} disabled={isQueryingRag || apiStatus === "offline"} className="bg-blue-600 hover:bg-blue-700">
                   {isQueryingRag ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
-                  Run retrieval
+                  Ask AI
                 </Button>
               </div>
             </div>
           </CardHeader>
           <CardContent className="grid gap-4 xl:grid-cols-[1.1fr_1.35fr_0.9fr]">
             <div className="space-y-3">
-              <div className="grid gap-2 sm:grid-cols-3">
-                {[
-                  { label: "Tenant A", tenantId: "tenant-a", role: "USER", tone: "border-blue-200 bg-blue-50 text-blue-700" },
-                  { label: "Tenant B", tenantId: "tenant-b", role: "USER", tone: "border-emerald-200 bg-emerald-50 text-emerald-700" },
-                  { label: "Platform", tenantId: "platform", role: "ADMIN", tone: "border-violet-200 bg-violet-50 text-violet-700" },
-                ].map((persona) => {
+              <div className="rounded-md border border-blue-100 bg-blue-50 p-4">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase text-blue-700">Proof Scenarios</p>
+                    <p className="mt-1 text-sm text-slate-700">Run the same AI Fabric endpoint with different tenant scopes.</p>
+                  </div>
+                  <Badge className="border-blue-200 bg-white text-blue-700" variant="outline">
+                    {activeActorLabel}
+                  </Badge>
+                </div>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {RETRIEVAL_GUIDES.map((guide) => {
+                    const active = ragTenantId === guide.tenantId && ragRole === guide.role && ragQuery === guide.query;
+                    return (
+                      <button
+                        key={guide.id}
+                        type="button"
+                        onClick={() => runGuidedRetrievalScenario(guide)}
+                        disabled={isQueryingRag || apiStatus === "offline"}
+                        className={`rounded-md border px-3 py-2 text-left transition ${
+                          active ? guide.tone : "border-blue-100 bg-white text-slate-800 hover:border-blue-200 hover:bg-blue-50"
+                        } ${isQueryingRag ? "opacity-70" : ""}`}
+                      >
+                        <span className="block text-sm font-semibold">{guide.label}</span>
+                        <span className="mt-1 block text-xs leading-5 opacity-80">{guide.expected}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {TENANT_PERSONAS.map((persona) => {
                   const active = ragTenantId === persona.tenantId && ragRole === persona.role;
                   return (
                     <button
@@ -919,6 +1074,7 @@ export default function AIFabricTenantGuard() {
                       onClick={() => {
                         setRagTenantId(persona.tenantId);
                         setRagRole(persona.role);
+                        setRagResponse(null);
                       }}
                       className={`rounded-md border px-3 py-2 text-left text-sm font-semibold transition ${
                         active ? persona.tone : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
@@ -932,13 +1088,24 @@ export default function AIFabricTenantGuard() {
               </div>
               <textarea
                 value={ragQuery}
-                onChange={(event) => setRagQuery(event.target.value)}
+                onChange={(event) => {
+                  setRagQuery(event.target.value);
+                  setRagResponse(null);
+                }}
                 className="min-h-[104px] w-full rounded-md border border-slate-200 p-3 text-sm leading-6 outline-none focus:border-blue-400"
                 aria-label="AI Fabric tenant retrieval query"
               />
               <div className="grid gap-2 sm:grid-cols-3">
-                {["How do I configure VPN?", "Can I export invoices?", "hardware key rotation"].map((prompt) => (
-                  <Button key={prompt} variant="outline" onClick={() => setRagQuery(prompt)} className="justify-start">
+                {["How do I configure VPN?", "Can finance export invoices?", "How often does Tenant B rotate hardware keys?"].map((prompt) => (
+                  <Button
+                    key={prompt}
+                    variant="outline"
+                    onClick={() => {
+                      setRagQuery(prompt);
+                      setRagResponse(null);
+                    }}
+                    className="justify-start"
+                  >
                     {prompt}
                   </Button>
                 ))}
@@ -999,7 +1166,7 @@ export default function AIFabricTenantGuard() {
                 </div>
               ) : null}
               <div className="rounded-md border border-blue-100 bg-blue-50 p-4 text-sm leading-6 text-slate-800">
-                {ragResponse?.answer || "Run retrieval to let AI Fabric search tenant-safe evidence and generate an answer from only those verified documents."}
+                {ragResponse?.answer || "Ask AI to search tenant-safe evidence and generate an answer from only verified documents."}
               </div>
               {ragResponse?.citations?.length ? (
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -1165,23 +1332,44 @@ export default function AIFabricTenantGuard() {
                 </Button>
               </div>
               <div className="mt-4 rounded-md border border-blue-100 bg-blue-50 p-3">
-                <p className="text-xs font-semibold uppercase text-blue-700">Natural-language action</p>
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase text-blue-700">Natural-language action</p>
+                    <p className="mt-1 text-sm text-slate-700">Resolve a write intent with the selected tenant actor.</p>
+                  </div>
+                  <Badge className={tenantTone(ragTenantId)} variant="outline">
+                    {activeActorLabel}
+                  </Badge>
+                </div>
                 <textarea
                   value={nlActionPrompt}
-                  onChange={(event) => setNlActionPrompt(event.target.value)}
+                  onChange={(event) => {
+                    setNlActionPrompt(event.target.value);
+                    setNlActionResult(null);
+                    setActionResult(null);
+                  }}
                   className="mt-2 min-h-[84px] w-full rounded-md border border-blue-100 bg-white p-3 text-sm leading-6 text-slate-900 outline-none focus:border-blue-400"
                   aria-label="Natural-language tenant action"
                 />
                 <div className="mt-2 grid gap-2">
-                  {[
-                    "Archive our VPN setup document.",
-                    "Archive the Tenant B VPN document.",
-                    "Archive the billing export policy.",
-                  ].map((prompt) => (
-                    <Button key={prompt} variant="outline" onClick={() => setNlActionPrompt(prompt)} className="justify-start bg-white">
-                      {prompt}
-                    </Button>
-                  ))}
+                  {ACTION_GUIDES.map((guide) => {
+                    const active = ragTenantId === guide.tenantId && ragRole === guide.role && nlActionPrompt === guide.prompt;
+                    return (
+                      <button
+                        key={guide.id}
+                        type="button"
+                        onClick={() => selectActionScenario(guide)}
+                        className={`rounded-md border px-3 py-2 text-left transition ${
+                          active ? guide.tone : "border-blue-100 bg-white text-slate-800 hover:border-blue-200 hover:bg-blue-50"
+                        }`}
+                      >
+                        <span className="block text-sm font-semibold">{guide.label}</span>
+                        <span className="mt-1 block text-xs leading-5 opacity-80">
+                          {actorLabel(guide.tenantId, guide.role)} · {guide.expected}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
                 <div className="mt-3 grid gap-2 sm:grid-cols-2">
                   <Button
