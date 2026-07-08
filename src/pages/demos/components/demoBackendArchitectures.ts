@@ -363,7 +363,7 @@ export const demoBackendArchitectures = {
     publicBackend: "https://ai-fabric-tenant-guard.46.224.145.148.sslip.io",
     uiRoutes: ["/demos/ai-fabric-tenant-guard"],
     summary:
-      "A tenant-boundary proof that combines AI Fabric metadata-filtered vector retrieval, role-aware catalog visibility, guarded actions, session-isolated mutation, and tenant deletion evidence.",
+      "A tenant-boundary proof that combines AI Fabric metadata-filtered vector retrieval, LLM-generated cited answers, NL action orchestration, role-aware catalog visibility, session-isolated mutation, and tenant deletion evidence.",
     diagram: [
       {
         title: "Tenant Guard UI",
@@ -375,13 +375,13 @@ export const demoBackendArchitectures = {
         title: "Demo API",
         subtitle: "Spring Boot app",
         tone: "api",
-        items: ["/api/tenant-guard-demo/query", "/api/tenant-guard-demo/index/proof", "/api/tenant-guard-demo/actions/execute"],
+        items: ["/api/tenant-guard-demo/query", "/api/tenant-guard-demo/actions/nl", "/api/tenant-guard-demo/index/proof"],
       },
       {
         title: "AI Fabric runtime",
-        subtitle: "Search and guardrails",
+        subtitle: "Search, generation, orchestration",
         tone: "framework",
-        items: ["AICoreService.performSearch", "tenant/session metadata filters", "app-side fail-closed verification"],
+        items: ["AICoreService.performSearch", "generateContent for answers/actions", "app-side fail-closed verification"],
       },
       {
         title: "RAG and indexing",
@@ -405,6 +405,7 @@ export const demoBackendArchitectures = {
         "GET /api/tenant-guard-demo/dashboard",
         "POST /api/tenant-guard-demo/reset",
         "POST /api/tenant-guard-demo/query",
+        "POST /api/tenant-guard-demo/actions/nl",
         "POST /api/tenant-guard-demo/index/seed",
         "GET /api/tenant-guard-demo/index/proof",
         "GET /api/tenant-guard-demo/compare",
@@ -416,6 +417,7 @@ export const demoBackendArchitectures = {
       localRun: [
         "mvn -pl examples/real-apps/tenant-knowledge-portal spring-boot:run",
         "Use /query and /index/proof to prove AI Fabric metadata-filtered retrieval.",
+        "Use /actions/nl to prove LLM action resolution remains governed by backend policy.",
         "Pass sessionId to isolate browser mutations while testing write/delete paths.",
         "Use the smoke provider locally, or OpenAI-compatible provider settings when testing live embeddings.",
       ],
@@ -435,6 +437,8 @@ export const demoBackendArchitectures = {
     aiSurface: [
       "Explicit KnowledgeDocument records are indexed into AI Fabric vector storage with tenantId, sessionId, visibility, and visibleToUser metadata.",
       "AI Fabric semantic search runs with exact metadata filters before the app performs a second fail-closed boundary check.",
+      "RAG answers are generated through AICoreService after retrieval; the LLM receives only verified tenant-safe evidence.",
+      "Natural-language actions are resolved through AICoreService with JSON output, then executed only through the backend tenant/role/confirmation policy engine.",
       "ActionAccessMode models read/write access so role and confirmation decisions are explicit.",
       "BoundaryProof is produced by the backend so the UI does not infer tenant policy outcomes.",
     ],
@@ -447,7 +451,8 @@ export const demoBackendArchitectures = {
     flow: [
       "The UI loads /api/demo/health and /api/tenant-guard-demo/dashboard?sessionId=... for deployed proof state.",
       "/index/seed stores the session's documents as tenant-document vectors with sessionId, tenantId, visibility, and visibleToUser metadata.",
-      "/query builds an AI Fabric search request with session and tenant filters, then verifies returned evidence before displaying it.",
+      "/query builds an AI Fabric search request with session and tenant filters, verifies returned evidence, then sends only those hits to the LLM answer generator.",
+      "/actions/nl asks the LLM for a JSON action draft, then validates target tenant, role, registered action, and confirmation before any approval.",
       "/compare runs the same query as tenant A, tenant B, and platform admin.",
       "/actions/execute validates target tenant, role, access mode, and confirmation.",
       "/tenants/delete deletes only the requested tenant documents and vector ids, then returns remaining index proof.",

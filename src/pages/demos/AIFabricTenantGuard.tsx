@@ -165,6 +165,12 @@ interface TenantRagResponse {
   answer: string;
   metadataFilter: Record<string, unknown>;
   hits: TenantRagHit[];
+  citations?: Array<{
+    id: string;
+    title: string;
+    tenantId: string;
+    score: number;
+  }>;
   boundaryProof: BoundaryProof;
   indexProof: VectorIndexProof;
   requestId: string | null;
@@ -438,6 +444,9 @@ export default function AIFabricTenantGuard() {
   const [ragResponse, setRagResponse] = useState<TenantRagResponse | null>(null);
   const [isSeedingIndex, setIsSeedingIndex] = useState(false);
   const [isQueryingRag, setIsQueryingRag] = useState(false);
+  const [nlActionPrompt, setNlActionPrompt] = useState("Archive our VPN setup document.");
+  const [nlActionResult, setNlActionResult] = useState<ActionDecision | null>(null);
+  const [isResolvingNlAction, setIsResolvingNlAction] = useState(false);
 
   const loadDashboard = useCallback(async () => {
     const [next, nextHealth] = await Promise.all([
@@ -484,6 +493,7 @@ export default function AIFabricTenantGuard() {
     setActionResult(null);
     setDeleteResult(null);
     setRagResponse(null);
+    setNlActionResult(null);
     try {
       const next = await apiRequest<TenantGuardDashboard>("/reset", sessionId, { method: "POST" });
       const normalized = normalizeDashboard(next);
@@ -599,6 +609,33 @@ export default function AIFabricTenantGuard() {
       setIsActing(false);
     }
   }, [sessionId, toast]);
+
+  const runNaturalLanguageAction = useCallback(async (confirmed: boolean) => {
+    setIsResolvingNlAction(true);
+    try {
+      const result = await apiRequest<ActionDecision>("/actions/nl", sessionId, {
+        method: "POST",
+        body: JSON.stringify({
+          tenantId: ragTenantId,
+          role: ragRole,
+          instruction: nlActionPrompt,
+          confirmed,
+        }),
+      });
+      setNlActionResult(result);
+      setActionResult(result);
+      setApiStatus("connected");
+    } catch (error) {
+      setApiStatus("offline");
+      toast({
+        title: "NL action failed",
+        description: error instanceof Error ? error.message : "Unable to resolve the natural-language action.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsResolvingNlAction(false);
+    }
+  }, [nlActionPrompt, ragRole, ragTenantId, sessionId, toast]);
 
   const deleteTenant = useCallback(async () => {
     setIsDeleting(true);
@@ -938,16 +975,41 @@ export default function AIFabricTenantGuard() {
                 <div>
                   <p className="text-xs font-semibold uppercase text-slate-500">Retrieved Answer</p>
                   <p className="mt-1 text-sm text-slate-600">
-                    {ragResponse ? `${ragResponse.hits.length} evidence docs` : "No retrieval run yet"}
+                    {ragResponse ? `${ragResponse.hits.length} verified evidence docs` : "No retrieval run yet"}
                   </p>
                 </div>
                 <Badge className={ragResponse?.success ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-slate-200 bg-slate-50 text-slate-600"} variant="outline">
-                  {ragResponse?.success ? "AI Fabric" : "idle"}
+                  {ragResponse?.success ? "LLM generated" : "idle"}
                 </Badge>
               </div>
+              {ragResponse ? (
+                <div className="mb-3 grid gap-2 sm:grid-cols-3">
+                  <div className="rounded-md border border-slate-100 bg-slate-50 px-3 py-2">
+                    <p className="text-xs font-semibold uppercase text-slate-500">Model</p>
+                    <p className="mt-1 break-all text-sm text-slate-900">{ragResponse.model || "no generation model"}</p>
+                  </div>
+                  <div className="rounded-md border border-slate-100 bg-slate-50 px-3 py-2">
+                    <p className="text-xs font-semibold uppercase text-slate-500">Request</p>
+                    <p className="mt-1 break-all text-sm text-slate-900">{ragResponse.requestId || "not reported"}</p>
+                  </div>
+                  <div className="rounded-md border border-slate-100 bg-slate-50 px-3 py-2">
+                    <p className="text-xs font-semibold uppercase text-slate-500">Generation</p>
+                    <p className="mt-1 text-sm text-slate-900">{ragResponse.processingTimeMs ?? 0} ms</p>
+                  </div>
+                </div>
+              ) : null}
               <div className="rounded-md border border-blue-100 bg-blue-50 p-4 text-sm leading-6 text-slate-800">
-                {ragResponse?.answer || "Run retrieval to see the evidence summary returned by the backend from AI Fabric search results."}
+                {ragResponse?.answer || "Run retrieval to let AI Fabric search tenant-safe evidence and generate an answer from only those verified documents."}
               </div>
+              {ragResponse?.citations?.length ? (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {ragResponse.citations.map((citation) => (
+                    <Badge key={`${citation.tenantId}-${citation.id}`} className={tenantTone(citation.tenantId)} variant="outline">
+                      [{citation.id}] {citation.title}
+                    </Badge>
+                  ))}
+                </div>
+              ) : null}
               <div className="mt-4 space-y-2">
                 {(ragResponse?.hits || []).map((hit) => (
                   <div key={`${hit.tenantId}-${hit.id}`} className={`rounded-md border p-3 ${tenantTone(hit.tenantId)}`}>
@@ -1101,6 +1163,56 @@ export default function AIFabricTenantGuard() {
                   {isActing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-2 h-4 w-4" />}
                   Confirm write
                 </Button>
+              </div>
+              <div className="mt-4 rounded-md border border-blue-100 bg-blue-50 p-3">
+                <p className="text-xs font-semibold uppercase text-blue-700">Natural-language action</p>
+                <textarea
+                  value={nlActionPrompt}
+                  onChange={(event) => setNlActionPrompt(event.target.value)}
+                  className="mt-2 min-h-[84px] w-full rounded-md border border-blue-100 bg-white p-3 text-sm leading-6 text-slate-900 outline-none focus:border-blue-400"
+                  aria-label="Natural-language tenant action"
+                />
+                <div className="mt-2 grid gap-2">
+                  {[
+                    "Archive our VPN setup document.",
+                    "Archive the Tenant B VPN document.",
+                    "Archive the billing export policy.",
+                  ].map((prompt) => (
+                    <Button key={prompt} variant="outline" onClick={() => setNlActionPrompt(prompt)} className="justify-start bg-white">
+                      {prompt}
+                    </Button>
+                  ))}
+                </div>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => runNaturalLanguageAction(false)}
+                    disabled={isResolvingNlAction || apiStatus === "offline"}
+                    className="bg-white"
+                  >
+                    {isResolvingNlAction ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ShieldCheck className="mr-2 h-4 w-4" />}
+                    Resolve action
+                  </Button>
+                  <Button
+                    onClick={() => runNaturalLanguageAction(true)}
+                    disabled={isResolvingNlAction || apiStatus === "offline"}
+                    className="bg-emerald-600 hover:bg-emerald-700"
+                  >
+                    {isResolvingNlAction ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-2 h-4 w-4" />}
+                    Resolve and confirm
+                  </Button>
+                </div>
+                {nlActionResult ? (
+                  <div className={`mt-3 rounded-md border p-3 ${actionTone(nlActionResult)}`}>
+                    <p className="text-sm font-semibold">{decisionLabel(nlActionResult)}</p>
+                    <p className="mt-1 text-sm leading-6 text-slate-700">{nlActionResult.message}</p>
+                    <div className="mt-2 grid gap-1 text-xs text-slate-600">
+                      <span>LLM action: {dataText(nlActionResult.data, "llmActionId") || "unresolved"}</span>
+                      <span>LLM target: {dataText(nlActionResult.data, "llmDocumentId") || "unresolved"}</span>
+                      <span>Model: {dataText(nlActionResult.data, "llmModel") || "not reported"}</span>
+                    </div>
+                  </div>
+                ) : null}
               </div>
             </CardContent>
           </Card>
