@@ -371,10 +371,10 @@ const ACTION_GUIDES: ActionGuide[] = [
   },
   {
     id: "ambiguous-target",
-    label: "Ambiguous target",
+    label: "Missing target",
     tenantId: "tenant-a",
     role: "ADMIN",
-    prompt: "Archive that document.",
+    prompt: "Remove a document.",
     expected: "Target required",
     tone: "border-slate-200 bg-slate-50 text-slate-700",
   },
