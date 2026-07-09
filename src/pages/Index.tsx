@@ -1,71 +1,488 @@
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import {
+  ArrowRight,
+  BookOpen,
+  Bot,
+  CheckCircle2,
+  Code2,
+  Database,
+  Github,
+  GitBranch,
+  Layers3,
+  LockKeyhole,
+  MessageSquare,
+  Play,
+  Server,
+  ShieldCheck,
+  ShoppingCart,
+  Sparkles,
+  TrendingUp,
+  Users,
+  Workflow,
+  Zap,
+} from "lucide-react";
 
-import Navbar from "@/components/Navbar";
-import HeroSection from "@/components/HeroSection";
-import ProblemSection from "@/components/ProblemSection";
-import CostSection from "@/components/CostSection";
-import ModulesSection from "@/components/ModulesSection";
-import HowItWorksSection from "@/components/HowItWorksSection";
-import ActionFlowSection from "@/components/ActionFlowSection";
-import FeaturesSection from "@/components/FeaturesSection";
-import RegistrationSection from "@/components/RegistrationSection";
-import OpenSourceSection from "@/components/OpenSourceSection";
-import StatusSection from "@/components/StatusSection";
-import MediumStoriesSection from "@/components/MediumStoriesSection";
-import CommunitySection from "@/components/CommunitySection";
 import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+
+const liveDemos = [
+  {
+    id: "shopping",
+    title: "AI Shopping Experience",
+    eyebrow: "Commerce RAG + actions",
+    href: "/demos/ai-shopping-experience",
+    image: "/images/home/ai-shopping-experience.jpg",
+    summary: "Stage product, policy, review, coupon, and support evidence, then let AI Fabric answer and operate the cart.",
+    proof: "RAG stages, chat memory, cart actions, checkout confirmation",
+    accent: "border-blue-200 bg-blue-50 text-blue-700",
+    icon: ShoppingCart,
+  },
+  {
+    id: "resolver",
+    title: "Account Resolver",
+    eyebrow: "Policy-aware resolution",
+    href: "/demos/ai-fabric-account-resolver",
+    image: "/images/home/account-resolver.jpg",
+    summary: "Read current account state, retrieve policies, explain blockers, and resolve payment, address, cancellation, or refund flows.",
+    proof: "Resolver mode, profile read action, policy RAG, confirmations",
+    accent: "border-rose-200 bg-rose-50 text-rose-700",
+    icon: ShieldCheck,
+  },
+  {
+    id: "behavior",
+    title: "Behavior Signals",
+    eyebrow: "Behavior analytics + agentic UI",
+    href: "/demos/ai-fabric-behavior-signals",
+    image: "/images/home/behavior-signals.jpg",
+    summary: "Feed raw app events into AI Fabric, produce churn insight, and compose user-specific UI recommendations.",
+    proof: "Behavior SPI, structured LLM output, persisted insights",
+    accent: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    icon: TrendingUp,
+  },
+  {
+    id: "tenant",
+    title: "Tenant Guard",
+    eyebrow: "Scoped retrieval + governed writes",
+    href: "/demos/ai-fabric-tenant-guard",
+    image: "/images/home/tenant-guard.jpg",
+    summary: "Prove tenant metadata filters, role-aware evidence, natural-language write actions, and deletion cleanup.",
+    proof: "Vector filters, boundary checks, LLM actions, tenant cleanup",
+    accent: "border-violet-200 bg-violet-50 text-violet-700",
+    icon: LockKeyhole,
+  },
+];
+
+const capabilityGroups = [
+  {
+    title: "Answers grounded in your app",
+    detail: "Index domain objects, policies, reviews, tickets, and docs into AI Fabric retrieval so answers cite real app evidence.",
+    icon: Database,
+    tone: "border-blue-100 bg-blue-50 text-blue-700",
+  },
+  {
+    title: "Actions behind confirmation",
+    detail: "Expose existing services as governed actions with parameter extraction, confirmation, access checks, and execution evidence.",
+    icon: Workflow,
+    tone: "border-amber-100 bg-amber-50 text-amber-700",
+  },
+  {
+    title: "Behavior intelligence",
+    detail: "Turn raw product events into sentiment, churn risk, trend, and UI composition signals without inventing another analytics stack.",
+    icon: TrendingUp,
+    tone: "border-emerald-100 bg-emerald-50 text-emerald-700",
+  },
+  {
+    title: "Tenant-safe AI",
+    detail: "Keep retrieval and writes scoped with metadata filters, app-side verification, role rules, and auditable failure modes.",
+    icon: ShieldCheck,
+    tone: "border-violet-100 bg-violet-50 text-violet-700",
+  },
+];
+
+const flowSteps = [
+  {
+    title: "Annotate app data",
+    body: "Mark entities, searchable fields, and action handlers in your existing Spring Boot code.",
+    icon: Code2,
+  },
+  {
+    title: "Sync evidence",
+    body: "AI Fabric indexes selected data into provider-backed vector storage with lifecycle metadata.",
+    icon: GitBranch,
+  },
+  {
+    title: "Ask or act",
+    body: "Users ask natural-language questions; AI Fabric routes to RAG, suggestions, or governed actions.",
+    icon: MessageSquare,
+  },
+  {
+    title: "Verify outcomes",
+    body: "The app returns citations, action results, confirmations, policy decisions, and request proof.",
+    icon: CheckCircle2,
+  },
+];
+
+const javaPieces = [
+  {
+    label: "Entity",
+    code: `@Entity
+@AICapable(entityType = "product")
+public class Product {
+  @AISearchable(weight = 1.0)
+  private String description;
+}`,
+  },
+  {
+    label: "Action",
+    code: `@AIAction("checkout_cart")
+public CheckoutResult checkout(
+  CheckoutCommand command,
+  ActionContext context
+) { ... }`,
+  },
+  {
+    label: "Provider",
+    code: `ai:
+  llm:
+    provider: openai
+  vector:
+    provider: lucene
+  orchestration:
+    mode: iterative`,
+  },
+];
+
+function scrollToHashTarget() {
+  const hash = window.location.hash?.replace("#", "");
+  if (!hash) return;
+  window.requestAnimationFrame(() => {
+    document.getElementById(hash)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
+function DemoPreviewWall() {
+  const previewOrder = [liveDemos[0], liveDemos[1], liveDemos[3], liveDemos[2]];
+
+  return (
+    <div className="mx-auto mt-12 grid max-w-6xl gap-3 lg:grid-cols-[1.25fr_0.9fr]">
+      <Link
+        to={previewOrder[0].href}
+        className="group relative min-h-[320px] overflow-hidden rounded-md border border-slate-200 bg-slate-100 shadow-2xl shadow-slate-900/10"
+      >
+        <img
+          src={previewOrder[0].image}
+          alt={`${previewOrder[0].title} live demo screenshot`}
+          className="h-full min-h-[320px] w-full object-cover object-top transition duration-500 group-hover:scale-[1.02]"
+        />
+        <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+          <Badge className="border-white/80 bg-white/90 text-slate-900" variant="outline">
+            Live AI Fabric app
+          </Badge>
+          <Badge className={previewOrder[0].accent} variant="outline">
+            {previewOrder[0].eyebrow}
+          </Badge>
+        </div>
+      </Link>
+
+      <div className="grid gap-3">
+        {previewOrder.slice(1).map((demo) => (
+          <Link
+            key={demo.id}
+            to={demo.href}
+            className="group grid min-h-[102px] grid-cols-[128px_1fr] overflow-hidden rounded-md border border-slate-200 bg-white shadow-lg shadow-slate-900/5 transition hover:-translate-y-0.5 hover:border-slate-300"
+          >
+            <img
+              src={demo.image}
+              alt={`${demo.title} live demo screenshot`}
+              className="h-full w-full object-cover object-top transition duration-500 group-hover:scale-[1.04]"
+            />
+            <div className="p-4">
+              <Badge className={demo.accent} variant="outline">
+                {demo.eyebrow}
+              </Badge>
+              <h3 className="mt-2 text-base font-bold text-slate-950">{demo.title}</h3>
+              <p className="mt-1 line-clamp-2 text-sm leading-5 text-slate-600">{demo.summary}</p>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function DemoCard({ demo }: { demo: (typeof liveDemos)[number] }) {
+  const Icon = demo.icon;
+
+  return (
+    <article className="overflow-hidden rounded-md border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-900/10">
+      <Link to={demo.href} className="block">
+        <img src={demo.image} alt={`${demo.title} screenshot`} className="aspect-[16/10] w-full object-cover object-top" />
+      </Link>
+      <div className="p-5">
+        <div className="flex items-center justify-between gap-3">
+          <Badge className={demo.accent} variant="outline">
+            <Icon className="mr-1 h-3.5 w-3.5" />
+            {demo.eyebrow}
+          </Badge>
+          <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-700">
+            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            live
+          </span>
+        </div>
+        <h3 className="mt-4 text-xl font-bold tracking-normal text-slate-950">{demo.title}</h3>
+        <p className="mt-2 min-h-[72px] text-sm leading-6 text-slate-600">{demo.summary}</p>
+        <div className="mt-4 rounded-md border border-slate-100 bg-slate-50 p-3 text-sm leading-6 text-slate-700">
+          {demo.proof}
+        </div>
+        <Button asChild className="mt-4 w-full bg-slate-950 hover:bg-slate-800">
+          <Link to={demo.href}>
+            Open demo
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Link>
+        </Button>
+      </div>
+    </article>
+  );
+}
 
 const Index = () => {
   useEffect(() => {
-    let raf: number | null = null;
-
-    const scrollToHash = () => {
-      const hash = window.location.hash?.replace("#", "");
-      if (!hash) return;
-
-      let tries = 0;
-      const attempt = () => {
-        const el = document.getElementById(hash);
-        if (el) {
-          el.scrollIntoView({ behavior: "smooth", block: "start" });
-          return;
-        }
-        tries += 1;
-        if (tries < 10) raf = window.requestAnimationFrame(attempt);
-      };
-
-      raf = window.requestAnimationFrame(attempt);
-    };
-
-    // Handle first visit with a hash before content is fully rendered
-    scrollToHash();
-
-    // Also handle subsequent in-page hash navigation
-    window.addEventListener("hashchange", scrollToHash);
-
-    return () => {
-      window.removeEventListener("hashchange", scrollToHash);
-      if (raf) window.cancelAnimationFrame(raf);
-    };
+    scrollToHashTarget();
+    window.addEventListener("hashchange", scrollToHashTarget);
+    return () => window.removeEventListener("hashchange", scrollToHashTarget);
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white text-slate-950">
       <Navbar />
+
       <main>
-        <HeroSection />
-        <ProblemSection />
-        <CostSection />
-        <ModulesSection />
-        <HowItWorksSection />
-        <ActionFlowSection />
-        <FeaturesSection />
-        <RegistrationSection />
-        <OpenSourceSection />
-        <StatusSection />
-        <MediumStoriesSection />
-        <CommunitySection />
+        <section className="relative overflow-hidden bg-[#f8fafc] px-6 pb-12 pt-24 md:pt-28">
+          <div className="mx-auto max-w-7xl">
+            <div className="mx-auto max-w-5xl text-center">
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                <Badge className="border-emerald-200 bg-emerald-50 px-3 py-1 text-emerald-700" variant="outline">
+                  <Sparkles className="mr-1 h-3.5 w-3.5" />
+                  Four live AI Fabric apps
+                </Badge>
+                <Badge className="border-slate-200 bg-white px-3 py-1 text-slate-700" variant="outline">
+                  Java-first
+                </Badge>
+                <Badge className="border-blue-200 bg-blue-50 px-3 py-1 text-blue-700" variant="outline">
+                  Spring Boot
+                </Badge>
+              </div>
+
+              <h1 className="mt-5 text-4xl font-black leading-[1.02] tracking-normal text-slate-950 sm:text-5xl md:mt-6 md:text-7xl md:leading-[0.98]">
+                Add production AI workflows to Spring Boot apps.
+              </h1>
+              <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-slate-600 md:mt-6 md:text-xl md:leading-8">
+                AI Fabric gives Java teams the building blocks behind real AI products: RAG, actions, confirmations,
+                behavior analysis, tenant-safe retrieval, chat memory, and provider-backed orchestration.
+              </p>
+
+              <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row md:mt-8">
+                <Button asChild size="lg" className="h-12 bg-slate-950 px-6 text-base hover:bg-slate-800">
+                  <Link to="/demos">
+                    Explore live demos
+                    <Play className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="h-12 border-slate-300 bg-white px-6 text-base">
+                  <a href="https://github.com/mahmoudashraf/AI-Fabric-Framework" target="_blank" rel="noopener noreferrer">
+                    <Github className="mr-2 h-4 w-4" />
+                    View framework
+                  </a>
+                </Button>
+              </div>
+
+              <div className="mx-auto mt-6 grid max-w-3xl grid-cols-3 gap-2 text-left md:mt-8">
+                {[
+                  ["4", "deployed AI apps"],
+                  ["0.3.x", "release line"],
+                  ["OpenAI", "live provider demos"],
+                ].map(([value, label]) => (
+                  <div key={label} className="rounded-md border border-slate-200 bg-white px-3 py-3 shadow-sm md:px-4">
+                    <p className="text-xl font-black text-slate-950 md:text-2xl">{value}</p>
+                    <p className="mt-1 text-xs leading-4 text-slate-600 md:text-sm md:leading-5">{label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <DemoPreviewWall />
+          </div>
+        </section>
+
+        <section id="live-demos" className="border-y border-slate-200 bg-white px-6 py-16">
+          <div className="mx-auto max-w-7xl">
+            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="text-sm font-bold uppercase tracking-wide text-blue-700">Live proof</p>
+                <h2 className="mt-2 text-3xl font-black tracking-normal text-slate-950 md:text-5xl">
+                  Start with working AI apps, not promises.
+                </h2>
+              </div>
+              <p className="max-w-2xl text-base leading-7 text-slate-600">
+                Each demo has a deployed Spring Boot backend that uses AI Fabric modules for a different production pattern.
+              </p>
+            </div>
+
+            <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+              {liveDemos.map((demo) => (
+                <DemoCard key={demo.id} demo={demo} />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="features" className="bg-slate-950 px-6 py-16 text-white">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+              <div>
+                <Badge className="border-white/20 bg-white/10 text-white" variant="outline">
+                  <Bot className="mr-1 h-3.5 w-3.5" />
+                  Framework capabilities
+                </Badge>
+                <h2 className="mt-5 text-3xl font-black tracking-normal md:text-5xl">
+                  The useful middle layer between your app and AI providers.
+                </h2>
+                <p className="mt-5 text-base leading-8 text-slate-300">
+                  AI Fabric is not another chatbot skin. It is the app-side framework for grounding, routing,
+                  protecting, and executing AI workflows inside Java systems.
+                </p>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                {capabilityGroups.map((capability) => {
+                  const Icon = capability.icon;
+                  return (
+                    <article key={capability.title} className="rounded-md border border-white/10 bg-white/[0.04] p-5">
+                      <div className={`inline-flex h-10 w-10 items-center justify-center rounded-md border ${capability.tone}`}>
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <h3 className="mt-4 text-lg font-bold text-white">{capability.title}</h3>
+                      <p className="mt-2 text-sm leading-6 text-slate-300">{capability.detail}</p>
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="how-it-works" className="bg-[#f8fafc] px-6 py-16">
+          <div className="mx-auto max-w-7xl">
+            <div className="mx-auto max-w-3xl text-center">
+              <p className="text-sm font-bold uppercase tracking-wide text-emerald-700">Request flow</p>
+              <h2 className="mt-2 text-3xl font-black tracking-normal text-slate-950 md:text-5xl">
+                Existing code stays in charge.
+              </h2>
+              <p className="mt-4 text-base leading-7 text-slate-600">
+                AI Fabric coordinates the AI parts, but your Spring Boot app owns the data, actions, policies, and final result.
+              </p>
+            </div>
+
+            <div className="mt-10 grid gap-3 md:grid-cols-4">
+              {flowSteps.map((step, index) => {
+                const Icon = step.icon;
+                return (
+                  <article key={step.title} className="rounded-md border border-slate-200 bg-white p-5 shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-md bg-slate-950 text-white">
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <span className="text-sm font-black text-slate-300">0{index + 1}</span>
+                    </div>
+                    <h3 className="mt-5 text-lg font-bold text-slate-950">{step.title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">{step.body}</p>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section id="modules" className="bg-white px-6 py-16">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+              <div>
+                <Badge className="border-slate-200 bg-slate-50 text-slate-700" variant="outline">
+                  <Layers3 className="mr-1 h-3.5 w-3.5" />
+                  Java integration shape
+                </Badge>
+                <h2 className="mt-5 text-3xl font-black tracking-normal text-slate-950 md:text-5xl">
+                  A framework developers can actually adopt.
+                </h2>
+                <p className="mt-5 text-base leading-8 text-slate-600">
+                  Use annotations, Spring services, provider configuration, and explicit policies. AI Fabric handles
+                  the repetitive orchestration work while your domain model remains recognizable.
+                </p>
+                <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                  {[
+                    ["Core", "intent, actions, chat session, structured output"],
+                    ["RAG", "retrieval, prompt grounding, citations"],
+                    ["Indexing", "entity sync, vector lifecycle, metadata"],
+                    ["Behavior", "raw events to persisted user insights"],
+                  ].map(([name, detail]) => (
+                    <div key={name} className="rounded-md border border-slate-200 bg-slate-50 p-4">
+                      <p className="font-bold text-slate-950">{name}</p>
+                      <p className="mt-1 text-sm leading-6 text-slate-600">{detail}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid gap-3">
+                {javaPieces.map((piece) => (
+                  <article key={piece.label} className="overflow-hidden rounded-md border border-slate-200 bg-slate-950">
+                    <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+                      <span className="text-sm font-semibold text-white">{piece.label}</span>
+                      <Server className="h-4 w-4 text-slate-400" />
+                    </div>
+                    <pre className="overflow-x-auto p-4 text-sm leading-6 text-slate-100">
+                      <code>{piece.code}</code>
+                    </pre>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="register" className="bg-slate-950 px-6 py-16 text-white">
+          <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-center">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-wide text-emerald-300">Ready path</p>
+              <h2 className="mt-2 text-3xl font-black tracking-normal md:text-5xl">
+                Pick a demo. Then inspect the backend that powers it.
+              </h2>
+              <p className="mt-4 max-w-3xl text-base leading-8 text-slate-300">
+                The fastest way to understand AI Fabric is to run the live apps, open the about pages, and trace the
+                Spring Boot request flow from UI to AI Fabric modules.
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+              <Button asChild size="lg" className="h-12 bg-white text-slate-950 hover:bg-slate-100">
+                <Link to="/demos">
+                  <Play className="mr-2 h-4 w-4" />
+                  Open live demos
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="h-12 border-white/20 bg-transparent text-white hover:bg-white/10">
+                <Link to="/docs">
+                  <BookOpen className="mr-2 h-4 w-4" />
+                  Read developer docs
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
       </main>
+
       <Footer />
     </div>
   );

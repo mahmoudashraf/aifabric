@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { MaxModeProvider } from "@/contexts/MaxModeContext";
 import Index from "./pages/Index";
+import ClassicLanding from "./pages/ClassicLanding";
 import Landing2 from "./pages/Landing2";
 import NotFound from "./pages/NotFound";
 import Documentation from "./pages/Documentation";
@@ -123,6 +124,7 @@ const App = () => (
           <PageTracker>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/landing-classic" element={<ClassicLanding />} />
             <Route path="/landing2" element={<Landing2 />} />
             <Route path="/demos" element={<Demos />} />
             <Route

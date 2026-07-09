@@ -1,9 +1,8 @@
 import { motion } from "framer-motion";
-import { Github, Menu, X, Users, BookOpen, Play } from "lucide-react";
+import { Github, Menu, X, BookOpen, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 interface HashLinkProps {
   to: string;
@@ -57,17 +56,6 @@ const HashLink = ({ to, children, className, onClick }: HashLinkProps) => {
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [registrationCount, setRegistrationCount] = useState<number | null>(null);
-
-  useEffect(() => {
-    const fetchCount = async () => {
-      const { data, error } = await supabase.rpc("get_registration_count");
-      if (!error && data !== null) {
-        setRegistrationCount(data);
-      }
-    };
-    fetchCount();
-  }, []);
 
   const closeMenu = () => setIsMenuOpen(false);
 
@@ -94,11 +82,14 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden items-center gap-6 md:flex">
+            <HashLink to="/#live-demos" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              Live Demos
+            </HashLink>
             <HashLink to="/#features" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-              Features
+              Capabilities
             </HashLink>
             <HashLink to="/#modules" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-              Modules
+              Java Shape
             </HashLink>
             <HashLink to="/#how-it-works" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               How It Works
@@ -114,12 +105,6 @@ const Navbar = () => {
                 New
               </Badge>
             </Link>
-            <Link to="/landing2" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-              Landing 2
-            </Link>
-            <HashLink to="/#register" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-              Register
-            </HashLink>
           </div>
 
           {/* CTA Buttons */}
@@ -131,15 +116,9 @@ const Navbar = () => {
               </a>
             </Button>
             <Button variant="hero" size="sm" asChild>
-              <HashLink to="/#register" className="flex items-center gap-2">
-                Register Interest
-                {registrationCount !== null && registrationCount > 0 && (
-                  <span className="flex items-center gap-1 rounded-full bg-primary-foreground/20 px-2 py-0.5 text-xs">
-                    <Users className="h-3 w-3" />
-                    {registrationCount}
-                  </span>
-                )}
-              </HashLink>
+              <Link to="/demos" className="flex items-center gap-2">
+                Explore Demos
+              </Link>
             </Button>
           </div>
 
@@ -160,11 +139,14 @@ const Navbar = () => {
             className="border-t border-border py-4 md:hidden"
           >
             <div className="flex flex-col gap-4">
+              <HashLink to="/#live-demos" onClick={closeMenu} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+                Live Demos
+              </HashLink>
               <HashLink to="/#features" onClick={closeMenu} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-                Features
+                Capabilities
               </HashLink>
               <HashLink to="/#modules" onClick={closeMenu} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-                Modules
+                Java Shape
               </HashLink>
               <HashLink to="/#how-it-works" onClick={closeMenu} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 How It Works
@@ -180,12 +162,6 @@ const Navbar = () => {
                   New
                 </Badge>
               </Link>
-              <Link to="/landing2" onClick={closeMenu} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-                Landing 2
-              </Link>
-              <HashLink to="/#register" onClick={closeMenu} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-                Register
-              </HashLink>
               <div className="flex gap-3 pt-2">
                 <Button variant="github" size="sm" asChild>
                   <a href="https://github.com/mahmoudashraf/AI-Fabric-Framework" target="_blank" rel="noopener noreferrer">
@@ -194,14 +170,9 @@ const Navbar = () => {
                   </a>
                 </Button>
                 <Button variant="hero" size="sm" asChild>
-                  <HashLink to="/#register" onClick={closeMenu} className="flex items-center gap-2">
-                    Register
-                    {registrationCount !== null && registrationCount > 0 && (
-                      <span className="flex items-center gap-1 rounded-full bg-primary-foreground/20 px-2 py-0.5 text-xs">
-                        {registrationCount}
-                      </span>
-                    )}
-                  </HashLink>
+                  <Link to="/demos" onClick={closeMenu} className="flex items-center gap-2">
+                    Explore Demos
+                  </Link>
                 </Button>
               </div>
             </div>
