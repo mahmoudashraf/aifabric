@@ -1,9 +1,9 @@
 # ⚡ The Indexing Dilemma: When Milliseconds Cost Millions
 
-> **How we built a queue system that handles 500,000 entities/day without blocking a single HTTP request**  
-> *Part of the AI Fabric Framework series — under active development for Q1 2026*
+> **How AI Fabric indexing lets an app choose sync, async, or batch behavior without blocking every request**  
+> *Narrative companion for AI Fabric 0.3.2. Use the current semantic-search and indexing guides for exact setup.*
 
-🚧 **Status:** Under active development | Q1 2026 release | Battle-tested with 10M+ entities internally
+**Status:** Narrative companion. Current implementation details are in the AI Fabric 0.3.2 guides.
 
 ---
 
@@ -662,9 +662,8 @@ They're about **making the right trade-off**:
 
 ## Learn More
 
-🚧 **Status:** Under active development | Q1 2026 release
+**Status:** Narrative companion. Current implementation details are in the AI Fabric 0.3.2 guides.
 
-⭐ **Early Access:** First 500 stars get 50% lifetime Pro discount  
 📖 **GitHub:** [AI Fabric Framework](link)  
 💬 **Discuss:** [Join the community](link)
 
@@ -672,5 +671,5 @@ They're about **making the right trade-off**:
 
 *Built with ❤️ for developers who want to ship AI features, not rebuild infrastructure*
 
-*© 2025 AI Fabric Framework | MIT License | Free Forever*
+*© 2025 AI Fabric Framework*
 

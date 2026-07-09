@@ -516,7 +516,7 @@ result.getRedactedValues();     // ["123-45-6789", "john@example.com"]`} />
 
               <div className="mt-8 rounded-xl bg-gradient-primary p-6 text-center">
                 <p className="text-2xl font-bold text-primary-foreground mb-2">
-                  $10M+ in Potential Fines Avoided
+                  Compliance Risk Reduced By Policy
                 </p>
                 <p className="text-primary-foreground/80">
                   HIPAA compliance maintained • Customer trust intact • Zero data breaches
@@ -616,7 +616,7 @@ result.getRedactedValues();     // ["123-45-6789", "john@example.com"]`} />
           <div className="flex flex-col items-center gap-4">
             <StoryLoveButton storySlug="pii-detection-edge" />
             <p className="text-sm text-muted-foreground text-center">
-              Real API Integration Story • Part of AI Fabric Framework • MIT License • Production-Ready
+              Real API Integration Story • Part of AI Fabric Framework • See current guides for exact setup
             </p>
           </div>
         </footer>

@@ -619,8 +619,8 @@ List<Product> products = response.getResults();`} />
                 Bring This to Your E-Commerce Platform
               </h2>
               <p className="text-muted-foreground mb-8">
-                The AI Fabric Framework provides everything you need for natural language product discovery. 
-                MIT License, free forever, production-ready.
+                The AI Fabric Framework provides the building blocks for natural language product discovery.
+                Validate exact dependencies and release checks in the current Getting Started guide.
               </p>
 
               <div className="grid gap-6 md:grid-cols-2 mb-8">
@@ -728,7 +728,7 @@ List<Product> products = response.getResults();`} />
           <div className="flex flex-col items-center gap-4">
             <StoryLoveButton storySlug="ecommerce-product-discovery" />
             <p className="text-sm text-muted-foreground text-center">
-              Real API Integration Story • Part of AI Fabric Framework • MIT License • Production-Ready
+              Real API Integration Story • Part of AI Fabric Framework • See current guides for exact setup
             </p>
           </div>
         </footer>

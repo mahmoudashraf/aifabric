@@ -426,7 +426,7 @@ const ArchitectureDiagram = () => (
 const ScaleMetrics = () => {
   const metrics = [
     { label: "Databases Supported", value: "9+", icon: Database, color: "text-blue-400" },
-    { label: "Tested Entities", value: "10M+", icon: Layers, color: "text-green-400" },
+    { label: "Entity Metadata", value: "Typed", icon: Layers, color: "text-green-400" },
     { label: "Config Change", value: "1 line", icon: Settings2, color: "text-amber-400" },
     { label: "Code Changes", value: "0", icon: Zap, color: "text-primary" },
   ];
@@ -770,7 +770,7 @@ const StorageStory = () => {
             <div className="flex flex-col items-center gap-4">
               <StoryLoveButton storySlug="storage-strategy-story" />
               <p className="text-sm text-muted-foreground text-center">
-                Part of the AI Fabric Framework series — under active development for Q1 2026
+                Part of the AI Fabric Framework series. See current guides for exact setup and release checks.
               </p>
             </div>
           </footer>

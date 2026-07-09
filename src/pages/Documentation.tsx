@@ -23,18 +23,18 @@ const featuredUserStories = [
   },
   {
     title: "The Behavior Story",
-    description: "Predict churn with 87% accuracy using AI patterns",
+    description: "Analyze behavior signals with AI-backed user insights",
     href: "/docs/behavior_story",
     emoji: "📈",
-    metrics: "87% accuracy",
+    metrics: "Behavior insights",
     status: "available" as const,
   },
   {
     title: "The Indexing Story",
-    description: "Index 2000 entities per second efficiently",
+    description: "Keep AI evidence fresh with sync, async, and batch indexing",
     href: "/docs/indexing_story",
     emoji: "💾",
-    metrics: "2000 entities/s",
+    metrics: "Async lifecycle",
     status: "available" as const,
   },
   {
@@ -63,10 +63,10 @@ const featuredUserStories = [
   },
   {
     title: "The Migration Story",
-    description: "Zero-downtime migrations for enterprise systems",
+    description: "Plan bulk indexing and reindexing for changing systems",
     href: "/docs/migration_story",
     emoji: "🔄",
-    metrics: "Zero downtime",
+    metrics: "Bulk indexing",
     status: "available" as const,
   },
   {
@@ -86,7 +86,7 @@ const featuredRealAPIStories = [
     description: "When shoppers speak, AI listens—natural language product search",
     href: "/docs/ecommerce-product-discovery-story",
     emoji: "🛍️",
-    metrics: "+40% conversion",
+    metrics: "Product retrieval",
     status: "available" as const,
   },
   {
@@ -94,7 +94,7 @@ const featuredRealAPIStories = [
     description: "Track suspicious money flows through relationship queries",
     href: "/docs/financial-fraud-detection-story",
     emoji: "🔒",
-    metrics: "87% detection rate",
+    metrics: "Graph signals",
     status: "available" as const,
   },
   {
@@ -102,7 +102,7 @@ const featuredRealAPIStories = [
     description: "Find needles in legal haystacks—30 seconds instead of 3 hours",
     href: "/docs/law-firm-document-story",
     emoji: "⚖️",
-    metrics: "50K+ documents",
+    metrics: "Document search",
     status: "available" as const,
   },
   {
@@ -110,7 +110,7 @@ const featuredRealAPIStories = [
     description: "Testing every privacy edge case—HIPAA & GDPR compliant",
     href: "/docs/pii-detection-edge-story",
     emoji: "🛡️",
-    metrics: "$10M+ in fines avoided",
+    metrics: "Privacy edge cases",
     status: "available" as const,
   },
   {
@@ -118,23 +118,23 @@ const featuredRealAPIStories = [
     description: "AI-powered next-step predictions with confidence scores",
     href: "/docs/smart-suggestions-story",
     emoji: "✨",
-    metrics: "+40% engagement",
+    metrics: "Next-step hints",
     status: "available" as const,
   },
   {
     title: "ONNX Fallback Readiness",
-    description: "$0 embeddings, 100% private, zero downtime",
+    description: "Local embedding fallback when remote providers are unavailable",
     href: "/docs/onnx-fallback-story",
     emoji: "💾",
-    metrics: "15ms latency",
+    metrics: "Local fallback",
     status: "available" as const,
   },
   {
     title: "Real AI Embedding Generation",
-    description: "From product data to semantic search in 15ms with $0 cost",
+    description: "From product data to semantic search with real embedding evidence",
     href: "/docs/real-ai-embedding-story",
     emoji: "⚡",
-    metrics: "94% accuracy",
+    metrics: "Embedding proof",
     status: "available" as const,
   },
   {
@@ -142,7 +142,7 @@ const featuredRealAPIStories = [
     description: "8-phase lifecycle: create, remove, clear, reseed with full audit",
     href: "/docs/vector-lifecycle-story",
     emoji: "🔄",
-    metrics: "Zero downtime",
+    metrics: "Lifecycle checks",
     status: "available" as const,
   },
 ];
@@ -151,10 +151,10 @@ const featuredRealAPIStories = [
 const featuredCoreModules = [
   {
     title: "AI Core",
-    description: "From 6 months to 5 minutes—one annotation for everything AI",
+    description: "Core annotations, orchestration, providers, actions, and policy hooks",
     href: "/docs/modules/core",
     emoji: "🧠",
-    metrics: "One annotation",
+    metrics: "Core starter",
     status: "available" as const,
   },
   {
@@ -195,18 +195,18 @@ const featuredAIAnnotationsStories = [
   },
   {
     title: "E-Commerce Semantic Search",
-    description: "When 'comfy chair' finds your ergonomic collection—34% conversion boost",
+    description: "When natural language finds domain-specific products",
     href: "/docs/ai-annotations-ecommerce",
     emoji: "🛒",
-    metrics: "+34% conversion",
+    metrics: "Semantic match",
     status: "available" as const,
   },
   {
     title: "Enterprise Knowledge",
-    description: "When 'password reset' finally finds 'account recovery'—60% fewer tickets",
+    description: "When related enterprise terms retrieve the right knowledge",
     href: "/docs/ai-annotations-enterprise-knowledge",
     emoji: "📖",
-    metrics: "-60% tickets",
+    metrics: "Knowledge search",
     status: "available" as const,
   },
   {
@@ -268,6 +268,79 @@ const featuredAdvancedFeatures = [
     emoji: "💻",
     metrics: "$0 cost",
     status: "coming-soon" as const,
+  },
+];
+
+const implementationGuides = [
+  {
+    title: "Start Here",
+    description: "The human-first map for adopting AI Fabric in a Spring Boot app.",
+    href: "/docs/getting-started",
+    storyTitle: "User Stories",
+    storyHref: "/docs/user-stories",
+  },
+  {
+    title: "Choose Your Path",
+    description: "Pick search, RAG, actions, memory, behavior, or tenant-safe retrieval.",
+    href: "/docs/choose-your-path",
+    storyTitle: "Real API Stories",
+    storyHref: "/docs/real-api-stories",
+  },
+  {
+    title: "First Semantic Search",
+    description: "Index app data and retrieve it by meaning.",
+    href: "/docs/first-semantic-search",
+    storyTitle: "Semantic Search Deep Dive",
+    storyHref: "/docs/ai-annotations-semantic-search",
+  },
+  {
+    title: "First RAG Chat",
+    description: "Answer from retrieved evidence and show what was used.",
+    href: "/docs/first-rag-chat",
+    storyTitle: "The RAG Story",
+    storyHref: "/docs/rag_story",
+  },
+  {
+    title: "First Governed Action",
+    description: "Expose app actions with confirmation and server-owned handlers.",
+    href: "/docs/first-governed-action",
+    storyTitle: "Intent Extraction Story",
+    storyHref: "/docs/intent_story",
+  },
+  {
+    title: "Chat Session Memory",
+    description: "Let the backend own follow-up turns, pending actions, and targets.",
+    href: "/docs/chat-session-memory",
+    storyTitle: "Smart Suggestions",
+    storyHref: "/docs/smart-suggestions-story",
+  },
+  {
+    title: "Providers",
+    description: "Configure OpenAI through Spring AI or local ONNX embeddings.",
+    href: "/docs/providers/openai",
+    storyTitle: "OpenAI Provider Story",
+    storyHref: "/docs/openai_provider_story",
+  },
+  {
+    title: "Security Access Policy",
+    description: "Keep tenant/user retrieval and actions fail-closed.",
+    href: "/docs/security/access-policy",
+    storyTitle: "Access Policy Story",
+    storyHref: "/docs/access_policy_story",
+  },
+  {
+    title: "Testing And Release",
+    description: "Know what to run locally, in CI, and with real provider keys.",
+    href: "/docs/testing-verification",
+    storyTitle: "Real API Stories",
+    storyHref: "/docs/real-api-stories",
+  },
+  {
+    title: "Production Checklist",
+    description: "A release-readiness checklist for AI Fabric apps.",
+    href: "/docs/production-checklist",
+    storyTitle: "Audit Capabilities Story",
+    storyHref: "/docs/audit_capabilities_story",
   },
 ];
 
@@ -654,10 +727,85 @@ const Documentation = () => {
                 Documentation
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl">
-                Learn how to build production-ready AI applications with AI Fabric. 
+                Learn how to build AI-enabled Spring Boot applications with AI Fabric. 
                 From quick starts to advanced patterns, we've got you covered.
               </p>
             </motion.div>
+          </div>
+        </section>
+
+        {/* Human implementation path */}
+        <section className="border-b border-border/50 px-6 py-12">
+          <div className="max-w-6xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-8"
+            >
+              <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+                <BookOpen className="h-4 w-4" />
+                New implementation path
+              </span>
+              <h2 className="text-2xl font-bold text-foreground md:text-3xl">
+                Build AI Fabric Apps
+              </h2>
+              <p className="mt-3 max-w-3xl text-muted-foreground">
+                Start with the canonical framework guides, then use the related stories when you
+                want a more human explanation of the same capability.
+              </p>
+            </motion.div>
+
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {implementationGuides.map((guide, index) => (
+                <motion.div
+                  key={guide.href}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.04 }}
+                  className="rounded-lg border border-border/60 bg-card p-5 transition-all hover:border-primary/40 hover:shadow-lg"
+                >
+                  <Link to={guide.href} className="group block">
+                    <div className="mb-3 flex items-start justify-between gap-3">
+                      <h3 className="font-semibold text-foreground transition-colors group-hover:text-primary">
+                        {guide.title}
+                      </h3>
+                      <ChevronRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
+                    </div>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {guide.description}
+                    </p>
+                  </Link>
+                  <div className="mt-4 border-t border-border/50 pt-3">
+                    <Link
+                      to={guide.storyHref}
+                      className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+                    >
+                      Related story: {guide.storyTitle}
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="mt-6 rounded-lg border border-primary/25 bg-primary/5 p-5">
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h3 className="font-semibold text-foreground">Working with a coding assistant?</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Use the LLM context pack to give an assistant the rules, module map, recipes,
+                    and troubleshooting path before it edits code.
+                  </p>
+                </div>
+                <Link
+                  to="/docs/llm-context"
+                  className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                >
+                  Open LLM Context
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -905,13 +1053,13 @@ const Documentation = () => {
         {/* Quick Stats */}
         <section className="border-t border-border/50 bg-muted/30 px-6 py-12">
           <div className="max-w-5xl">
-            <h2 className="text-xl font-bold text-foreground mb-6">Framework Stats</h2>
+            <h2 className="text-xl font-bold text-foreground mb-6">Current Release Facts</h2>
             <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
               {[
-                { value: "10M+", label: "Entities Indexed" },
-                { value: "100M+", label: "Embeddings Generated" },
-                { value: "500-2000/s", label: "Indexing Speed" },
-                { value: "99.9%", label: "Uptime" },
+                { value: "0.3.2", label: "Latest Release" },
+                { value: "Java 21", label: "Runtime Target" },
+                { value: "Boot 4.1.x", label: "Spring Baseline" },
+                { value: "4", label: "Live Framework Demos" },
               ].map((stat) => (
                 <div key={stat.label} className="rounded-lg border border-border/50 bg-card p-4 text-center">
                   <p className="text-2xl font-bold text-gradient">{stat.value}</p>

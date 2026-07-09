@@ -460,10 +460,10 @@ const SearchComparison = () => (
 // Impact Metrics
 const ImpactMetrics = () => {
   const metrics = [
-    { value: "6→5", unit: "months→min", label: "Development Time", icon: Clock, color: "text-blue-400" },
-    { value: "$6M", unit: "/year", label: "Revenue Impact", icon: DollarSign, color: "text-green-400" },
-    { value: "56x", unit: "faster", label: "Cached Response", icon: Zap, color: "text-amber-400" },
-    { value: "10M+", unit: "entities", label: "Battle-tested", icon: Database, color: "text-primary" },
+    { value: "Core", unit: "module", label: "Foundation", icon: Clock, color: "text-blue-400" },
+    { value: "RAG", unit: "+ actions", label: "App Patterns", icon: DollarSign, color: "text-green-400" },
+    { value: "Cache", unit: "ready", label: "Shared Names", icon: Zap, color: "text-amber-400" },
+    { value: "Java", unit: "21", label: "Runtime Target", icon: Database, color: "text-primary" },
   ];
 
   return (
@@ -729,7 +729,7 @@ const CoreStory = () => {
                   </div>
                   <div className="flex items-center gap-2 rounded-full bg-secondary/10 px-4 py-2 text-sm text-secondary">
                     <Database className="h-4 w-4" />
-                    10M+ Entities
+                    Annotated Entities
                   </div>
                   <div className="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm text-primary">
                     <Zap className="h-4 w-4" />
@@ -823,7 +823,7 @@ const CoreStory = () => {
             <div className="flex flex-col items-center gap-4">
               <StoryLoveButton storySlug="ai-core-story" />
               <p className="text-sm text-muted-foreground text-center">
-                Part of the AI Fabric Framework series — the foundation module for production-ready AI infrastructure
+                Part of the AI Fabric Framework series. See current guides for exact setup and release checks.
               </p>
             </div>
           </footer>

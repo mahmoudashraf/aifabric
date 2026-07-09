@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 
 const PAGE_TITLE = "Real API Stories - AI Fabric Framework";
-const PAGE_DESCRIPTION = "Production integration tests told as interactive stories. See the AI Fabric Framework in action with real-world scenarios.";
+const PAGE_DESCRIPTION = "Integration scenarios told as interactive stories. Pair them with the current AI Fabric testing guide for exact release checks.";
 
 const stories = [
   {
@@ -29,7 +29,7 @@ const stories = [
     href: "/docs/ecommerce-product-discovery-story",
     icon: ShoppingCart,
     color: "bg-blue-500",
-    stats: "+40% conversion",
+    stats: "Product retrieval",
     category: "E-Commerce",
     readTime: "8 min read"
   },
@@ -40,18 +40,18 @@ const stories = [
     href: "/docs/financial-fraud-detection-story",
     icon: Shield,
     color: "bg-green-500",
-    stats: "87% detection rate",
+    stats: "Graph signals",
     category: "Finance",
     readTime: "10 min read"
   },
   {
     id: "law-firm-document",
     title: "Law Firm Document Management",
-    description: "Find needles in legal haystacks—30 seconds instead of 3 hours",
+    description: "Find needles in legal haystacks with semantic document search",
     href: "/docs/law-firm-document-story",
     icon: FileText,
     color: "bg-purple-500",
-    stats: "50K+ documents",
+    stats: "Document search",
     category: "Legal",
     readTime: "12 min read"
   },
@@ -62,7 +62,7 @@ const stories = [
     href: "/docs/pii-detection-edge-story",
     icon: Lock,
     color: "bg-red-500",
-    stats: "$10M+ in fines avoided",
+    stats: "Privacy edge cases",
     category: "Security",
     readTime: "15 min read"
   },
@@ -73,29 +73,29 @@ const stories = [
     href: "/docs/smart-suggestions-story",
     icon: Sparkles,
     color: "bg-yellow-500",
-    stats: "+40% engagement",
+    stats: "Next-step hints",
     category: "UX",
     readTime: "7 min read"
   },
   {
     id: "onnx-fallback",
     title: "ONNX Fallback Readiness",
-    description: "$0 embeddings, 100% private, zero downtime",
+    description: "Local embedding fallback when remote providers are unavailable",
     href: "/docs/onnx-fallback-story",
     icon: Cpu,
     color: "bg-cyan-500",
-    stats: "$18K → $0",
+    stats: "Local fallback",
     category: "Cost Optimization",
     readTime: "9 min read"
   },
   {
     id: "real-ai-embedding",
     title: "Real AI Embedding Generation",
-    description: "From product data to semantic search in 15ms with $0 cost",
+    description: "From product data to semantic search with real embedding evidence",
     href: "/docs/real-ai-embedding-story",
     icon: Zap,
     color: "bg-orange-500",
-    stats: "94% accuracy",
+    stats: "Embedding proof",
     category: "Performance",
     readTime: "11 min read"
   },
@@ -106,7 +106,7 @@ const stories = [
     href: "/docs/vector-lifecycle-story",
     icon: RefreshCw,
     color: "bg-indigo-500",
-    stats: "Zero downtime",
+    stats: "Lifecycle checks",
     category: "Operations",
     readTime: "13 min read"
   }
@@ -312,4 +312,3 @@ const RealAPIStories = () => {
 };
 
 export default RealAPIStories;
-

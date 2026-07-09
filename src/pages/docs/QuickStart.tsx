@@ -358,23 +358,23 @@ const QuickStart = () => {
                 code={`<dependencies>
     <!-- 1. Core Module (foundation) -->
     <dependency>
-        <groupId>com.ai.fabric</groupId>
+        <groupId>io.github.loom-ai-labs</groupId>
         <artifactId>ai-fabric-core</artifactId>
-        <version>1.0.0</version>
+        <version>0.3.2</version>
     </dependency>
     
-    <!-- 2. ONNX Provider (free local embeddings) -->
+    <!-- 2. ONNX Provider (local embeddings) -->
     <dependency>
-        <groupId>com.ai.fabric</groupId>
-        <artifactId>ai-infrastructure-onnx-starter</artifactId>
-        <version>1.0.0</version>
+        <groupId>io.github.loom-ai-labs</groupId>
+        <artifactId>ai-fabric-onnx-starter</artifactId>
+        <version>0.3.2</version>
     </dependency>
     
-    <!-- 3. Lucene Vector DB (free embedded database) -->
+    <!-- 3. Lucene Vector DB (embedded local vector store) -->
     <dependency>
-        <groupId>com.ai.fabric</groupId>
-        <artifactId>ai-infrastructure-vector-lucene</artifactId>
-        <version>1.0.0</version>
+        <groupId>io.github.loom-ai-labs</groupId>
+        <artifactId>ai-fabric-vector-lucene</artifactId>
+        <version>0.3.2</version>
     </dependency>
 </dependencies>`} 
               />
@@ -775,7 +775,7 @@ curl "http://localhost:8080/api/products/search?q=laptop%20for%20programming"
             <StoryLoveButton storySlug="quickstart" />
             
             <p className="text-sm text-muted-foreground mt-6">
-              Part of the AI Fabric Framework — under active development for Q1 2026
+              Part of the AI Fabric Framework. For the latest setup, use the current Getting Started guide.
             </p>
           </motion.div>
         </section>

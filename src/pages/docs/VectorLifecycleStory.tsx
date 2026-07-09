@@ -445,7 +445,7 @@ for (Product product : products) {
               </h2>
               <p className="text-muted-foreground mb-8">
                 AI Fabric Framework provides 8-phase lifecycle automation with full audit trails. 
-                Zero downtime, GDPR/HIPAA compliant, production-ready.
+                Validate provider capabilities, cleanup behavior, and release gates in the current AI Fabric guides.
               </p>
 
               <div className="flex flex-wrap items-center gap-4">
@@ -507,7 +507,7 @@ for (Product product : products) {
           <div className="flex flex-col items-center gap-4">
             <StoryLoveButton storySlug="vector-lifecycle" />
             <p className="text-sm text-muted-foreground text-center">
-              Real API Integration Story • Part of AI Fabric Framework • MIT License • Production-Ready
+              Real API Integration Story • Part of AI Fabric Framework • See current guides for exact setup
             </p>
           </div>
         </footer>

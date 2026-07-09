@@ -2,7 +2,7 @@
 
 *How we went from 47% zero-result searches to 92% relevance—and why keyword search was always a lie*
 
-🚧 **Under active development | Q1 2026 release | 100M+ queries served in testing**
+**Narrative companion for AI Fabric 0.3.2.** Use the current semantic-search guide for exact annotations, dependencies, and verification steps.
 
 ---
 
@@ -619,11 +619,10 @@ List<Product> results = searchService.semanticSearch(
 
 ## Learn More
 
-🚧 **Status:** Under active development | Q1 2026 release
+**Status:** Narrative companion. Current implementation details are in the semantic-search guide.
 
-Part of AI Fabric Framework—production-ready AI infrastructure for Spring Boot.
+Part of AI Fabric Framework for Spring Boot.
 
-🎁 **Early Access:** First 500 stars get 50% lifetime Pro discount  
 ⭐ **GitHub:** [AI Fabric Framework](link)  
 📖 **Docs:** [Semantic Search Guide](link)  
 💬 **Community:** [Join us](link)
@@ -640,11 +639,10 @@ Part of AI Fabric Framework—production-ready AI infrastructure for Spring Boot
 
 *Built with ❤️ for developers tired of zero-result searches*
 
-*© 2025 AI Fabric Framework | MIT License | Free Forever*
+*© 2025 AI Fabric Framework*
 
 ---
 
 **Keywords don't understand meaning. Embeddings do.**
 
 **Stop matching strings. Start finding answers.** 🔍
-

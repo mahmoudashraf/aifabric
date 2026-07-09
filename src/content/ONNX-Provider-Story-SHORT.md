@@ -1,8 +1,8 @@
-# 🆓 ONNX Provider: When "Free Forever" Meets "Production Ready"
+# ONNX Provider: Local Embeddings Without Remote API Calls
 
 *How we built a local embedding provider that costs $0, runs offline, and beats cloud APIs on speed—all while keeping your data 100% private*
 
-🚧 **Under active development | Q1 2026 release | Production-tested | Zero cost, forever**
+**Narrative companion for AI Fabric 0.3.2.** Use the current ONNX guide for exact dependency, model, and runtime configuration.
 
 ---
 
@@ -38,9 +38,9 @@
 
 ```xml
 <dependency>
-    <groupId>com.ai.fabric</groupId>
-    <artifactId>ai-infrastructure-onnx-starter</artifactId>
-    <version>1.0.0</version>
+    <groupId>io.github.loom-ai-labs</groupId>
+    <artifactId>ai-fabric-onnx-starter</artifactId>
+    <version>0.3.2</version>
 </dependency>
 ```
 
@@ -305,17 +305,16 @@ ai:
 - Optional: Custom model path
 - Optional: Sequence length
 
-**Result:** Free embeddings. Forever. 10x faster. 100% private. Production-ready.
+**Result:** Local embeddings with provider-independent execution and no remote embedding call.
 
 ---
 
 ## Learn More
 
-🚧 **Status:** Under active development | Q1 2026 release
+**Status:** Narrative companion. Current implementation details are in the ONNX guide.
 
-Part of AI Fabric Framework—production-ready AI infrastructure for Spring Boot.
+Part of AI Fabric Framework for Spring Boot.
 
-🎁 **Early Access:** First 500 stars get 50% lifetime Pro discount  
 ⭐ **GitHub:** [AI Fabric Framework](link)  
 📖 **Docs:** [ONNX Provider Guide](link)  
 💬 **Community:** [Join discussions](link)
@@ -326,21 +325,20 @@ Part of AI Fabric Framework—production-ready AI infrastructure for Spring Boot
 - [Custom Access Policy: Fail Closed Security](link)
 - [PII Detection: Privacy by Default](link)
 - [OpenAI Provider: Best-in-Class LLM](link)
-- **ONNX Provider: Free Forever** (you are here)
+- **ONNX Provider: Local Embeddings** (you are here)
 - [The Core: Foundation](link)
 
 ---
 
-*Built with ❤️ for developers who want free, fast, private embeddings*
+*Built for developers who want local embedding options*
 
-*© 2025 AI Fabric Framework | MIT License | Free Forever*
+*© 2025 AI Fabric Framework*
 
 ---
 
 **If this helped:**
-- ⭐ Star on GitHub (first 500 get 50% discount)
+- ⭐ Star on GitHub
 - 💬 Share your ONNX use cases
-- 🔄 Follow for Q1 2026 launch
+- 📖 Validate implementation details against the current guide
 
-**Stop paying for embeddings. Start generating locally. Free forever. 10x faster. 100% private.** 🆓
-
+**Use local embeddings when privacy, offline behavior, or provider independence matters.**

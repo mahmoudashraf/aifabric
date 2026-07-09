@@ -88,6 +88,7 @@ import RetentionCapabilitiesStory from "./pages/docs/RetentionCapabilitiesStory"
 import RetentionCapabilitiesStoryV2 from "./pages/docs/RetentionCapabilitiesStoryV2";
 import RetentionCapabilitiesFull from "./pages/docs/RetentionCapabilitiesFull";
 import QuickStart from "./pages/docs/QuickStart";
+import MarkdownGuidePage from "./pages/docs/MarkdownGuidePage";
 import RealAPIStories from "./pages/docs/RealAPIStories";
 import UserStories from "./pages/docs/UserStories";
 import CoreModules from "./pages/docs/CoreModules";
@@ -192,6 +193,29 @@ const App = () => (
             <Route path={`${LEGACY_AI_FABRIC_FRAMEWORK_ROUTE}/product/:id`} element={<ProductDetails />} />
             <Route path="/maxAI" element={<MaxAIMode />} />
             <Route path="/docs" element={<Documentation />} />
+            <Route path="/docs/getting-started" element={<MarkdownGuidePage docId="getting-started" />} />
+            <Route path="/docs/start-here" element={<MarkdownGuidePage docId="start-here" />} />
+            <Route path="/docs/choose-your-path" element={<MarkdownGuidePage docId="choose-your-path" />} />
+            <Route path="/docs/installation" element={<MarkdownGuidePage docId="installation" />} />
+            <Route path="/docs/first-semantic-search" element={<MarkdownGuidePage docId="first-semantic-search" />} />
+            <Route path="/docs/first-rag-chat" element={<MarkdownGuidePage docId="first-rag-chat" />} />
+            <Route path="/docs/first-governed-action" element={<MarkdownGuidePage docId="first-governed-action" />} />
+            <Route path="/docs/chat-session-memory" element={<MarkdownGuidePage docId="chat-session-memory" />} />
+            <Route path="/docs/providers/openai" element={<MarkdownGuidePage docId="real-provider-openai" />} />
+            <Route path="/docs/providers/onnx" element={<MarkdownGuidePage docId="local-onnx-embeddings" />} />
+            <Route path="/docs/vector/lucene" element={<MarkdownGuidePage docId="vector-storage-lucene" />} />
+            <Route path="/docs/security/access-policy" element={<MarkdownGuidePage docId="security-access-policy" />} />
+            <Route path="/docs/testing-verification" element={<MarkdownGuidePage docId="testing-verification" />} />
+            <Route path="/docs/real-apps-map" element={<MarkdownGuidePage docId="real-apps-map" />} />
+            <Route path="/docs/production-checklist" element={<MarkdownGuidePage docId="production-checklist" />} />
+            <Route path="/docs/llm-context" element={<MarkdownGuidePage docId="llm-context" />} />
+            <Route path="/docs/llm-context/routing" element={<MarkdownGuidePage docId="llm-context-routing" />} />
+            <Route path="/docs/llm-context/rules" element={<MarkdownGuidePage docId="llm-context-rules" />} />
+            <Route path="/docs/llm-context/capability-map" element={<MarkdownGuidePage docId="llm-capability-map" />} />
+            <Route path="/docs/llm-context/module-decision-tree" element={<MarkdownGuidePage docId="llm-module-decision-tree" />} />
+            <Route path="/docs/llm-context/common-recipes" element={<MarkdownGuidePage docId="llm-common-recipes" />} />
+            <Route path="/docs/llm-context/troubleshooting" element={<MarkdownGuidePage docId="llm-troubleshooting" />} />
+            <Route path="/docs/llm-context/real-app-reference" element={<MarkdownGuidePage docId="llm-real-app-reference" />} />
             <Route path="/docs/orchestrator_story" element={<OrchestratorStory />} />
             <Route path="/docs/orchestrator_story_v2" element={<OrchestratorStoryV2 />} />
             <Route path="/docs/pii_detection" element={<PIIDetectionStory />} />

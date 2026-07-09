@@ -31,7 +31,7 @@ import {
 import ragStoryContent from "@/content/rag-onnx-story.md?raw";
 
 const PAGE_TITLE = "RAG + ONNX: Stop Hallucinating, Start Saving - AI Fabric Framework";
-const PAGE_DESCRIPTION = "How we built retrieval-augmented generation with free local embeddings—zero hallucinations, zero API costs, $18K/year savings.";
+const PAGE_DESCRIPTION = "How AI Fabric grounds generated answers in retrieved evidence and shows the context used.";
 const OG_IMAGE = "/assets/story-preview.png";
 
 const codeTheme = {
@@ -532,7 +532,7 @@ const RagStory = () => {
                   <span className="text-gradient">Stop Hallucinating, Start Saving</span>
                 </h1>
                 <p className="text-lg text-muted-foreground max-w-2xl mb-8">
-                  How we built retrieval-augmented generation with free local embeddings—zero hallucinations, zero API costs, $18K/year savings. Part of the AI Fabric Framework series.
+                  How AI Fabric grounds generated answers in retrieved evidence and shows the context used. Pair this story with the current RAG guide for exact setup.
                 </p>
                 <div className="flex flex-wrap items-center gap-4">
                   <div className="flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm text-accent">
@@ -541,7 +541,7 @@ const RagStory = () => {
                   </div>
                   <div className="flex items-center gap-2 rounded-full bg-secondary/10 px-4 py-2 text-sm text-secondary">
                     <DollarSign className="h-4 w-4" />
-                    $18K Saved/Year
+                    Evidence-backed answers
                   </div>
                   <div className="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm text-primary">
                     <Zap className="h-4 w-4" />
@@ -735,7 +735,7 @@ const RagStory = () => {
             <div className="flex flex-col items-center gap-4">
               <StoryLoveButton storySlug="rag-onnx-story" />
               <p className="text-sm text-muted-foreground text-center">
-                Part of the AI Fabric Framework series — under active development for Q1 2026
+                Part of the AI Fabric Framework series. See current guides for exact setup and release checks.
               </p>
             </div>
           </footer>

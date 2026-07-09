@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 
 const PAGE_TITLE = "User Stories - AI Fabric Framework";
-const PAGE_DESCRIPTION = "Learn through real-world scenarios and use cases. See how AI Fabric Framework solves real problems in production.";
+const PAGE_DESCRIPTION = "Learn through real-world scenarios and use cases. Pair these narrative stories with the current AI Fabric implementation guides.";
 
 // Import more icons as needed
 import { 
@@ -90,7 +90,7 @@ const stories = [
   {
     id: "behavior-story",
     title: "The Behavior Story",
-    description: "Predict churn with 87% accuracy using AI patterns",
+    description: "Analyze behavior signals with AI-backed user insights",
     href: "/docs/behavior_story",
     icon: TrendingUp,
     color: "bg-green-500",
@@ -108,7 +108,7 @@ const stories = [
   {
     id: "indexing-story",
     title: "The Indexing Story",
-    description: "Index 2000 entities per second efficiently",
+    description: "Keep AI evidence fresh with sync, async, and batch indexing",
     href: "/docs/indexing_story",
     icon: Database,
     color: "bg-cyan-500",
@@ -171,7 +171,7 @@ const stories = [
   {
     id: "migration-story",
     title: "The Migration Story",
-    description: "Zero-downtime migrations for enterprise systems",
+    description: "Plan bulk indexing and reindexing for changing systems",
     href: "/docs/migration_story",
     icon: RefreshCw,
     color: "bg-orange-500",
@@ -512,4 +512,3 @@ const UserStories = () => {
 };
 
 export default UserStories;
-

@@ -39,8 +39,8 @@ import {
   Search
 } from "lucide-react";
 
-const PAGE_TITLE = "ONNX Provider: Local Embeddings That Cost $0 and Beat Cloud APIs - AI Fabric Framework";
-const PAGE_DESCRIPTION = "How we built a production-ready local embedding provider using ONNX Runtime—zero cost, 100% private, 10x faster than cloud APIs, and works completely offline.";
+const PAGE_TITLE = "ONNX Provider: Local Embeddings for AI Fabric - AI Fabric Framework";
+const PAGE_DESCRIPTION = "How AI Fabric can use ONNX Runtime for local embeddings when privacy, offline behavior, or provider independence matters.";
 
 const codeTheme = {
   ...themes.nightOwl,
@@ -425,17 +425,17 @@ const ONNXProviderStory = () => {
             >
               <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
                 ONNX Provider:{" "}
-                <span className="text-gradient">Local Embeddings That Cost $0</span>{" "}
-                and Beat Cloud APIs
+                <span className="text-gradient">Local Embeddings</span>{" "}
+                for AI Fabric
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mb-8">
-                How we built a production-ready local embedding provider using ONNX Runtime—zero cost, 
-                100% private, 10x faster than cloud APIs, and works completely offline.
+                How AI Fabric can use ONNX Runtime for local embeddings when privacy, offline behavior,
+                or provider independence matters.
               </p>
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm text-accent">
                   <DollarSign className="h-4 w-4" />
-                  $0 Forever
+                  Local Runtime
                 </div>
                 <div className="flex items-center gap-2 rounded-full bg-secondary/10 px-4 py-2 text-sm text-secondary">
                   <Lock className="h-4 w-4" />
@@ -443,7 +443,7 @@ const ONNXProviderStory = () => {
                 </div>
                 <div className="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm text-primary">
                   <Zap className="h-4 w-4" />
-                  10x Faster
+                  Provider Independent
                 </div>
                 <div className="flex items-center gap-2 rounded-full bg-green-500/10 px-4 py-2 text-sm text-green-400">
                   <WifiOff className="h-4 w-4" />
@@ -511,9 +511,9 @@ const ONNXProviderStory = () => {
               description="One dependency. Model included. Auto-configured."
               color="bg-primary"
               code={`<dependency>
-    <groupId>com.ai.fabric</groupId>
-    <artifactId>ai-infrastructure-onnx-starter</artifactId>
-    <version>1.0.0</version>
+    <groupId>io.github.loom-ai-labs</groupId>
+    <artifactId>ai-fabric-onnx-starter</artifactId>
+    <version>0.3.2</version>
 </dependency>`}
             />
 
@@ -926,4 +926,3 @@ public class SearchController {
 };
 
 export default ONNXProviderStory;
-

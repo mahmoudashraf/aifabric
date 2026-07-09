@@ -2,7 +2,7 @@
 
 *How we built automatic cleanup that removes orphaned vectors, enforces retention policies, and keeps your vector database healthy—all while protecting data integrity*
 
-🚧 **Under active development | Q1 2026 release | Production-tested | GDPR/HIPAA-ready**
+**Narrative companion for AI Fabric 0.3.2.** Use the current production checklist for exact cleanup and release gates.
 
 ---
 
@@ -358,11 +358,10 @@ ai:
 
 ## Learn More
 
-🚧 **Status:** Under active development | Q1 2026 release
+**Status:** Narrative companion. Current implementation details are in the production checklist.
 
-Part of AI Fabric Framework—production-ready AI infrastructure for Spring Boot.
+Part of AI Fabric Framework for Spring Boot.
 
-🎁 **Early Access:** First 500 stars get 50% lifetime Pro discount  
 ⭐ **GitHub:** [AI Fabric Framework](link)  
 📖 **Docs:** [Cleanup Capabilities Guide](link)  
 💬 **Community:** [Join discussions](link)
@@ -373,22 +372,21 @@ Part of AI Fabric Framework—production-ready AI infrastructure for Spring Boot
 - [Custom Access Policy: Fail Closed Security](link)
 - [PII Detection: Privacy by Default](link)
 - [OpenAI Provider: Best-in-Class LLM](link)
-- [ONNX Provider: Free Forever](link)
+- [ONNX Provider: Local Embeddings](link)
 - [Audit Capabilities: Compliance Gold](link)
 - **Cleanup Capabilities: Set It and Forget It** (you are here)
 
 ---
 
-*Built with ❤️ for developers who want automatic data cleanup*
+*Built for developers who want reliable AI data cleanup*
 
-*© 2025 AI Fabric Framework | MIT License | Free Forever*
+*© 2025 AI Fabric Framework*
 
 ---
 
 **If this helped:**
-- ⭐ Star on GitHub (first 500 get 50% discount)
+- ⭐ Star on GitHub
 - 💬 Share your cleanup use cases
-- 🔄 Follow for Q1 2026 launch
+- 📖 Validate implementation details against the current checklist
 
 **Remove orphaned vectors. Enforce retention. Keep database healthy. Zero code.** 🧹
-

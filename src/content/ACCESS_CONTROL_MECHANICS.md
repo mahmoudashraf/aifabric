@@ -355,7 +355,7 @@ private boolean canUserAccessEntity(String userId, RAGDocument document) {
 
 ### EntityAccessPolicy
 
-**Location**: `com.ai.infrastructure.access.policy.EntityAccessPolicy`
+**Location**: `ai.fabric.access.policy.EntityAccessPolicy`
 
 **Purpose**: Framework hook for entity-level access control decisions.
 
@@ -372,7 +372,7 @@ public interface EntityAccessPolicy {
      * @param entity immutable view of the entity metadata for the access decision
      * @return {@code true} when access should be granted, {@code false} otherwise
      */
-    boolean canUserAccessEntity(String userId, Map<String, Object> entity);
+    boolean canAccess(AIAccessSubjectContext authContext, Map<String, Object> entity);
     
     /**
      * Optional callback invoked when access is denied.
@@ -473,7 +473,7 @@ private Decision evaluateAccess(EntityAccessPolicy policy, String userId, Map<St
         boolean granted = policy.canUserAccessEntity(userId, Collections.unmodifiableMap(entityContext));
         return new Decision(granted, false, null);
     } catch (Exception ex) {
-        log.warn("EntityAccessPolicy threw an exception for user {}: {}", userId, ex.getMessage());
+        log.warn("EntityAccessPolicy threw an exception for the current subject: {}", ex.getMessage());
         return new Decision(false, true, ex.getMessage());  // ← DENY on exception
     }
 }
@@ -481,16 +481,16 @@ private Decision evaluateAccess(EntityAccessPolicy policy, String userId, Map<St
 
 ---
 
-### ActionHandler
+### AIActionHandler
 
-**Location**: `com.ai.infrastructure.intent.action.ActionHandler`
+**Location**: `ai.fabric.intent.action.AIActionHandler`
 
-**Purpose**: Handle specific actions detected by the LLM.
+**Purpose**: Internal runtime contract used by the orchestrator for registered actions. Framework users normally declare actions through `@AIAction` annotated beans.
 
 **Interface**:
 
 ```java
-public interface ActionHandler {
+public interface AIActionHandler {
     
     /**
      * @return metadata describing the action handled by this component.
@@ -948,9 +948,9 @@ ai:
 
 ```xml
 <dependency>
-    <groupId>com.ai.fabric</groupId>
-    <artifactId>ai-infrastructure-core</artifactId>
-    <version>1.0.0</version>
+    <groupId>io.github.loom-ai-labs</groupId>
+    <artifactId>ai-fabric-core</artifactId>
+    <version>0.3.2</version>
 </dependency>
 ```
 
@@ -1318,4 +1318,3 @@ The AI Infrastructure Framework provides **comprehensive, multi-layered access c
 **Last Updated**: 2025-12-30  
 **Framework Version**: 1.0.0  
 **License**: Open Source
-

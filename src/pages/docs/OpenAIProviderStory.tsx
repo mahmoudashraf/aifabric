@@ -33,8 +33,8 @@ import {
   TrendingUp
 } from "lucide-react";
 
-const PAGE_TITLE = "OpenAI Provider: Production-Ready Integration in One Dependency - AI Fabric Framework";
-const PAGE_DESCRIPTION = "How we built a production-ready OpenAI provider that plugs into the framework—zero code changes, auto-configuration, health checks, metrics.";
+const PAGE_TITLE = "OpenAI Provider: Spring AI-Backed Wiring - AI Fabric Framework";
+const PAGE_DESCRIPTION = "How AI Fabric uses Spring AI for OpenAI LLM and embeddings while keeping AI Fabric policy, RAG, actions, and diagnostics above it.";
 
 const codeTheme = {
   ...themes.nightOwl,
@@ -253,17 +253,16 @@ const OpenAIProviderStory = () => {
             >
               <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
                 OpenAI Provider:{" "}
-                <span className="text-gradient">Production-Ready Integration</span>{" "}
-                in One Dependency
+                <span className="text-gradient">Spring AI-Backed Wiring</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mb-8">
-                How we built a production-ready OpenAI provider that plugs into the framework—zero code changes, 
-                auto-configuration, health checks, metrics, and swappable providers.
+                How AI Fabric uses Spring AI for OpenAI LLM and embeddings while keeping AI Fabric policy,
+                RAG, actions, and diagnostics above the provider.
               </p>
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm text-accent">
                   <Package className="h-4 w-4" />
-                  One Dependency
+                  Provider Starter
                 </div>
                 <div className="flex items-center gap-2 rounded-full bg-secondary/10 px-4 py-2 text-sm text-secondary">
                   <Zap className="h-4 w-4" />
@@ -271,7 +270,7 @@ const OpenAIProviderStory = () => {
                 </div>
                 <div className="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm text-primary">
                   <CheckCircle2 className="h-4 w-4" />
-                  Production-Ready
+                  Current Guide Available
                 </div>
               </div>
             </motion.div>
@@ -397,12 +396,12 @@ public class ChatbotService {
             <SolutionCard
               title="1. Add Dependency"
               icon={Package}
-              description="One dependency. That's it."
+              description="Use the Spring AI-backed provider starter."
               color="bg-primary"
               code={`<dependency>
-    <groupId>com.ai.fabric</groupId>
-    <artifactId>ai-fabric-provider-openai</artifactId>
-    <version>1.0.0</version>
+    <groupId>io.github.loom-ai-labs</groupId>
+    <artifactId>ai-fabric-provider-spring-ai</artifactId>
+    <version>0.3.2</version>
 </dependency>`}
             />
 
@@ -981,4 +980,3 @@ public class SemanticSearchService {
 };
 
 export default OpenAIProviderStory;
-

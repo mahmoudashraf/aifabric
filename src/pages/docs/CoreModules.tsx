@@ -19,7 +19,7 @@ const modules = [
   {
     id: "ai-core",
     title: "AI Core",
-    description: "From 6 months to 5 minutes—one annotation for everything AI",
+    description: "Core annotations, orchestration, providers, actions, and policy hooks",
     href: "/docs/modules/core",
     icon: Brain,
     color: "bg-purple-500",
@@ -259,5 +259,4 @@ const CoreModules = () => {
 };
 
 export default CoreModules;
-
 

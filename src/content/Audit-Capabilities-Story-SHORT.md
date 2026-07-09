@@ -2,7 +2,7 @@
 
 *How we built comprehensive audit logging that tracks every AI interaction, detects anomalies, and generates compliance reports—all while protecting user privacy*
 
-🚧 **Under active development | Q1 2026 release | Production-tested | GDPR/HIPAA/SOC2-ready**
+**Narrative companion for AI Fabric 0.3.2.** Use the current production checklist for exact audit and release gates.
 
 ---
 
@@ -413,11 +413,10 @@ List<IntentHistory> history = intentHistoryService.getUserIntentHistoryBetween(
 
 ## Learn More
 
-🚧 **Status:** Under active development | Q1 2026 release
+**Status:** Narrative companion. Current implementation details are in the production checklist.
 
-Part of AI Fabric Framework—production-ready AI infrastructure for Spring Boot.
+Part of AI Fabric Framework for Spring Boot.
 
-🎁 **Early Access:** First 500 stars get 50% lifetime Pro discount  
 ⭐ **GitHub:** [AI Fabric Framework](link)  
 📖 **Docs:** [Audit Capabilities Guide](link)  
 💬 **Community:** [Join discussions](link)
@@ -428,21 +427,20 @@ Part of AI Fabric Framework—production-ready AI infrastructure for Spring Boot
 - [Custom Access Policy: Fail Closed Security](link)
 - [PII Detection: Privacy by Default](link)
 - [OpenAI Provider: Best-in-Class LLM](link)
-- [ONNX Provider: Free Forever](link)
+- [ONNX Provider: Local Embeddings](link)
 - **Audit Capabilities: Compliance Gold** (you are here)
 
 ---
 
-*Built with ❤️ for developers who need compliance-ready audit trails*
+*Built for developers who need auditable AI flows*
 
-*© 2025 AI Fabric Framework | MIT License | Free Forever*
+*© 2025 AI Fabric Framework*
 
 ---
 
 **If this helped:**
-- ⭐ Star on GitHub (first 500 get 50% discount)
+- ⭐ Star on GitHub
 - 💬 Share your audit use cases
-- 🔄 Follow for Q1 2026 launch
+- 📖 Validate implementation details against the current checklist
 
 **Track every interaction. Protect privacy. Pass audits. Zero code.** 🔍
-

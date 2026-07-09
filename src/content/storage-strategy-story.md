@@ -2,7 +2,7 @@
 
 *How we built a flexible metadata storage system that auto-creates tables and adapts to your database*
 
-🚧 **Under active development | Q1 2026 release | Tested with 10M+ entities**
+**Narrative companion for AI Fabric 0.3.2.** Use the current vector-storage guide for exact provider behavior and configuration.
 
 ---
 
@@ -726,11 +726,10 @@ It's about **picking the right architecture** for your scale and complexity:
 
 ## Learn More
 
-🚧 **Status:** Under active development | Q1 2026 release
+**Status:** Narrative companion. Current implementation details are in the vector-storage guide.
 
-Part of AI Fabric Framework—production-ready AI infrastructure for Spring Boot.
+Part of AI Fabric Framework for Spring Boot.
 
-🎁 **Early Access:** First 500 stars get 50% lifetime Pro discount  
 ⭐ **GitHub:** [AI Fabric Framework](link)  
 📖 **Docs:** [Storage strategy guide](link)  
 💬 **Community:** [Join us](link)
@@ -744,12 +743,12 @@ Part of AI Fabric Framework—production-ready AI infrastructure for Spring Boot
 
 *Built with ❤️ for developers who want flexibility without complexity*
 
-*© 2025 AI Fabric Framework | MIT License | Free Forever*
+*© 2025 AI Fabric Framework*
 
 ---
 
 **If this helped:**
-- ⭐ Star on GitHub (first 500 get 50% discount)
+- ⭐ Star on GitHub
 - 💬 Share your storage strategy experiences
-- 🔄 Follow for Q1 2026 launch
+- 📖 Validate implementation details against the current guide
 

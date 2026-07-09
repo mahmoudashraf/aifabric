@@ -456,7 +456,7 @@ public class ProductIndexingService {
                   { value: "$0", label: "Annual Cost", icon: DollarSign },
                   { value: "15ms", label: "Avg Latency", icon: Zap },
                   { value: "100%", label: "Private", icon: Lock },
-                  { value: "10M+", label: "Documents", icon: Target }
+                  { value: "Local", label: "Fallback Mode", icon: Target }
                 ].map((stat) => (
                   <div key={stat.label} className="rounded-lg border border-border/50 bg-card p-4 text-center">
                     <stat.icon className="h-6 w-6 mx-auto mb-2 text-primary" />
@@ -566,7 +566,7 @@ public class ProductIndexingService {
           <div className="flex flex-col items-center gap-4">
             <StoryLoveButton storySlug="onnx-fallback" />
             <p className="text-sm text-muted-foreground text-center">
-              Real API Integration Story • Part of AI Fabric Framework • MIT License • Production-Ready
+              Real API Integration Story • Part of AI Fabric Framework • See current guides for exact setup
             </p>
           </div>
         </footer>

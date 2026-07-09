@@ -1,8 +1,8 @@
-# 💬 RAG: Why Your AI Stops Hallucinating (And Costs $0)
+# RAG: Grounding AI Answers In Retrieved Evidence
 
-*How we built retrieval-augmented generation with free local embeddings*
+*How AI Fabric combines retrieval, provider calls, and evidence panels for grounded answers*
 
-🚧 **Under active development | Q1 2026 release | Tested with 10M+ entities**
+**Narrative companion for AI Fabric 0.3.2.** Use the current RAG and ONNX guides for exact setup and test commands.
 
 ---
 
@@ -617,16 +617,17 @@ Result: 0.0 (unrelated) to 1.0 (identical)
 ### Setup (30 seconds)
 
 ```xml
-<!-- Free local embeddings -->
 <dependency>
-    <artifactId>ai-infrastructure-onnx-starter</artifactId>
+    <groupId>io.github.loom-ai-labs</groupId>
+    <artifactId>ai-fabric-onnx-starter</artifactId>
+    <version>0.3.2</version>
 </dependency>
 ```
 
 ```yaml
 ai:
   providers:
-    embedding-provider: onnx  # That's it!
+    embedding-provider: onnx
 ```
 
 ---
@@ -1041,11 +1042,10 @@ if (rag.getConfidenceScore() < 0.7) {
 
 ## Learn More
 
-🚧 **Status:** Under active development | Q1 2026 release
+**Status:** Narrative companion. Current implementation details are in the RAG and ONNX guides.
 
-Part of AI Fabric Framework—production-ready AI infrastructure for Spring Boot.
+Part of AI Fabric Framework for Spring Boot.
 
-🎁 **Early Access:** First 500 stars get 50% lifetime Pro discount  
 ⭐ **GitHub:** [AI Fabric Framework](link)  
 📖 **Docs:** [RAG & ONNX guides](link)  
 💬 **Community:** [Join us](link)
@@ -1058,16 +1058,16 @@ Part of AI Fabric Framework—production-ready AI infrastructure for Spring Boot
 
 ---
 
-*Built with ❤️ for developers who want facts, not hallucinations, at zero cost*
+*Built for developers who want answer generation tied to retrieved evidence*
 
-*© 2025 AI Fabric Framework | MIT License | Free Forever*
+*© 2025 AI Fabric Framework*
 
 ---
 
 **If this resonated:**
-- ⭐ Star on GitHub (first 500 get 50% discount)
+- ⭐ Star on GitHub
 - 💬 Share your RAG experiences
-- 🔄 Follow for Q1 2026 launch
+- 📖 Validate implementation details against the current guide
 
-**Stop paying for embeddings. Stop hallucinating. Start using RAG + ONNX.** 🚀
+**Ground answers in retrieved evidence, then verify with the current RAG tests.**
 

@@ -343,10 +343,10 @@ const TrendDetection = () => {
 // Impact Metrics
 const ImpactMetrics = () => {
   const metrics = [
-    { label: "Revenue Saved", value: "$840K", subtext: "/year", icon: DollarSign, color: "text-green-400" },
-    { label: "Churn Predicted", value: "87%", subtext: "accuracy", icon: Target, color: "text-amber-400" },
+    { label: "Signals Read", value: "Events", subtext: "timeline", icon: DollarSign, color: "text-green-400" },
+    { label: "Insight Type", value: "AI", subtext: "analysis", icon: Target, color: "text-amber-400" },
     { label: "Early Warning", value: "2-4", subtext: "weeks", icon: AlertTriangle, color: "text-orange-400" },
-    { label: "Users Analyzed", value: "10M+", subtext: "tested", icon: Users, color: "text-primary" },
+    { label: "Session Users", value: "Demo", subtext: "isolated", icon: Users, color: "text-primary" },
   ];
 
   return (
@@ -555,11 +555,11 @@ const BehaviorStory = () => {
                 <div className="flex flex-wrap items-center gap-4">
                   <div className="flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm text-accent">
                     <Target className="h-4 w-4" />
-                    87% Accuracy
+                    AI Analysis
                   </div>
                   <div className="flex items-center gap-2 rounded-full bg-secondary/10 px-4 py-2 text-sm text-secondary">
                     <Users className="h-4 w-4" />
-                    10M+ Users
+                    Session Users
                   </div>
                   <div className="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm text-primary">
                     <DollarSign className="h-4 w-4" />
@@ -687,7 +687,7 @@ const BehaviorStory = () => {
             <div className="flex flex-col items-center gap-4">
               <StoryLoveButton storySlug="behavior-analytics-story" />
               <p className="text-sm text-muted-foreground text-center">
-                Part of the AI Fabric Framework series — under active development for Q1 2026
+                Part of the AI Fabric Framework series. See current guides for exact setup and release checks.
               </p>
             </div>
           </footer>

@@ -645,7 +645,7 @@ suspicious.forEach(tx -> {
               </h2>
               <p className="text-muted-foreground mb-8">
                 The AI Fabric Framework provides enterprise-grade fraud detection out of the box. 
-                MIT License, production-ready, compliance-friendly.
+                Validate exact dependencies, policy behavior, and release checks in the current AI Fabric guides.
               </p>
 
               <div className="flex flex-wrap items-center gap-4">
@@ -707,7 +707,7 @@ suspicious.forEach(tx -> {
           <div className="flex flex-col items-center gap-4">
             <StoryLoveButton storySlug="financial-fraud-detection" />
             <p className="text-sm text-muted-foreground text-center">
-              Real API Integration Story • Part of AI Fabric Framework • MIT License • Production-Ready
+              Real API Integration Story • Part of AI Fabric Framework • See current guides for exact setup
             </p>
           </div>
         </footer>

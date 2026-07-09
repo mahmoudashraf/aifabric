@@ -1,8 +1,8 @@
 # 🤖 OpenAI Provider: When You Need the Best LLM, Just Add a Dependency
 
-*How we built a production-ready OpenAI provider that plugs into the framework—zero code changes, just configuration*
+*How AI Fabric wires OpenAI LLM and embeddings through Spring AI while keeping AI Fabric policy, RAG, actions, and diagnostics above the provider*
 
-🚧 **Under active development | Q1 2026 release | Production-tested with GPT-4, GPT-3.5, embeddings**
+**Narrative companion for AI Fabric 0.3.2.** Use the current OpenAI provider guide for exact Spring AI-backed configuration.
 
 ---
 
@@ -56,9 +56,9 @@ ResponseEntity<Map> response = restTemplate.postForEntity(
 
 ```xml
 <dependency>
-    <groupId>com.ai.fabric</groupId>
-    <artifactId>ai-fabric-provider-openai</artifactId>
-    <version>1.0.0</version>
+    <groupId>io.github.loom-ai-labs</groupId>
+    <artifactId>ai-fabric-provider-spring-ai</artifactId>
+    <version>0.3.2</version>
 </dependency>
 ```
 
@@ -459,17 +459,16 @@ public class ProductDescriptionService {
 - Temperature, max tokens
 - Timeout settings
 
-**Result:** Best-in-class LLM. Zero boilerplate. Production-ready. Swappable.
+**Result:** OpenAI LLM and embeddings through Spring AI, with AI Fabric orchestration above it.
 
 ---
 
 ## Learn More
 
-🚧 **Status:** Under active development | Q1 2026 release
+**Status:** Narrative companion. Current implementation details are in the OpenAI provider guide.
 
-Part of AI Fabric Framework—production-ready AI infrastructure for Spring Boot.
+Part of AI Fabric Framework for Spring Boot.
 
-🎁 **Early Access:** First 500 stars get 50% lifetime Pro discount  
 ⭐ **GitHub:** [AI Fabric Framework](link)  
 📖 **Docs:** [OpenAI Provider Guide](link)  
 💬 **Community:** [Join discussions](link)
@@ -484,16 +483,15 @@ Part of AI Fabric Framework—production-ready AI infrastructure for Spring Boot
 
 ---
 
-*Built with ❤️ for developers who want production-ready AI, not boilerplate*
+*Built for developers who want provider wiring without losing AI Fabric policy and diagnostics*
 
-*© 2025 AI Fabric Framework | MIT License | Free Forever*
+*© 2025 AI Fabric Framework*
 
 ---
 
 **If this helped:**
-- ⭐ Star on GitHub (first 500 get 50% discount)
+- ⭐ Star on GitHub
 - 💬 Share your OpenAI use cases
-- 🔄 Follow for Q1 2026 launch
+- 📖 Validate implementation details against the current guide
 
-**Stop writing boilerplate. Start using GPT-4. Just add a dependency.** 🤖
-
+**Use OpenAI through Spring AI where it fits, and keep AI Fabric policy, RAG, actions, and diagnostics in control.**

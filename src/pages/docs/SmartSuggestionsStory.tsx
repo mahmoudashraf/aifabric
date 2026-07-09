@@ -449,7 +449,7 @@ SmartSuggestion {
           <div className="flex flex-col items-center gap-4">
             <StoryLoveButton storySlug="smart-suggestions" />
             <p className="text-sm text-muted-foreground text-center">
-              Real API Integration Story • Part of AI Fabric Framework • MIT License • Production-Ready
+              Real API Integration Story • Part of AI Fabric Framework • See current guides for exact setup
             </p>
           </div>
         </footer>
