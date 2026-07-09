@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   Code2,
   Database,
+  EyeOff,
   Github,
   GitBranch,
   Layers3,
@@ -72,6 +73,17 @@ const liveDemos = [
     proof: "Vector filters, boundary checks, LLM actions, tenant cleanup",
     accent: "border-violet-200 bg-violet-50 text-violet-700",
     icon: LockKeyhole,
+  },
+  {
+    id: "privacy",
+    title: "Privacy Shield",
+    eyebrow: "Sensitive-info guard",
+    href: "/demos/ai-fabric-privacy-shield",
+    image: "/images/home/privacy-shield.jpg",
+    summary: "Submit support text with emails, phones, or SSNs and watch AI Fabric return redacted records and safe search proof.",
+    proof: "PII detection, redacted persistence, sanitized vector search",
+    accent: "border-cyan-200 bg-cyan-50 text-cyan-700",
+    icon: EyeOff,
   },
 ];
 
@@ -164,7 +176,7 @@ function scrollToHashTarget() {
 }
 
 function DemoPreviewWall() {
-  const previewOrder = [liveDemos[0], liveDemos[1], liveDemos[3], liveDemos[2]];
+  const previewOrder = [liveDemos[0], liveDemos[1], liveDemos[3], liveDemos[2], liveDemos[4]];
 
   return (
     <div className="mx-auto mt-12 grid max-w-6xl gap-3 lg:grid-cols-[1.25fr_0.9fr]">
@@ -266,7 +278,7 @@ const Index = () => {
               <div className="flex flex-wrap items-center justify-center gap-2">
                 <Badge className="border-emerald-200 bg-emerald-50 px-3 py-1 text-emerald-700" variant="outline">
                   <Sparkles className="mr-1 h-3.5 w-3.5" />
-                  Four live AI Fabric apps
+                  Five live AI Fabric apps
                 </Badge>
                 <Badge className="border-slate-200 bg-white px-3 py-1 text-slate-700" variant="outline">
                   Java-first
@@ -301,7 +313,7 @@ const Index = () => {
 
               <div className="mx-auto mt-6 grid max-w-3xl grid-cols-3 gap-2 text-left md:mt-8">
                 {[
-                  ["4", "deployed AI apps"],
+                  ["5", "deployed AI apps"],
                   ["0.3.x", "release line"],
                   ["OpenAI", "live provider demos"],
                 ].map(([value, label]) => (
@@ -331,7 +343,7 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-5">
               {liveDemos.map((demo) => (
                 <DemoCard key={demo.id} demo={demo} />
               ))}

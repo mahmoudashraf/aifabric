@@ -13,6 +13,7 @@ import Demos from "./pages/Demos";
 import AIFabricAccountResolver from "./pages/demos/AIFabricAccountResolver";
 import AIFabricAgenticUI from "./pages/demos/AIFabricAgenticUI";
 import AIFabricBehaviorSignals from "./pages/demos/AIFabricBehaviorSignals";
+import AIFabricPrivacyShield from "./pages/demos/AIFabricPrivacyShield";
 import AIFabricTenantGuard from "./pages/demos/AIFabricTenantGuard";
 import DemoAboutPage from "./pages/demos/DemoAboutPage";
 import SmartFAQAssistant from "./pages/demos/SmartFAQAssistant";
@@ -161,6 +162,17 @@ const App = () => (
             <Route path="/demos/ai-fabric-behavior-signals" element={<AIFabricBehaviorSignals />} />
             <Route path="/demos/team-sentiment-tracker/about" element={<Navigate to="/demos/ai-fabric-behavior-signals/about" replace />} />
             <Route path="/demos/team-sentiment-tracker" element={<AIFabricBehaviorSignals />} />
+            <Route
+              path="/demos/ai-fabric-privacy-shield/about"
+              element={
+                <DemoAboutPage
+                  architecture={demoBackendArchitectures.privacyShield}
+                  demoLabel="AI Fabric Privacy Shield"
+                  demoPath="/demos/ai-fabric-privacy-shield"
+                />
+              }
+            />
+            <Route path="/demos/ai-fabric-privacy-shield" element={<AIFabricPrivacyShield />} />
             <Route
               path="/demos/ai-fabric-tenant-guard/about"
               element={

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, CreditCard, MessageSquare, TrendingUp, Shield, Zap, HelpCircle, Search, Bot, FileText, Upload, ShoppingBag, Users, Heart, Smile, Activity, Code, Calendar, ListTodo, Lock, CheckCircle2, Database, Layers, ShieldCheck } from "lucide-react";
+import { ArrowRight, Sparkles, CreditCard, MessageSquare, TrendingUp, Shield, Zap, HelpCircle, Search, Bot, FileText, Upload, ShoppingBag, Users, Heart, Smile, Activity, Code, Calendar, ListTodo, Lock, CheckCircle2, Database, Layers, ShieldCheck, EyeOff } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
@@ -173,6 +173,33 @@ const demos = [
     link: "/demos/ai-fabric-tenant-guard",
   },
   {
+    id: "ai-fabric-privacy-shield",
+    title: "AI Fabric Privacy Shield",
+    description: "Privacy-first support intake that detects sensitive user text, stores redacted records, searches a safe index, and proves raw payloads are withheld.",
+    icon: EyeOff,
+    status: "featured" as const,
+    features: [
+      { icon: ShieldCheck, label: "PII Detection" },
+      { icon: EyeOff, label: "Redacted Storage" },
+      { icon: Search, label: "Safe Search" },
+      { icon: Database, label: "Governance Evidence" },
+    ],
+    stats: [
+      { value: "3", label: "Sensitive Samples" },
+      { value: "0", label: "LLM Keys Needed" },
+      { value: "Safe", label: "Index Proof" },
+    ],
+    aboutLink: "/demos/ai-fabric-privacy-shield/about",
+    livePreview: {
+      eyebrow: "Privacy gate",
+      prompt: "Submit support text with an email, phone, or SSN, then search using sensitive text and inspect the sanitized query.",
+      proof: "Backend returns redacted records, detection evidence, original-evidence policy, and session-scoped vector results.",
+      runtime: "AI Fabric PII detection + Lucene safe indexing",
+    },
+    accent: "border-cyan-200 bg-cyan-50 text-cyan-700",
+    link: "/demos/ai-fabric-privacy-shield",
+  },
+  {
     id: "code-documentation-search",
     title: "Code Documentation Search",
     description: "AI-powered semantic search across your codebase with RAG-based answers and code understanding.",
@@ -217,6 +244,7 @@ const deployedDemoIds = new Set([
   "ai-fabric-account-resolver",
   "ai-fabric-behavior-signals",
   "ai-fabric-tenant-guard",
+  "ai-fabric-privacy-shield",
 ]);
 
 const deployedDemos = demos.filter((demo) => deployedDemoIds.has(demo.id));
@@ -242,7 +270,7 @@ const Demos = () => {
               Real apps first, framework patterns next
             </h1>
             <p className="mx-auto max-w-3xl text-lg leading-8 text-muted-foreground">
-              Start with the four deployed AI Fabric apps that run against live backends, then browse smaller pattern demos for specific framework ideas.
+              Start with the five deployed AI Fabric apps that run against live backends, then browse smaller pattern demos for specific framework ideas.
             </p>
           </motion.div>
         </section>
@@ -261,7 +289,7 @@ const Demos = () => {
             </div>
             <Badge variant="outline" className="w-fit gap-1 border-emerald-200 bg-emerald-50 text-emerald-700">
               <Database className="h-3.5 w-3.5" />
-              4 live backends
+              5 live backends
             </Badge>
           </div>
 
