@@ -427,9 +427,9 @@ const Index = () => {
                 >
                   Mahmoud Elgammal
                 </a>
-                . Next live webinar:{" "}
+                .{" "}
                 <Link to="/webinars" className="font-semibold text-blue-700 underline underline-offset-4">
-                  {nextWebinar.dateLabel}
+                  Next live webinar: {nextWebinar.dateLabel}
                 </Link>
                 . Source:{" "}
                 <a
