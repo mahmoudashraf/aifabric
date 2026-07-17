@@ -29,7 +29,11 @@ import {
   LEGACY_AI_FABRIC_FRAMEWORK_ROUTE,
 } from "./pages/demos/AIFabricFramework/routes";
 import MarkdownGuidePage, { MarkdownGuideId } from "./pages/docs/MarkdownGuidePage";
+import RealAPIStories from "./pages/docs/RealAPIStories";
+import ReviewedStoryPage from "./pages/docs/ReviewedStoryPage";
+import UserStories from "./pages/docs/UserStories";
 import { usePageTracking } from "./hooks/usePageTracking";
+import { reviewedStories } from "./lib/reviewedStoryCatalog";
 
 const queryClient = new QueryClient();
 
@@ -73,6 +77,81 @@ const retiredDemoRoutes = [
   "/demos/product-discovery-engine",
   "/demos/code-documentation-search",
   "/demos/meeting-notes-analyzer",
+];
+
+const legacyStoryRedirectRoutes = [
+  { path: "/docs/orchestrator_story", to: "/docs/architecture" },
+  { path: "/docs/orchestrator_story_v2", to: "/docs/architecture" },
+  { path: "/docs/guides/orchestrator", to: "/docs/architecture" },
+  { path: "/docs/pii_detection", to: "/docs/pii_detection_story_v1" },
+  { path: "/docs/pii_detection_story_v2", to: "/docs/pii_detection_story_v1" },
+  { path: "/docs/pii_detection_full", to: "/docs/pii_detection_story_v1" },
+  { path: "/docs/guides/pii_detection", to: "/docs/pii_detection_story_v1" },
+  { path: "/docs/rag_story", to: "/docs/rag_story_v3" },
+  { path: "/docs/rag_story_v2", to: "/docs/rag_story_v3" },
+  { path: "/docs/behavior_story", to: "/docs/behavior-signals-story" },
+  { path: "/docs/behavior_story_v2", to: "/docs/behavior-signals-story" },
+  { path: "/docs/guides/behavior", to: "/docs/behavior-signals-story" },
+  { path: "/docs/indexing_story_v2", to: "/docs/indexing_story" },
+  { path: "/docs/guides/indexing", to: "/docs/indexing_story" },
+  { path: "/docs/custom_storage_indexing", to: "/docs/first-semantic-search" },
+  { path: "/docs/storage_story", to: "/docs/first-semantic-search" },
+  { path: "/docs/storage_story_v2", to: "/docs/first-semantic-search" },
+  { path: "/docs/guides/storage", to: "/docs/first-semantic-search" },
+  { path: "/docs/intent_story", to: "/docs/governed_actions_story" },
+  { path: "/docs/intent_story_v2", to: "/docs/governed_actions_story" },
+  { path: "/docs/guides/intent", to: "/docs/governed_actions_story" },
+  { path: "/docs/migration_story", to: "/docs/indexing_story" },
+  { path: "/docs/migration_story_v2", to: "/docs/indexing_story" },
+  { path: "/docs/guides/migration", to: "/docs/indexing_story" },
+  { path: "/docs/access_policy_story_v2", to: "/docs/access_policy_story" },
+  { path: "/docs/guides/access_policy", to: "/docs/security/access-policy" },
+  { path: "/docs/openai_provider_story_v2", to: "/docs/openai_provider_story" },
+  { path: "/docs/openai_provider_full", to: "/docs/providers/openai" },
+  { path: "/docs/guides/openai_provider", to: "/docs/providers/openai" },
+  { path: "/docs/onnx_provider_story_v2", to: "/docs/onnx_provider_story" },
+  { path: "/docs/onnx_provider_full", to: "/docs/providers/onnx" },
+  { path: "/docs/guides/onnx_provider", to: "/docs/providers/onnx" },
+  { path: "/docs/onnx-fallback-story", to: "/docs/onnx_provider_story" },
+  { path: "/docs/real-ai-embedding-story", to: "/docs/first-semantic-search" },
+  { path: "/docs/audit_capabilities_story", to: "/docs/production-checklist" },
+  { path: "/docs/audit_capabilities_story_v2", to: "/docs/production-checklist" },
+  { path: "/docs/audit_capabilities_full", to: "/docs/production-checklist" },
+  { path: "/docs/guides/audit_capabilities", to: "/docs/production-checklist" },
+  { path: "/docs/cleanup_capabilities_story", to: "/docs/production-checklist" },
+  { path: "/docs/cleanup_capabilities_story_v2", to: "/docs/production-checklist" },
+  { path: "/docs/cleanup_capabilities_full", to: "/docs/production-checklist" },
+  { path: "/docs/guides/cleanup_capabilities", to: "/docs/production-checklist" },
+  { path: "/docs/retention_capabilities_story", to: "/docs/production-checklist" },
+  { path: "/docs/retention_capabilities_story_v2", to: "/docs/production-checklist" },
+  { path: "/docs/retention_capabilities_full", to: "/docs/production-checklist" },
+  { path: "/docs/guides/retention_capabilities", to: "/docs/production-checklist" },
+  { path: "/docs/financial-fraud-detection-story", to: "/docs/real-api-stories" },
+  { path: "/docs/law-firm-document-story", to: "/docs/real-api-stories" },
+  { path: "/docs/pii-detection-edge-story", to: "/docs/privacy-shield-story" },
+  { path: "/docs/smart-suggestions-story", to: "/docs/real-api-stories" },
+  { path: "/docs/vector-lifecycle-story", to: "/docs/indexing_story" },
+  { path: "/docs/features/query", to: "/docs/modules" },
+  { path: "/docs/guides/query", to: "/docs/modules" },
+  { path: "/docs/relationship_query_intelligence_story", to: "/docs/relationship_query_story_v2" },
+  { path: "/docs/relationship_query_intelligence_v2", to: "/docs/relationship_query_story_v2" },
+  { path: "/docs/guides/relationship_query_intelligence", to: "/docs/relationship_query_story_v2" },
+  { path: "/docs/guides/rag", to: "/docs/first-rag-chat" },
+  { path: "/docs/modules/core", to: "/docs/modules" },
+  { path: "/docs/core_story_v2", to: "/docs/modules" },
+  { path: "/docs/guides/core", to: "/docs/modules" },
+  { path: "/docs/core-modules", to: "/docs/modules" },
+  { path: "/docs/access_control_mechanics_story", to: "/docs/access_policy_story" },
+  { path: "/docs/access_control_mechanics_v2", to: "/docs/access_policy_story" },
+  { path: "/docs/guides/access_control_mechanics", to: "/docs/access_policy_story" },
+  { path: "/docs/access_policy_full", to: "/docs/security/access-policy" },
+  { path: "/docs/quickstart", to: "/docs/getting-started" },
+  { path: "/docs/ai-annotations-ecommerce", to: "/docs/ecommerce-product-discovery-story" },
+  { path: "/docs/ai-annotations-enterprise-knowledge", to: "/docs/rag_story_v3" },
+  { path: "/docs/ai-annotations-developer-guide", to: "/docs/llm-context/opportunity-scanner" },
+  { path: "/docs/ai-annotations-architect", to: "/docs/llm-context/opportunity-scanner" },
+  { path: "/docs/ai-annotations-killing-boilerplate", to: "/docs/llm-context/opportunity-scanner" },
+  { path: "/docs/ai-annotations-semantic-search", to: "/docs/first-semantic-search" },
 ];
 
 const PageTracker = ({ children }: { children: React.ReactNode }) => {
@@ -171,6 +250,22 @@ const App = () => (
               <Route path="/maxAI" element={<MaxAIMode />} />
 
               <Route path="/docs" element={<Documentation />} />
+              <Route path="/docs/user-stories" element={<UserStories />} />
+              <Route path="/docs/real-api-stories" element={<RealAPIStories />} />
+              {reviewedStories.map((story) => (
+                <Route
+                  key={story.href}
+                  path={story.href}
+                  element={<ReviewedStoryPage storyId={story.id} />}
+                />
+              ))}
+              {legacyStoryRedirectRoutes.map((route) => (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={<Navigate to={route.to} replace />}
+                />
+              ))}
               {markdownGuideRoutes.map((route) => (
                 <Route
                   key={route.path}

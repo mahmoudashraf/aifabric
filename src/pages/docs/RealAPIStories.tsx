@@ -1,116 +1,15 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { ArrowRight, ExternalLink, FlaskConical, ShieldCheck } from "lucide-react";
+
 import DocsLayout from "@/components/docs/DocsLayout";
 import StoryPreviewImage from "@/components/StoryPreviewImage";
-import { 
-  ShoppingCart, 
-  Shield, 
-  FileText, 
-  Lock, 
-  Sparkles, 
-  Cpu, 
-  Zap, 
-  RefreshCw,
-  ArrowRight,
-  ExternalLink,
-  BookOpen,
-  TestTube
-} from "lucide-react";
+import { realApiStories } from "@/lib/reviewedStoryCatalog";
 
-const PAGE_TITLE = "Real API Stories - AI Fabric Framework";
-const PAGE_DESCRIPTION = "Integration scenarios told as interactive stories. Pair them with the current AI Fabric testing guide for exact release checks.";
-
-const stories = [
-  {
-    id: "ecommerce-product-discovery",
-    title: "E-Commerce Product Discovery",
-    description: "When shoppers speak, AI listens—natural language product search",
-    href: "/docs/ecommerce-product-discovery-story",
-    icon: ShoppingCart,
-    color: "bg-blue-500",
-    stats: "Product retrieval",
-    category: "E-Commerce",
-    readTime: "8 min read"
-  },
-  {
-    id: "financial-fraud-detection",
-    title: "Financial Fraud Detection",
-    description: "Track suspicious money flows through relationship queries",
-    href: "/docs/financial-fraud-detection-story",
-    icon: Shield,
-    color: "bg-green-500",
-    stats: "Graph signals",
-    category: "Finance",
-    readTime: "10 min read"
-  },
-  {
-    id: "law-firm-document",
-    title: "Law Firm Document Management",
-    description: "Find needles in legal haystacks with semantic document search",
-    href: "/docs/law-firm-document-story",
-    icon: FileText,
-    color: "bg-purple-500",
-    stats: "Document search",
-    category: "Legal",
-    readTime: "12 min read"
-  },
-  {
-    id: "pii-detection-edge",
-    title: "PII Detection Edge Spectrum",
-    description: "Testing every privacy edge case—HIPAA & GDPR compliant",
-    href: "/docs/pii-detection-edge-story",
-    icon: Lock,
-    color: "bg-red-500",
-    stats: "Privacy edge cases",
-    category: "Security",
-    readTime: "15 min read"
-  },
-  {
-    id: "smart-suggestions",
-    title: "Smart Suggestions",
-    description: "AI-powered next-step predictions with confidence scores",
-    href: "/docs/smart-suggestions-story",
-    icon: Sparkles,
-    color: "bg-yellow-500",
-    stats: "Next-step hints",
-    category: "UX",
-    readTime: "7 min read"
-  },
-  {
-    id: "onnx-fallback",
-    title: "ONNX Fallback Readiness",
-    description: "Local embedding fallback when remote providers are unavailable",
-    href: "/docs/onnx-fallback-story",
-    icon: Cpu,
-    color: "bg-cyan-500",
-    stats: "Local fallback",
-    category: "Cost Optimization",
-    readTime: "9 min read"
-  },
-  {
-    id: "real-ai-embedding",
-    title: "Real AI Embedding Generation",
-    description: "From product data to semantic search with real embedding evidence",
-    href: "/docs/real-ai-embedding-story",
-    icon: Zap,
-    color: "bg-orange-500",
-    stats: "Embedding proof",
-    category: "Performance",
-    readTime: "11 min read"
-  },
-  {
-    id: "vector-lifecycle",
-    title: "Vector Lifecycle Management",
-    description: "8-phase lifecycle: create, remove, clear, reseed with full audit",
-    href: "/docs/vector-lifecycle-story",
-    icon: RefreshCw,
-    color: "bg-indigo-500",
-    stats: "Lifecycle checks",
-    category: "Operations",
-    readTime: "13 min read"
-  }
-];
+const PAGE_TITLE = "Reviewed Real App Stories - AI Fabric Framework";
+const PAGE_DESCRIPTION =
+  "Reviewed stories for deployed AI Fabric demo apps and release verification. Each story links to current live demos, architecture pages, or test guides.";
 
 const RealAPIStories = () => {
   useEffect(() => {
@@ -121,189 +20,138 @@ const RealAPIStories = () => {
       if (!element) {
         element = document.createElement("meta");
         if (selector.includes("property=")) {
-          element.setAttribute(
-            "property",
-            selector.match(/property="([^"]+)"/)?.[1] || ""
-          );
+          element.setAttribute("property", selector.match(/property=\"([^\"]+)\"/)?.[1] || "");
         } else if (selector.includes("name=")) {
-          element.setAttribute(
-            "name",
-            selector.match(/name="([^"]+)"/)?.[1] || ""
-          );
+          element.setAttribute("name", selector.match(/name=\"([^\"]+)\"/)?.[1] || "");
         }
         document.head.appendChild(element);
       }
       element.setAttribute(attribute, value);
     };
 
-    const updateCanonical = (href: string) => {
-      let link = document.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
-      if (!link) {
-        link = document.createElement("link");
-        link.setAttribute("rel", "canonical");
-        document.head.appendChild(link);
-      }
-      link.setAttribute("href", href);
-    };
-
-    updateMeta('meta[name="description"]', "content", PAGE_DESCRIPTION);
-    updateMeta('meta[property="og:title"]', "content", PAGE_TITLE);
-    updateMeta('meta[property="og:description"]', "content", PAGE_DESCRIPTION);
-    updateMeta('meta[property="og:image"]', "content", `${window.location.origin}/assets/story-preview.png`);
-    updateMeta('meta[property="og:type"]', "content", "website");
-    updateMeta('meta[property="og:url"]', "content", window.location.href);
-
-    updateMeta('meta[name="twitter:title"]', "content", PAGE_TITLE);
-    updateMeta('meta[name="twitter:description"]', "content", PAGE_DESCRIPTION);
-    updateMeta('meta[name="twitter:image"]', "content", `${window.location.origin}/assets/story-preview.png`);
-    updateMeta('meta[name="twitter:card"]', "content", "summary_large_image");
-
-    updateCanonical(window.location.href);
+    updateMeta("meta[name=\"description\"]", "content", PAGE_DESCRIPTION);
+    updateMeta("meta[property=\"og:title\"]", "content", PAGE_TITLE);
+    updateMeta("meta[property=\"og:description\"]", "content", PAGE_DESCRIPTION);
+    updateMeta("meta[property=\"og:type\"]", "content", "website");
+    updateMeta("meta[property=\"og:url\"]", "content", window.location.href);
+    updateMeta("meta[name=\"twitter:title\"]", "content", PAGE_TITLE);
+    updateMeta("meta[name=\"twitter:description\"]", "content", PAGE_DESCRIPTION);
+    updateMeta("meta[name=\"twitter:card\"]", "content", "summary_large_image");
   }, []);
 
   return (
     <DocsLayout>
       <div className="min-h-screen bg-background">
-        {/* Hero Section */}
-        <section className="relative overflow-hidden border-b border-border/50 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
-          <div className="absolute inset-0 bg-gradient-glow opacity-30" />
-          <div className="relative px-6 py-16">
-            <div className="mx-auto max-w-6xl">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="text-center"
-              >
-                <div className="mb-4 flex items-center justify-center gap-2">
-                  <TestTube className="h-6 w-6 text-primary" />
-                  <span className="text-sm font-medium uppercase tracking-wider text-primary">
-                    Production Integration Tests
-                  </span>
-                </div>
-                <h1 className="mb-4 text-4xl font-bold text-foreground sm:text-5xl lg:text-6xl">
-                  🧪 Real API Stories
-                </h1>
-                <p className="mx-auto max-w-3xl text-lg text-muted-foreground sm:text-xl">
-                  Production integration tests told as interactive stories. See the AI Fabric Framework 
-                  in action with real-world scenarios, actual API calls, and measurable results.
-                </p>
-              </motion.div>
+        <section className="border-b border-border/50 px-6 py-14">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mx-auto max-w-6xl"
+          >
+            <div className="mb-5 flex flex-wrap items-center gap-3">
+              <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary">
+                <FlaskConical className="h-3.5 w-3.5" />
+                Reviewed real app stories
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                Linked to deployed demos
+              </span>
             </div>
-          </div>
+
+            <h1 className="max-w-4xl text-4xl font-black leading-tight tracking-normal text-foreground md:text-6xl">
+              Real app stories that show AI Fabric under live pressure.
+            </h1>
+            <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">
+              These stories replace the older Real API drafts with current deployed demo evidence:
+              shopping, account resolution, behavior signals, tenant guard, privacy shield, and release verification.
+            </p>
+          </motion.div>
         </section>
 
-        {/* Stories Grid */}
-        <section className="px-6 py-16">
+        <section className="px-6 py-12">
           <div className="mx-auto max-w-7xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="mb-12 text-center"
-            >
-              <h2 className="mb-4 text-3xl font-bold text-foreground">
-                Explore Real-World Integrations
-              </h2>
-              <p className="mx-auto max-w-2xl text-muted-foreground">
-                Each story demonstrates a complete integration with real API calls, performance metrics, 
-                and business impact.
+            <div className="mb-8 max-w-3xl">
+              <h2 className="text-2xl font-bold text-foreground">Reviewed Demo And Test Stories</h2>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                Each card opens a story that points to the live demo, backend architecture page, or release
+                verification guide. Unsupported accuracy, revenue, uptime, or compliance claims were not carried forward.
               </p>
-            </motion.div>
+            </div>
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {stories.map((story, index) => {
-                const Icon = story.icon;
-                return (
-                  <motion.div
-                    key={story.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
+            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              {realApiStories.map((story, index) => (
+                <motion.div
+                  key={story.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.04 }}
+                >
+                  <Link
+                    to={story.href}
+                    className="group block h-full overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all hover:border-primary/40 hover:shadow-md"
                   >
-                    <Link
-                      to={story.href}
-                      className="group block h-full overflow-hidden rounded-2xl border border-border/50 bg-card transition-all hover:border-primary/50 hover:shadow-xl"
-                    >
-                      {/* Preview Image */}
-                      <div className="relative aspect-video w-full overflow-hidden">
-                        <StoryPreviewImage
-                          icon={story.icon}
-                          title={story.title}
-                          description={story.description}
-                          stats={story.stats}
-                          category={story.category}
-                          color={story.color}
-                          className="transition-transform duration-300 group-hover:scale-105"
-                        />
-                      </div>
+                    <div className="relative aspect-video w-full overflow-hidden">
+                      <StoryPreviewImage
+                        icon={story.icon}
+                        title={story.title}
+                        description={story.description}
+                        stats={story.stats}
+                        category={story.category}
+                        color={story.color}
+                        className="transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
 
-                      {/* Content */}
-                      <div className="p-6">
-                        <h3 className="mb-2 text-xl font-bold text-foreground transition-colors group-hover:text-primary">
-                          {story.title}
-                        </h3>
-                        <p className="mb-4 text-sm text-muted-foreground line-clamp-2">
-                          {story.description}
-                        </p>
-                        
-                        {/* Stats */}
-                        <div className="mb-4 flex items-center justify-between">
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <BookOpen className="h-3 w-3" />
-                            {story.readTime}
-                          </div>
-                          <div className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-                            {story.stats}
-                          </div>
-                        </div>
-
-                        {/* CTA */}
-                        <div className="flex items-center gap-2 text-sm font-medium text-primary group-hover:gap-3 transition-all">
-                          <span>Read Story</span>
-                          <ArrowRight className="h-4 w-4" />
-                        </div>
+                    <div className="flex h-full flex-col p-5">
+                      <h3 className="text-xl font-bold text-foreground transition-colors group-hover:text-primary">
+                        {story.title}
+                      </h3>
+                      <p className="mt-2 flex-1 text-sm leading-6 text-muted-foreground">
+                        {story.description}
+                      </p>
+                      <div className="mt-5 flex items-center justify-between gap-3">
+                        <span className="rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+                          {story.readTime}
+                        </span>
+                        <span className="inline-flex items-center gap-2 text-sm font-semibold text-primary">
+                          Read story
+                          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                        </span>
                       </div>
-                    </Link>
-                  </motion.div>
-                );
-              })}
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
             </div>
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="border-t border-border/50 bg-muted/30 px-6 py-16">
-          <div className="mx-auto max-w-4xl text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-            >
-              <h2 className="mb-4 text-3xl font-bold text-foreground">
-                Ready to Build Your Own Story?
-              </h2>
-              <p className="mb-8 text-lg text-muted-foreground">
-                Start integrating AI Fabric Framework into your application today. 
-                These stories show you exactly how.
+        <section className="border-t border-border/50 bg-muted/30 px-6 py-12">
+          <div className="mx-auto flex max-w-5xl flex-col gap-5 rounded-xl border border-border bg-card p-6 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-foreground">Want to test them yourself?</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
+                The demo index contains the current public apps, including about pages with backend module,
+                provider, data, and request-flow details.
               </p>
-              <div className="flex flex-wrap items-center justify-center gap-4">
-                <Link
-                  to="/docs/quickstart"
-                  className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-lg"
-                >
-                  Get Started
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-                <Link
-                  to="/docs"
-                  className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-6 py-3 font-semibold text-foreground transition-all hover:border-primary/50 hover:bg-primary/5"
-                >
-                  View Documentation
-                  <ExternalLink className="h-4 w-4" />
-                </Link>
-              </div>
-            </motion.div>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                to="/demos"
+                className="inline-flex items-center gap-2 rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+              >
+                Open Demos
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                to="/docs/live-demos"
+                className="inline-flex items-center gap-2 rounded-lg border border-border bg-background px-5 py-3 text-sm font-semibold text-foreground transition-colors hover:border-primary/40 hover:text-primary"
+              >
+                Demo Guide
+                <ExternalLink className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
         </section>
       </div>

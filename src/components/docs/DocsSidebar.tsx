@@ -57,6 +57,18 @@ const docSections: DocSection[] = [
     ],
   },
   {
+    title: "Framework Stories",
+    icon: <BookOpen className="h-4 w-4" />,
+    items: [
+      { title: "Reviewed User Stories", href: "/docs/user-stories" },
+      { title: "Reviewed Real App Stories", href: "/docs/real-api-stories" },
+      { title: "RAG Evidence Search", href: "/docs/rag_story_v3" },
+      { title: "Governed Actions", href: "/docs/governed_actions_story" },
+      { title: "Account Resolver Story", href: "/docs/account-resolver-story" },
+      { title: "Tenant Guard Story", href: "/docs/tenant-guard-story" },
+    ],
+  },
+  {
     title: "Architecture",
     icon: <BookOpen className="h-4 w-4" />,
     items: [
@@ -185,7 +197,7 @@ const SidebarSection = ({
 export const DocsSidebar = () => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set(["Getting Started", "Architecture", "Modules"])
+    new Set(["Getting Started", "LLM Assistant Context", "Framework Stories", "Architecture", "Modules"])
   );
 
   const toggleSection = (title: string) => {

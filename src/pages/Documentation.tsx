@@ -33,6 +33,13 @@ const primarySections = [
     tone: "border-fuchsia-200 bg-fuchsia-50 text-fuchsia-700",
   },
   {
+    title: "Framework Stories",
+    description: "Read reviewed narrative companions for RAG, actions, chat memory, privacy, tenant guard, and real app demos.",
+    href: "/docs/user-stories",
+    icon: FileText,
+    tone: "border-orange-200 bg-orange-50 text-orange-700",
+  },
+  {
     title: "Architecture",
     description: "Understand request flow, providers, vector stores, access policy, chat memory, and app ownership.",
     href: "/docs/architecture",
@@ -93,6 +100,8 @@ const releaseFacts = [
 const quickLinks = [
   { title: "Opportunity scanner", href: "/docs/llm-context/opportunity-scanner" },
   { title: "LLM assistant context", href: "/docs/llm-context" },
+  { title: "Reviewed user stories", href: "/docs/user-stories" },
+  { title: "Reviewed real app stories", href: "/docs/real-api-stories" },
   { title: "Installation", href: "/docs/installation" },
   { title: "First semantic search", href: "/docs/first-semantic-search" },
   { title: "First RAG chat", href: "/docs/first-rag-chat" },
@@ -119,8 +128,8 @@ const Documentation = () => {
             </h1>
             <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">
               These are the current public docs for the framework, live real-app demos, testing path,
-              and contributor funnel. Legacy story pages now redirect here so new users start from the
-              release-backed material.
+              contributor funnel, and reviewed framework stories. Older draft story pages are only
+              restored when they can point to release-backed material.
             </p>
           </motion.div>
         </section>
