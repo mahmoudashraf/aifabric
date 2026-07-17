@@ -360,21 +360,21 @@ const QuickStart = () => {
     <dependency>
         <groupId>io.github.loom-ai-labs</groupId>
         <artifactId>ai-fabric-core</artifactId>
-        <version>0.3.2</version>
+        <version>0.3.3</version>
     </dependency>
     
     <!-- 2. ONNX Provider (local embeddings) -->
     <dependency>
         <groupId>io.github.loom-ai-labs</groupId>
         <artifactId>ai-fabric-onnx-starter</artifactId>
-        <version>0.3.2</version>
+        <version>0.3.3</version>
     </dependency>
     
     <!-- 3. Lucene Vector DB (embedded local vector store) -->
     <dependency>
         <groupId>io.github.loom-ai-labs</groupId>
         <artifactId>ai-fabric-vector-lucene</artifactId>
-        <version>0.3.2</version>
+        <version>0.3.3</version>
     </dependency>
 </dependencies>`} 
               />

@@ -136,7 +136,7 @@ const MediumStoriesSection = () => {
                   🛍️ E-Commerce Product Discovery
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  Natural language product search • +40% conversion
+                  Natural language product search • retrieval evidence
                 </p>
               </Link>
               <Link
@@ -147,7 +147,7 @@ const MediumStoriesSection = () => {
                   🔒 Financial Fraud Detection
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  Track suspicious money flows • 87% detection rate
+                  Track suspicious money flows • relationship query flow
                 </p>
               </Link>
               <Link
@@ -158,7 +158,7 @@ const MediumStoriesSection = () => {
                   ⚖️ Law Firm Document Management
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  From 3 hours to 30 seconds • 50K+ documents
+                  Semantic document search • RAG-backed answers
                 </p>
               </Link>
               <Link
@@ -169,7 +169,7 @@ const MediumStoriesSection = () => {
                   🛡️ PII Detection Edge Spectrum
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  10-phase testing • $10M+ in fines avoided
+                  Privacy edge cases • redaction evidence
                 </p>
               </Link>
               <Link
@@ -180,7 +180,7 @@ const MediumStoriesSection = () => {
                   ✨ Smart Suggestions
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  AI predictions • +40% engagement
+                  AI suggestions • confidence-scored next steps
                 </p>
               </Link>
               <Link
@@ -191,7 +191,7 @@ const MediumStoriesSection = () => {
                   💾 ONNX Fallback Readiness
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  $18K → $0 • 100% private • 15ms latency
+                  Local embeddings • fallback readiness
                 </p>
               </Link>
               <Link
@@ -202,7 +202,7 @@ const MediumStoriesSection = () => {
                   ⚡ Real AI Embedding Generation
                 </h4>
                 <p className="text-sm text-muted-foreground">
-                  Product to vector in 15ms • $0 cost • 94% accuracy
+                  Product to vector • embedding evidence
                 </p>
               </Link>
               <Link

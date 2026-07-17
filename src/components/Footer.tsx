@@ -1,4 +1,9 @@
-import { Github, Twitter, MessageCircle, BookOpen, Map, FileText, Heart } from "lucide-react";
+import { BookOpen, ExternalLink, FileText, Github, Heart, Map } from "lucide-react";
+import { Link } from "react-router-dom";
+
+const FRAMEWORK_REPO_URL = "https://github.com/Loom-AI-Labs/ai-fabric-framework";
+const MAINTAINER_GITHUB_URL = "https://github.com/mahmoudashraf";
+const MAINTAINER_MEDIUM_URL = "https://medium.com/@mahmoudashraf";
 
 const Footer = () => {
   return (
@@ -6,105 +11,107 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-8 md:grid-cols-4">
-            {/* Logo & Description */}
             <div className="md:col-span-1">
-              <a href="#" className="flex items-center gap-2">
+              <Link to="/" className="flex items-center gap-2">
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-primary">
                   <span className="text-lg font-bold text-primary-foreground">AI</span>
                 </div>
                 <span className="text-xl font-bold text-foreground">Fabric</span>
-              </a>
-              <p className="mt-4 text-sm text-muted-foreground">
-                Making AI accessible to every developer
+              </Link>
+              <p className="mt-4 text-sm leading-6 text-muted-foreground">
+                Open-source Java/Spring Boot framework for production-oriented AI workflows.
               </p>
             </div>
 
-            {/* Resources */}
             <div>
               <h4 className="mb-4 font-semibold text-foreground">Resources</h4>
               <ul className="space-y-2">
                 <li>
-                  <a href="#" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  <Link to="/docs" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
                     <BookOpen className="h-4 w-4" />
                     Documentation
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="https://github.com/mahmoudashraf/AI-Fabric-Framework" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  <a href={FRAMEWORK_REPO_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
                     <Github className="h-4 w-4" />
-                    GitHub
+                    Framework GitHub
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  <Link to="/docs/roadmap" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
                     <Map className="h-4 w-4" />
                     Roadmap
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  <Link to="/demos" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
                     <FileText className="h-4 w-4" />
-                    Blog
-                  </a>
+                    Live demos
+                  </Link>
                 </li>
               </ul>
             </div>
 
-            {/* Community */}
             <div>
-              <h4 className="mb-4 font-semibold text-foreground">Community</h4>
+              <h4 className="mb-4 font-semibold text-foreground">Maintainer</h4>
+              <p className="mb-3 text-sm leading-6 text-muted-foreground">
+                Created and maintained by Mahmoud Ashraf Elgammal.
+              </p>
               <ul className="space-y-2">
                 <li>
-                  <a href="#" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
-                    <MessageCircle className="h-4 w-4" />
-                    Discord
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
-                    <Twitter className="h-4 w-4" />
-                    Twitter
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  <a href={MAINTAINER_GITHUB_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
                     <Github className="h-4 w-4" />
-                    Discussions
+                    Mahmoud on GitHub
+                  </a>
+                </li>
+                <li>
+                  <a href={MAINTAINER_MEDIUM_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
+                    <ExternalLink className="h-4 w-4" />
+                    Mahmoud on Medium
                   </a>
                 </li>
               </ul>
             </div>
 
-            {/* Legal */}
             <div>
               <h4 className="mb-4 font-semibold text-foreground">Legal</h4>
               <ul className="space-y-2">
                 <li>
-                  <a href="#" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-                    Privacy Policy
+                  <a
+                    href={`${FRAMEWORK_REPO_URL}/blob/main/LICENSE`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    Apache License 2.0
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-                    Terms of Service
+                  <a
+                    href={`${FRAMEWORK_REPO_URL}/security/policy`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    Security policy
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-                    MIT License
-                  </a>
+                  <Link to="/docs/contributing" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                    Contributing
+                  </Link>
                 </li>
               </ul>
             </div>
           </div>
 
-          {/* Bottom */}
           <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 md:flex-row">
             <p className="text-sm text-muted-foreground">
-              © 2024 AI Fabric Framework
+              © 2026 AI Fabric Framework
             </p>
             <p className="flex items-center gap-1 text-sm text-muted-foreground">
-              Built with <Heart className="h-4 w-4 text-destructive" fill="currentColor" /> for the developer community
+              Built with <Heart className="h-4 w-4 text-destructive" fill="currentColor" /> for Java developers
             </p>
           </div>
         </div>

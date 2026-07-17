@@ -450,7 +450,7 @@ for (Product product : products) {
 
               <div className="flex flex-wrap items-center gap-4">
                 <Button variant="hero" size="lg" asChild>
-                  <a href="https://github.com/mahmoudashraf/AI-Fabric-Framework" target="_blank" rel="noopener noreferrer">
+                  <a href="https://github.com/Loom-AI-Labs/ai-fabric-framework" target="_blank" rel="noopener noreferrer">
                     ⭐ Star on GitHub
                   </a>
                 </Button>

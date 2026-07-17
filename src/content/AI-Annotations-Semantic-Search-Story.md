@@ -2,7 +2,7 @@
 
 *How we went from 47% zero-result searches to 92% relevance—and why keyword search was always a lie*
 
-**Narrative companion for AI Fabric 0.3.2.** Use the current semantic-search guide for exact annotations, dependencies, and verification steps.
+**Narrative companion for AI Fabric 0.3.3.** Use the current semantic-search guide for exact annotations, dependencies, and verification steps.
 
 ---
 

@@ -87,7 +87,7 @@ const CommunitySection = () => {
             className="flex flex-wrap justify-center gap-4"
           >
             <Button variant="github" size="lg" asChild>
-              <a href="https://github.com/mahmoudashraf/AI-Fabric-Framework" target="_blank" rel="noopener noreferrer">
+              <a href="https://github.com/Loom-AI-Labs/ai-fabric-framework" target="_blank" rel="noopener noreferrer">
                 <Github className="h-5 w-5" />
                 Star on GitHub
               </a>

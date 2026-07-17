@@ -2,7 +2,7 @@
 
 *How we built a flexible metadata storage system that auto-creates tables and adapts to your database*
 
-**Narrative companion for AI Fabric 0.3.2.** Use the current vector-storage guide for exact provider behavior and configuration.
+**Narrative companion for AI Fabric 0.3.3.** Use the current vector-storage guide for exact provider behavior and configuration.
 
 ---
 

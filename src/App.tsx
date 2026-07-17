@@ -1,12 +1,12 @@
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+import { MaxModeProvider } from "@/contexts/MaxModeContext";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { MaxModeProvider } from "@/contexts/MaxModeContext";
+
 import Index from "./pages/Index";
-import ClassicLanding from "./pages/ClassicLanding";
-import Landing2 from "./pages/Landing2";
 import NotFound from "./pages/NotFound";
 import Documentation from "./pages/Documentation";
 import Demos from "./pages/Demos";
@@ -16,11 +16,6 @@ import AIFabricBehaviorSignals from "./pages/demos/AIFabricBehaviorSignals";
 import AIFabricPrivacyShield from "./pages/demos/AIFabricPrivacyShield";
 import AIFabricTenantGuard from "./pages/demos/AIFabricTenantGuard";
 import DemoAboutPage from "./pages/demos/DemoAboutPage";
-import SmartFAQAssistant from "./pages/demos/SmartFAQAssistant";
-import DocumentIntelligenceHub from "./pages/demos/DocumentIntelligenceHub";
-import ProductDiscoveryEngine from "./pages/demos/ProductDiscoveryEngine";
-import CodeDocumentationSearch from "./pages/demos/CodeDocumentationSearch";
-import MeetingNotesAnalyzer from "./pages/demos/MeetingNotesAnalyzer";
 import AIFabricFramework from "./pages/demos/AIFabricFramework";
 import { demoBackendArchitectures } from "./pages/demos/components/demoBackendArchitectures";
 import MaxAIMode from "./pages/MaxAIMode";
@@ -31,85 +26,51 @@ import {
   LEGACY_AI_FABRIC_FRAMEWORK_ABOUT_ROUTE,
   LEGACY_AI_FABRIC_FRAMEWORK_ROUTE,
 } from "./pages/demos/AIFabricFramework/routes";
-import OrchestratorStory from "./pages/docs/OrchestratorStory";
-import OrchestratorStoryV2 from "./pages/docs/OrchestratorStoryV2";
-import PIIDetectionStory from "./pages/docs/PIIDetectionStory";
-import OrchestratorStoryFull from "./pages/docs/OrchestratorStoryFull";
-import IndexingStory from "./pages/docs/IndexingStory";
-import IndexingStoryV2 from "./pages/docs/IndexingStoryV2";
-import CustomStorageIndexingStory from "./pages/docs/CustomStorageIndexingStory";
-import IndexingStrategiesFull from "./pages/docs/IndexingStrategiesFull";
-import MigrationStory from "./pages/docs/MigrationStory";
-import MigrationStoryV2 from "./pages/docs/MigrationStoryV2";
-import MigrationFull from "./pages/docs/MigrationFull";
-import StorageStory from "./pages/docs/StorageStory";
-import StorageStoryV2 from "./pages/docs/StorageStoryV2";
-import StorageFull from "./pages/docs/StorageFull";
-import RagStory from "./pages/docs/RagStory";
-import RagStoryV2 from "./pages/docs/RagStoryV2";
-import RagStoryV3 from "./pages/docs/RagStoryV3";
-import RagFull from "./pages/docs/RagFull";
-import BehaviorStory from "./pages/docs/BehaviorStory";
-import BehaviorStoryV2 from "./pages/docs/BehaviorStoryV2";
-import BehaviorFull from "./pages/docs/BehaviorFull";
-import CoreStory from "./pages/docs/CoreStory";
-import CoreStoryV2 from "./pages/docs/CoreStoryV2";
-import CoreFull from "./pages/docs/CoreFull";
-import RelationshipQueryStory from "./pages/docs/RelationshipQueryStory";
-import RelationshipQueryStoryV2 from "./pages/docs/RelationshipQueryStoryV2";
-import RelationshipQueryFull from "./pages/docs/RelationshipQueryFull";
-import RelationshipQueryIntelligenceStory from "./pages/docs/RelationshipQueryIntelligenceStory";
-import RelationshipQueryIntelligenceStoryV2 from "./pages/docs/RelationshipQueryIntelligenceStoryV2";
-import RelationshipQueryIntelligenceFull from "./pages/docs/RelationshipQueryIntelligenceFull";
-import IntentStory from "./pages/docs/IntentStory";
-import IntentStoryV2 from "./pages/docs/IntentStoryV2";
-import IntentFull from "./pages/docs/IntentFull";
-import AccessPolicyStory from "./pages/docs/AccessPolicyStory";
-import AccessPolicyStoryV2 from "./pages/docs/AccessPolicyStoryV2";
-import AccessPolicyFull from "./pages/docs/AccessPolicyFull";
-import AccessControlMechanicsStory from "./pages/docs/AccessControlMechanicsStory";
-import AccessControlMechanicsStoryV2 from "./pages/docs/AccessControlMechanicsStoryV2";
-import AccessControlMechanicsFull from "./pages/docs/AccessControlMechanicsFull";
-import PIIDetectionStoryV1 from "./pages/docs/PIIDetectionStoryV1";
-import PIIDetectionStoryV2 from "./pages/docs/PIIDetectionStoryV2";
-import PIIDetectionFull from "./pages/docs/PIIDetectionFull";
-import OpenAIProviderStory from "./pages/docs/OpenAIProviderStory";
-import OpenAIProviderStoryV2 from "./pages/docs/OpenAIProviderStoryV2";
-import OpenAIProviderFull from "./pages/docs/OpenAIProviderFull";
-import ONNXProviderStory from "./pages/docs/ONNXProviderStory";
-import ONNXProviderStoryV2 from "./pages/docs/ONNXProviderStoryV2";
-import ONNXProviderFull from "./pages/docs/ONNXProviderFull";
-import AuditCapabilitiesStory from "./pages/docs/AuditCapabilitiesStory";
-import AuditCapabilitiesStoryV2 from "./pages/docs/AuditCapabilitiesStoryV2";
-import AuditCapabilitiesFull from "./pages/docs/AuditCapabilitiesFull";
-import CleanupCapabilitiesStory from "./pages/docs/CleanupCapabilitiesStory";
-import CleanupCapabilitiesStoryV2 from "./pages/docs/CleanupCapabilitiesStoryV2";
-import CleanupCapabilitiesFull from "./pages/docs/CleanupCapabilitiesFull";
-import RetentionCapabilitiesStory from "./pages/docs/RetentionCapabilitiesStory";
-import RetentionCapabilitiesStoryV2 from "./pages/docs/RetentionCapabilitiesStoryV2";
-import RetentionCapabilitiesFull from "./pages/docs/RetentionCapabilitiesFull";
-import QuickStart from "./pages/docs/QuickStart";
-import MarkdownGuidePage from "./pages/docs/MarkdownGuidePage";
-import RealAPIStories from "./pages/docs/RealAPIStories";
-import UserStories from "./pages/docs/UserStories";
-import CoreModules from "./pages/docs/CoreModules";
-import ECommerceProductDiscoveryStory from "./pages/docs/ECommerceProductDiscoveryStory";
-import FinancialFraudDetectionStory from "./pages/docs/FinancialFraudDetectionStory";
-import LawFirmDocumentStory from "./pages/docs/LawFirmDocumentStory";
-import PIIDetectionEdgeStory from "./pages/docs/PIIDetectionEdgeStory";
-import SmartSuggestionsStory from "./pages/docs/SmartSuggestionsStory";
-import ONNXFallbackStory from "./pages/docs/ONNXFallbackStory";
-import RealAIEmbeddingStory from "./pages/docs/RealAIEmbeddingStory";
-import VectorLifecycleStory from "./pages/docs/VectorLifecycleStory";
-import AIAnnotationsEcommerceStory from "./pages/docs/AIAnnotationsEcommerceStory";
-import AIAnnotationsEnterpriseKnowledgeStory from "./pages/docs/AIAnnotationsEnterpriseKnowledgeStory";
-import AIAnnotationsDeveloperGuideStory from "./pages/docs/AIAnnotationsDeveloperGuideStory";
-import AIAnnotationsArchitectStory from "./pages/docs/AIAnnotationsArchitectStory";
-import AIAnnotationsKillingBoilerplateStory from "./pages/docs/AIAnnotationsKillingBoilerplateStory";
-import AIAnnotationsSemanticSearchStory from "./pages/docs/AIAnnotationsSemanticSearchStory";
+import MarkdownGuidePage, { MarkdownGuideId } from "./pages/docs/MarkdownGuidePage";
 import { usePageTracking } from "./hooks/usePageTracking";
 
 const queryClient = new QueryClient();
+
+const markdownGuideRoutes: Array<{ path: string; docId: MarkdownGuideId }> = [
+  { path: "/docs/getting-started", docId: "getting-started" },
+  { path: "/docs/start-here", docId: "start-here" },
+  { path: "/docs/choose-your-path", docId: "choose-your-path" },
+  { path: "/docs/installation", docId: "installation" },
+  { path: "/docs/architecture", docId: "architecture" },
+  { path: "/docs/modules", docId: "modules" },
+  { path: "/docs/first-semantic-search", docId: "first-semantic-search" },
+  { path: "/docs/first-rag-chat", docId: "first-rag-chat" },
+  { path: "/docs/first-governed-action", docId: "first-governed-action" },
+  { path: "/docs/chat-session-memory", docId: "chat-session-memory" },
+  { path: "/docs/providers/openai", docId: "real-provider-openai" },
+  { path: "/docs/providers/onnx", docId: "local-onnx-embeddings" },
+  { path: "/docs/vector/lucene", docId: "vector-storage-lucene" },
+  { path: "/docs/security", docId: "security-access-policy" },
+  { path: "/docs/security/access-policy", docId: "security-access-policy" },
+  { path: "/docs/testing", docId: "testing-verification" },
+  { path: "/docs/testing-verification", docId: "testing-verification" },
+  { path: "/docs/live-demos", docId: "live-demos" },
+  { path: "/docs/real-apps-map", docId: "real-apps-map" },
+  { path: "/docs/production-checklist", docId: "production-checklist" },
+  { path: "/docs/contributing", docId: "contributing" },
+  { path: "/docs/roadmap", docId: "roadmap" },
+  { path: "/docs/llm-context", docId: "llm-context" },
+  { path: "/docs/llm-context/routing", docId: "llm-context-routing" },
+  { path: "/docs/llm-context/rules", docId: "llm-context-rules" },
+  { path: "/docs/llm-context/capability-map", docId: "llm-capability-map" },
+  { path: "/docs/llm-context/module-decision-tree", docId: "llm-module-decision-tree" },
+  { path: "/docs/llm-context/common-recipes", docId: "llm-common-recipes" },
+  { path: "/docs/llm-context/troubleshooting", docId: "llm-troubleshooting" },
+  { path: "/docs/llm-context/real-app-reference", docId: "llm-real-app-reference" },
+];
+
+const retiredDemoRoutes = [
+  "/demos/smart-faq-assistant",
+  "/demos/document-intelligence-hub",
+  "/demos/product-discovery-engine",
+  "/demos/code-documentation-search",
+  "/demos/meeting-notes-analyzer",
+];
 
 const PageTracker = ({ children }: { children: React.ReactNode }) => {
   usePageTracking();
@@ -124,196 +85,98 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <PageTracker>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/landing-classic" element={<ClassicLanding />} />
-            <Route path="/landing2" element={<Landing2 />} />
-            <Route path="/demos" element={<Demos />} />
-            <Route
-              path="/demos/ai-fabric-account-resolver/about"
-              element={
-                <DemoAboutPage
-                  architecture={demoBackendArchitectures.accountResolver}
-                  demoLabel="AI Fabric Account Resolver"
-                  demoPath="/demos/ai-fabric-account-resolver"
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/landing-classic" element={<Navigate to="/" replace />} />
+              <Route path="/landing2" element={<Navigate to="/" replace />} />
+
+              <Route path="/demos" element={<Demos />} />
+              {retiredDemoRoutes.map((path) => (
+                <Route key={path} path={path} element={<Navigate to="/demos" replace />} />
+              ))}
+              <Route
+                path="/demos/ai-fabric-account-resolver/about"
+                element={
+                  <DemoAboutPage
+                    architecture={demoBackendArchitectures.accountResolver}
+                    demoLabel="AI Fabric Account Resolver"
+                    demoPath="/demos/ai-fabric-account-resolver"
+                  />
+                }
+              />
+              <Route path="/demos/subscription-management-hub/about" element={<Navigate to="/demos/ai-fabric-account-resolver/about" replace />} />
+              <Route path="/demos/ai-fabric-account-resolver" element={<AIFabricAccountResolver />} />
+              <Route path="/demos/subscription-management-hub" element={<AIFabricAccountResolver />} />
+              <Route path="/demos/ai-fabric-agentic-ui" element={<Navigate to="/demos/ai-fabric-behavior-signals/agentic-ui" replace />} />
+              <Route path="/demos/ai-fabric-agentic-ui/about" element={<Navigate to="/demos/ai-fabric-behavior-signals/about" replace />} />
+              <Route path="/demos/ai-fabric-behavior-signals/agentic-ui/about" element={<Navigate to="/demos/ai-fabric-behavior-signals/about" replace />} />
+              <Route path="/demos/ai-fabric-behavior-signals/agentic-ui" element={<AIFabricAgenticUI />} />
+              <Route
+                path="/demos/ai-fabric-behavior-signals/about"
+                element={
+                  <DemoAboutPage
+                    architecture={demoBackendArchitectures.behaviorSignals}
+                    demoLabel="AI Fabric Behavior Signals"
+                    demoPath="/demos/ai-fabric-behavior-signals"
+                  />
+                }
+              />
+              <Route path="/demos/ai-fabric-behavior-signals" element={<AIFabricBehaviorSignals />} />
+              <Route path="/demos/team-sentiment-tracker/about" element={<Navigate to="/demos/ai-fabric-behavior-signals/about" replace />} />
+              <Route path="/demos/team-sentiment-tracker" element={<AIFabricBehaviorSignals />} />
+              <Route
+                path="/demos/ai-fabric-privacy-shield/about"
+                element={
+                  <DemoAboutPage
+                    architecture={demoBackendArchitectures.privacyShield}
+                    demoLabel="AI Fabric Privacy Shield"
+                    demoPath="/demos/ai-fabric-privacy-shield"
+                  />
+                }
+              />
+              <Route path="/demos/ai-fabric-privacy-shield" element={<AIFabricPrivacyShield />} />
+              <Route
+                path="/demos/ai-fabric-tenant-guard/about"
+                element={
+                  <DemoAboutPage
+                    architecture={demoBackendArchitectures.tenantGuard}
+                    demoLabel="AI Fabric Tenant Guard"
+                    demoPath="/demos/ai-fabric-tenant-guard"
+                  />
+                }
+              />
+              <Route path="/demos/ai-fabric-tenant-guard" element={<AIFabricTenantGuard />} />
+              <Route
+                path={AI_SHOPPING_EXPERIENCE_ABOUT_ROUTE}
+                element={
+                  <DemoAboutPage
+                    architecture={demoBackendArchitectures.shopping}
+                    demoLabel="AI Shopping Experience"
+                    demoPath={AI_SHOPPING_EXPERIENCE_ROUTE}
+                  />
+                }
+              />
+              <Route path={AI_SHOPPING_EXPERIENCE_ROUTE} element={<AIFabricFramework />} />
+              <Route path={`${AI_SHOPPING_EXPERIENCE_ROUTE}/maxAI-Mode`} element={<AIFabricFramework />} />
+              <Route path={`${AI_SHOPPING_EXPERIENCE_ROUTE}/product/:id`} element={<ProductDetails />} />
+              <Route path={LEGACY_AI_FABRIC_FRAMEWORK_ABOUT_ROUTE} element={<Navigate to={AI_SHOPPING_EXPERIENCE_ABOUT_ROUTE} replace />} />
+              <Route path={LEGACY_AI_FABRIC_FRAMEWORK_ROUTE} element={<AIFabricFramework />} />
+              <Route path={`${LEGACY_AI_FABRIC_FRAMEWORK_ROUTE}/maxAI-Mode`} element={<AIFabricFramework />} />
+              <Route path={`${LEGACY_AI_FABRIC_FRAMEWORK_ROUTE}/product/:id`} element={<ProductDetails />} />
+              <Route path="/maxAI" element={<MaxAIMode />} />
+
+              <Route path="/docs" element={<Documentation />} />
+              {markdownGuideRoutes.map((route) => (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={<MarkdownGuidePage docId={route.docId} />}
                 />
-              }
-            />
-            <Route path="/demos/subscription-management-hub/about" element={<Navigate to="/demos/ai-fabric-account-resolver/about" replace />} />
-            <Route path="/demos/ai-fabric-account-resolver" element={<AIFabricAccountResolver />} />
-            <Route path="/demos/subscription-management-hub" element={<AIFabricAccountResolver />} />
-            <Route path="/demos/smart-faq-assistant" element={<SmartFAQAssistant />} />
-            <Route path="/demos/document-intelligence-hub" element={<DocumentIntelligenceHub />} />
-            <Route path="/demos/product-discovery-engine" element={<ProductDiscoveryEngine />} />
-            <Route path="/demos/ai-fabric-agentic-ui" element={<Navigate to="/demos/ai-fabric-behavior-signals/agentic-ui" replace />} />
-            <Route path="/demos/ai-fabric-agentic-ui/about" element={<Navigate to="/demos/ai-fabric-behavior-signals/about" replace />} />
-            <Route path="/demos/ai-fabric-behavior-signals/agentic-ui/about" element={<Navigate to="/demos/ai-fabric-behavior-signals/about" replace />} />
-            <Route path="/demos/ai-fabric-behavior-signals/agentic-ui" element={<AIFabricAgenticUI />} />
-            <Route
-              path="/demos/ai-fabric-behavior-signals/about"
-              element={
-                <DemoAboutPage
-                  architecture={demoBackendArchitectures.behaviorSignals}
-                  demoLabel="AI Fabric Behavior Signals"
-                  demoPath="/demos/ai-fabric-behavior-signals"
-                />
-              }
-            />
-            <Route path="/demos/ai-fabric-behavior-signals" element={<AIFabricBehaviorSignals />} />
-            <Route path="/demos/team-sentiment-tracker/about" element={<Navigate to="/demos/ai-fabric-behavior-signals/about" replace />} />
-            <Route path="/demos/team-sentiment-tracker" element={<AIFabricBehaviorSignals />} />
-            <Route
-              path="/demos/ai-fabric-privacy-shield/about"
-              element={
-                <DemoAboutPage
-                  architecture={demoBackendArchitectures.privacyShield}
-                  demoLabel="AI Fabric Privacy Shield"
-                  demoPath="/demos/ai-fabric-privacy-shield"
-                />
-              }
-            />
-            <Route path="/demos/ai-fabric-privacy-shield" element={<AIFabricPrivacyShield />} />
-            <Route
-              path="/demos/ai-fabric-tenant-guard/about"
-              element={
-                <DemoAboutPage
-                  architecture={demoBackendArchitectures.tenantGuard}
-                  demoLabel="AI Fabric Tenant Guard"
-                  demoPath="/demos/ai-fabric-tenant-guard"
-                />
-              }
-            />
-            <Route path="/demos/ai-fabric-tenant-guard" element={<AIFabricTenantGuard />} />
-            <Route path="/demos/code-documentation-search" element={<CodeDocumentationSearch />} />
-            <Route path="/demos/meeting-notes-analyzer" element={<MeetingNotesAnalyzer />} />
-            <Route
-              path={AI_SHOPPING_EXPERIENCE_ABOUT_ROUTE}
-              element={
-                <DemoAboutPage
-                  architecture={demoBackendArchitectures.shopping}
-                  demoLabel="AI Shopping Experience"
-                  demoPath={AI_SHOPPING_EXPERIENCE_ROUTE}
-                />
-              }
-            />
-            <Route path={AI_SHOPPING_EXPERIENCE_ROUTE} element={<AIFabricFramework />} />
-            <Route path={`${AI_SHOPPING_EXPERIENCE_ROUTE}/maxAI-Mode`} element={<AIFabricFramework />} />
-            <Route path={`${AI_SHOPPING_EXPERIENCE_ROUTE}/product/:id`} element={<ProductDetails />} />
-            <Route path={LEGACY_AI_FABRIC_FRAMEWORK_ABOUT_ROUTE} element={<Navigate to={AI_SHOPPING_EXPERIENCE_ABOUT_ROUTE} replace />} />
-            <Route path={LEGACY_AI_FABRIC_FRAMEWORK_ROUTE} element={<AIFabricFramework />} />
-            <Route path={`${LEGACY_AI_FABRIC_FRAMEWORK_ROUTE}/maxAI-Mode`} element={<AIFabricFramework />} />
-            <Route path={`${LEGACY_AI_FABRIC_FRAMEWORK_ROUTE}/product/:id`} element={<ProductDetails />} />
-            <Route path="/maxAI" element={<MaxAIMode />} />
-            <Route path="/docs" element={<Documentation />} />
-            <Route path="/docs/getting-started" element={<MarkdownGuidePage docId="getting-started" />} />
-            <Route path="/docs/start-here" element={<MarkdownGuidePage docId="start-here" />} />
-            <Route path="/docs/choose-your-path" element={<MarkdownGuidePage docId="choose-your-path" />} />
-            <Route path="/docs/installation" element={<MarkdownGuidePage docId="installation" />} />
-            <Route path="/docs/first-semantic-search" element={<MarkdownGuidePage docId="first-semantic-search" />} />
-            <Route path="/docs/first-rag-chat" element={<MarkdownGuidePage docId="first-rag-chat" />} />
-            <Route path="/docs/first-governed-action" element={<MarkdownGuidePage docId="first-governed-action" />} />
-            <Route path="/docs/chat-session-memory" element={<MarkdownGuidePage docId="chat-session-memory" />} />
-            <Route path="/docs/providers/openai" element={<MarkdownGuidePage docId="real-provider-openai" />} />
-            <Route path="/docs/providers/onnx" element={<MarkdownGuidePage docId="local-onnx-embeddings" />} />
-            <Route path="/docs/vector/lucene" element={<MarkdownGuidePage docId="vector-storage-lucene" />} />
-            <Route path="/docs/security/access-policy" element={<MarkdownGuidePage docId="security-access-policy" />} />
-            <Route path="/docs/testing-verification" element={<MarkdownGuidePage docId="testing-verification" />} />
-            <Route path="/docs/real-apps-map" element={<MarkdownGuidePage docId="real-apps-map" />} />
-            <Route path="/docs/production-checklist" element={<MarkdownGuidePage docId="production-checklist" />} />
-            <Route path="/docs/llm-context" element={<MarkdownGuidePage docId="llm-context" />} />
-            <Route path="/docs/llm-context/routing" element={<MarkdownGuidePage docId="llm-context-routing" />} />
-            <Route path="/docs/llm-context/rules" element={<MarkdownGuidePage docId="llm-context-rules" />} />
-            <Route path="/docs/llm-context/capability-map" element={<MarkdownGuidePage docId="llm-capability-map" />} />
-            <Route path="/docs/llm-context/module-decision-tree" element={<MarkdownGuidePage docId="llm-module-decision-tree" />} />
-            <Route path="/docs/llm-context/common-recipes" element={<MarkdownGuidePage docId="llm-common-recipes" />} />
-            <Route path="/docs/llm-context/troubleshooting" element={<MarkdownGuidePage docId="llm-troubleshooting" />} />
-            <Route path="/docs/llm-context/real-app-reference" element={<MarkdownGuidePage docId="llm-real-app-reference" />} />
-            <Route path="/docs/orchestrator_story" element={<OrchestratorStory />} />
-            <Route path="/docs/orchestrator_story_v2" element={<OrchestratorStoryV2 />} />
-            <Route path="/docs/pii_detection" element={<PIIDetectionStory />} />
-            <Route path="/docs/guides/orchestrator" element={<OrchestratorStoryFull />} />
-            <Route path="/docs/indexing_story" element={<IndexingStory />} />
-            <Route path="/docs/indexing_story_v2" element={<IndexingStoryV2 />} />
-            <Route path="/docs/custom_storage_indexing" element={<CustomStorageIndexingStory />} />
-            <Route path="/docs/guides/indexing" element={<IndexingStrategiesFull />} />
-            <Route path="/docs/migration_story" element={<MigrationStory />} />
-            <Route path="/docs/migration_story_v2" element={<MigrationStoryV2 />} />
-            <Route path="/docs/guides/migration" element={<MigrationFull />} />
-            <Route path="/docs/storage_story" element={<StorageStory />} />
-            <Route path="/docs/storage_story_v2" element={<StorageStoryV2 />} />
-            <Route path="/docs/guides/storage" element={<StorageFull />} />
-            <Route path="/docs/rag_story" element={<RagStory />} />
-            <Route path="/docs/rag_story_v2" element={<RagStoryV2 />} />
-            <Route path="/docs/rag_story_v3" element={<RagStoryV3 />} />
-            <Route path="/docs/guides/rag" element={<RagFull />} />
-            <Route path="/docs/behavior_story" element={<BehaviorStory />} />
-            <Route path="/docs/behavior_story_v2" element={<BehaviorStoryV2 />} />
-            <Route path="/docs/guides/behavior" element={<BehaviorFull />} />
-            <Route path="/docs/modules/core" element={<CoreStory />} />
-            <Route path="/docs/core_story_v2" element={<CoreStoryV2 />} />
-            <Route path="/docs/guides/core" element={<CoreFull />} />
-            <Route path="/docs/features/query" element={<RelationshipQueryStory />} />
-            <Route path="/docs/relationship_query_story_v2" element={<RelationshipQueryStoryV2 />} />
-            <Route path="/docs/guides/query" element={<RelationshipQueryFull />} />
-            <Route path="/docs/relationship_query_intelligence_story" element={<RelationshipQueryIntelligenceStory />} />
-            <Route path="/docs/relationship_query_intelligence_v2" element={<RelationshipQueryIntelligenceStoryV2 />} />
-            <Route path="/docs/guides/relationship_query_intelligence" element={<RelationshipQueryIntelligenceFull />} />
-            <Route path="/docs/intent_story" element={<IntentStory />} />
-            <Route path="/docs/intent_story_v2" element={<IntentStoryV2 />} />
-            <Route path="/docs/guides/intent" element={<IntentFull />} />
-            <Route path="/docs/access_policy_story" element={<AccessPolicyStory />} />
-            <Route path="/docs/access_policy_story_v2" element={<AccessPolicyStoryV2 />} />
-            <Route path="/docs/guides/access_policy" element={<AccessPolicyFull />} />
-            <Route path="/docs/access_policy_full" element={<AccessPolicyFull />} />
-            <Route path="/docs/access_control_mechanics_story" element={<AccessControlMechanicsStory />} />
-            <Route path="/docs/access_control_mechanics_v2" element={<AccessControlMechanicsStoryV2 />} />
-            <Route path="/docs/guides/access_control_mechanics" element={<AccessControlMechanicsFull />} />
-            <Route path="/docs/pii_detection_story_v1" element={<PIIDetectionStoryV1 />} />
-            <Route path="/docs/pii_detection_story_v2" element={<PIIDetectionStoryV2 />} />
-            <Route path="/docs/guides/pii_detection" element={<PIIDetectionFull />} />
-            <Route path="/docs/pii_detection_full" element={<PIIDetectionFull />} />
-            <Route path="/docs/openai_provider_story" element={<OpenAIProviderStory />} />
-            <Route path="/docs/openai_provider_story_v2" element={<OpenAIProviderStoryV2 />} />
-            <Route path="/docs/guides/openai_provider" element={<OpenAIProviderFull />} />
-            <Route path="/docs/openai_provider_full" element={<OpenAIProviderFull />} />
-            <Route path="/docs/onnx_provider_story" element={<ONNXProviderStory />} />
-            <Route path="/docs/onnx_provider_story_v2" element={<ONNXProviderStoryV2 />} />
-            <Route path="/docs/guides/onnx_provider" element={<ONNXProviderFull />} />
-            <Route path="/docs/onnx_provider_full" element={<ONNXProviderFull />} />
-            <Route path="/docs/audit_capabilities_story" element={<AuditCapabilitiesStory />} />
-            <Route path="/docs/audit_capabilities_story_v2" element={<AuditCapabilitiesStoryV2 />} />
-            <Route path="/docs/guides/audit_capabilities" element={<AuditCapabilitiesFull />} />
-            <Route path="/docs/audit_capabilities_full" element={<AuditCapabilitiesFull />} />
-            <Route path="/docs/cleanup_capabilities_story" element={<CleanupCapabilitiesStory />} />
-            <Route path="/docs/cleanup_capabilities_story_v2" element={<CleanupCapabilitiesStoryV2 />} />
-            <Route path="/docs/guides/cleanup_capabilities" element={<CleanupCapabilitiesFull />} />
-            <Route path="/docs/cleanup_capabilities_full" element={<CleanupCapabilitiesFull />} />
-            <Route path="/docs/retention_capabilities_story" element={<RetentionCapabilitiesStory />} />
-            <Route path="/docs/retention_capabilities_story_v2" element={<RetentionCapabilitiesStoryV2 />} />
-            <Route path="/docs/guides/retention_capabilities" element={<RetentionCapabilitiesFull />} />
-            <Route path="/docs/retention_capabilities_full" element={<RetentionCapabilitiesFull />} />
-            <Route path="/docs/quickstart" element={<QuickStart />} />
-            <Route path="/docs/real-api-stories" element={<RealAPIStories />} />
-            <Route path="/docs/user-stories" element={<UserStories />} />
-            <Route path="/docs/core-modules" element={<CoreModules />} />
-            <Route path="/docs/ecommerce-product-discovery-story" element={<ECommerceProductDiscoveryStory />} />
-            <Route path="/docs/financial-fraud-detection-story" element={<FinancialFraudDetectionStory />} />
-            <Route path="/docs/law-firm-document-story" element={<LawFirmDocumentStory />} />
-            <Route path="/docs/pii-detection-edge-story" element={<PIIDetectionEdgeStory />} />
-            <Route path="/docs/smart-suggestions-story" element={<SmartSuggestionsStory />} />
-            <Route path="/docs/onnx-fallback-story" element={<ONNXFallbackStory />} />
-            <Route path="/docs/real-ai-embedding-story" element={<RealAIEmbeddingStory />} />
-            <Route path="/docs/vector-lifecycle-story" element={<VectorLifecycleStory />} />
-            {/* AI Annotations Stories */}
-            <Route path="/docs/ai-annotations-ecommerce" element={<AIAnnotationsEcommerceStory />} />
-            <Route path="/docs/ai-annotations-enterprise-knowledge" element={<AIAnnotationsEnterpriseKnowledgeStory />} />
-            <Route path="/docs/ai-annotations-developer-guide" element={<AIAnnotationsDeveloperGuideStory />} />
-            <Route path="/docs/ai-annotations-architect" element={<AIAnnotationsArchitectStory />} />
-            <Route path="/docs/ai-annotations-killing-boilerplate" element={<AIAnnotationsKillingBoilerplateStory />} />
-            <Route path="/docs/ai-annotations-semantic-search" element={<AIAnnotationsSemanticSearchStory />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+              ))}
+              <Route path="/docs/*" element={<Navigate to="/docs" replace />} />
+
+              <Route path="*" element={<NotFound />} />
+            </Routes>
           </PageTracker>
         </BrowserRouter>
       </TooltipProvider>

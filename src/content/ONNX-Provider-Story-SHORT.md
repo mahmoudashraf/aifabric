@@ -2,7 +2,7 @@
 
 *How we built a local embedding provider that costs $0, runs offline, and beats cloud APIs on speed—all while keeping your data 100% private*
 
-**Narrative companion for AI Fabric 0.3.2.** Use the current ONNX guide for exact dependency, model, and runtime configuration.
+**Narrative companion for AI Fabric 0.3.3.** Use the current ONNX guide for exact dependency, model, and runtime configuration.
 
 ---
 
@@ -40,7 +40,7 @@
 <dependency>
     <groupId>io.github.loom-ai-labs</groupId>
     <artifactId>ai-fabric-onnx-starter</artifactId>
-    <version>0.3.2</version>
+    <version>0.3.3</version>
 </dependency>
 ```
 

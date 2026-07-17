@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Highlight, themes } from "prism-react-renderer";
-import { ArrowRight, BookOpen, Check, Copy, ExternalLink, FileText } from "lucide-react";
+import { Check, Copy, ExternalLink, FileText } from "lucide-react";
 import DocsLayout from "@/components/docs/DocsLayout";
 import PageViewCounter from "@/components/PageViewCounter";
 import gettingStartedIndex from "@/content/getting-started/README.md?raw";
@@ -22,6 +22,11 @@ import securityAccessPolicy from "@/content/getting-started/10-security-access-p
 import testingVerification from "@/content/getting-started/11-testing-and-verification.md?raw";
 import realAppsMap from "@/content/getting-started/12-real-apps-map.md?raw";
 import productionChecklist from "@/content/getting-started/13-production-checklist.md?raw";
+import architectureGuide from "@/content/public-docs/architecture.md?raw";
+import modulesGuide from "@/content/public-docs/modules.md?raw";
+import liveDemosGuide from "@/content/public-docs/live-demos.md?raw";
+import contributingGuide from "@/content/public-docs/contributing.md?raw";
+import roadmapGuide from "@/content/public-docs/roadmap.md?raw";
 import llmContextIndex from "@/content/llm-context/README.md?raw";
 import llmContextRouting from "@/content/llm-context/AI_FABRIC_CONTEXT_INDEX.md?raw";
 import llmContextRules from "@/content/llm-context/AI_FABRIC_RULES_FOR_CODING_ASSISTANTS.md?raw";
@@ -36,6 +41,8 @@ export type MarkdownGuideId =
   | "start-here"
   | "choose-your-path"
   | "installation"
+  | "architecture"
+  | "modules"
   | "first-semantic-search"
   | "first-rag-chat"
   | "first-governed-action"
@@ -45,8 +52,11 @@ export type MarkdownGuideId =
   | "vector-storage-lucene"
   | "security-access-policy"
   | "testing-verification"
+  | "live-demos"
   | "real-apps-map"
   | "production-checklist"
+  | "contributing"
+  | "roadmap"
   | "llm-context"
   | "llm-context-routing"
   | "llm-context-rules"
@@ -74,6 +84,7 @@ type RelatedStory = {
 
 const frameworkRepoUrl =
   "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/main";
+const siteRepoUrl = "https://github.com/mahmoudashraf/aifabric/blob/main";
 
 const guides: Record<MarkdownGuideId, MarkdownGuide> = {
   "getting-started": {
@@ -147,7 +158,7 @@ const guides: Record<MarkdownGuideId, MarkdownGuide> = {
   },
   installation: {
     title: "Installation",
-    description: "Maven coordinates, modules, and baseline configuration for AI Fabric 0.3.2.",
+    description: "Maven coordinates, modules, and baseline configuration for AI Fabric 0.3.3.",
     content: installation,
     sourcePath: "docs/getting-started/02-installation.md",
     sourceUrl: `${frameworkRepoUrl}/docs/getting-started/02-installation.md`,
@@ -171,6 +182,20 @@ const guides: Record<MarkdownGuideId, MarkdownGuide> = {
         label: "Core story",
       },
     ],
+  },
+  architecture: {
+    title: "Architecture",
+    description: "How AI Fabric fits into Spring Boot applications.",
+    content: architectureGuide,
+    sourcePath: "src/content/public-docs/architecture.md",
+    sourceUrl: `${siteRepoUrl}/src/content/public-docs/architecture.md`,
+  },
+  modules: {
+    title: "Modules",
+    description: "Choose AI Fabric modules by capability.",
+    content: modulesGuide,
+    sourcePath: "src/content/public-docs/modules.md",
+    sourceUrl: `${siteRepoUrl}/src/content/public-docs/modules.md`,
   },
   "first-semantic-search": {
     title: "First Semantic Search",
@@ -213,7 +238,7 @@ const guides: Record<MarkdownGuideId, MarkdownGuide> = {
         label: "RAG story",
       },
       {
-        title: "RAG Story V3",
+        title: "RAG chat scenario",
         description: "A realistic support-style RAG scenario.",
         href: "/docs/rag_story_v3",
         label: "Scenario story",
@@ -261,7 +286,7 @@ const guides: Record<MarkdownGuideId, MarkdownGuide> = {
     sourceUrl: `${frameworkRepoUrl}/docs/getting-started/06-chat-session-memory.md`,
     relatedStories: [
       {
-        title: "Intent Story V2",
+        title: "Chat follow-up scenario",
         description: "Narrative context for follow-up messages and intent continuity.",
         href: "/docs/intent_story_v2",
         label: "Conversation story",
@@ -288,7 +313,7 @@ const guides: Record<MarkdownGuideId, MarkdownGuide> = {
         label: "Provider story",
       },
       {
-        title: "OpenAI Provider Story V2",
+        title: "OpenAI provider scenario",
         description: "Narrative version of provider wiring and operational concerns.",
         href: "/docs/openai_provider_story_v2",
         label: "Narrative story",
@@ -403,6 +428,13 @@ const guides: Record<MarkdownGuideId, MarkdownGuide> = {
       },
     ],
   },
+  "live-demos": {
+    title: "Live Demos",
+    description: "Five deployed AI Fabric real apps and what each one proves.",
+    content: liveDemosGuide,
+    sourcePath: "src/content/public-docs/live-demos.md",
+    sourceUrl: `${siteRepoUrl}/src/content/public-docs/live-demos.md`,
+  },
   "real-apps-map": {
     title: "Real Apps Map",
     description: "Pick the example app that proves the capability you need.",
@@ -450,6 +482,20 @@ const guides: Record<MarkdownGuideId, MarkdownGuide> = {
         label: "Evidence index",
       },
     ],
+  },
+  contributing: {
+    title: "Contributing",
+    description: "How external users can start improving AI Fabric safely.",
+    content: contributingGuide,
+    sourcePath: "src/content/public-docs/contributing.md",
+    sourceUrl: `${siteRepoUrl}/src/content/public-docs/contributing.md`,
+  },
+  roadmap: {
+    title: "Roadmap",
+    description: "What matters next for the framework and public adoption.",
+    content: roadmapGuide,
+    sourcePath: "src/content/public-docs/roadmap.md",
+    sourceUrl: `${siteRepoUrl}/src/content/public-docs/roadmap.md`,
   },
   "llm-context": {
     title: "LLM Context Pack",
@@ -539,6 +585,11 @@ const routeByMarkdownFile: Record<string, string> = {
   "11-testing-and-verification.md": "/docs/testing-verification",
   "12-real-apps-map.md": "/docs/real-apps-map",
   "13-production-checklist.md": "/docs/production-checklist",
+  "architecture.md": "/docs/architecture",
+  "modules.md": "/docs/modules",
+  "live-demos.md": "/docs/live-demos",
+  "contributing.md": "/docs/contributing",
+  "roadmap.md": "/docs/roadmap",
   "AI_FABRIC_CONTEXT_INDEX.md": "/docs/llm-context/routing",
   "AI_FABRIC_RULES_FOR_CODING_ASSISTANTS.md": "/docs/llm-context/rules",
   "AI_FABRIC_CAPABILITY_MAP.md": "/docs/llm-context/capability-map",
@@ -742,42 +793,6 @@ export const MarkdownGuidePage = ({ docId }: { docId: MarkdownGuideId }) => {
             {renderedContent}
           </ReactMarkdown>
         </motion.article>
-
-        {guide.relatedStories && guide.relatedStories.length > 0 && (
-          <section className="border-t border-border/50 px-6 py-8">
-            <div className="mb-5 flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <BookOpen className="h-4 w-4" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-foreground">Related Stories And Deep Dives</h2>
-                <p className="text-sm text-muted-foreground">
-                  Pair this implementation guide with the existing human-readable stories.
-                </p>
-              </div>
-            </div>
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {guide.relatedStories.map((story) => (
-                <Link
-                  key={story.href}
-                  to={story.href}
-                  className="group rounded-lg border border-border/60 bg-card p-5 transition-all hover:border-primary/50 hover:shadow-lg"
-                >
-                  <div className="mb-3 flex items-center justify-between gap-3">
-                    <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-                      {story.label}
-                    </span>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-primary" />
-                  </div>
-                  <h3 className="mb-2 font-semibold text-foreground transition-colors group-hover:text-primary">
-                    {story.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">{story.description}</p>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
       </div>
     </DocsLayout>
   );

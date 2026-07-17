@@ -2,7 +2,7 @@
 
 *How we built a pluggable access control system that lets you define your security rules while the framework enforces them—fail closed, always secure*
 
-**Narrative companion for AI Fabric 0.3.2.** Use the current access-policy guide for exact APIs and configuration.
+**Narrative companion for AI Fabric 0.3.3.** Use the current access-policy guide for exact APIs and configuration.
 
 ---
 

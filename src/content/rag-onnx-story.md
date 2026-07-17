@@ -2,7 +2,7 @@
 
 *How AI Fabric combines retrieval, provider calls, and evidence panels for grounded answers*
 
-**Narrative companion for AI Fabric 0.3.2.** Use the current RAG and ONNX guides for exact setup and test commands.
+**Narrative companion for AI Fabric 0.3.3.** Use the current RAG and ONNX guides for exact setup and test commands.
 
 ---
 
@@ -620,7 +620,7 @@ Result: 0.0 (unrelated) to 1.0 (identical)
 <dependency>
     <groupId>io.github.loom-ai-labs</groupId>
     <artifactId>ai-fabric-onnx-starter</artifactId>
-    <version>0.3.2</version>
+    <version>0.3.3</version>
 </dependency>
 ```
 

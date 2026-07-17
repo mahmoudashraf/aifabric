@@ -16,7 +16,7 @@ AI Fabric is distributed on Maven Central under `io.github.loom-ai-labs`.
     <dependency>
       <groupId>io.github.loom-ai-labs</groupId>
       <artifactId>ai-fabric-bom</artifactId>
-      <version>0.3.2</version>
+      <version>0.3.3</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>

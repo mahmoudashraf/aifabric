@@ -950,7 +950,7 @@ ai:
 <dependency>
     <groupId>io.github.loom-ai-labs</groupId>
     <artifactId>ai-fabric-core</artifactId>
-    <version>0.3.2</version>
+    <version>0.3.3</version>
 </dependency>
 ```
 

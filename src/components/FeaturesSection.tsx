@@ -12,7 +12,7 @@ const features = [
   {
     icon: Shield,
     title: "Privacy-First",
-    description: "PII detection and GDPR compliance built-in",
+    description: "PII detection and privacy-oriented guardrails",
   },
   {
     icon: Zap,
@@ -22,7 +22,7 @@ const features = [
   {
     icon: DollarSign,
     title: "Cost-Effective",
-    description: "Free local options save $180K+/year",
+    description: "Local options for development and controlled deployments",
   },
   {
     icon: Package,
@@ -41,8 +41,8 @@ const features = [
   },
   {
     icon: Rocket,
-    title: "Battle-Tested",
-    description: "Real-world validation in progress",
+    title: "Release-Gated",
+    description: "Backed by CI, examples, and live demo smoke paths",
   },
 ];
 

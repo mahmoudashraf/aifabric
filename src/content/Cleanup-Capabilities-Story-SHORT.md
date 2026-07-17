@@ -2,7 +2,7 @@
 
 *How we built automatic cleanup that removes orphaned vectors, enforces retention policies, and keeps your vector database healthy—all while protecting data integrity*
 
-**Narrative companion for AI Fabric 0.3.2.** Use the current production checklist for exact cleanup and release gates.
+**Narrative companion for AI Fabric 0.3.3.** Use the current production checklist for exact cleanup and release gates.
 
 ---
 

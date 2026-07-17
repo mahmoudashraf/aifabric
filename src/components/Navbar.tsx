@@ -110,7 +110,7 @@ const Navbar = () => {
           {/* CTA Buttons */}
           <div className="hidden items-center gap-3 md:flex">
             <Button variant="github" size="sm" asChild>
-              <a href="https://github.com/mahmoudashraf/AI-Fabric-Framework" target="_blank" rel="noopener noreferrer">
+              <a href="https://github.com/Loom-AI-Labs/ai-fabric-framework" target="_blank" rel="noopener noreferrer">
                 <Github className="h-4 w-4" />
                 Star on GitHub
               </a>
@@ -164,7 +164,7 @@ const Navbar = () => {
               </Link>
               <div className="flex gap-3 pt-2">
                 <Button variant="github" size="sm" asChild>
-                  <a href="https://github.com/mahmoudashraf/AI-Fabric-Framework" target="_blank" rel="noopener noreferrer">
+                  <a href="https://github.com/Loom-AI-Labs/ai-fabric-framework" target="_blank" rel="noopener noreferrer">
                     <Github className="h-4 w-4" />
                     Star on GitHub
                   </a>

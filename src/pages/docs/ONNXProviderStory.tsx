@@ -513,7 +513,7 @@ const ONNXProviderStory = () => {
               code={`<dependency>
     <groupId>io.github.loom-ai-labs</groupId>
     <artifactId>ai-fabric-onnx-starter</artifactId>
-    <version>0.3.2</version>
+    <version>0.3.3</version>
 </dependency>`}
             />
 

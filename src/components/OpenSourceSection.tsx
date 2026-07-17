@@ -6,7 +6,7 @@ import { Check } from "lucide-react";
 const communityFeatures = [
   "All core modules",
   "Full source code",
-  "MIT licensed",
+  "Apache 2.0 licensed",
   "Forever free",
   "Community support",
 ];
@@ -39,7 +39,7 @@ const OpenSourceSection = () => {
               Open Source, Forever
             </h2>
             <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-              AI Fabric Framework is MIT licensed and will always remain open source and free.
+              AI Fabric Framework is Apache 2.0 licensed and will always remain open source and free.
             </p>
           </motion.div>
 

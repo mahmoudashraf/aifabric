@@ -87,7 +87,7 @@ const HeroSection = () => {
               </a>
             </Button>
             <Button variant="hero-outline" size="xl" asChild>
-              <a href="https://github.com/mahmoudashraf/AI-Fabric-Framework" target="_blank" rel="noopener noreferrer">
+              <a href="https://github.com/Loom-AI-Labs/ai-fabric-framework" target="_blank" rel="noopener noreferrer">
                 <Github className="h-5 w-5" />
                 View on GitHub
               </a>

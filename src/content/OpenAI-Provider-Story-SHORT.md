@@ -2,7 +2,7 @@
 
 *How AI Fabric wires OpenAI LLM and embeddings through Spring AI while keeping AI Fabric policy, RAG, actions, and diagnostics above the provider*
 
-**Narrative companion for AI Fabric 0.3.2.** Use the current OpenAI provider guide for exact Spring AI-backed configuration.
+**Narrative companion for AI Fabric 0.3.3.** Use the current OpenAI provider guide for exact Spring AI-backed configuration.
 
 ---
 
@@ -58,7 +58,7 @@ ResponseEntity<Map> response = restTemplate.postForEntity(
 <dependency>
     <groupId>io.github.loom-ai-labs</groupId>
     <artifactId>ai-fabric-provider-spring-ai</artifactId>
-    <version>0.3.2</version>
+    <version>0.3.3</version>
 </dependency>
 ```
 

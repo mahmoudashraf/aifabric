@@ -304,7 +304,7 @@ const Index = () => {
                   </Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="h-12 border-slate-300 bg-white px-6 text-base">
-                  <a href="https://github.com/mahmoudashraf/AI-Fabric-Framework" target="_blank" rel="noopener noreferrer">
+                  <a href="https://github.com/Loom-AI-Labs/ai-fabric-framework" target="_blank" rel="noopener noreferrer">
                     <Github className="mr-2 h-4 w-4" />
                     View framework
                   </a>
@@ -314,7 +314,7 @@ const Index = () => {
               <div className="mx-auto mt-6 grid max-w-3xl grid-cols-3 gap-2 text-left md:mt-8">
                 {[
                   ["5", "deployed AI apps"],
-                  ["0.3.x", "release line"],
+                  ["0.3.3", "current release"],
                   ["OpenAI", "live provider demos"],
                 ].map(([value, label]) => (
                   <div key={label} className="rounded-md border border-slate-200 bg-white px-3 py-3 shadow-sm md:px-4">
@@ -323,6 +323,27 @@ const Index = () => {
                   </div>
                 ))}
               </div>
+              <p className="mx-auto mt-5 max-w-2xl text-sm leading-6 text-slate-600">
+                Created and maintained by{" "}
+                <a
+                  href="https://github.com/mahmoudashraf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-slate-950 underline underline-offset-4"
+                >
+                  Mahmoud Ashraf Elgammal
+                </a>
+                . Source code lives under{" "}
+                <a
+                  href="https://github.com/Loom-AI-Labs/ai-fabric-framework"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-slate-950 underline underline-offset-4"
+                >
+                  Loom AI Labs
+                </a>
+                .
+              </p>
             </div>
 
             <DemoPreviewWall />

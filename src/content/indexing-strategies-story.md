@@ -1,9 +1,9 @@
 # ⚡ The Indexing Dilemma: When Milliseconds Cost Millions
 
 > **How AI Fabric indexing lets an app choose sync, async, or batch behavior without blocking every request**  
-> *Narrative companion for AI Fabric 0.3.2. Use the current semantic-search and indexing guides for exact setup.*
+> *Narrative companion for AI Fabric 0.3.3. Use the current semantic-search and indexing guides for exact setup.*
 
-**Status:** Narrative companion. Current implementation details are in the AI Fabric 0.3.2 guides.
+**Status:** Narrative companion. Current implementation details are in the AI Fabric 0.3.3 guides.
 
 ---
 
@@ -662,7 +662,7 @@ They're about **making the right trade-off**:
 
 ## Learn More
 
-**Status:** Narrative companion. Current implementation details are in the AI Fabric 0.3.2 guides.
+**Status:** Narrative companion. Current implementation details are in the AI Fabric 0.3.3 guides.
 
 📖 **GitHub:** [AI Fabric Framework](link)  
 💬 **Discuss:** [Join the community](link)

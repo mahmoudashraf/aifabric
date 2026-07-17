@@ -2,7 +2,7 @@
 
 *How we built comprehensive audit logging that tracks every AI interaction, detects anomalies, and generates compliance reports—all while protecting user privacy*
 
-**Narrative companion for AI Fabric 0.3.2.** Use the current production checklist for exact audit and release gates.
+**Narrative companion for AI Fabric 0.3.3.** Use the current production checklist for exact audit and release gates.
 
 ---
 
