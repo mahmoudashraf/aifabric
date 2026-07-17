@@ -1,8 +1,9 @@
-import { BookOpen, ExternalLink, FileText, Github, Heart, Map } from "lucide-react";
+import { BookOpen, ExternalLink, FileText, Github, Heart, Linkedin, Map } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const FRAMEWORK_REPO_URL = "https://github.com/Loom-AI-Labs/ai-fabric-framework";
 const MAINTAINER_GITHUB_URL = "https://github.com/mahmoudashraf";
+const MAINTAINER_LINKEDIN_URL = "https://www.linkedin.com/in/engmahmoudalgammal/";
 const MAINTAINER_MEDIUM_URL = "https://medium.com/@mahmoudashraf";
 
 const Footer = () => {
@@ -63,6 +64,12 @@ const Footer = () => {
                   <a href={MAINTAINER_GITHUB_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
                     <Github className="h-4 w-4" />
                     Mahmoud on GitHub
+                  </a>
+                </li>
+                <li>
+                  <a href={MAINTAINER_LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
+                    <Linkedin className="h-4 w-4" />
+                    Mahmoud on LinkedIn
                   </a>
                 </li>
                 <li>

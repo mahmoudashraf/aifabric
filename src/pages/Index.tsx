@@ -333,7 +333,16 @@ const Index = () => {
                 >
                   Mahmoud Ashraf Elgammal
                 </a>
-                . Source code lives under{" "}
+                {" "}(
+                <a
+                  href="https://www.linkedin.com/in/engmahmoudalgammal/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-slate-950 underline underline-offset-4"
+                >
+                  LinkedIn
+                </a>
+                ). Source code lives under{" "}
                 <a
                   href="https://github.com/Loom-AI-Labs/ai-fabric-framework"
                   target="_blank"
