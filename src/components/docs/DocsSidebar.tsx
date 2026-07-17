@@ -44,6 +44,19 @@ const docSections: DocSection[] = [
     ],
   },
   {
+    title: "LLM Assistant Context",
+    icon: <Brain className="h-4 w-4" />,
+    items: [
+      { title: "Opportunity Scanner", href: "/docs/llm-context/opportunity-scanner" },
+      { title: "Context Pack Index", href: "/docs/llm-context" },
+      { title: "Context Routing", href: "/docs/llm-context/routing" },
+      { title: "Assistant Rules", href: "/docs/llm-context/rules" },
+      { title: "Common Recipes", href: "/docs/llm-context/common-recipes" },
+      { title: "Troubleshooting", href: "/docs/llm-context/troubleshooting" },
+      { title: "Real App Reference", href: "/docs/llm-context/real-app-reference" },
+    ],
+  },
+  {
     title: "Architecture",
     icon: <BookOpen className="h-4 w-4" />,
     items: [
@@ -98,19 +111,6 @@ const docSections: DocSection[] = [
     items: [
       { title: "Contributing Guide", href: "/docs/contributing" },
       { title: "Roadmap", href: "/docs/roadmap" },
-    ],
-  },
-  {
-    title: "LLM Assistant Context",
-    icon: <Brain className="h-4 w-4" />,
-    items: [
-      { title: "Context Pack Index", href: "/docs/llm-context" },
-      { title: "Context Routing", href: "/docs/llm-context/routing" },
-      { title: "Opportunity Scanner", href: "/docs/llm-context/opportunity-scanner" },
-      { title: "Assistant Rules", href: "/docs/llm-context/rules" },
-      { title: "Common Recipes", href: "/docs/llm-context/common-recipes" },
-      { title: "Troubleshooting", href: "/docs/llm-context/troubleshooting" },
-      { title: "Real App Reference", href: "/docs/llm-context/real-app-reference" },
     ],
   },
 ];

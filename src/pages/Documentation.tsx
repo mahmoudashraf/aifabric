@@ -4,6 +4,7 @@ import {
   ArrowRight,
   BookOpen,
   Boxes,
+  Brain,
   CheckCircle2,
   FileText,
   GitPullRequest,
@@ -23,6 +24,13 @@ const primarySections = [
     href: "/docs/getting-started",
     icon: Sparkles,
     tone: "border-blue-200 bg-blue-50 text-blue-700",
+  },
+  {
+    title: "LLM Assistant Context",
+    description: "Give coding assistants the opportunity scanner, rules, recipes, and evidence map before they edit code.",
+    href: "/docs/llm-context/opportunity-scanner",
+    icon: Brain,
+    tone: "border-fuchsia-200 bg-fuchsia-50 text-fuchsia-700",
   },
   {
     title: "Architecture",
@@ -83,11 +91,12 @@ const releaseFacts = [
 ];
 
 const quickLinks = [
+  { title: "Opportunity scanner", href: "/docs/llm-context/opportunity-scanner" },
+  { title: "LLM assistant context", href: "/docs/llm-context" },
   { title: "Installation", href: "/docs/installation" },
   { title: "First semantic search", href: "/docs/first-semantic-search" },
   { title: "First RAG chat", href: "/docs/first-rag-chat" },
   { title: "First governed action", href: "/docs/first-governed-action" },
-  { title: "LLM assistant context", href: "/docs/llm-context" },
   { title: "Production checklist", href: "/docs/production-checklist" },
 ];
 
