@@ -417,7 +417,7 @@ const Index = () => {
                   </div>
                 ))}
               </div>
-              <p className="mx-auto mt-5 max-w-3xl text-sm leading-6 text-slate-600">
+              <p className="mx-auto mt-5 max-w-2xl text-sm leading-6 text-slate-600">
                 Created and maintained by{" "}
                 <a
                   href="https://www.linkedin.com/in/engmahmoudalgammal/"
@@ -427,12 +427,11 @@ const Index = () => {
                 >
                   Mahmoud Elgammal
                 </a>
-                . Join the{" "}
+                . Next live webinar:{" "}
                 <Link to="/webinars" className="font-semibold text-blue-700 underline underline-offset-4">
-                  next live webinar on {nextWebinar.dateLabel}
-                </Link>{" "}
-                to see how a real Spring Boot workflow becomes AI-enabled with RAG, governed actions, memory,
-                privacy, and release-ready tests. Source code is published under the{" "}
+                  {nextWebinar.dateLabel}
+                </Link>
+                . Source:{" "}
                 <a
                   href="https://github.com/Loom-AI-Labs"
                   target="_blank"
