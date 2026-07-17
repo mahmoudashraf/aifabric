@@ -1,5 +1,6 @@
 export const webinarContactLinks = {
   consultation: "/consultation",
+  discord: "https://discord.gg/cBpR7JQuY",
   linkedin: "https://www.linkedin.com/in/engmahmoudalgammal/",
   whatsapp: "https://wa.me/message/O3RF2KNXTHQDF1",
 };

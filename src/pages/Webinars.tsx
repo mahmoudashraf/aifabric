@@ -71,6 +71,12 @@ const Webinars = () => {
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Button asChild size="lg" className="h-12 bg-slate-950 px-6 text-base hover:bg-slate-800">
+                  <a href={webinarContactLinks.discord} target="_blank" rel="noopener noreferrer">
+                    Join Discord community
+                    <MessageCircle className="ml-2 h-4 w-4" />
+                  </a>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="h-12 border-slate-300 bg-white px-6 text-base">
                   <a href={webinarContactLinks.whatsapp} target="_blank" rel="noopener noreferrer">
                     Ask to join
                     <MessageCircle className="ml-2 h-4 w-4" />
@@ -160,6 +166,12 @@ const Webinars = () => {
                     <Linkedin className="ml-2 h-4 w-4" />
                   </a>
                 </Button>
+                <Button asChild variant="outline" className="border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-100 hover:text-violet-800">
+                  <a href={webinarContactLinks.discord} target="_blank" rel="noopener noreferrer">
+                    Join Discord
+                    <MessageCircle className="ml-2 h-4 w-4" />
+                  </a>
+                </Button>
               </div>
             </div>
 
@@ -192,8 +204,8 @@ const Webinars = () => {
                 </p>
               </div>
               <Button asChild variant="outline" className="w-fit border-slate-300 bg-white">
-                <a href={webinarContactLinks.whatsapp} target="_blank" rel="noopener noreferrer">
-                  Request a topic
+                <a href={webinarContactLinks.discord} target="_blank" rel="noopener noreferrer">
+                  Discuss topics on Discord
                   <MessageCircle className="ml-2 h-4 w-4" />
                 </a>
               </Button>

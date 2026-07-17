@@ -3,6 +3,7 @@ import { useInView } from "framer-motion";
 import { useRef } from "react";
 import { Star, Eye, GitFork, Github, MessageCircle, Quote, Code2, Rocket, Lightbulb, LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { webinarContactLinks } from "@/data/webinars";
 
 const testimonials: { quote: string; icon: LucideIcon }[] = [
   {
@@ -93,7 +94,7 @@ const CommunitySection = () => {
               </a>
             </Button>
             <Button variant="hero-outline" size="lg" asChild>
-              <a href="#" target="_blank" rel="noopener noreferrer">
+              <a href={webinarContactLinks.discord} target="_blank" rel="noopener noreferrer">
                 <MessageCircle className="h-5 w-5" />
                 Join Discord
               </a>

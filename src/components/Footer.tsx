@@ -1,5 +1,6 @@
 import { BookOpen, CalendarCheck, CalendarDays, ExternalLink, FileText, Github, Heart, Linkedin, Map, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { webinarContactLinks } from "@/data/webinars";
 
 const FRAMEWORK_REPO_URL = "https://github.com/Loom-AI-Labs/ai-fabric-framework";
 const MAINTAINER_GITHUB_URL = "https://github.com/mahmoudashraf";
@@ -57,6 +58,12 @@ const Footer = () => {
                     <CalendarDays className="h-4 w-4" />
                     Webinars
                   </Link>
+                </li>
+                <li>
+                  <a href={webinarContactLinks.discord} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
+                    <MessageCircle className="h-4 w-4" />
+                    Discord community
+                  </a>
                 </li>
                 <li>
                   <Link to="/consultation" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">

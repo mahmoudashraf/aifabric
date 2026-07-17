@@ -331,6 +331,12 @@ function WebinarHomeSection() {
               <p className="mt-3 text-sm leading-6 text-slate-600">{nextWebinar.summary}</p>
               <div className="mt-5 flex flex-col gap-3 sm:flex-row">
                 <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                  <a href={webinarContactLinks.discord} target="_blank" rel="noopener noreferrer">
+                    Join Discord
+                    <MessageSquare className="ml-2 h-4 w-4" />
+                  </a>
+                </Button>
+                <Button asChild variant="outline" className="border-slate-300 bg-white">
                   <a href={webinarContactLinks.whatsapp} target="_blank" rel="noopener noreferrer">
                     Ask to join
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -403,6 +409,12 @@ const Index = () => {
                     Book a discussion
                   </Link>
                 </Button>
+                <Button asChild size="lg" variant="outline" className="h-12 border-violet-200 bg-violet-50 px-6 text-base text-violet-700 hover:bg-violet-100 hover:text-violet-800">
+                  <a href={webinarContactLinks.discord} target="_blank" rel="noopener noreferrer">
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    Join Discord
+                  </a>
+                </Button>
               </div>
 
               <div className="mx-auto mt-6 grid max-w-3xl grid-cols-3 gap-2 text-left md:mt-8">
@@ -431,6 +443,15 @@ const Index = () => {
                 <Link to="/webinars" className="font-semibold text-blue-700 underline underline-offset-4">
                   Next webinar: {nextWebinar.shortDateLabel}
                 </Link>
+                .{" "}
+                <a
+                  href={webinarContactLinks.discord}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-violet-700 underline underline-offset-4"
+                >
+                  Join the AI Fabric Discord
+                </a>
                 . Source:{" "}
                 <a
                   href="https://github.com/Loom-AI-Labs"
