@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 
 import Footer from "@/components/Footer";
+import ConsultationCtaBand from "@/components/ConsultationCtaBand";
 import Navbar from "@/components/Navbar";
 import { Badge } from "@/components/ui/badge";
 import { AI_SHOPPING_EXPERIENCE_ROUTE } from "./demos/AIFabricFramework/routes";
@@ -310,6 +311,13 @@ const Demos = () => {
           </div>
         </section>
       </main>
+
+      <ConsultationCtaBand
+        compact
+        className="bg-background py-10"
+        title="Not sure which demo maps to your use case?"
+        body="Book a free AI Fabric architecture discussion and map your Java/Spring Boot workflow to the right framework modules and proof-of-concept path."
+      />
 
       <Footer />
     </div>

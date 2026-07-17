@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 
 import Footer from "@/components/Footer";
+import ConsultationCtaBand from "@/components/ConsultationCtaBand";
 import Navbar from "@/components/Navbar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -1499,6 +1500,13 @@ export default function AIFabricTenantGuard() {
         </div>
 
       </main>
+
+      <ConsultationCtaBand
+        compact
+        className="bg-slate-50 py-10"
+        title="Building tenant-safe AI retrieval?"
+        body="Book a free AI Fabric architecture discussion to map tenant metadata filters, role visibility, governed writes, and cleanup proof to your own multi-tenant app."
+      />
 
       <Footer />
     </div>

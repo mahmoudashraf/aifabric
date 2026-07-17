@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 
 import Footer from "@/components/Footer";
+import ConsultationCtaBand from "@/components/ConsultationCtaBand";
 import Navbar from "@/components/Navbar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -1115,6 +1116,13 @@ export default function AIFabricAgenticUI() {
 
         </section>
       </main>
+
+      <ConsultationCtaBand
+        compact
+        className="bg-background py-10"
+        title="Exploring agentic UI for your users?"
+        body="Book a free AI Fabric architecture discussion to translate behavior insights into trusted, backend-validated UI composition for your own app."
+      />
 
       <Footer />
     </div>

@@ -2,6 +2,7 @@ import { ArrowLeft, ExternalLink, Info, Play, Server } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import Footer from "@/components/Footer";
+import ConsultationCtaBand from "@/components/ConsultationCtaBand";
 import Navbar from "@/components/Navbar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -66,6 +67,13 @@ export default function DemoAboutPage({ architecture, demoLabel, demoPath }: Dem
           <DemoBackendArchitecture architecture={architecture} />
         </section>
       </main>
+
+      <ConsultationCtaBand
+        compact
+        className="bg-background pb-10"
+        title={`Want to adapt ${demoLabel} to your app?`}
+        body="Book a free AI Fabric architecture discussion to turn this demo architecture into a realistic proof-of-concept plan for your own Spring Boot system."
+      />
 
       <Footer />
     </div>

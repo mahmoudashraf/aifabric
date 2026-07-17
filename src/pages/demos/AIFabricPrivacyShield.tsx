@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 
 import Footer from "@/components/Footer";
+import ConsultationCtaBand from "@/components/ConsultationCtaBand";
 import Navbar from "@/components/Navbar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -780,6 +781,13 @@ export default function AIFabricPrivacyShield() {
           </div>
         </section>
       </main>
+
+      <ConsultationCtaBand
+        compact
+        className="bg-background py-10"
+        title="Need sensitive-data guardrails for AI sessions?"
+        body="Book a free AI Fabric architecture discussion to map PII detection, redacted persistence, and sanitized retrieval to your customer-facing support workflow."
+      />
 
       <Footer />
     </div>

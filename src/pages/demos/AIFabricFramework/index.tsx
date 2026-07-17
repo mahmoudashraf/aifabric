@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // Widget library
 import { MaxModeWidget } from "@/lib/max-mode-widget/max-mode-widget.esm.js";
 import "@/lib/max-mode-widget/style.css";
+import ConsultationCtaBand from "@/components/ConsultationCtaBand";
 
 // Hooks
 import { useChat, useProducts, useMigration, useDataEntities, useCart } from "./hooks";
@@ -194,6 +195,13 @@ export default function AIFabricFramework() {
               refreshCommerceData();
             })
           }
+        />
+
+        <ConsultationCtaBand
+          compact
+          className="mb-6 px-0"
+          title="Want this shopping AI pattern in your Spring Boot app?"
+          body="Book a free AI Fabric architecture discussion to map staged RAG evidence, chat memory, cart actions, and checkout confirmations to your own commerce workflow."
         />
 
         {/* Main content tabs */}

@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 
 import Footer from "@/components/Footer";
+import ConsultationCtaBand from "@/components/ConsultationCtaBand";
 import Navbar from "@/components/Navbar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -1187,6 +1188,13 @@ const AIFabricAccountResolver = () => {
           </div>
         </div>
       </div>
+
+      <ConsultationCtaBand
+        compact
+        className="bg-white py-10"
+        title="Need this account-resolution pattern in your app?"
+        body="Book a free AI Fabric architecture discussion to map policies, current-account actions, confirmations, and RAG-backed resolver flows to your own Spring Boot application."
+      />
 
       <Footer />
     </div>

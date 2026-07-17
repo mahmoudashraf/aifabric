@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 
 import Footer from "@/components/Footer";
+import ConsultationCtaBand from "@/components/ConsultationCtaBand";
 import Navbar from "@/components/Navbar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -1233,6 +1234,13 @@ export default function AIFabricBehaviorSignals() {
 
         </section>
       </main>
+
+      <ConsultationCtaBand
+        compact
+        className="bg-background py-10"
+        title="Want behavior intelligence for your product?"
+        body="Book a free AI Fabric architecture discussion to map raw events, persisted insights, and behavior-aware UI recommendations to your own Java application."
+      />
 
       <Footer />
     </div>
