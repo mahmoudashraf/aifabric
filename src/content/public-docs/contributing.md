@@ -22,7 +22,7 @@ AI Fabric is open source under Apache License 2.0. The best first contributions 
 
 Framework source: [Loom-AI-Labs/ai-fabric-framework](https://github.com/Loom-AI-Labs/ai-fabric-framework)
 
-Maintainer: Mahmoud Ashraf Elgammal.
+Maintainer: Mahmoud Elgammal.
 
 ## Useful Next Reads
 

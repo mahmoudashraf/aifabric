@@ -324,32 +324,23 @@ const Index = () => {
                 ))}
               </div>
               <p className="mx-auto mt-5 max-w-2xl text-sm leading-6 text-slate-600">
-                Created and maintained by{" "}
-                <a
-                  href="https://github.com/mahmoudashraf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-semibold text-slate-950 underline underline-offset-4"
-                >
-                  Mahmoud Ashraf Elgammal
-                </a>
-                {" "}(
+                AI Fabric is created and maintained by{" "}
                 <a
                   href="https://www.linkedin.com/in/engmahmoudalgammal/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-semibold text-slate-950 underline underline-offset-4"
                 >
-                  LinkedIn
+                  Mahmoud Elgammal
                 </a>
-                ). Source code lives under{" "}
+                , with source code published under the{" "}
                 <a
-                  href="https://github.com/Loom-AI-Labs/ai-fabric-framework"
+                  href="https://github.com/Loom-AI-Labs"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="font-semibold text-slate-950 underline underline-offset-4"
                 >
-                  Loom AI Labs
+                  Loom AI Labs GitHub organization
                 </a>
                 .
               </p>

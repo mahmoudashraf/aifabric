@@ -57,7 +57,7 @@ const Footer = () => {
             <div>
               <h4 className="mb-4 font-semibold text-foreground">Maintainer</h4>
               <p className="mb-3 text-sm leading-6 text-muted-foreground">
-                Created and maintained by Mahmoud Ashraf Elgammal.
+                AI Fabric is created and maintained by Mahmoud Elgammal, with source code published under Loom AI Labs.
               </p>
               <ul className="space-y-2">
                 <li>
