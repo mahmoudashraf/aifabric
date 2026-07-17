@@ -1,10 +1,11 @@
-import { BookOpen, ExternalLink, FileText, Github, Heart, Linkedin, Map } from "lucide-react";
+import { BookOpen, CalendarCheck, ExternalLink, FileText, Github, Heart, Linkedin, Map, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const FRAMEWORK_REPO_URL = "https://github.com/Loom-AI-Labs/ai-fabric-framework";
 const MAINTAINER_GITHUB_URL = "https://github.com/mahmoudashraf";
 const MAINTAINER_LINKEDIN_URL = "https://www.linkedin.com/in/engmahmoudalgammal/";
 const MAINTAINER_MEDIUM_URL = "https://medium.com/@mahmoudashraf";
+const MAINTAINER_WHATSAPP_URL = "https://wa.me/message/O3RF2KNXTHQDF1";
 
 const Footer = () => {
   return (
@@ -51,6 +52,12 @@ const Footer = () => {
                     Live demos
                   </Link>
                 </li>
+                <li>
+                  <Link to="/consultation" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
+                    <CalendarCheck className="h-4 w-4" />
+                    Book a discussion
+                  </Link>
+                </li>
               </ul>
             </div>
 
@@ -76,6 +83,12 @@ const Footer = () => {
                   <a href={MAINTAINER_MEDIUM_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
                     <ExternalLink className="h-4 w-4" />
                     Mahmoud on Medium
+                  </a>
+                </li>
+                <li>
+                  <a href={MAINTAINER_WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
+                    <MessageCircle className="h-4 w-4" />
+                    WhatsApp
                   </a>
                 </li>
               </ul>

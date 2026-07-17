@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Documentation from "./pages/Documentation";
 import Demos from "./pages/Demos";
+import Consultation from "./pages/Consultation";
 import AIFabricAccountResolver from "./pages/demos/AIFabricAccountResolver";
 import AIFabricAgenticUI from "./pages/demos/AIFabricAgenticUI";
 import AIFabricBehaviorSignals from "./pages/demos/AIFabricBehaviorSignals";
@@ -91,6 +92,7 @@ const App = () => (
               <Route path="/landing2" element={<Navigate to="/" replace />} />
 
               <Route path="/demos" element={<Demos />} />
+              <Route path="/consultation" element={<Consultation />} />
               {retiredDemoRoutes.map((path) => (
                 <Route key={path} path={path} element={<Navigate to="/demos" replace />} />
               ))}

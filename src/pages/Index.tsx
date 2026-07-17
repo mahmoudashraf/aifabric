@@ -4,6 +4,7 @@ import {
   ArrowRight,
   BookOpen,
   Bot,
+  CalendarCheck,
   CheckCircle2,
   Code2,
   Database,
@@ -12,6 +13,7 @@ import {
   GitBranch,
   Layers3,
   LockKeyhole,
+  MessageCircle,
   MessageSquare,
   Play,
   Server,
@@ -309,6 +311,12 @@ const Index = () => {
                     View framework
                   </a>
                 </Button>
+                <Button asChild size="lg" variant="outline" className="h-12 border-blue-200 bg-blue-50 px-6 text-base text-blue-700 hover:bg-blue-100 hover:text-blue-800">
+                  <Link to="/consultation">
+                    <CalendarCheck className="mr-2 h-4 w-4" />
+                    Book a discussion
+                  </Link>
+                </Button>
               </div>
 
               <div className="mx-auto mt-6 grid max-w-3xl grid-cols-3 gap-2 text-left md:mt-8">
@@ -510,6 +518,44 @@ const Index = () => {
                   <BookOpen className="mr-2 h-4 w-4" />
                   Read developer docs
                 </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        <section id="consultation" className="border-t border-slate-200 bg-white px-6 py-16">
+          <div className="mx-auto grid max-w-7xl gap-8 rounded-lg border border-blue-100 bg-gradient-to-br from-blue-50 via-white to-slate-50 p-6 shadow-sm md:p-8 lg:grid-cols-[1fr_0.75fr] lg:items-center">
+            <div>
+              <Badge className="border-blue-200 bg-white text-blue-700" variant="outline">
+                <CalendarCheck className="mr-1 h-3.5 w-3.5" />
+                Free initial discussion
+              </Badge>
+              <h2 className="mt-4 text-3xl font-black tracking-normal text-slate-950 md:text-5xl">
+                Want to evaluate AI Fabric against your app?
+              </h2>
+              <p className="mt-4 max-w-3xl text-base leading-8 text-slate-600">
+                Book a focused 30-minute architecture discussion with Mahmoud Elgammal. Bring one real Java/Spring Boot
+                workflow and leave with a clearer module path, risk map, and proof-of-concept shape.
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+              <Button asChild size="lg" className="h-12 bg-slate-950 text-white hover:bg-slate-800">
+                <Link to="/consultation">
+                  <CalendarCheck className="mr-2 h-4 w-4" />
+                  Book a free discussion
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="h-12 border-slate-300 bg-white text-slate-950 hover:bg-slate-50">
+                <a href="https://www.linkedin.com/in/engmahmoudalgammal/" target="_blank" rel="noopener noreferrer">
+                  Message on LinkedIn
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </a>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="h-12 border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100">
+                <a href="https://wa.me/message/O3RF2KNXTHQDF1" target="_blank" rel="noopener noreferrer">
+                  <MessageCircle className="mr-2 h-4 w-4" />
+                  WhatsApp
+                </a>
               </Button>
             </div>
           </div>

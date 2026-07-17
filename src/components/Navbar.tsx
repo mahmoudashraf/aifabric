@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Github, Menu, X, BookOpen, Play } from "lucide-react";
+import { CalendarCheck, Github, Menu, X, BookOpen, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -91,9 +91,6 @@ const Navbar = () => {
             <HashLink to="/#modules" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               Java Shape
             </HashLink>
-            <HashLink to="/#how-it-works" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-              How It Works
-            </HashLink>
             <Link to="/docs" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               <BookOpen className="h-4 w-4" />
               Getting Started
@@ -104,6 +101,10 @@ const Navbar = () => {
               <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[10px] bg-primary/10 text-primary">
                 New
               </Badge>
+            </Link>
+            <Link to="/consultation" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              <CalendarCheck className="h-4 w-4" />
+              Consultation
             </Link>
           </div>
 
@@ -116,8 +117,8 @@ const Navbar = () => {
               </a>
             </Button>
             <Button variant="hero" size="sm" asChild>
-              <Link to="/demos" className="flex items-center gap-2">
-                Explore Demos
+              <Link to="/consultation" className="flex items-center gap-2">
+                Book a Call
               </Link>
             </Button>
           </div>
@@ -162,6 +163,10 @@ const Navbar = () => {
                   New
                 </Badge>
               </Link>
+              <Link to="/consultation" onClick={closeMenu} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+                <CalendarCheck className="h-4 w-4" />
+                Consultation
+              </Link>
               <div className="flex gap-3 pt-2">
                 <Button variant="github" size="sm" asChild>
                   <a href="https://github.com/Loom-AI-Labs/ai-fabric-framework" target="_blank" rel="noopener noreferrer">
@@ -170,8 +175,8 @@ const Navbar = () => {
                   </a>
                 </Button>
                 <Button variant="hero" size="sm" asChild>
-                  <Link to="/demos" onClick={closeMenu} className="flex items-center gap-2">
-                    Explore Demos
+                  <Link to="/consultation" onClick={closeMenu} className="flex items-center gap-2">
+                    Book a Call
                   </Link>
                 </Button>
               </div>
