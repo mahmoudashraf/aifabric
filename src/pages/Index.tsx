@@ -429,7 +429,7 @@ const Index = () => {
                 </a>
                 .{" "}
                 <Link to="/webinars" className="font-semibold text-blue-700 underline underline-offset-4">
-                  Next live webinar: {nextWebinar.dateLabel}
+                  Next webinar: {nextWebinar.shortDateLabel}
                 </Link>
                 . Source:{" "}
                 <a
