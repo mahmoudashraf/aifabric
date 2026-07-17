@@ -58,6 +58,7 @@ const markdownGuideRoutes: Array<{ path: string; docId: MarkdownGuideId }> = [
   { path: "/docs/roadmap", docId: "roadmap" },
   { path: "/docs/llm-context", docId: "llm-context" },
   { path: "/docs/llm-context/routing", docId: "llm-context-routing" },
+  { path: "/docs/llm-context/opportunity-scanner", docId: "llm-opportunity-scanner" },
   { path: "/docs/llm-context/rules", docId: "llm-context-rules" },
   { path: "/docs/llm-context/capability-map", docId: "llm-capability-map" },
   { path: "/docs/llm-context/module-decision-tree", docId: "llm-module-decision-tree" },

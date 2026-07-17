@@ -106,6 +106,7 @@ const docSections: DocSection[] = [
     items: [
       { title: "Context Pack Index", href: "/docs/llm-context" },
       { title: "Context Routing", href: "/docs/llm-context/routing" },
+      { title: "Opportunity Scanner", href: "/docs/llm-context/opportunity-scanner" },
       { title: "Assistant Rules", href: "/docs/llm-context/rules" },
       { title: "Common Recipes", href: "/docs/llm-context/common-recipes" },
       { title: "Troubleshooting", href: "/docs/llm-context/troubleshooting" },

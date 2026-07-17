@@ -29,6 +29,7 @@ import contributingGuide from "@/content/public-docs/contributing.md?raw";
 import roadmapGuide from "@/content/public-docs/roadmap.md?raw";
 import llmContextIndex from "@/content/llm-context/README.md?raw";
 import llmContextRouting from "@/content/llm-context/AI_FABRIC_CONTEXT_INDEX.md?raw";
+import llmOpportunityScanner from "@/content/llm-context/AI_FABRIC_OPPORTUNITY_SCANNER.md?raw";
 import llmContextRules from "@/content/llm-context/AI_FABRIC_RULES_FOR_CODING_ASSISTANTS.md?raw";
 import llmCapabilityMap from "@/content/llm-context/AI_FABRIC_CAPABILITY_MAP.md?raw";
 import llmDecisionTree from "@/content/llm-context/AI_FABRIC_MODULE_DECISION_TREE.md?raw";
@@ -59,6 +60,7 @@ export type MarkdownGuideId =
   | "roadmap"
   | "llm-context"
   | "llm-context-routing"
+  | "llm-opportunity-scanner"
   | "llm-context-rules"
   | "llm-capability-map"
   | "llm-module-decision-tree"
@@ -525,6 +527,27 @@ const guides: Record<MarkdownGuideId, MarkdownGuide> = {
     sourcePath: "docs/llm-context/AI_FABRIC_CONTEXT_INDEX.md",
     sourceUrl: `${frameworkRepoUrl}/docs/llm-context/AI_FABRIC_CONTEXT_INDEX.md`,
   },
+  "llm-opportunity-scanner": {
+    title: "AI Fabric Opportunity Scanner",
+    description: "Help coding assistants discover what AI Fabric can unlock in a Java/Spring Boot app.",
+    content: llmOpportunityScanner,
+    sourcePath: "docs/llm-context/AI_FABRIC_OPPORTUNITY_SCANNER.md",
+    sourceUrl: `${frameworkRepoUrl}/docs/llm-context/AI_FABRIC_OPPORTUNITY_SCANNER.md`,
+    relatedStories: [
+      {
+        title: "Real App Reference",
+        description: "Use existing real apps as proof patterns after identifying an opportunity.",
+        href: "/docs/llm-context/real-app-reference",
+        label: "Evidence map",
+      },
+      {
+        title: "Choose Your Path",
+        description: "Move from opportunity discovery into a specific integration path.",
+        href: "/docs/choose-your-path",
+        label: "Implementation path",
+      },
+    ],
+  },
   "llm-context-rules": {
     title: "Rules For Coding Assistants",
     description: "Implementation rules that protect the framework philosophy.",
@@ -591,6 +614,7 @@ const routeByMarkdownFile: Record<string, string> = {
   "contributing.md": "/docs/contributing",
   "roadmap.md": "/docs/roadmap",
   "AI_FABRIC_CONTEXT_INDEX.md": "/docs/llm-context/routing",
+  "AI_FABRIC_OPPORTUNITY_SCANNER.md": "/docs/llm-context/opportunity-scanner",
   "AI_FABRIC_RULES_FOR_CODING_ASSISTANTS.md": "/docs/llm-context/rules",
   "AI_FABRIC_CAPABILITY_MAP.md": "/docs/llm-context/capability-map",
   "AI_FABRIC_MODULE_DECISION_TREE.md": "/docs/llm-context/module-decision-tree",
