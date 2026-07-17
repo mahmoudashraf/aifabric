@@ -5,16 +5,20 @@ import {
   BookOpen,
   Bot,
   CalendarCheck,
+  CalendarDays,
   CheckCircle2,
+  Clock,
   Code2,
   Database,
   EyeOff,
   Github,
   GitBranch,
+  History,
   Layers3,
   LockKeyhole,
   MessageSquare,
   Play,
+  RadioTower,
   Server,
   ShieldCheck,
   ShoppingCart,
@@ -30,6 +34,7 @@ import ConsultationCtaBand from "@/components/ConsultationCtaBand";
 import Navbar from "@/components/Navbar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { nextWebinar, webinarContactLinks } from "@/data/webinars";
 
 const liveDemos = [
   {
@@ -262,6 +267,87 @@ function DemoCard({ demo }: { demo: (typeof liveDemos)[number] }) {
   );
 }
 
+function WebinarHomeSection() {
+  return (
+    <section id="webinars" className="border-y border-slate-200 bg-slate-950 px-6 py-14 text-white">
+      <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
+        <div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge className="border-white/20 bg-white/10 px-3 py-1 text-white" variant="outline">
+              <RadioTower className="mr-1 h-3.5 w-3.5" />
+              Next live webinar
+            </Badge>
+            <Badge className="border-emerald-300/40 bg-emerald-300/10 px-3 py-1 text-emerald-200" variant="outline">
+              <CalendarDays className="mr-1 h-3.5 w-3.5" />
+              {nextWebinar.status}
+            </Badge>
+          </div>
+
+          <h2 className="mt-5 text-3xl font-black leading-tight tracking-normal md:text-5xl">
+            Learn AI Fabric from a real Spring Boot workflow.
+          </h2>
+          <p className="mt-5 max-w-2xl text-base leading-8 text-slate-300">
+            The next live session walks through how AI Fabric turns normal Java services into production-oriented AI
+            workflows with retrieval, actions, confirmations, memory, privacy, and release gates.
+          </p>
+
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+            <Button asChild size="lg" className="h-12 bg-white px-6 text-slate-950 hover:bg-slate-100">
+              <Link to="/webinars">
+                View webinar details
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="h-12 border-white/20 bg-transparent px-6 text-white hover:bg-white/10">
+              <Link to="/webinars#previous-webinars">
+                Previous webinars
+                <History className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+
+        <article className="overflow-hidden rounded-lg border border-white/10 bg-white text-slate-950 shadow-2xl shadow-black/20">
+          <div className="grid gap-0 md:grid-cols-[0.95fr_1.05fr]">
+            <div className="bg-blue-50 p-6">
+              <p className="text-sm font-bold uppercase tracking-wide text-blue-700">Date preview</p>
+              <p className="mt-3 text-3xl font-black leading-tight tracking-normal text-slate-950">
+                {nextWebinar.dateLabel}
+              </p>
+              <p className="mt-3 flex items-center gap-2 text-sm font-semibold text-slate-700">
+                <Clock className="h-4 w-4 text-blue-700" />
+                {nextWebinar.timeLabel}
+              </p>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{nextWebinar.duration}</p>
+            </div>
+
+            <div className="p-6">
+              <Badge className="border-violet-200 bg-violet-50 text-violet-700" variant="outline">
+                {nextWebinar.audience}
+              </Badge>
+              <h3 className="mt-4 text-2xl font-black leading-tight tracking-normal text-slate-950">
+                {nextWebinar.title}
+              </h3>
+              <p className="mt-3 text-sm leading-6 text-slate-600">{nextWebinar.summary}</p>
+              <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+                <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                  <a href={webinarContactLinks.whatsapp} target="_blank" rel="noopener noreferrer">
+                    Ask to join
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </a>
+                </Button>
+                <Button asChild variant="outline" className="border-slate-300 bg-white">
+                  <Link to="/webinars">Open archive</Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  );
+}
+
 const Index = () => {
   useEffect(() => {
     scrollToHashTarget();
@@ -357,6 +443,8 @@ const Index = () => {
             <DemoPreviewWall />
           </div>
         </section>
+
+        <WebinarHomeSection />
 
         <section id="live-demos" className="border-y border-slate-200 bg-white px-6 py-16">
           <div className="mx-auto max-w-7xl">

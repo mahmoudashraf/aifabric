@@ -1,4 +1,4 @@
-import { BookOpen, CalendarCheck, ExternalLink, FileText, Github, Heart, Linkedin, Map, MessageCircle } from "lucide-react";
+import { BookOpen, CalendarCheck, CalendarDays, ExternalLink, FileText, Github, Heart, Linkedin, Map, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const FRAMEWORK_REPO_URL = "https://github.com/Loom-AI-Labs/ai-fabric-framework";
@@ -50,6 +50,12 @@ const Footer = () => {
                   <Link to="/demos" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
                     <FileText className="h-4 w-4" />
                     Live demos
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/webinars" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
+                    <CalendarDays className="h-4 w-4" />
+                    Webinars
                   </Link>
                 </li>
                 <li>
