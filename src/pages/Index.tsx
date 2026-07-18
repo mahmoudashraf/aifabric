@@ -187,47 +187,96 @@ function DemoPreviewWall() {
   const previewOrder = [liveDemos[0], liveDemos[1], liveDemos[3], liveDemos[2], liveDemos[4]];
 
   return (
-    <div className="mx-auto mt-12 grid max-w-6xl gap-3 lg:grid-cols-[1.25fr_0.9fr]">
-      <Link
-        to={previewOrder[0].href}
-        className="group relative min-h-[320px] overflow-hidden rounded-md border border-slate-200 bg-slate-100 shadow-2xl shadow-slate-900/10"
-      >
-        <img
-          src={previewOrder[0].image}
-          alt={`${previewOrder[0].title} live demo screenshot`}
-          className="h-full min-h-[320px] w-full object-cover object-top transition duration-500 group-hover:scale-[1.02]"
-        />
-        <div className="absolute left-4 top-4 flex flex-wrap gap-2">
-          <Badge className="border-white/80 bg-white/90 text-slate-900" variant="outline">
-            Live AI Fabric app
-          </Badge>
-          <Badge className={previewOrder[0].accent} variant="outline">
-            {previewOrder[0].eyebrow}
-          </Badge>
+    <div className="mx-auto mt-10 max-w-6xl">
+      <div className="mb-3 flex flex-col gap-2 text-left sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge className="border-emerald-200 bg-emerald-50 px-3 py-1 text-emerald-700" variant="outline">
+              <span className="mr-1.5 h-2 w-2 rounded-full bg-emerald-500" />
+              Live deployed demos
+            </Badge>
+            <Badge className="border-slate-200 bg-white px-3 py-1 text-slate-700" variant="outline">
+              <Server className="mr-1 h-3.5 w-3.5" />
+              Spring Boot backends
+            </Badge>
+          </div>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+            Open any app below to test AI Fabric running against a real deployed backend.
+          </p>
         </div>
-      </Link>
+        <Link
+          to="/demos"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-blue-700 underline underline-offset-4"
+        >
+          View all live demos
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+      </div>
 
-      <div className="grid gap-3">
-        {previewOrder.slice(1).map((demo) => (
-          <Link
-            key={demo.id}
-            to={demo.href}
-            className="group grid min-h-[102px] grid-cols-[128px_1fr] overflow-hidden rounded-md border border-slate-200 bg-white shadow-lg shadow-slate-900/5 transition hover:-translate-y-0.5 hover:border-slate-300"
-          >
-            <img
-              src={demo.image}
-              alt={`${demo.title} live demo screenshot`}
-              className="h-full w-full object-cover object-top transition duration-500 group-hover:scale-[1.04]"
-            />
-            <div className="p-4">
-              <Badge className={demo.accent} variant="outline">
-                {demo.eyebrow}
-              </Badge>
-              <h3 className="mt-2 text-base font-bold text-slate-950">{demo.title}</h3>
-              <p className="mt-1 line-clamp-2 text-sm leading-5 text-slate-600">{demo.summary}</p>
+      <div className="grid gap-3 lg:grid-cols-[1.25fr_0.9fr]">
+        <Link
+          to={previewOrder[0].href}
+          className="group relative min-h-[320px] overflow-hidden rounded-md border border-slate-200 bg-slate-100 shadow-2xl shadow-slate-900/10"
+        >
+          <img
+            src={previewOrder[0].image}
+            alt={`${previewOrder[0].title} live demo screenshot`}
+            className="h-full min-h-[320px] w-full object-cover object-top transition duration-500 group-hover:scale-[1.02]"
+          />
+          <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+            <Badge className="border-white/80 bg-white/90 text-slate-900" variant="outline">
+              Featured live demo
+            </Badge>
+            <Badge className={previewOrder[0].accent} variant="outline">
+              {previewOrder[0].eyebrow}
+            </Badge>
+          </div>
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/80 via-slate-950/35 to-transparent p-4 pt-16 text-left text-white">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-white/75">Running on deployed AI Fabric backend</p>
+                <h3 className="mt-1 text-xl font-black tracking-normal">{previewOrder[0].title}</h3>
+              </div>
+              <span className="inline-flex w-fit items-center gap-2 rounded-md bg-white px-3 py-2 text-sm font-bold text-slate-950 shadow-lg">
+                Try live demo
+                <ArrowRight className="h-4 w-4" />
+              </span>
             </div>
-          </Link>
-        ))}
+          </div>
+        </Link>
+
+        <div className="grid gap-3">
+          {previewOrder.slice(1).map((demo) => (
+            <Link
+              key={demo.id}
+              to={demo.href}
+              className="group grid min-h-[102px] grid-cols-[128px_1fr] overflow-hidden rounded-md border border-slate-200 bg-white shadow-lg shadow-slate-900/5 transition hover:-translate-y-0.5 hover:border-slate-300"
+            >
+              <img
+                src={demo.image}
+                alt={`${demo.title} live demo screenshot`}
+                className="h-full w-full object-cover object-top transition duration-500 group-hover:scale-[1.04]"
+              />
+              <div className="p-4">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge className={demo.accent} variant="outline">
+                    {demo.eyebrow}
+                  </Badge>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                    live
+                  </span>
+                </div>
+                <h3 className="mt-2 text-base font-bold text-slate-950">{demo.title}</h3>
+                <p className="mt-1 line-clamp-2 text-sm leading-5 text-slate-600">{demo.summary}</p>
+                <span className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold text-blue-700">
+                  Try live demo
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );
