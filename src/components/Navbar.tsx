@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
+import BrandLogo from "@/components/BrandLogo";
 interface HashLinkProps {
   to: string;
   children: React.ReactNode;
@@ -71,13 +72,10 @@ const Navbar = () => {
           {/* Logo */}
           <Link 
             to="/" 
-            className="flex items-center gap-2"
+            className="flex items-center"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-primary">
-              <span className="text-lg font-bold text-primary-foreground">AI</span>
-            </div>
-            <span className="text-xl font-bold text-foreground">Fabric</span>
+            <BrandLogo />
           </Link>
 
           {/* Desktop Navigation */}

@@ -6,7 +6,6 @@ import {
   Brain,
   ChevronDown,
   ChevronRight,
-  Code2,
   Database,
   GitPullRequest,
   Map,
@@ -19,6 +18,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import BrandLogo from "@/components/BrandLogo";
 import { cn } from "@/lib/utils";
 
 interface DocSection {
@@ -216,9 +216,7 @@ export const DocsSidebar = () => {
     <div className="flex h-full flex-col">
       <div className="border-b border-border p-6">
         <Link to="/docs" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-primary">
-            <Code2 className="h-5 w-5 text-primary-foreground" />
-          </div>
+          <BrandLogo showText={false} />
           <div>
             <h2 className="font-bold text-foreground">AI Fabric Docs</h2>
             <p className="text-xs text-muted-foreground">Release 0.3.3</p>

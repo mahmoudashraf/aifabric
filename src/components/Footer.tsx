@@ -1,5 +1,6 @@
 import { BookOpen, CalendarCheck, CalendarDays, ExternalLink, FileText, Github, Heart, Linkedin, Map, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import BrandLogo from "@/components/BrandLogo";
 import { webinarContactLinks } from "@/data/webinars";
 
 const FRAMEWORK_REPO_URL = "https://github.com/Loom-AI-Labs/ai-fabric-framework";
@@ -16,10 +17,7 @@ const Footer = () => {
           <div className="grid gap-8 md:grid-cols-4">
             <div className="md:col-span-1">
               <Link to="/" className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-primary">
-                  <span className="text-lg font-bold text-primary-foreground">AI</span>
-                </div>
-                <span className="text-xl font-bold text-foreground">Fabric</span>
+                <BrandLogo />
               </Link>
               <p className="mt-4 text-sm leading-6 text-muted-foreground">
                 Open-source Java/Spring Boot framework for production-oriented AI workflows.

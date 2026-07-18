@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 
 import Footer from "@/components/Footer";
+import { AI_FABRIC_LOGO_LOCKUP_SRC } from "@/components/BrandLogo";
 import ConsultationCtaBand from "@/components/ConsultationCtaBand";
 import Navbar from "@/components/Navbar";
 import { Badge } from "@/components/ui/badge";
@@ -369,6 +370,11 @@ const Index = () => {
         <section className="relative overflow-hidden bg-[#f8fafc] px-6 pb-12 pt-24 md:pt-28">
           <div className="mx-auto max-w-7xl">
             <div className="mx-auto max-w-5xl text-center">
+              <img
+                src={AI_FABRIC_LOGO_LOCKUP_SRC}
+                alt="AI Fabric"
+                className="mx-auto mb-5 h-20 w-auto max-w-[260px] object-contain mix-blend-multiply sm:h-24 sm:max-w-[320px]"
+              />
               <div className="flex flex-wrap items-center justify-center gap-2">
                 <Badge className="border-emerald-200 bg-emerald-50 px-3 py-1 text-emerald-700" variant="outline">
                   <Sparkles className="mr-1 h-3.5 w-3.5" />
