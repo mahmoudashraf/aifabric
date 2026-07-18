@@ -776,10 +776,7 @@ const AIFabricAccountResolver = () => {
   };
 
   const handleConfirmation = (action: "confirm" | "deny", _data?: unknown) => {
-    const confirmationQuery =
-      action === "confirm"
-        ? "Yes, confirm and execute the pending account resolver action."
-        : "No, reject the pending action and do not change my account.";
+    const confirmationQuery = action === "confirm" ? "yes" : "no";
     sendResolverQuery(confirmationQuery);
   };
 
