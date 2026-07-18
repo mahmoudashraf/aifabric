@@ -389,11 +389,11 @@ const Index = () => {
               </div>
 
               <h1 className="mt-5 text-4xl font-black leading-[1.02] tracking-normal text-slate-950 sm:text-5xl md:mt-6 md:text-7xl md:leading-[0.98]">
-                Add production AI workflows to Spring Boot apps.
+                Build production-oriented AI workflows in Spring Boot.
               </h1>
               <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-slate-600 md:mt-6 md:text-xl md:leading-8">
-                AI Fabric gives Java teams the building blocks behind real AI products: RAG, actions, confirmations,
-                behavior analysis, tenant-safe retrieval, chat memory, and provider-backed orchestration.
+                AI Fabric gives Java teams the building blocks behind real AI applications: RAG, governed actions,
+                confirmations, behavior analysis, tenant-safe retrieval, chat memory, and provider-backed orchestration.
               </p>
 
               <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row md:mt-8">
