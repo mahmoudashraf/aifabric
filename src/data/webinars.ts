@@ -2,6 +2,7 @@ export const webinarContactLinks = {
   consultation: "/consultation",
   discord: "https://discord.gg/cBpR7JQuY",
   linkedin: "https://www.linkedin.com/in/engmahmoudalgammal/",
+  registration: "https://luma.com/zgwhk5sc",
   whatsapp: "https://wa.me/message/O3RF2KNXTHQDF1",
 };
 
@@ -11,7 +12,7 @@ export const nextWebinar = {
   shortDateLabel: "Aug 7, 2026",
   timeLabel: "5:00 PM London / 12:00 PM New York",
   duration: "45 minute live walkthrough + Q&A",
-  status: "Save the date",
+  status: "Registration open",
   audience: "Java and Spring Boot teams evaluating AI Fabric",
   summary:
     "A practical live session on turning a normal Spring Boot app into an AI-enabled workflow with retrieval, governed actions, memory, privacy, and release-ready tests.",

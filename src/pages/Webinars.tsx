@@ -71,14 +71,14 @@ const Webinars = () => {
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Button asChild size="lg" className="h-12 bg-slate-950 px-6 text-base hover:bg-slate-800">
-                  <a href={webinarContactLinks.discord} target="_blank" rel="noopener noreferrer">
-                    Join Discord community
-                    <MessageCircle className="ml-2 h-4 w-4" />
+                  <a href={webinarContactLinks.registration} target="_blank" rel="noopener noreferrer">
+                    Register on Luma
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </a>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="h-12 border-slate-300 bg-white px-6 text-base">
-                  <a href={webinarContactLinks.whatsapp} target="_blank" rel="noopener noreferrer">
-                    Ask to join
+                  <a href={webinarContactLinks.discord} target="_blank" rel="noopener noreferrer">
+                    Join Discord community
                     <MessageCircle className="ml-2 h-4 w-4" />
                   </a>
                 </Button>
@@ -137,6 +137,12 @@ const Webinars = () => {
                     </div>
                   ))}
                 </div>
+                <Button asChild className="mt-6 w-full bg-blue-600 hover:bg-blue-700">
+                  <a href={webinarContactLinks.registration} target="_blank" rel="noopener noreferrer">
+                    Reserve your place on Luma
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </a>
+                </Button>
               </div>
             </article>
           </div>

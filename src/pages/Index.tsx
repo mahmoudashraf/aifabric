@@ -343,10 +343,10 @@ function WebinarHomeSection() {
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <Button asChild size="lg" className="h-12 bg-white px-6 text-slate-950 hover:bg-slate-100">
-              <Link to="/webinars">
-                View webinar details
+              <a href={webinarContactLinks.registration} target="_blank" rel="noopener noreferrer">
+                Register on Luma
                 <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
+              </a>
             </Button>
             <Button asChild size="lg" variant="outline" className="h-12 border-white/20 bg-transparent px-6 text-white hover:bg-white/10">
               <Link to="/webinars#previous-webinars">
@@ -381,19 +381,19 @@ function WebinarHomeSection() {
               <p className="mt-3 text-sm leading-6 text-slate-600">{nextWebinar.summary}</p>
               <div className="mt-5 flex flex-col gap-3 sm:flex-row">
                 <Button asChild className="bg-blue-600 hover:bg-blue-700">
+                  <a href={webinarContactLinks.registration} target="_blank" rel="noopener noreferrer">
+                    Register on Luma
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </a>
+                </Button>
+                <Button asChild variant="outline" className="border-slate-300 bg-white">
                   <a href={webinarContactLinks.discord} target="_blank" rel="noopener noreferrer">
                     Join Discord
                     <MessageSquare className="ml-2 h-4 w-4" />
                   </a>
                 </Button>
                 <Button asChild variant="outline" className="border-slate-300 bg-white">
-                  <a href={webinarContactLinks.whatsapp} target="_blank" rel="noopener noreferrer">
-                    Ask to join
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </a>
-                </Button>
-                <Button asChild variant="outline" className="border-slate-300 bg-white">
-                  <Link to="/webinars">Open archive</Link>
+                  <Link to="/webinars">Details</Link>
                 </Button>
               </div>
             </div>
@@ -495,9 +495,14 @@ const Index = () => {
                   Mahmoud Elgammal
                 </a>
                 .{" "}
-                <Link to="/webinars" className="font-semibold text-blue-700 underline underline-offset-4">
+                <a
+                  href={webinarContactLinks.registration}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-blue-700 underline underline-offset-4"
+                >
                   Next webinar: {nextWebinar.shortDateLabel}
-                </Link>
+                </a>
                 .{" "}
                 <a
                   href={webinarContactLinks.discord}
