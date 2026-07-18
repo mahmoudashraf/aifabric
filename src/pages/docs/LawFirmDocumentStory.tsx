@@ -517,7 +517,7 @@ List<LegalDocument> documents = response.getResults();`} />
                 Deploy This in Your Law Firm
               </h2>
               <p className="text-muted-foreground mb-8">
-                The AI Fabric Framework provides instant document discovery. MIT License, production-ready.
+                AI Fabric provides production-oriented document discovery patterns for Java applications. Apache 2.0.
               </p>
 
               <div className="flex flex-wrap items-center gap-4">
@@ -579,7 +579,7 @@ List<LegalDocument> documents = response.getResults();`} />
           <div className="flex flex-col items-center gap-4">
             <StoryLoveButton storySlug="law-firm-document" />
             <p className="text-sm text-muted-foreground text-center">
-              Real API Integration Story • Part of AI Fabric Framework • MIT License • Production-Ready
+              Real API Integration Story • Part of AI Fabric Framework • Apache 2.0 • Production-Oriented
             </p>
           </div>
         </footer>

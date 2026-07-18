@@ -9,7 +9,7 @@ import StoryLoveButton from "@/components/StoryLoveButton";
 import coreModuleGuide from "@/content/core-module-guide.md?raw";
 
 const PAGE_TITLE = "AI Core Module - Complete Technical Guide";
-const PAGE_DESCRIPTION = "Comprehensive technical reference for the AI Core module. Configuration, services, providers, and production-ready code examples.";
+const PAGE_DESCRIPTION = "Comprehensive technical reference for the AI Core module. Configuration, services, providers, and production-oriented code examples.";
 
 const codeTheme = {
   ...themes.nightOwl,

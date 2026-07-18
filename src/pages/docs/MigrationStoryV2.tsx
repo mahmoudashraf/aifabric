@@ -696,7 +696,7 @@ const RealWorldComparison = () => {
             <CheckCircle2 className="h-5 w-5 text-green-400 shrink-0 mt-0.5" />
             <div>
               <p className="font-semibold text-foreground">Monday 8 AM</p>
-              <p className="text-muted-foreground">COMPLETED. 8M records indexed. 8M embeddings generated. 99.9% success. ✨</p>
+              <p className="text-muted-foreground">COMPLETED. 8M records indexed. 8M embeddings generated. Verification report captured.</p>
             </div>
           </div>
         </div>
@@ -855,7 +855,7 @@ const MigrationStoryV2 = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {[
                 { value: "10M+", label: "Records Indexed", icon: Database },
-                { value: "99.9%", label: "Success Rate", icon: Target },
+                { value: "Tracked", label: "Success Rate", icon: Target },
                 { value: "0", label: "Weekends Lost", icon: CalendarClock },
                 { value: "16hrs", label: "Sleep Recovered", icon: Moon }
               ].map((stat, i) => (
@@ -914,4 +914,3 @@ const MigrationStoryV2 = () => {
 };
 
 export default MigrationStoryV2;
-

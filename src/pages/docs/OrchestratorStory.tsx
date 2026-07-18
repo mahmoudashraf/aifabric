@@ -231,7 +231,7 @@ const OrchestratorStory = () => {
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mb-8">
                 A story about building trust in AI systems. Part of the AI Fabric Framework series — 
-                production-ready AI infrastructure for Spring Boot.
+                production-oriented AI infrastructure for Spring Boot.
               </p>
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm text-accent">
@@ -645,7 +645,7 @@ OrchestrationResult
             >
               <h2 className="text-2xl font-bold text-foreground mb-4">🌟 Try It Yourself</h2>
               <p className="text-muted-foreground mb-8">
-                The Orchestrator is part of AI Fabric Framework (MIT License, free forever).
+                The orchestrator story is part of AI Fabric Framework, published under the Apache 2.0 license.
               </p>
 
               <CodeBlock code={`// Build context
@@ -727,7 +727,7 @@ OrchestrationResult result = orchestrator.orchestrate(
           <div className="flex flex-col items-center gap-4">
             <StoryLoveButton storySlug="orchestrator-story" />
             <p className="text-sm text-muted-foreground text-center">
-              Written by the AI Fabric Team • Part of the AI Fabric Framework series • MIT License • Free Forever
+              Written by the AI Fabric Team • Part of the AI Fabric Framework series • Apache 2.0
             </p>
           </div>
         </footer>

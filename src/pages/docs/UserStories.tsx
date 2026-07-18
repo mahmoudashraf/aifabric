@@ -64,7 +64,8 @@ const UserStories = () => {
             </h1>
             <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">
               These are the restored story pages, rebuilt carefully around current framework behavior.
-              Older draft stories with unsupported compliance, revenue, accuracy, or outdated API claims stay retired.
+              Older draft routes remain available where useful, with unsupported compliance, revenue, accuracy,
+              or outdated API claims qualified instead of hidden.
             </p>
           </motion.div>
         </section>

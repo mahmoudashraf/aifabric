@@ -348,7 +348,7 @@ const TheCostJourney = () => {
       events: [
         { emoji: "💰", text: "Total savings: $12,000/year", type: "positive" },
         { emoji: "⚡", text: "Performance: 10x faster consistently", type: "positive" },
-        { emoji: "🔒", text: "Privacy: GDPR-compliant by default", type: "positive" },
+        { emoji: "🔒", text: "Privacy: local embedding path with app-owned controls", type: "positive" },
         { emoji: "🎯", text: "Production: Zero issues, 100% uptime", type: "positive" }
       ]
     }
@@ -571,7 +571,7 @@ public List<Double> generateEmbedding(String text) {
                 <li>• $0/month ($0/year) - Forever free</li>
                 <li>• 100% private (data never leaves)</li>
                 <li>• Works offline</li>
-                <li>• 10-50ms latency (10x faster)</li>
+                <li>• Latency depends on model, hardware, and batching</li>
                 <li>• No rate limits</li>
                 <li>• No usage tracking</li>
                 <li>• No vendor lock-in</li>
@@ -653,12 +653,10 @@ embeddingProvider.generateEmbedding(request);
 // Processed on:
 // - Your server (100% private)
 // - Never touches internet (offline capable)
-// - No third-party access (zero risk)
+// - No embedding-provider network call for local inference
 // - No usage tracking (complete privacy)
 
-// GDPR: Compliant by default
-// HIPAA: Fully compliant (no external access)
-// SOC2: No external dependencies
+// GDPR/HIPAA/SOC2: Your app still owns controls and audit proof
 // Air-gapped: Works offline`} language="java" />
         </div>
       </div>
@@ -666,13 +664,13 @@ embeddingProvider.generateEmbedding(request);
       <div className="mt-6 grid md:grid-cols-4 gap-4">
         <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/30 text-center">
           <CheckCircle2 className="h-6 w-6 text-green-400 mx-auto mb-2" />
-          <p className="text-sm font-semibold text-foreground">GDPR Compliant</p>
-          <p className="text-xs text-muted-foreground">By default</p>
+          <p className="text-sm font-semibold text-foreground">Privacy Controls</p>
+          <p className="text-xs text-muted-foreground">App-owned</p>
         </div>
         <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/30 text-center">
           <CheckCircle2 className="h-6 w-6 text-green-400 mx-auto mb-2" />
-          <p className="text-sm font-semibold text-foreground">HIPAA Compliant</p>
-          <p className="text-xs text-muted-foreground">No external access</p>
+          <p className="text-sm font-semibold text-foreground">Regulated Workflows</p>
+          <p className="text-xs text-muted-foreground">Policy-driven</p>
         </div>
         <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/30 text-center">
           <CheckCircle2 className="h-6 w-6 text-green-400 mx-auto mb-2" />
@@ -958,21 +956,20 @@ const ONNXProviderStoryV2 = () => {
                 That Never Came
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mb-8">
-                A developer's journey from paying forever for embeddings to generating them locally for free—how ONNX 
-                saved thousands and kept data private.
+                A developer's journey from remote embedding calls to a local embedding option that keeps more control inside the app boundary.
               </p>
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm text-accent">
                   <DollarSign className="h-4 w-4" />
-                  $12K → $0
+                  Local Option
                 </div>
                 <div className="flex items-center gap-2 rounded-full bg-secondary/10 px-4 py-2 text-sm text-secondary">
                   <Zap className="h-4 w-4" />
-                  10x Faster
+                  No Network Hop
                 </div>
                 <div className="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm text-primary">
                   <Lock className="h-4 w-4" />
-                  100% Private
+                  Local Data Path
                 </div>
               </div>
             </motion.div>
@@ -1059,4 +1056,3 @@ const ONNXProviderStoryV2 = () => {
 };
 
 export default ONNXProviderStoryV2;
-

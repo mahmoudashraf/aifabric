@@ -456,9 +456,9 @@ const CloudVsOnnx = () => {
       features: [
         { label: "Cost per 1M embeddings", value: "$0/month", good: true },
         { label: "Data Privacy", value: "On your servers", good: true },
-        { label: "HIPAA/GDPR", value: "100% compliant", good: true },
+        { label: "Privacy Posture", value: "App-controlled", good: true },
         { label: "Internet Required", value: "No (offline)", good: true },
-        { label: "Latency", value: "10-50ms", good: true },
+        { label: "Latency", value: "Provider-dependent", good: true },
         { label: "Usage Tracking", value: "None", good: true }
       ]
     }
@@ -629,7 +629,7 @@ const BeforeAfterComparison = () => {
         </div>
         
         <div className="mt-6 p-4 rounded-lg bg-green-500/10 border border-green-500/20">
-          <p className="text-sm text-green-400 font-bold">Result: Accurate Answers, Zero Cost</p>
+          <p className="text-sm text-green-400 font-bold">Result: Evidence-grounded answers with local embedding option</p>
           <p className="text-xs text-muted-foreground mt-1">AI reads YOUR docs. Customers get correct info. Trust restored.</p>
         </div>
       </div>
@@ -644,7 +644,7 @@ const WhatYouImplement = () => {
         What You Actually Implement
       </h3>
       <p className="text-muted-foreground text-center mb-8">
-        One config line. Free embeddings. Zero hallucinations. Facts from YOUR database.
+        Configure an embedding provider and make answers use retrieved evidence from your application data.
       </p>
       
       <div className="space-y-6">
@@ -667,13 +667,13 @@ const WhatYouImplement = () => {
           <CodeBlock code={`# application.yml
 ai:
   providers:
-    embedding-provider: onnx  # Free local embeddings!
+  embedding-provider: onnx  # Local embeddings option
 
 # That's it! Framework handles:
 # - Downloads ONNX model (86MB, bundled)
 # - Runs on your CPU/GPU
-# - 10-50ms latency
-# - $0 cost forever`} language="yaml" />
+# - Local runtime characteristics depend on hardware
+# - No remote embedding API fee`} language="yaml" />
         </motion.div>
         
         <motion.div
@@ -772,20 +772,20 @@ const RagStoryV2 = () => {
                 <span className="text-gradient">Almost Cost Everything</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mb-8">
-                This is a story about hallucinations, trust, and one wrong answer. How a chatbot's guess led to discovering RAG + ONNX—the solution that stops hallucinations and costs $0.
+                This is a story about hallucinations, trust, and one wrong answer. How a chatbot's guess led to discovering RAG + ONNX as a way to ground answers in retrieved evidence.
               </p>
               <div className="flex flex-wrap items-center gap-4 text-sm">
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 border border-border/50">
                   <Shield className="h-4 w-4 text-green-400" />
-                  Zero Hallucinations
+                  Evidence-Grounded
                 </div>
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 border border-border/50">
                   <DollarSign className="h-4 w-4 text-green-400" />
-                  $18K Saved/Year
+                  Support Load Reduced
                 </div>
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 border border-border/50">
                   <Zap className="h-4 w-4 text-blue-400" />
-                  10-50ms Latency
+                  Provider-Dependent Latency
                 </div>
               </div>
             </div>
@@ -815,16 +815,16 @@ const RagStoryV2 = () => {
                 "I thought AI hallucinations were inevitable. That wrong answers were the cost of using LLMs."
               </p>
               <p className="text-lg">
-                "I was wrong. <span className="text-primary font-semibold">RAG stops hallucinations by giving AI facts from YOUR database.</span>"
+	                "I was wrong. <span className="text-primary font-semibold">RAG reduces guessing by giving AI retrieved evidence from YOUR database.</span>"
               </p>
               <p className="text-lg">
-                "And ONNX? <span className="text-primary font-semibold">Free local embeddings. $0 forever. 10x faster than cloud APIs.</span>"
+	                "And ONNX? <span className="text-primary font-semibold">Local embeddings that remove the remote embedding API round trip.</span>"
               </p>
               <p className="text-lg">
                 "The $47.23 disaster? Never happened again. Because the AI reads the database, not its imagination."
               </p>
               <p className="text-lg">
-                "<span className="text-primary font-semibold">One config line. Zero hallucinations. $18K saved per year.</span>"
+	                "<span className="text-primary font-semibold">Retrieved evidence, local embedding options, and app-owned controls.</span>"
               </p>
               <p className="text-sm text-foreground italic font-semibold pt-4 border-t border-border/30">
                 — Developer, after implementing RAG + ONNX, after the $47.23 disaster
@@ -837,10 +837,10 @@ const RagStoryV2 = () => {
             <h3 className="text-2xl font-bold text-foreground mb-6 text-center">The Numbers Don't Lie</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {[
-                { value: "$18K+", label: "Saved/Year", icon: DollarSign },
-                { value: "0", label: "Hallucinations", icon: Shield },
-                { value: "10-50ms", label: "Latency", icon: Timer },
-                { value: "100%", label: "Private", icon: Eye }
+	                { value: "Lower", label: "Support Load", icon: DollarSign },
+	                { value: "Reduced", label: "Guessing", icon: Shield },
+	                { value: "Depends", label: "Latency", icon: Timer },
+	                { value: "App", label: "Privacy Owner", icon: Eye }
               ].map((stat, i) => (
                 <motion.div
                   key={i}
@@ -896,4 +896,3 @@ const RagStoryV2 = () => {
 };
 
 export default RagStoryV2;
-

@@ -770,7 +770,7 @@ const RetentionCapabilitiesStory = () => {
                 </div>
                 <div className="flex items-center gap-2 rounded-full bg-secondary/10 px-4 py-2 text-sm text-secondary">
                   <Shield className="h-4 w-4" />
-                  GDPR/HIPAA Ready
+                  Policy Examples
                 </div>
                 <div className="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm text-primary">
                   <Zap className="h-4 w-4" />
@@ -1333,4 +1333,3 @@ public class HIPAARetentionPolicyProvider
 };
 
 export default RetentionCapabilitiesStory;
-

@@ -499,7 +499,7 @@ result.getRedactedValues();     // ["123-45-6789", "john@example.com"]`} />
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
                       <div>
-                        <strong className="text-foreground">100% compliant</strong>
+                        <strong className="text-foreground">privacy-control ready</strong>
                         <p className="text-muted-foreground">HIPAA & GDPR ready</p>
                       </div>
                     </li>

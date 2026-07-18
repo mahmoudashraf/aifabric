@@ -241,10 +241,10 @@ const CloudVsOnnxCard = ({
 // Impact Metrics
 const ImpactMetrics = () => {
   const metrics = [
-    { label: "Annual Savings", value: "$18K+", icon: DollarSign, color: "text-green-400" },
-    { label: "Latency", value: "10-50ms", icon: Timer, color: "text-amber-400" },
-    { label: "Privacy", value: "100%", icon: Shield, color: "text-blue-400" },
-    { label: "Hallucinations", value: "0", icon: AlertTriangle, color: "text-primary" },
+    { label: "Support Impact", value: "Lower load", icon: DollarSign, color: "text-green-400" },
+    { label: "Latency", value: "Provider-based", icon: Timer, color: "text-amber-400" },
+    { label: "Privacy", value: "App-owned", icon: Shield, color: "text-blue-400" },
+    { label: "Hallucinations", value: "Reduced", icon: AlertTriangle, color: "text-primary" },
   ];
 
   return (
@@ -294,7 +294,7 @@ const RAGArchitectureDiagram = () => (
         <text x="240" y="165" textAnchor="middle" fill="hsl(var(--foreground))" fontSize="10" fontWeight="bold">ONNX Embeddings</text>
         <text x="240" y="182" textAnchor="middle" fill="hsl(var(--muted-foreground))" fontSize="9">Local • Free • Fast</text>
         <text x="240" y="197" textAnchor="middle" fill="#22c55e" fontSize="9">384 dimensions</text>
-        <text x="240" y="210" textAnchor="middle" fill="#22c55e" fontSize="8">10-50ms | $0</text>
+        <text x="240" y="210" textAnchor="middle" fill="#22c55e" fontSize="8">local path | no network</text>
         
         {/* Arrow */}
         <path d="M 310 180 L 350 180" stroke="hsl(var(--muted-foreground))" strokeWidth="2"/>
@@ -481,9 +481,9 @@ const RagStory = () => {
       costs: { monthly: "$0/mo", yearly: "$0 forever" },
       features: [
         { label: "Data Privacy", value: "On your servers", good: true },
-        { label: "HIPAA/GDPR", value: "100% compliant", good: true },
+        { label: "Privacy Posture", value: "App-controlled", good: true },
         { label: "Internet Required", value: "No (offline)", good: true },
-        { label: "Latency", value: "10-50ms", good: true },
+        { label: "Latency", value: "Provider-dependent", good: true },
         { label: "Usage Tracking", value: "None", good: true },
       ],
     },
@@ -537,7 +537,7 @@ const RagStory = () => {
                 <div className="flex flex-wrap items-center gap-4">
                   <div className="flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm text-accent">
                     <Shield className="h-4 w-4" />
-                    Zero Hallucinations
+                    Evidence-Grounded
                   </div>
                   <div className="flex items-center gap-2 rounded-full bg-secondary/10 px-4 py-2 text-sm text-secondary">
                     <DollarSign className="h-4 w-4" />
@@ -545,7 +545,7 @@ const RagStory = () => {
                   </div>
                   <div className="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm text-primary">
                     <Zap className="h-4 w-4" />
-                    10-50ms Latency
+                    Provider-Dependent Latency
                   </div>
                 </div>
               </motion.div>
@@ -626,8 +626,8 @@ const RagStory = () => {
                 icon={Shield}
                 title="Legal Documents"
                 before="50K docs, data sent to cloud APIs"
-                after="100% private, ONNX local processing"
-                impact="Zero privacy risk, legal approved"
+                after="Local embedding path with app-owned controls"
+                impact="Reduced external data exposure"
                 color="bg-purple-500"
               />
               <UseCaseCard
@@ -635,7 +635,7 @@ const RagStory = () => {
                 title="Medical Chatbot"
                 before="LLM guessing, hallucination risk"
                 after="RAG from approved literature"
-                impact="70% questions auto-answered, HIPAA compliant"
+                impact="Common questions grounded in approved literature"
                 color="bg-red-500"
               />
             </div>
@@ -651,7 +651,7 @@ const RagStory = () => {
                   <ul className="space-y-1 text-sm text-muted-foreground">
                     <li>❌ Cloud API costs: $1,200-1,800/year</li>
                     <li>❌ Data leaves your servers</li>
-                    <li>❌ HIPAA compliance questionable</li>
+                    <li>❌ Compliance review becomes harder</li>
                     <li>❌ Internet dependency</li>
                     <li>❌ Network latency: 100-500ms</li>
                   </ul>
@@ -659,11 +659,11 @@ const RagStory = () => {
                 <div>
                   <h3 className="font-semibold text-green-400 mb-2">The ONNX Way</h3>
                   <ul className="space-y-1 text-sm text-muted-foreground">
-                    <li>✓ Cost: $0/year forever</li>
+                    <li>✓ No remote embedding API fee</li>
                     <li>✓ Data never leaves your servers</li>
-                    <li>✓ HIPAA/GDPR compliant</li>
+                    <li>✓ App-owned privacy controls</li>
                     <li>✓ No internet needed</li>
-                    <li>✓ Blazing fast: 10-50ms</li>
+                    <li>✓ No provider network round trip</li>
                   </ul>
                 </div>
               </div>

@@ -510,7 +510,7 @@ const ProviderSwap = () => (
         <div className="mt-3 space-y-1 text-sm">
           <div className="text-green-400">✓ Cost: $0/month</div>
           <div className="text-green-400">✓ Privacy: 100% local</div>
-          <div className="text-green-400">✓ Speed: 10-50ms</div>
+          <div className="text-green-400">✓ Speed: provider-dependent</div>
         </div>
       </motion.div>
       

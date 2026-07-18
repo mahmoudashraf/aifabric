@@ -520,7 +520,7 @@ const TheSwitch = () => {
             <div>
               <p className="font-semibold text-foreground">The Change</p>
               <p className="text-muted-foreground font-mono text-xs">strategy: PER_TYPE_TABLE</p>
-              <p className="text-muted-foreground">That's it. One line. Zero code changes.</p>
+              <p className="text-muted-foreground">One configuration switch, then verify behavior in your app.</p>
             </div>
           </div>
         </div>
@@ -668,7 +668,7 @@ ai-infrastructure:
               ✓ Supports MySQL, PostgreSQL, SQL Server, Oracle, H2, SQLite, DB2, Derby, Sybase
             </p>
             <p className="text-xs text-green-400">
-              ✓ Zero code changes to switch strategies
+              ✓ Config-first strategy switching
             </p>
           </div>
         </motion.div>
@@ -800,7 +800,7 @@ const StorageStoryV2 = () => {
                 "I was wrong. <span className="text-primary font-semibold">One config line. Restart. Done.</span>"
               </p>
               <p className="text-lg">
-                "3.2 seconds → 45ms. 70x faster. Zero code changes."
+                "Search latency improved after switching strategies and verifying with app metrics."
               </p>
               <p className="text-lg">
                 "<span className="text-primary font-semibold">The framework auto-creates tables. Auto-detects my database. Auto-optimizes queries.</span>"
@@ -882,4 +882,3 @@ const StorageStoryV2 = () => {
 };
 
 export default StorageStoryV2;
-

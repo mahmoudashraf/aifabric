@@ -107,7 +107,7 @@ const MigrationFlowDiagram = () => (
         className="bg-green-500/20 border border-green-500/50 rounded-lg px-6 py-4 text-center"
       >
         <div className="text-sm font-semibold text-green-400">COMPLETED</div>
-        <div className="text-xs text-green-400/70 mt-1">10M records • 99.9% success • Zero downtime</div>
+        <div className="text-xs text-green-400/70 mt-1">10M records • monitored rollout • controlled cutover</div>
       </motion.div>
     </div>
   </div>
@@ -361,7 +361,7 @@ const ImpactMetrics = () => (
   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
     {[
       { value: '10M+', label: 'Records Migrated', icon: Database },
-      { value: '99.9%', label: 'Success Rate', icon: Target },
+      { value: 'Tracked', label: 'Success Rate', icon: Target },
       { value: 'Zero', label: 'Downtime', icon: Zap },
       { value: '16hrs', label: 'Sleep Recovered', icon: Moon },
     ].map((metric, index) => (
@@ -514,7 +514,7 @@ export default function MigrationStory() {
                     <li>• If crashes? Resume from checkpoint</li>
                     <li>• ETA calculated automatically</li>
                     <li>• Monday 8 AM: 8M records migrated ✓</li>
-                    <li>• Zero downtime, 99.9% success ✓</li>
+                    <li>• Controlled rollout with explicit verification ✓</li>
                   </ul>
                 </div>
               </div>
@@ -586,8 +586,8 @@ export default function MigrationStory() {
               { 
                 title: 'Healthcare Platform', 
                 records: '2M Patient Records', 
-                time: 'HIPAA Compliant', 
-                result: '$500K/year support savings',
+                time: 'Regulated Workflow',
+                result: 'Support workload reduced',
                 icon: Shield
               },
             ].map((case_, index) => (

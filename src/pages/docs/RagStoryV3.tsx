@@ -37,7 +37,7 @@ import {
 } from "lucide-react";
 
 const PAGE_TITLE = "RAG V3: The Support Ticket That Changed Everything - AI Fabric Framework";
-const PAGE_DESCRIPTION = "A realistic RAG story: How a customer support chatbot went from guessing to answering from your knowledge base—zero hallucinations, real answers.";
+const PAGE_DESCRIPTION = "A realistic RAG story: how a customer support chatbot moves from guessing to answering from retrieved knowledge-base evidence.";
 
 const codeTheme = {
   ...themes.nightOwl,
@@ -132,8 +132,8 @@ const TheSupportCrisis = () => {
       events: [
         { emoji: "💡", text: "Developer discovers RAG + ONNX", type: "positive" },
         { emoji: "🔍", text: "RAG: Retrieves facts from knowledge base", type: "positive" },
-        { emoji: "💰", text: "ONNX: Free local embeddings ($0)", type: "positive" },
-        { emoji: "✅", text: "No more guessing. Facts from YOUR docs.", type: "positive" }
+        { emoji: "💰", text: "ONNX: Local embeddings without per-call embedding fees", type: "positive" },
+        { emoji: "✅", text: "Less guessing. Answers grounded in YOUR docs.", type: "positive" }
       ]
     },
     {
@@ -146,8 +146,8 @@ const TheSupportCrisis = () => {
       events: [
         { emoji: "⚡", text: "Implements RAG with knowledge base", type: "positive" },
         { emoji: "📚", text: "Chatbot reads from help articles", type: "positive" },
-        { emoji: "🎉", text: "70% of questions auto-answered correctly", type: "positive" },
-        { emoji: "💰", text: "$35K/year saved on support costs", type: "positive" }
+        { emoji: "🎉", text: "Common policy questions now cite indexed help articles", type: "positive" },
+        { emoji: "💰", text: "Support load can move from repetitive lookup to harder cases", type: "positive" }
       ]
     }
   ];
@@ -667,7 +667,7 @@ const BeforeAfterComparison = () => {
         </div>
         
         <div className="mt-6 p-4 rounded-lg bg-green-500/10 border border-green-500/20">
-          <p className="text-sm text-green-400 font-bold">Result: Accurate Answers, Zero Cost</p>
+          <p className="text-sm text-green-400 font-bold">Result: evidence-grounded answers with inspectable sources</p>
           <p className="text-xs text-muted-foreground mt-1">AI reads YOUR knowledge base. Customers get correct info. Trust restored.</p>
         </div>
       </div>
@@ -682,7 +682,7 @@ const WhatYouImplement = () => {
         What You Actually Implement
       </h3>
       <p className="text-muted-foreground text-center mb-8">
-        One config line. Free embeddings. Zero hallucinations. Facts from YOUR knowledge base.
+        Index selected knowledge, choose an embedding path, and make answers cite retrieved evidence from your knowledge base.
       </p>
       
       <div className="space-y-6">
@@ -717,7 +717,7 @@ public class HelpArticle {
 
 // Save article
 helpArticleRepo.save(article);
-// ↑ Auto-indexed with ONNX embeddings ($0)`} />
+// ↑ Indexed through the configured embedding provider`} />
         </motion.div>
         
         <motion.div
@@ -751,16 +751,16 @@ public String answerSupportQuestion(@RequestBody String question) {
             .build()
     );
     
-    // LLM answers from YOUR knowledge base, not imagination
+    // LLM answer is grounded in retrieved evidence
     return response.getResponse();
 }
 
 // What happens automatically:
-// 1. Generate embedding (ONNX, $0, 15ms)
+// 1. Generate embedding through the configured provider
 // 2. Search YOUR knowledge base vectors
 // 3. Find relevant articles (similarity > 0.8)
 // 4. Build context from YOUR articles
-// 5. LLM answers from facts, not guesses
+// 5. LLM answers with retrieved evidence in context
 // 6. Return answer + sources`} />
         </motion.div>
       </div>
@@ -817,20 +817,20 @@ const RagStoryV3 = () => {
                 <span className="text-gradient">Changed Everything</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mb-8">
-                A realistic RAG story: How a customer support chatbot went from guessing to answering from your knowledge base—zero hallucinations, real answers from help articles.
+                A realistic RAG story: how a customer support chatbot moves from guessing to answering with retrieved knowledge-base evidence.
               </p>
               <div className="flex flex-wrap items-center gap-4 text-sm">
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 border border-border/50">
                   <Shield className="h-4 w-4 text-green-400" />
-                  Zero Hallucinations
+                  Evidence-Grounded
                 </div>
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 border border-border/50">
                   <DollarSign className="h-4 w-4 text-green-400" />
-                  $18K Saved/Year
+                  Support Load Reduced
                 </div>
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 border border-border/50">
                   <Zap className="h-4 w-4 text-blue-400" />
-                  10-50ms Latency
+                  Provider Latency Varies
                 </div>
               </div>
             </div>
@@ -954,4 +954,3 @@ const RagStoryV3 = () => {
 };
 
 export default RagStoryV3;
-

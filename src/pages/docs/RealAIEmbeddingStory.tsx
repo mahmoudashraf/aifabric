@@ -468,7 +468,7 @@ List<Product> results = searchService.semanticSearch(
               </h2>
               <p className="text-muted-foreground mb-8">
                 AI Fabric Framework provides automatic ONNX embeddings with real API integration. 
-                15ms generation, $0 cost, production-ready.
+                Local embedding generation with release-oriented verification.
               </p>
 
               <div className="flex flex-wrap items-center gap-4">

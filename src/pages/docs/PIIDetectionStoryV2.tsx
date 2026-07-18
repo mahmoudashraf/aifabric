@@ -144,7 +144,7 @@ const TheGDPRAudit = () => {
       events: [
         { emoji: "💡", text: "Remember: AI Fabric has PII Detection module", type: "positive" },
         { emoji: "🔒", text: "Automatic detection & redaction before LLM", type: "positive" },
-        { emoji: "✅", text: "GDPR-compliant by default", type: "positive" },
+        { emoji: "✅", text: "Privacy controls enabled before the LLM path", type: "positive" },
         { emoji: "📋", text: "Audit trail with encryption support", type: "positive" }
       ]
     },
@@ -173,7 +173,7 @@ const TheGDPRAudit = () => {
         { emoji: "🎉", text: "Auditor: 'This is exactly what we needed'", type: "positive" },
         { emoji: "✅", text: "GDPR Compliance: PASSED", type: "positive" },
         { emoji: "😴", text: "Team: 'We can finally sleep'", type: "positive" },
-        { emoji: "🔒", text: "Privacy: Automatic, tested, production-ready", type: "positive" }
+        { emoji: "🔒", text: "Privacy: automatic detection with app-owned compliance policy", type: "positive" }
       ]
     }
   ];
@@ -316,7 +316,7 @@ const TheGDPRAudit = () => {
           <Shield className="h-8 w-8 text-green-400 mx-auto mb-3" />
           <p className="text-lg font-bold text-green-400 mb-2">PII Detection Enabled: Privacy Protected</p>
           <p className="text-sm text-muted-foreground">
-            All PII automatically detected and redacted before reaching LLMs. GDPR-compliant by default.
+            Configured PII patterns are detected and redacted before reaching LLMs. Your app still owns compliance obligations.
           </p>
         </motion.div>
       )}
@@ -496,9 +496,9 @@ orchestrator.orchestrate(query, context);
                 <li>• PII automatically detected</li>
                 <li>• Redacted before reaching LLM</li>
                 <li>• Original encrypted for audit</li>
-                <li>• GDPR-compliant by default</li>
+                <li>• Privacy controls before LLM calls</li>
                 <li>• HIPAA-ready</li>
-                <li>• Zero code changes needed</li>
+                <li>• Minimal integration code after configuration</li>
               </ul>
             </div>
             <CodeBlock code={`User: "My SSN is 123-45-6789, email is john@example.com"
@@ -566,7 +566,7 @@ const PatternShowcase = () => {
       bgColor: "bg-purple-500/5",
       example: "4532-1234-5678-9010",
       redacted: "****-****-****-****",
-      description: "Credit card numbers - PCI-DSS compliant redaction"
+      description: "Credit card numbers - redaction pattern for payment-data safety"
     }
   ];
 
@@ -700,7 +700,7 @@ MultiIntentResponse intents = intentQueryExtractor
       
       <div className="mt-6 p-6 rounded-xl bg-gradient-primary text-center">
         <p className="text-primary-foreground font-semibold text-lg">
-          That's it. Configure once. Framework protects everything. GDPR-compliant by default.
+          Configure once, then verify with tests. The framework helps protect AI paths, while compliance remains application-owned.
         </p>
       </div>
     </div>
@@ -788,17 +788,17 @@ const PIIDetectionStoryV2 = () => {
               className="max-w-4xl"
             >
               <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
-                The GDPR Audit That{" "}
+                The Privacy Audit That{" "}
                 <span className="text-gradient">Saved Everything</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mb-8">
-                A developer's journey from privacy panic to GDPR compliance—how automatic PII detection 
-                prevented a €20M fine in 5 days.
+	                A developer's journey from privacy panic to AI input controls: how PII detection
+	                gave the team evidence to fix unsafe AI paths quickly.
               </p>
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm text-accent">
                   <Shield className="h-4 w-4" />
-                  GDPR Compliant
+                  Privacy Controls
                 </div>
                 <div className="flex items-center gap-2 rounded-full bg-secondary/10 px-4 py-2 text-sm text-secondary">
                   <Lock className="h-4 w-4" />
@@ -886,4 +886,3 @@ const PIIDetectionStoryV2 = () => {
 };
 
 export default PIIDetectionStoryV2;
-

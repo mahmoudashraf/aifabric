@@ -477,7 +477,7 @@ public String generateResponse(String userMessage) {
               <FeatureCard
                 title="Auto-Configuration"
                 icon={Settings}
-                description="Spring Boot auto-discovers and configures. Zero code changes needed"
+                description="Spring Boot auto-configuration reduces wiring after the provider starter is added."
                 color="bg-green-500"
               />
               <FeatureCard
@@ -887,7 +887,7 @@ public class SemanticSearchService {
                     </li>
                     <li className="flex items-center gap-2">
                       <Activity className="h-4 w-4 text-primary" />
-                      Health checks & metrics (production-ready)
+                      Health checks & metrics (production-oriented)
                     </li>
                     <li className="flex items-center gap-2">
                       <Zap className="h-4 w-4 text-accent" />

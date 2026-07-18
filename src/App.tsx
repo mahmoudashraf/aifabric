@@ -29,9 +29,81 @@ import {
   LEGACY_AI_FABRIC_FRAMEWORK_ROUTE,
 } from "./pages/demos/AIFabricFramework/routes";
 import MarkdownGuidePage, { MarkdownGuideId } from "./pages/docs/MarkdownGuidePage";
+import AccessControlMechanicsFull from "./pages/docs/AccessControlMechanicsFull";
+import AccessControlMechanicsStory from "./pages/docs/AccessControlMechanicsStory";
+import AccessControlMechanicsStoryV2 from "./pages/docs/AccessControlMechanicsStoryV2";
+import AccessPolicyFull from "./pages/docs/AccessPolicyFull";
+import AccessPolicyStory from "./pages/docs/AccessPolicyStory";
+import AccessPolicyStoryV2 from "./pages/docs/AccessPolicyStoryV2";
+import AIAnnotationsArchitectStory from "./pages/docs/AIAnnotationsArchitectStory";
+import AIAnnotationsDeveloperGuideStory from "./pages/docs/AIAnnotationsDeveloperGuideStory";
+import AIAnnotationsEcommerceStory from "./pages/docs/AIAnnotationsEcommerceStory";
+import AIAnnotationsEnterpriseKnowledgeStory from "./pages/docs/AIAnnotationsEnterpriseKnowledgeStory";
+import AIAnnotationsKillingBoilerplateStory from "./pages/docs/AIAnnotationsKillingBoilerplateStory";
+import AIAnnotationsSemanticSearchStory from "./pages/docs/AIAnnotationsSemanticSearchStory";
+import AuditCapabilitiesFull from "./pages/docs/AuditCapabilitiesFull";
+import AuditCapabilitiesStory from "./pages/docs/AuditCapabilitiesStory";
+import AuditCapabilitiesStoryV2 from "./pages/docs/AuditCapabilitiesStoryV2";
+import BehaviorFull from "./pages/docs/BehaviorFull";
+import BehaviorStory from "./pages/docs/BehaviorStory";
+import BehaviorStoryV2 from "./pages/docs/BehaviorStoryV2";
+import CleanupCapabilitiesFull from "./pages/docs/CleanupCapabilitiesFull";
+import CleanupCapabilitiesStory from "./pages/docs/CleanupCapabilitiesStory";
+import CleanupCapabilitiesStoryV2 from "./pages/docs/CleanupCapabilitiesStoryV2";
+import CoreFull from "./pages/docs/CoreFull";
+import CoreModules from "./pages/docs/CoreModules";
+import CoreStory from "./pages/docs/CoreStory";
+import CoreStoryV2 from "./pages/docs/CoreStoryV2";
+import CustomStorageIndexingStory from "./pages/docs/CustomStorageIndexingStory";
+import ECommerceProductDiscoveryStory from "./pages/docs/ECommerceProductDiscoveryStory";
+import FinancialFraudDetectionStory from "./pages/docs/FinancialFraudDetectionStory";
+import IndexingStrategiesFull from "./pages/docs/IndexingStrategiesFull";
+import IndexingStory from "./pages/docs/IndexingStory";
+import IndexingStoryV2 from "./pages/docs/IndexingStoryV2";
+import IntentFull from "./pages/docs/IntentFull";
+import IntentStory from "./pages/docs/IntentStory";
+import IntentStoryV2 from "./pages/docs/IntentStoryV2";
+import LawFirmDocumentStory from "./pages/docs/LawFirmDocumentStory";
+import MigrationFull from "./pages/docs/MigrationFull";
+import MigrationStory from "./pages/docs/MigrationStory";
+import MigrationStoryV2 from "./pages/docs/MigrationStoryV2";
+import ONNXFallbackStory from "./pages/docs/ONNXFallbackStory";
+import ONNXProviderFull from "./pages/docs/ONNXProviderFull";
+import ONNXProviderStory from "./pages/docs/ONNXProviderStory";
+import ONNXProviderStoryV2 from "./pages/docs/ONNXProviderStoryV2";
+import OpenAIProviderFull from "./pages/docs/OpenAIProviderFull";
+import OpenAIProviderStory from "./pages/docs/OpenAIProviderStory";
+import OpenAIProviderStoryV2 from "./pages/docs/OpenAIProviderStoryV2";
+import OrchestratorStory from "./pages/docs/OrchestratorStory";
+import OrchestratorStoryFull from "./pages/docs/OrchestratorStoryFull";
+import OrchestratorStoryV2 from "./pages/docs/OrchestratorStoryV2";
+import PIIDetectionEdgeStory from "./pages/docs/PIIDetectionEdgeStory";
+import PIIDetectionFull from "./pages/docs/PIIDetectionFull";
+import PIIDetectionStory from "./pages/docs/PIIDetectionStory";
+import PIIDetectionStoryV1 from "./pages/docs/PIIDetectionStoryV1";
+import PIIDetectionStoryV2 from "./pages/docs/PIIDetectionStoryV2";
+import RagFull from "./pages/docs/RagFull";
+import RagStory from "./pages/docs/RagStory";
+import RagStoryV2 from "./pages/docs/RagStoryV2";
+import RagStoryV3 from "./pages/docs/RagStoryV3";
 import RealAPIStories from "./pages/docs/RealAPIStories";
+import RealAIEmbeddingStory from "./pages/docs/RealAIEmbeddingStory";
+import RelationshipQueryFull from "./pages/docs/RelationshipQueryFull";
+import RelationshipQueryIntelligenceFull from "./pages/docs/RelationshipQueryIntelligenceFull";
+import RelationshipQueryIntelligenceStory from "./pages/docs/RelationshipQueryIntelligenceStory";
+import RelationshipQueryIntelligenceStoryV2 from "./pages/docs/RelationshipQueryIntelligenceStoryV2";
+import RelationshipQueryStory from "./pages/docs/RelationshipQueryStory";
+import RelationshipQueryStoryV2 from "./pages/docs/RelationshipQueryStoryV2";
 import ReviewedStoryPage from "./pages/docs/ReviewedStoryPage";
+import RetentionCapabilitiesFull from "./pages/docs/RetentionCapabilitiesFull";
+import RetentionCapabilitiesStory from "./pages/docs/RetentionCapabilitiesStory";
+import RetentionCapabilitiesStoryV2 from "./pages/docs/RetentionCapabilitiesStoryV2";
+import SmartSuggestionsStory from "./pages/docs/SmartSuggestionsStory";
+import StorageFull from "./pages/docs/StorageFull";
+import StorageStory from "./pages/docs/StorageStory";
+import StorageStoryV2 from "./pages/docs/StorageStoryV2";
 import UserStories from "./pages/docs/UserStories";
+import VectorLifecycleStory from "./pages/docs/VectorLifecycleStory";
 import { usePageTracking } from "./hooks/usePageTracking";
 import { reviewedStories } from "./lib/reviewedStoryCatalog";
 
@@ -78,6 +150,92 @@ const retiredDemoRoutes = [
   "/demos/code-documentation-search",
   "/demos/meeting-notes-analyzer",
 ];
+
+const richStoryRoutes = [
+  { path: "/docs/orchestrator_story", element: <OrchestratorStory /> },
+  { path: "/docs/orchestrator_story_v2", element: <OrchestratorStoryV2 /> },
+  { path: "/docs/guides/orchestrator", element: <OrchestratorStoryFull /> },
+  { path: "/docs/pii_detection", element: <PIIDetectionStory /> },
+  { path: "/docs/indexing_story", element: <IndexingStory /> },
+  { path: "/docs/indexing_story_v2", element: <IndexingStoryV2 /> },
+  { path: "/docs/custom_storage_indexing", element: <CustomStorageIndexingStory /> },
+  { path: "/docs/guides/indexing", element: <IndexingStrategiesFull /> },
+  { path: "/docs/migration_story", element: <MigrationStory /> },
+  { path: "/docs/migration_story_v2", element: <MigrationStoryV2 /> },
+  { path: "/docs/guides/migration", element: <MigrationFull /> },
+  { path: "/docs/storage_story", element: <StorageStory /> },
+  { path: "/docs/storage_story_v2", element: <StorageStoryV2 /> },
+  { path: "/docs/guides/storage", element: <StorageFull /> },
+  { path: "/docs/rag_story", element: <RagStory /> },
+  { path: "/docs/rag_story_v2", element: <RagStoryV2 /> },
+  { path: "/docs/rag_story_v3", element: <RagStoryV3 /> },
+  { path: "/docs/guides/rag", element: <RagFull /> },
+  { path: "/docs/behavior_story", element: <BehaviorStory /> },
+  { path: "/docs/behavior_story_v2", element: <BehaviorStoryV2 /> },
+  { path: "/docs/behavior-signals-story", element: <BehaviorStoryV2 /> },
+  { path: "/docs/guides/behavior", element: <BehaviorFull /> },
+  { path: "/docs/modules/core", element: <CoreStory /> },
+  { path: "/docs/core_story_v2", element: <CoreStoryV2 /> },
+  { path: "/docs/core-modules", element: <CoreModules /> },
+  { path: "/docs/guides/core", element: <CoreFull /> },
+  { path: "/docs/features/query", element: <RelationshipQueryStory /> },
+  { path: "/docs/relationship_query_story_v2", element: <RelationshipQueryStoryV2 /> },
+  { path: "/docs/guides/query", element: <RelationshipQueryFull /> },
+  { path: "/docs/relationship_query_intelligence_story", element: <RelationshipQueryIntelligenceStory /> },
+  { path: "/docs/relationship_query_intelligence_v2", element: <RelationshipQueryIntelligenceStoryV2 /> },
+  { path: "/docs/guides/relationship_query_intelligence", element: <RelationshipQueryIntelligenceFull /> },
+  { path: "/docs/intent_story", element: <IntentStory /> },
+  { path: "/docs/intent_story_v2", element: <IntentStoryV2 /> },
+  { path: "/docs/governed_actions_story", element: <IntentStoryV2 /> },
+  { path: "/docs/guides/intent", element: <IntentFull /> },
+  { path: "/docs/access_policy_story", element: <AccessPolicyStory /> },
+  { path: "/docs/access_policy_story_v2", element: <AccessPolicyStoryV2 /> },
+  { path: "/docs/guides/access_policy", element: <AccessPolicyFull /> },
+  { path: "/docs/access_policy_full", element: <AccessPolicyFull /> },
+  { path: "/docs/access_control_mechanics_story", element: <AccessControlMechanicsStory /> },
+  { path: "/docs/access_control_mechanics_v2", element: <AccessControlMechanicsStoryV2 /> },
+  { path: "/docs/guides/access_control_mechanics", element: <AccessControlMechanicsFull /> },
+  { path: "/docs/pii_detection_story_v1", element: <PIIDetectionStoryV1 /> },
+  { path: "/docs/pii_detection_story_v2", element: <PIIDetectionStoryV2 /> },
+  { path: "/docs/guides/pii_detection", element: <PIIDetectionFull /> },
+  { path: "/docs/pii_detection_full", element: <PIIDetectionFull /> },
+  { path: "/docs/openai_provider_story", element: <OpenAIProviderStory /> },
+  { path: "/docs/openai_provider_story_v2", element: <OpenAIProviderStoryV2 /> },
+  { path: "/docs/guides/openai_provider", element: <OpenAIProviderFull /> },
+  { path: "/docs/openai_provider_full", element: <OpenAIProviderFull /> },
+  { path: "/docs/onnx_provider_story", element: <ONNXProviderStory /> },
+  { path: "/docs/onnx_provider_story_v2", element: <ONNXProviderStoryV2 /> },
+  { path: "/docs/guides/onnx_provider", element: <ONNXProviderFull /> },
+  { path: "/docs/onnx_provider_full", element: <ONNXProviderFull /> },
+  { path: "/docs/onnx-fallback-story", element: <ONNXFallbackStory /> },
+  { path: "/docs/audit_capabilities_story", element: <AuditCapabilitiesStory /> },
+  { path: "/docs/audit_capabilities_story_v2", element: <AuditCapabilitiesStoryV2 /> },
+  { path: "/docs/guides/audit_capabilities", element: <AuditCapabilitiesFull /> },
+  { path: "/docs/audit_capabilities_full", element: <AuditCapabilitiesFull /> },
+  { path: "/docs/cleanup_capabilities_story", element: <CleanupCapabilitiesStory /> },
+  { path: "/docs/cleanup_capabilities_story_v2", element: <CleanupCapabilitiesStoryV2 /> },
+  { path: "/docs/guides/cleanup_capabilities", element: <CleanupCapabilitiesFull /> },
+  { path: "/docs/cleanup_capabilities_full", element: <CleanupCapabilitiesFull /> },
+  { path: "/docs/retention_capabilities_story", element: <RetentionCapabilitiesStory /> },
+  { path: "/docs/retention_capabilities_story_v2", element: <RetentionCapabilitiesStoryV2 /> },
+  { path: "/docs/guides/retention_capabilities", element: <RetentionCapabilitiesFull /> },
+  { path: "/docs/retention_capabilities_full", element: <RetentionCapabilitiesFull /> },
+  { path: "/docs/ecommerce-product-discovery-story", element: <ECommerceProductDiscoveryStory /> },
+  { path: "/docs/financial-fraud-detection-story", element: <FinancialFraudDetectionStory /> },
+  { path: "/docs/law-firm-document-story", element: <LawFirmDocumentStory /> },
+  { path: "/docs/pii-detection-edge-story", element: <PIIDetectionEdgeStory /> },
+  { path: "/docs/smart-suggestions-story", element: <SmartSuggestionsStory /> },
+  { path: "/docs/real-ai-embedding-story", element: <RealAIEmbeddingStory /> },
+  { path: "/docs/vector-lifecycle-story", element: <VectorLifecycleStory /> },
+  { path: "/docs/ai-annotations-ecommerce", element: <AIAnnotationsEcommerceStory /> },
+  { path: "/docs/ai-annotations-enterprise-knowledge", element: <AIAnnotationsEnterpriseKnowledgeStory /> },
+  { path: "/docs/ai-annotations-developer-guide", element: <AIAnnotationsDeveloperGuideStory /> },
+  { path: "/docs/ai-annotations-architect", element: <AIAnnotationsArchitectStory /> },
+  { path: "/docs/ai-annotations-killing-boilerplate", element: <AIAnnotationsKillingBoilerplateStory /> },
+  { path: "/docs/ai-annotations-semantic-search", element: <AIAnnotationsSemanticSearchStory /> },
+];
+
+const richStoryPaths = new Set(richStoryRoutes.map((route) => route.path));
 
 const legacyStoryRedirectRoutes = [
   { path: "/docs/orchestrator_story", to: "/docs/architecture" },
@@ -252,14 +410,17 @@ const App = () => (
               <Route path="/docs" element={<Documentation />} />
               <Route path="/docs/user-stories" element={<UserStories />} />
               <Route path="/docs/real-api-stories" element={<RealAPIStories />} />
-              {reviewedStories.map((story) => (
+              {richStoryRoutes.map((route) => (
+                <Route key={route.path} path={route.path} element={route.element} />
+              ))}
+              {reviewedStories.filter((story) => !richStoryPaths.has(story.href)).map((story) => (
                 <Route
                   key={story.href}
                   path={story.href}
                   element={<ReviewedStoryPage storyId={story.id} />}
                 />
               ))}
-              {legacyStoryRedirectRoutes.map((route) => (
+              {legacyStoryRedirectRoutes.filter((route) => !richStoryPaths.has(route.path)).map((route) => (
                 <Route
                   key={route.path}
                   path={route.path}

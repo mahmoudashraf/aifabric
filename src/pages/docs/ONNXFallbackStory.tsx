@@ -20,7 +20,7 @@ import PageViewCounter from "@/components/PageViewCounter";
 import StoryLoveButton from "@/components/StoryLoveButton";
 import StoryNavigation from "@/components/StoryNavigation";
 
-const PAGE_TITLE = "ONNX Fallback Readiness - $0 Embeddings, 100% Private, Zero Downtime";
+const PAGE_TITLE = "ONNX Fallback Readiness - Local Embeddings And Provider Resilience";
 const PAGE_DESCRIPTION =
   "Escape cloud embedding costs and privacy concerns. Learn how ONNX Runtime delivers local, private embeddings with zero API costs and 10x faster performance.";
 const OG_IMAGE = "/images/orchestrator-story-og.png";
@@ -159,7 +159,7 @@ const ONNXFallbackStory = () => {
               className="max-w-4xl"
             >
               <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
-                <span className="text-gradient">$0 Embeddings</span>, 100% Private, Zero Downtime
+                <span className="text-gradient">Local Embeddings</span> And Provider Resilience
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mb-8">
                 The story of escaping $18K/year embedding costs and privacy concerns with local ONNX 
@@ -176,7 +176,7 @@ const ONNXFallbackStory = () => {
                 </div>
                 <div className="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm text-primary">
                   <Lock className="h-4 w-4" />
-                  100% Private
+                  Local Data Path
                 </div>
               </div>
             </motion.div>
@@ -215,7 +215,7 @@ const ONNXFallbackStory = () => {
               <div className="mt-6 space-y-2 text-sm text-muted-foreground">
                 <p>❌ Privacy concerns: Sending proprietary data to OpenAI</p>
                 <p>❌ Vendor lock-in: Can't switch without rewriting</p>
-                <p>❌ Compliance issues: HIPAA/GDPR require on-premises</p>
+	                <p>❌ Compliance review: regulated apps may require local processing and audit controls</p>
                 <p>❌ Latency spikes: Cloud API calls add overhead</p>
               </div>
             </div>

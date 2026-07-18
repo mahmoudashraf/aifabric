@@ -36,7 +36,7 @@ import {
 } from "lucide-react";
 
 const PAGE_TITLE = "PII Detection: Building Privacy Into Every Request - AI Fabric Framework";
-const PAGE_DESCRIPTION = "How we built automatic PII detection that redacts sensitive data before it reaches your LLM—GDPR-compliant by default.";
+const PAGE_DESCRIPTION = "How AI Fabric PII detection can redact sensitive data before it reaches retrieval, logging, or LLM paths.";
 
 const codeTheme = {
   ...themes.nightOwl,
@@ -71,8 +71,8 @@ const ProblemList = () => {
     { icon: XCircle, text: "Email stored in logs", color: "text-red-400" },
     { icon: XCircle, text: "Credit card in database", color: "text-red-400" },
     { icon: XCircle, text: "Phone number in vector embeddings", color: "text-red-400" },
-    { icon: XCircle, text: "GDPR violation (€20M fine)", color: "text-red-400" },
-    { icon: XCircle, text: "HIPAA violation ($1.5M fine)", color: "text-red-400" },
+    { icon: XCircle, text: "Regulatory and audit exposure", color: "text-red-400" },
+    { icon: XCircle, text: "Sensitive health or financial data leakage", color: "text-red-400" },
   ];
 
   return (
@@ -285,21 +285,21 @@ const PIIDetectionStoryV1 = () => {
                 <span className="text-gradient">Privacy Into Every Request</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mb-8">
-                How we built automatic PII detection that redacts sensitive data before it reaches 
-                your LLM—GDPR-compliant by default, production-tested, encryption-ready.
+                How AI Fabric PII detection can redact sensitive data before it reaches
+                retrieval, logging, or LLM paths, while your app still owns compliance policy.
               </p>
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm text-accent">
                   <Shield className="h-4 w-4" />
-                  GDPR Compliant
+                  Privacy Guardrails
                 </div>
                 <div className="flex items-center gap-2 rounded-full bg-secondary/10 px-4 py-2 text-sm text-secondary">
                   <Lock className="h-4 w-4" />
-                  HIPAA Ready
+                  Sensitive-Data Aware
                 </div>
                 <div className="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm text-primary">
                   <Zap className="h-4 w-4" />
-                  Zero Code Changes
+                  Minimal Integration
                 </div>
               </div>
             </motion.div>
@@ -349,7 +349,7 @@ credit card is 4532-1234-5678-9010, and my phone is (555) 123-4567"`} language="
                 Our Solution: Automatic Detection & Redaction
               </h2>
               <p className="text-muted-foreground mb-8">
-                Framework detects PII automatically. Redacts before LLM. Encrypts for audit. Zero code changes.
+                Framework detects configured PII patterns, redacts before AI paths, and can encrypt audit evidence after app integration.
               </p>
             </motion.div>
 
@@ -644,7 +644,7 @@ MultiIntentResponse intents = intentQueryExtractor
               <div className="rounded-xl border border-primary/30 bg-primary/5 p-6">
                 <h3 className="font-bold text-foreground mb-3 flex items-center gap-2">
                   <Shield className="h-5 w-5 text-primary" />
-                  Healthcare Chatbot (HIPAA Compliance)
+	                  Healthcare Support Assistant
                 </h3>
                 <p className="text-sm text-muted-foreground mb-4">
                   Patients share medical info, SSNs, insurance numbers, medical record numbers.
@@ -657,13 +657,13 @@ Processed (sent to LLM):
 "My SSN is ***-**-****, MRN is MRN-********, 
 insurance is INS-**********, DOB is **/**/****"
 
-Result: HIPAA-compliant. PII never in logs. Safe for LLM.`} />
+	Result: sensitive fields are redacted before the LLM path and logs can store sanitized text.`} />
               </div>
 
               <div className="rounded-xl border border-secondary/30 bg-secondary/5 p-6">
                 <h3 className="font-bold text-foreground mb-3 flex items-center gap-2">
                   <CreditCard className="h-5 w-5 text-secondary" />
-                  Financial Services (PCI-DSS Compliance)
+	                  Financial Services Support
                 </h3>
                 <p className="text-sm text-muted-foreground mb-4">
                   Customers share credit cards, SSNs, account numbers.
@@ -676,7 +676,7 @@ Processed:
 "My credit card is ****-****-****-****, 
 SSN is ***-**-****, account is ACC-**********"
 
-Result: PCI-DSS compliant. Credit cards never stored. Safe for LLM.`} />
+	Result: card numbers and account identifiers are masked before support search or generation.`} />
               </div>
             </div>
           </div>
@@ -720,7 +720,7 @@ Result: PCI-DSS compliant. Credit cards never stored. Safe for LLM.`} />
                     </li>
                     <li className="flex items-center gap-2">
                       <Zap className="h-4 w-4 text-primary" />
-                      Zero code changes (automatic in orchestrator)
+                      Minimal app integration once configured
                     </li>
                   </ul>
                 </div>
@@ -752,7 +752,7 @@ Result: PCI-DSS compliant. Credit cards never stored. Safe for LLM.`} />
               </div>
               <div className="rounded-lg bg-gradient-primary p-6 text-center">
                 <p className="text-primary-foreground font-semibold text-lg">
-                  Result: GDPR-compliant by default. HIPAA-ready. PII never reaches LLM. Safe for production. Audit trail encrypted.
+	                  Result: privacy-aware by design. Sensitive text is redacted before AI paths, and encrypted audit trails can support your own compliance controls.
                 </p>
               </div>
             </motion.div>
@@ -797,4 +797,3 @@ Result: PCI-DSS compliant. Credit cards never stored. Safe for LLM.`} />
 };
 
 export default PIIDetectionStoryV1;
-

@@ -643,7 +643,7 @@ const BeforeAfterComparison = () => {
               <span className="text-green-400">✓</span> PII never leaves your servers
             </div>
             <div className="flex items-center gap-2 text-foreground">
-              <span className="text-green-400">✓</span> HIPAA compliant
+              <span className="text-green-400">✓</span> Sensitive data redacted
             </div>
             <div className="flex items-center gap-2 text-foreground">
               <span className="text-green-400">✓</span> Zero fines
@@ -671,7 +671,7 @@ const RealWorldScenarios = () => {
       color: "bg-blue-500",
       problem: "Patient includes SSN in query",
       solution: "SSN automatically redacted before LLM",
-      impact: "HIPAA compliant, $1.5M fine avoided"
+      impact: "Sensitive health data redacted before AI handling"
     },
     {
       title: "FinTech Platform",
@@ -679,7 +679,7 @@ const RealWorldScenarios = () => {
       color: "bg-green-500",
       problem: "User mentions credit card number",
       solution: "Credit card redacted automatically",
-      impact: "PCI-DSS compliant, zero data leaks"
+      impact: "Payment data masked before AI handling"
     },
     {
       title: "E-Commerce Platform",
@@ -748,7 +748,7 @@ const WhatYouImplement = () => {
         What You Actually Implement
       </h3>
       <p className="text-muted-foreground text-center mb-8">
-        One config line. Automatic PII detection. Zero code changes needed.
+        Configure PII detection once, then verify redaction across your AI entry points.
       </p>
       
       <div className="space-y-6">
@@ -882,7 +882,7 @@ const ComplianceImpact = () => {
       color: "text-green-400",
       fine: "€20M or 4% revenue",
       protection: "Email, Phone, IP Address",
-      result: "100% compliant with automatic redaction"
+      result: "Sensitive fields automatically redacted according to app policy"
     },
     {
       name: "PCI-DSS",
@@ -983,16 +983,16 @@ const PIIDetectionStory = () => {
                 <span className="text-gradient">Never Happened</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mb-8">
-                A developer's journey from HIPAA nightmare to peaceful sleep—how PII detection prevents data leaks before they happen. Automatic detection. Automatic redaction. Zero compliance violations.
+	                A developer's journey from sensitive-data panic to safer AI requests. PII detection helps redact risky input before retrieval, logging, or LLM calls.
               </p>
               <div className="flex flex-wrap items-center gap-4 text-sm">
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 border border-border/50">
                   <Shield className="h-4 w-4 text-green-400" />
-                  HIPAA Compliant
+                  Sensitive-Data Controls
                 </div>
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 border border-border/50">
                   <Lock className="h-4 w-4 text-blue-400" />
-                  GDPR Compliant
+                  Privacy-Aware Flow
                 </div>
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 border border-border/50">
                   <Eye className="h-4 w-4 text-purple-400" />
@@ -1115,4 +1115,3 @@ const PIIDetectionStory = () => {
 };
 
 export default PIIDetectionStory;
-

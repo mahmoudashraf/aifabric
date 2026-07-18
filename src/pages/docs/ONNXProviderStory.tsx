@@ -299,7 +299,7 @@ const PerformanceComparison = () => {
           <div className="space-y-3">
             <div>
               <p className="text-xs text-muted-foreground mb-1">Single Embedding:</p>
-              <p className="text-lg font-bold text-blue-400">10-50ms</p>
+              <p className="text-lg font-bold text-blue-400">Local runtime</p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground mb-1">Batch(100):</p>
@@ -439,7 +439,7 @@ const ONNXProviderStory = () => {
                 </div>
                 <div className="flex items-center gap-2 rounded-full bg-secondary/10 px-4 py-2 text-sm text-secondary">
                   <Lock className="h-4 w-4" />
-                  100% Private
+                  Local Data Path
                 </div>
                 <div className="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm text-primary">
                   <Zap className="h-4 w-4" />
@@ -562,21 +562,21 @@ List<Double> embedding = response.getEmbedding();
 
             <div className="grid md:grid-cols-2 gap-4">
               <FeatureCard
-                title="Zero Cost"
+                title="No Per-Call Embedding Fee"
                 icon={DollarSign}
-                description="No API fees, ever. Generate unlimited embeddings for free. Save thousands per year."
+                description="Run embeddings locally so indexing and retrieval do not depend on a remote embedding API call."
                 color="bg-green-500"
               />
               <FeatureCard
-                title="100% Private"
+                title="Local Data Path"
                 icon={Lock}
-                description="Data never leaves your servers. GDPR-compliant by default. HIPAA-friendly. Works offline."
+                description="Text can stay inside your infrastructure, which helps privacy-oriented designs when your app owns the compliance controls."
                 color="bg-blue-500"
               />
               <FeatureCard
-                title="Lightning Fast"
+                title="Predictable Local Runtime"
                 icon={Zap}
-                description="10-50ms on CPU, 2-10ms on GPU. 10x faster than cloud APIs. Batch processing 3-5x speedup."
+                description="Latency depends on model, hardware, and batching, but local execution removes provider network round trips."
                 color="bg-purple-500"
               />
               <FeatureCard
@@ -837,7 +837,7 @@ public class SearchController {
                     </li>
                     <li className="flex items-center gap-2">
                       <Zap className="h-4 w-4 text-purple-400" />
-                      Lightning fast (10-50ms CPU, 2-10ms GPU)
+                      Local runtime without a provider network round trip
                     </li>
                     <li className="flex items-center gap-2">
                       <Package className="h-4 w-4 text-orange-400" />

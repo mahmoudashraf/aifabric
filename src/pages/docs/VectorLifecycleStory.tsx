@@ -225,8 +225,8 @@ const VectorLifecycleStory = () => {
 
               <div className="mt-6 rounded-lg border border-accent/30 bg-accent/5 p-4">
                 <p className="text-foreground">
-                  <strong>The Promise:</strong> Automated lifecycle management with zero downtime, complete 
-                  audit trails, and GDPR/HIPAA compliant deletion.
+                  <strong>The Promise:</strong> lifecycle management with explicit delete, clear, reseed,
+                  diagnostics, and audit evidence that your app can use in regulated workflows.
                 </p>
               </div>
             </StoryAct>
@@ -271,8 +271,8 @@ const VectorLifecycleStory = () => {
 
               <div className="mt-6 rounded-lg border border-accent/30 bg-accent/5 p-4">
                 <p className="text-sm text-foreground">
-                  <strong>Result:</strong> Vector completely removed • Product no longer searchable • 
-                  Full audit trail maintained • GDPR/HIPAA compliant
+                  <strong>Result:</strong> Vector removed • Product no longer searchable •
+                  deletion event recorded for application audit review
                 </p>
               </div>
             </StoryAct>
@@ -417,7 +417,7 @@ for (Product product : products) {
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 {[
                   "Complete operation history",
-                  "GDPR/HIPAA compliance",
+                  "Compliance-oriented deletion evidence",
                   "Deletion audit trail",
                   "Reseed tracking",
                 ].map((feature, i) => (

@@ -28,8 +28,8 @@ import {
   Shield
 } from "lucide-react";
 
-const PAGE_TITLE = "Intent Extraction V2: A Conversation Story - AI Fabric Framework";
-const PAGE_DESCRIPTION = "Experience how AI learns to understand users through an interactive storytelling approach.";
+const PAGE_TITLE = "Governed Actions: Intent And Confirmation Story - AI Fabric Framework";
+const PAGE_DESCRIPTION = "Experience how AI Fabric turns natural language into governed action requests with validation, confirmation, and application-owned execution.";
 const OG_IMAGE = "/assets/story-preview.png";
 
 const codeTheme = {
@@ -73,14 +73,16 @@ const ConversationSimulator = () => {
   
   const conversation: Message[] = [
     { speaker: "user", text: "I want to cancel my subscription" },
-    { speaker: "system", text: "Analyzing intent...", intent: "cancel_subscription", confidence: 0.95, action: "ACTION" },
-    { speaker: "system", text: "✓ Understood: Cancel Subscription (95% confidence)" },
-    { speaker: "system", text: "Routing to SubscriptionHandler..." },
-    { speaker: "system", text: "✓ Subscription cancelled successfully" },
+    { speaker: "system", text: "Resolving governed action...", intent: "cancel_subscription", confidence: 95, action: "ACTION" },
+    { speaker: "system", text: "✓ Action candidate: Cancel Subscription (95% confidence)" },
+    { speaker: "system", text: "Confirmation required before SubscriptionHandler can run." },
+    { speaker: "system", text: "Confirm: Cancel Pro plan and stop renewal?" },
+    { speaker: "user", text: "Yes, confirm it" },
+    { speaker: "system", text: "✓ Confirmed. Executing the registered app handler." },
+    { speaker: "system", text: "✓ Subscription cancellation request recorded" },
     { speaker: "user", text: "Actually, can you help me downgrade to Basic instead?" },
-    { speaker: "system", text: "Analyzing intent...", intent: "change_plan", confidence: 0.91, action: "ACTION" },
-    { speaker: "system", text: "✓ Understood: Change Plan to Basic (91% confidence)" },
-    { speaker: "system", text: "✓ Plan updated successfully" },
+    { speaker: "system", text: "Resolving follow-up action...", intent: "change_plan", confidence: 91, action: "ACTION" },
+    { speaker: "system", text: "✓ Action candidate: Change Plan to Basic; confirmation still belongs to the app." },
   ];
 
   useEffect(() => {
@@ -164,7 +166,7 @@ const ConversationSimulator = () => {
       
       <div className="mt-6 p-4 rounded-lg bg-muted/50 border border-border/30">
         <p className="text-xs text-muted-foreground text-center">
-          Each message is analyzed by the LLM → Intent extracted → Routed to your business logic
+          The LLM proposes intent and parameters → AI Fabric validates the action → your app confirms and executes
         </p>
       </div>
     </div>
@@ -319,11 +321,11 @@ public class SubscriptionHandler implements ActionHandler {
 
 const MagicMoment = () => {
   const examples = [
-    { input: '"Cancel my subscription"', output: "cancel_subscription", color: "text-blue-400" },
-    { input: '"Stop billing me"', output: "cancel_subscription", color: "text-purple-400" },
-    { input: '"I want to unsubscribe"', output: "cancel_subscription", color: "text-green-400" },
-    { input: '"End my plan please"', output: "cancel_subscription", color: "text-amber-400" },
-    { input: '"Make me stop paying"', output: "cancel_subscription", color: "text-pink-400" },
+    { input: '"Cancel my subscription"', output: "action: cancel_subscription", color: "text-blue-400" },
+    { input: '"Stop billing me"', output: "action: cancel_subscription", color: "text-purple-400" },
+    { input: '"I want to unsubscribe"', output: "action: cancel_subscription", color: "text-green-400" },
+    { input: '"End my plan please"', output: "action: cancel_subscription", color: "text-amber-400" },
+    { input: '"Make me stop paying"', output: "action: cancel_subscription", color: "text-pink-400" },
   ];
 
   return (
@@ -364,9 +366,7 @@ const MagicMoment = () => {
         
         <div className="mt-8 text-center">
           <p className="text-sm text-muted-foreground">
-            <span className="text-primary font-semibold">Zero</span> string parsing.{" "}
-            <span className="text-primary font-semibold">Zero</span> regex.{" "}
-            <span className="text-primary font-semibold">Zero</span> keywords.
+            Replace brittle string parsing with structured intent, parameter, and confirmation handling.
           </p>
           <p className="text-lg font-bold text-foreground mt-2">Just pure understanding.</p>
         </div>
@@ -464,7 +464,7 @@ const FourUniversalLanguages = () => {
       
       <div className="mt-8 p-6 rounded-xl bg-card border border-border/50 text-center">
         <p className="text-sm text-muted-foreground">
-          The LLM automatically categorizes every request. <span className="text-primary font-semibold">You never write parsing logic again.</span>
+          The LLM categorizes requests into a bounded contract. <span className="text-primary font-semibold">Your app still owns policy, validation, and execution.</span>
         </p>
       </div>
     </div>
@@ -747,7 +747,7 @@ const IntentStoryV2 = () => {
                 <div className="flex items-center gap-3">
                   <span className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-2 text-sm font-medium text-accent">
                     <MessageSquare className="h-4 w-4" />
-                    Intent Extraction V2
+                    Governed Actions V2
                   </span>
                   <Link 
                     to="/docs/intent_story"
@@ -766,7 +766,7 @@ const IntentStoryV2 = () => {
                 <span className="text-gradient">Changed Everything</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mb-8">
-                A story about Sarah, a developer who discovered that understanding users doesn't require parsing—it requires listening.
+                A story about Sarah, a developer who learned to let the LLM understand language while her Java app keeps the final say.
               </p>
             </div>
           </section>
@@ -802,11 +802,12 @@ const IntentStoryV2 = () => {
             <div className="space-y-4">
               {[
                 { step: "User speaks naturally", detail: '"I want to cancel my subscription"' },
-                { step: "LLM understands context", detail: "Not just keywords—actual meaning" },
-                { step: "Intent extracted", detail: '{ type: "ACTION", action: "cancel_subscription" }' },
-                { step: "Framework routes automatically", detail: "Finds your SubscriptionHandler" },
-                { step: "Your code runs", detail: "subscriptionService.cancel(userId)" },
-                { step: "Clean response", detail: "User gets confirmation" }
+                { step: "LLM understands context", detail: "Not just keywords; bounded action intent" },
+                { step: "Action request created", detail: '{ type: "ACTION", action: "cancel_subscription" }' },
+                { step: "Framework finds registered handler", detail: "SubscriptionHandler is the app-owned executor" },
+                { step: "App validates and asks confirmation", detail: "Sensitive actions pause before state change" },
+                { step: "Confirmed code runs", detail: "subscriptionService.cancel(userId)" },
+                { step: "User-facing result returns", detail: "No raw handler dump required" }
               ].map((item, i) => (
                 <motion.div
                   key={i}

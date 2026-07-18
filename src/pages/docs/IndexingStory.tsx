@@ -221,7 +221,7 @@ const StrategyComparison = () => (
           <td className="px-4 py-3 font-medium text-red-400">SYNC</td>
           <td className="px-4 py-3 text-muted-foreground">+50-500ms</td>
           <td className="px-4 py-3 text-muted-foreground">Immediately</td>
-          <td className="px-4 py-3 text-muted-foreground">Compliance, GDPR</td>
+          <td className="px-4 py-3 text-muted-foreground">Immediate delete/refresh paths</td>
         </tr>
         <tr className="border-t border-border/50 bg-primary/5">
           <td className="px-4 py-3 font-medium text-green-400">ASYNC ⭐</td>
@@ -245,7 +245,7 @@ const ImpactMetrics = () => {
   const metrics = [
     { label: "Revenue Saved", value: "$2.1M", icon: DollarSign, color: "text-green-400" },
     { label: "Cost Reduction", value: "99%", icon: TrendingUp, color: "text-primary" },
-    { label: "GDPR Compliance", value: "100%", icon: Shield, color: "text-blue-400" },
+    { label: "Delete Coverage", value: "Explicit", icon: Shield, color: "text-blue-400" },
     { label: "Entities/Day", value: "500K+", icon: Database, color: "text-amber-400" },
   ];
 

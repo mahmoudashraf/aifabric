@@ -699,7 +699,7 @@ curl "http://localhost:8080/api/products/search?q=laptop%20for%20programming"
                 { name: "Migration", artifact: "ai-infrastructure-migration", features: ["Bulk indexing", "Pause/resume", "Progress tracking"], icon: Database },
                 { name: "Relationship Query", artifact: "ai-infrastructure-relationship-query", features: ["Natural language → SQL", "64x cache speedup", "4-level fallback"], icon: MessageSquare },
                 { name: "Web APIs", artifact: "ai-fabric-web", features: ["59 REST endpoints", "RAG API", "Health monitoring"], icon: Globe },
-                { name: "ONNX Provider", artifact: "ai-infrastructure-onnx-starter", features: ["Free embeddings", "100% private", "10-50ms latency"], icon: Zap },
+                { name: "ONNX Provider", artifact: "ai-infrastructure-onnx-starter", features: ["Local embeddings", "Local data path", "Hardware-dependent latency"], icon: Zap },
                 { name: "Lucene Vector", artifact: "ai-infrastructure-vector-lucene", features: ["Embedded DB", "No setup", "< 1M vectors"], icon: Search }
               ].map((module, i) => (
                 <motion.div

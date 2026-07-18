@@ -217,7 +217,7 @@ const StorageFull = () => {
           <section className="mt-12 p-6 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 text-center">
             <h2 className="text-2xl font-bold text-foreground mb-4">Ready to Get Started?</h2>
             <p className="text-muted-foreground mb-6">
-              Part of AI Fabric Framework—production-ready AI infrastructure for Spring Boot.
+              Part of AI Fabric Framework: production-oriented AI infrastructure for Spring Boot.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link to="/docs/storage_story">

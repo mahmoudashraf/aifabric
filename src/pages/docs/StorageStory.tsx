@@ -700,7 +700,7 @@ const StorageStory = () => {
                 </li>
               </ul>
               <p className="mt-4 text-foreground font-semibold">
-                One config line. Zero code changes. Maximum flexibility.
+                Config-first storage selection with app-level verification.
               </p>
             </div>
           </section>

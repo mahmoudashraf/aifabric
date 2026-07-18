@@ -1112,7 +1112,7 @@ const OpenAIProviderStoryV2 = () => {
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mb-8">
                 A developer's journey from 200 lines of boilerplate to one dependency—how OpenAI integration 
-                became trivial and production-ready.
+                became easier to verify and operate.
               </p>
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2 rounded-full bg-accent/10 px-4 py-2 text-sm text-accent">
@@ -1219,4 +1219,3 @@ const OpenAIProviderStoryV2 = () => {
 };
 
 export default OpenAIProviderStoryV2;
-
