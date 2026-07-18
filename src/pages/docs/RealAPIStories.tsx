@@ -6,10 +6,11 @@ import { ArrowRight, ExternalLink, FlaskConical, ShieldCheck } from "lucide-reac
 import DocsLayout from "@/components/docs/DocsLayout";
 import StoryPreviewImage from "@/components/StoryPreviewImage";
 import { realApiStories } from "@/lib/reviewedStoryCatalog";
+import { restoredRealApiStories } from "@/lib/storyNavigation";
 
-const PAGE_TITLE = "Reviewed Real App Stories - AI Fabric Framework";
+const PAGE_TITLE = "Real App Story Library - AI Fabric Framework";
 const PAGE_DESCRIPTION =
-  "Reviewed stories for deployed AI Fabric demo apps and release verification. Each story links to current live demos, architecture pages, or test guides.";
+  "Real app story library for deployed AI Fabric demos, release verification, and restored classic Real API scenarios.";
 
 const RealAPIStories = () => {
   useEffect(() => {
@@ -20,9 +21,9 @@ const RealAPIStories = () => {
       if (!element) {
         element = document.createElement("meta");
         if (selector.includes("property=")) {
-          element.setAttribute("property", selector.match(/property=\"([^\"]+)\"/)?.[1] || "");
+          element.setAttribute("property", selector.match(/property="([^"]+)"/)?.[1] || "");
         } else if (selector.includes("name=")) {
-          element.setAttribute("name", selector.match(/name=\"([^\"]+)\"/)?.[1] || "");
+          element.setAttribute("name", selector.match(/name="([^"]+)"/)?.[1] || "");
         }
         document.head.appendChild(element);
       }
@@ -51,20 +52,20 @@ const RealAPIStories = () => {
             <div className="mb-5 flex flex-wrap items-center gap-3">
               <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary">
                 <FlaskConical className="h-3.5 w-3.5" />
-                Reviewed real app stories
+                Real app story library
               </span>
               <span className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
                 <ShieldCheck className="h-3.5 w-3.5" />
-                Linked to deployed demos
+                {restoredRealApiStories.length} classic scenarios restored
               </span>
             </div>
 
             <h1 className="max-w-4xl text-4xl font-black leading-tight tracking-normal text-foreground md:text-6xl">
-              Real app stories that show AI Fabric under live pressure.
+              Real app stories that show AI Fabric through concrete scenarios.
             </h1>
             <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">
-              These stories replace the older Real API drafts with current deployed demo evidence:
-              shopping, account resolution, behavior signals, tenant guard, privacy shield, and release verification.
+              Current deployed demo stories stay first, and the restored Real API scenario pages are linked below
+              with corrected wording around performance, privacy, and verification.
             </p>
           </motion.div>
         </section>
@@ -119,6 +120,68 @@ const RealAPIStories = () => {
                           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                         </span>
                       </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="border-t border-border/50 px-6 py-12">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+              <div className="max-w-3xl">
+                <h2 className="text-2xl font-bold text-foreground">Restored Classic Real API Scenarios</h2>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                  These classic scenario pages remain useful for showing how AI Fabric maps to domains like
+                  commerce, finance, legal discovery, privacy testing, suggestions, embeddings, and vector lifecycle.
+                </p>
+              </div>
+              <span className="w-fit rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                {restoredRealApiStories.length} restored scenarios
+              </span>
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+              {restoredRealApiStories.map((story, index) => (
+                <motion.div
+                  key={story.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: Math.min(index * 0.03, 0.25) }}
+                  viewport={{ once: true, margin: "-80px" }}
+                >
+                  <Link
+                    to={story.href}
+                    className="group block h-full overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all hover:border-primary/40 hover:shadow-md"
+                  >
+                    <div className="relative aspect-[16/8] w-full overflow-hidden">
+                      <StoryPreviewImage
+                        icon={story.icon}
+                        title={story.title}
+                        description={story.description}
+                        stats="Restored scenario"
+                        category={story.category}
+                        color={story.color}
+                        className="transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
+
+                    <div className="flex h-full flex-col p-5">
+                      <span className="mb-2 w-fit rounded-full bg-muted px-2.5 py-1 text-[11px] font-semibold text-muted-foreground">
+                        {story.category}
+                      </span>
+                      <h3 className="text-lg font-bold text-foreground transition-colors group-hover:text-primary">
+                        {story.title}
+                      </h3>
+                      <p className="mt-2 flex-1 text-sm leading-6 text-muted-foreground">
+                        {story.description}
+                      </p>
+                      <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary">
+                        Open scenario
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </span>
                     </div>
                   </Link>
                 </motion.div>

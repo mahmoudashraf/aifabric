@@ -19,6 +19,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import BrandLogo from "@/components/BrandLogo";
+import { restoredRealApiStories, restoredUserStories } from "@/lib/storyNavigation";
 import { cn } from "@/lib/utils";
 
 interface DocSection {
@@ -30,6 +31,24 @@ interface DocSection {
     badge?: string;
   }[];
 }
+
+const storyBadge = (href: string) => {
+  if (href.endsWith("_v3")) return "V3";
+  if (href.endsWith("_v2") || href.includes("_v2")) return "V2";
+  if (href.includes("/guides/")) return "Guide";
+  return undefined;
+};
+
+const restoredStoryItems = restoredUserStories.map((story) => ({
+  title: story.title,
+  href: story.href,
+  badge: storyBadge(story.href),
+}));
+
+const restoredRealApiStoryItems = restoredRealApiStories.map((story) => ({
+  title: story.title,
+  href: story.href,
+}));
 
 const docSections: DocSection[] = [
   {
@@ -60,10 +79,12 @@ const docSections: DocSection[] = [
     title: "Framework Stories",
     icon: <BookOpen className="h-4 w-4" />,
     items: [
-      { title: "Reviewed User Stories", href: "/docs/user-stories" },
-      { title: "Reviewed Real App Stories", href: "/docs/real-api-stories" },
+      { title: "Story Library", href: "/docs/user-stories", badge: "40+" },
+      { title: "Real App Story Library", href: "/docs/real-api-stories" },
+      { title: "Orchestrator Story", href: "/docs/orchestrator_story_v2", badge: "Restored" },
       { title: "RAG Evidence Search", href: "/docs/rag_story_v3", badge: "V3" },
       { title: "Governed Actions", href: "/docs/governed_actions_story", badge: "Interactive" },
+      { title: "Chat Session Memory", href: "/docs/chat_session_memory_story" },
       { title: "Behavior Signals", href: "/docs/behavior-signals-story" },
       { title: "Indexing And Sync", href: "/docs/indexing_story" },
       { title: "Access Policy", href: "/docs/access_policy_story" },
@@ -72,6 +93,19 @@ const docSections: DocSection[] = [
       { title: "ONNX Embeddings", href: "/docs/onnx_provider_story" },
       { title: "Account Resolver Story", href: "/docs/account-resolver-story" },
       { title: "Tenant Guard Story", href: "/docs/tenant-guard-story" },
+    ],
+  },
+  {
+    title: "Classic Story Library",
+    icon: <BookOpen className="h-4 w-4" />,
+    items: restoredStoryItems,
+  },
+  {
+    title: "Real API Stories",
+    icon: <TestTube className="h-4 w-4" />,
+    items: [
+      { title: "Reviewed Real App Stories", href: "/docs/real-api-stories" },
+      ...restoredRealApiStoryItems,
     ],
   },
   {
@@ -95,6 +129,40 @@ const docSections: DocSection[] = [
       { title: "OpenAI Provider", href: "/docs/providers/openai" },
       { title: "ONNX Embeddings", href: "/docs/providers/onnx" },
       { title: "Lucene Vector Storage", href: "/docs/vector/lucene" },
+    ],
+  },
+  {
+    title: "Detailed Story Guides",
+    icon: <Map className="h-4 w-4" />,
+    items: [
+      { title: "Orchestrator Full Guide", href: "/docs/guides/orchestrator" },
+      { title: "Core Full Guide", href: "/docs/guides/core" },
+      { title: "Intent Full Guide", href: "/docs/guides/intent" },
+      { title: "Relationship Query Full Guide", href: "/docs/guides/query" },
+      { title: "Indexing Full Guide", href: "/docs/guides/indexing" },
+      { title: "Migration Full Guide", href: "/docs/guides/migration" },
+      { title: "Storage Full Guide", href: "/docs/guides/storage" },
+      { title: "RAG Full Guide", href: "/docs/guides/rag" },
+      { title: "Behavior Full Guide", href: "/docs/guides/behavior" },
+      { title: "Access Policy Full Guide", href: "/docs/guides/access_policy" },
+      { title: "PII Detection Full Guide", href: "/docs/guides/pii_detection" },
+      { title: "OpenAI Provider Full Guide", href: "/docs/guides/openai_provider" },
+      { title: "ONNX Provider Full Guide", href: "/docs/guides/onnx_provider" },
+      { title: "Audit Capabilities Full Guide", href: "/docs/guides/audit_capabilities" },
+      { title: "Cleanup Capabilities Full Guide", href: "/docs/guides/cleanup_capabilities" },
+      { title: "Retention Capabilities Full Guide", href: "/docs/guides/retention_capabilities" },
+    ],
+  },
+  {
+    title: "AI Annotation Stories",
+    icon: <Sparkles className="h-4 w-4" />,
+    items: [
+      { title: "E-Commerce Semantic Search", href: "/docs/ai-annotations-ecommerce" },
+      { title: "Enterprise Knowledge", href: "/docs/ai-annotations-enterprise-knowledge" },
+      { title: "Developer Guide", href: "/docs/ai-annotations-developer-guide" },
+      { title: "Architect Guide", href: "/docs/ai-annotations-architect" },
+      { title: "Killing Boilerplate", href: "/docs/ai-annotations-killing-boilerplate" },
+      { title: "Semantic Search Deep Dive", href: "/docs/ai-annotations-semantic-search" },
     ],
   },
   {
@@ -203,7 +271,7 @@ const SidebarSection = ({
 export const DocsSidebar = () => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set(["Getting Started", "LLM Assistant Context", "Framework Stories", "Architecture", "Modules"])
+    new Set(["Getting Started", "LLM Assistant Context", "Framework Stories", "Classic Story Library", "Architecture", "Modules"])
   );
 
   const toggleSection = (title: string) => {
