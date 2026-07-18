@@ -344,7 +344,7 @@ function WebinarHomeSection() {
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <Button asChild size="lg" className="h-12 bg-white px-6 text-slate-950 hover:bg-slate-100">
               <a href={webinarContactLinks.registration} target="_blank" rel="noopener noreferrer">
-                Register on Luma
+                Register for webinar
                 <ArrowRight className="ml-2 h-4 w-4" />
               </a>
             </Button>
@@ -382,7 +382,7 @@ function WebinarHomeSection() {
               <div className="mt-5 flex flex-col gap-3 sm:flex-row">
                 <Button asChild className="bg-blue-600 hover:bg-blue-700">
                   <a href={webinarContactLinks.registration} target="_blank" rel="noopener noreferrer">
-                    Register on Luma
+                    Register for webinar
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </a>
                 </Button>

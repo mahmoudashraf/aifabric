@@ -72,7 +72,7 @@ const Webinars = () => {
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Button asChild size="lg" className="h-12 bg-slate-950 px-6 text-base hover:bg-slate-800">
                   <a href={webinarContactLinks.registration} target="_blank" rel="noopener noreferrer">
-                    Register on Luma
+                    Register for webinar
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </a>
                 </Button>
@@ -139,7 +139,7 @@ const Webinars = () => {
                 </div>
                 <Button asChild className="mt-6 w-full bg-blue-600 hover:bg-blue-700">
                   <a href={webinarContactLinks.registration} target="_blank" rel="noopener noreferrer">
-                    Reserve your place on Luma
+                    Reserve your place
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </a>
                 </Button>

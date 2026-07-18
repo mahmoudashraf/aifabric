@@ -2,16 +2,16 @@ export const webinarContactLinks = {
   consultation: "/consultation",
   discord: "https://discord.gg/cBpR7JQuY",
   linkedin: "https://www.linkedin.com/in/engmahmoudalgammal/",
-  registration: "https://luma.com/zgwhk5sc",
+  registration: "https://streamyard.com/faupxuggnj",
   whatsapp: "https://wa.me/message/O3RF2KNXTHQDF1",
 };
 
 export const nextWebinar = {
-  title: "Building Production AI Workflows in Spring Boot with AI Fabric",
-  dateLabel: "Friday, August 7, 2026",
-  shortDateLabel: "Aug 7, 2026",
-  timeLabel: "5:00 PM London / 12:00 PM New York",
-  duration: "45 minute live walkthrough + Q&A",
+  title: "AI Fabric Engineering Live - Learn AI Fabric from a Real Spring Boot Workflow",
+  dateLabel: "Thursday, July 23, 2026",
+  shortDateLabel: "Jul 23, 2026",
+  timeLabel: "5:00 PM - 6:00 PM London",
+  duration: "60 minute practical live session",
   status: "Registration open",
   audience: "Java and Spring Boot teams evaluating AI Fabric",
   summary:
