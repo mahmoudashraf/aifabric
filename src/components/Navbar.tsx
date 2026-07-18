@@ -1,9 +1,8 @@
 import { motion } from "framer-motion";
-import { CalendarCheck, CalendarDays, Github, Menu, X, BookOpen, Play } from "lucide-react";
+import { CalendarCheck, CalendarDays, Github, Menu, X, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Badge } from "@/components/ui/badge";
 import BrandLogo from "@/components/BrandLogo";
 interface HashLinkProps {
   to: string;
@@ -83,10 +82,6 @@ const Navbar = () => {
             <HashLink to="/#live-demos" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               Live Demos
             </HashLink>
-            <Link to="/webinars" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-              <CalendarDays className="h-4 w-4" />
-              Webinars
-            </Link>
             <HashLink to="/#features" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               Capabilities
             </HashLink>
@@ -97,12 +92,9 @@ const Navbar = () => {
               <BookOpen className="h-4 w-4" />
               Getting Started
             </Link>
-            <Link to="/demos" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-              <Play className="h-4 w-4" />
-              Demos
-              <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[10px] bg-primary/10 text-primary">
-                New
-              </Badge>
+            <Link to="/webinars" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              <CalendarDays className="h-4 w-4" />
+              Webinars
             </Link>
             <Link to="/consultation" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               <CalendarCheck className="h-4 w-4" />
@@ -145,29 +137,19 @@ const Navbar = () => {
               <HashLink to="/#live-demos" onClick={closeMenu} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 Live Demos
               </HashLink>
-              <Link to="/webinars" onClick={closeMenu} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-                <CalendarDays className="h-4 w-4" />
-                Webinars
-              </Link>
               <HashLink to="/#features" onClick={closeMenu} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 Capabilities
               </HashLink>
               <HashLink to="/#modules" onClick={closeMenu} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 Java Shape
               </HashLink>
-              <HashLink to="/#how-it-works" onClick={closeMenu} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-                How It Works
-              </HashLink>
               <Link to="/docs" onClick={closeMenu} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 <BookOpen className="h-4 w-4" />
-                Docs
+                Getting Started
               </Link>
-              <Link to="/demos" onClick={closeMenu} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-                <Play className="h-4 w-4" />
-                Demos
-                <Badge variant="secondary" className="ml-1 px-1.5 py-0 text-[10px] bg-primary/10 text-primary">
-                  New
-                </Badge>
+              <Link to="/webinars" onClick={closeMenu} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+                <CalendarDays className="h-4 w-4" />
+                Webinars
               </Link>
               <Link to="/consultation" onClick={closeMenu} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 <CalendarCheck className="h-4 w-4" />
