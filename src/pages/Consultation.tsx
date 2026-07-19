@@ -43,7 +43,7 @@ declare global {
   }
 }
 
-function useCalendlyInlineWidget() {
+function useCalendlyInlineWidget(url: string) {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -56,7 +56,7 @@ function useCalendlyInlineWidget() {
 
       containerRef.current.innerHTML = "";
       window.Calendly.initInlineWidget({
-        url: CALENDLY_URL,
+        url,
         parentElement: containerRef.current,
       });
     };
@@ -86,7 +86,7 @@ function useCalendlyInlineWidget() {
       cancelled = true;
       script.removeEventListener("load", initWidget);
     };
-  }, []);
+  }, [url]);
 
   return containerRef;
 }
@@ -200,9 +200,12 @@ const contactOptions = [
 ];
 
 const Consultation = () => {
-  const calendlyRef = useCalendlyInlineWidget();
   const [selectedFocusId, setSelectedFocusId] = useState<(typeof discussionFocuses)[number]["id"]>("starting-point");
   const selectedFocus = discussionFocuses.find((focus) => focus.id === selectedFocusId) ?? discussionFocuses[0];
+  const calendlyAnswer = `${selectedFocus.label}: ${selectedFocus.heading}`;
+  const calendlyUrl = `${CALENDLY_URL}?a1=${encodeURIComponent(calendlyAnswer)}`;
+  const calendlyRef = useCalendlyInlineWidget(calendlyUrl);
+  const SelectedFocusIcon = selectedFocus.icon;
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -410,9 +413,14 @@ const Consultation = () => {
                 <p className="mt-4 text-base leading-8 text-slate-600">
                   The initial 30-minute discussion is free. Pick a slot below or open Calendly in a separate window.
                 </p>
+                <div className="mt-5 inline-flex items-center gap-2 rounded-md border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-950">
+                  <SelectedFocusIcon className="h-4 w-4 shrink-0 text-blue-700" />
+                  <span className="text-blue-700">Selected focus:</span>
+                  <strong>{selectedFocus.label}</strong>
+                </div>
               </div>
               <Button asChild variant="outline" className="w-fit border-slate-300 bg-white">
-                <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer">
+                <a href={calendlyUrl} target="_blank" rel="noopener noreferrer">
                   Open Calendly
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </a>
@@ -426,7 +434,7 @@ const Consultation = () => {
                 </div>
                 <div>
                   <p className="font-bold text-slate-950">AI Fabric architecture discussion</p>
-                  <p className="text-sm text-slate-600">30 minutes with Mahmoud Elgammal</p>
+                  <p className="text-sm text-slate-600">30 minutes with Mahmoud Elgammal | {selectedFocus.label}</p>
                 </div>
               </div>
               <div
