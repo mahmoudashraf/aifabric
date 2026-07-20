@@ -1,4 +1,4 @@
-import { LogIn, LogOut, UserRound } from "lucide-react";
+import { AlertCircle, LogIn, LogOut, UserRound } from "lucide-react";
 import { toast } from "sonner";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -35,15 +35,24 @@ export const CourseAuthButton = ({ compact = false }: { compact?: boolean }) => 
         variant="outline"
         size="sm"
         disabled={!auth.githubAvailable}
-        title={auth.githubAvailable ? "Save progress across devices" : auth.configurationIssue ?? undefined}
+        title={
+          auth.authenticationIssue ??
+          (auth.githubAvailable ? "Save progress across devices" : auth.configurationIssue ?? undefined)
+        }
         onClick={() => {
           void auth.signInWithGitHub().catch((error) =>
             toast.error(error instanceof Error ? error.message : "GitHub sign-in failed"),
           );
         }}
       >
-        <LogIn className="h-4 w-4" />
-        {compact ? "Sign in" : "Sign in to save"}
+        {auth.authenticationIssue ? <AlertCircle className="h-4 w-4" /> : <LogIn className="h-4 w-4" />}
+        {auth.authenticationIssue
+          ? compact
+            ? "Retry sign-in"
+            : "Retry GitHub sign-in"
+          : compact
+            ? "Sign in"
+            : "Sign in to save"}
       </Button>
     );
   }

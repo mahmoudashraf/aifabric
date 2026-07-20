@@ -18,8 +18,9 @@ As of July 20, 2026:
 - the dedicated course Supabase migration is applied to the real course project;
 - public and secret keys, direct database access, migration history, and two-user RLS behavior have been verified;
 - the repeatable RLS proof creates isolated temporary users and removes all users and rows afterward;
-- GitHub OAuth remains an operator configuration item because the provider is currently disabled in
-  the course project; the UI detects this state and does not expose a misleading active sign-in action;
+- GitHub OAuth is enabled in the real course project with the production site URL and explicit
+  production/local course redirect allowlists; the public provider setting and browser handoff to
+  GitHub authorization have been verified;
 - completion and certificate application remain closed until reviewed theory media, starter refs,
   solution refs, and the remaining required lessons are published.
 

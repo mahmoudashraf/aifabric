@@ -5,6 +5,7 @@ export interface CourseAuthValue {
   configured: boolean;
   githubAvailable: boolean;
   configurationIssue: string | null;
+  authenticationIssue: string | null;
   loading: boolean;
   session: Session | null;
   user: User | null;
