@@ -20,4 +20,14 @@ describe("generated course catalog", () => {
     expect(getRenderedLesson("qs-01")?.video.status).toBe("script-ready");
     expect(getRenderedLesson("core-01")).toBeNull();
   });
+
+  it("keeps QS-01 developer-facing and ships its complete theory script", () => {
+    const lesson = getRenderedLesson("qs-01");
+
+    expect(lesson?.markdown).toContain("By the end of this lesson, you will be able to:");
+    expect(lesson?.markdown).not.toMatch(/\bthe learner\b/i);
+    expect(lesson?.video.targetDurationMinutes).toBe(7);
+    expect(lesson?.video.transcript).toContain("## Scene 9: Handoff To The Lab");
+    expect(lesson?.video.transcript).toContain("## Accuracy Guardrails For NotebookLM");
+  });
 });

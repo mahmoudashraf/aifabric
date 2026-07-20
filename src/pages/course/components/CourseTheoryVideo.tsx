@@ -80,7 +80,7 @@ export const CourseTheoryVideo = ({ lesson, progress, onMarkWatched, saving }: C
             <CollapsibleTrigger asChild>
               <Button variant="outline" size="sm">
                 <BookText className="h-4 w-4" />
-                {transcriptOpen ? "Hide theory brief" : "Read theory brief"}
+                {transcriptOpen ? "Hide theory script" : "Read theory script"}
               </Button>
             </CollapsibleTrigger>
           </Collapsible>
