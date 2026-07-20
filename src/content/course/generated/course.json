@@ -23,7 +23,7 @@
     {
       "id": "quickstart",
       "title": "Quickstart",
-      "description": "Reach a useful semantic-search result and understand the complete evidence path.",
+      "description": "Reach one useful semantic-search result before the Core track explains the complete architecture.",
       "required": true,
       "lessons": [
         {
@@ -37,7 +37,6 @@
           "knowledgeCheck": "quickstart/01-first-useful-result/knowledge-check.yml",
           "assistantPrompt": "quickstart/01-first-useful-result/assistant-prompt.md",
           "assistantReviewPrompt": "quickstart/01-first-useful-result/assistant-review-prompt.md",
-          "notebookSourceManifest": "quickstart/01-first-useful-result/notebooklm/source-manifest.yml",
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/quickstart"
@@ -53,8 +52,8 @@
         {
           "id": "core-01",
           "slug": "mental-model",
-          "title": "AI Fabric Mental Model",
-          "description": "Map application, framework, provider, vector, and UI ownership.",
+          "title": "What Is AI Fabric? Architecture And Mental Model",
+          "description": "Learn why AI Fabric exists, when to use it, how its modules fit together, and what remains application-owned.",
           "durationMinutes": 40,
           "availability": "planned",
           "relatedStories": [],
@@ -286,6 +285,6 @@
       ]
     }
   ],
-  "sourceCommit": "5700d858d8ca3fccad448c8c6b2e09b589071e50",
-  "generatedAt": "2026-07-20T01:54:54.168Z"
+  "sourceCommit": "d2639e51e8fe7d779a714bf1815b33a0637775a5",
+  "generatedAt": "2026-07-20T13:01:33.037Z"
 }

@@ -64,16 +64,18 @@ const CourseLessonPage = () => {
               <div>
                 <p className="font-bold text-slate-950">What is ready in this preview</p>
                 <p className="mt-1 text-sm leading-6 text-slate-700">
-                  The architecture, lesson source, assistant prompts, and knowledge check are available for
-                  review. The executable starter, solution refs, and approved theory recording remain publication
-                  gates, so this lesson cannot yet count as complete.
+                  The practical lesson source, assistant prompts, and knowledge check are available for review.
+                  This Quickstart intentionally has no theory-video gate. The executable starter and immutable
+                  solution refs still need publication, so this preview cannot yet count as complete.
                 </p>
               </div>
             </div>
           </div>
 
           <nav className="mt-6 flex flex-wrap gap-2" aria-label="Lesson sections">
-            <Button variant="outline" size="sm" asChild><a href="#theory"><PlayCircle className="h-4 w-4" />Theory</a></Button>
+            {lesson.video && (
+              <Button variant="outline" size="sm" asChild><a href="#theory"><PlayCircle className="h-4 w-4" />Theory</a></Button>
+            )}
             <Button variant="outline" size="sm" asChild><a href="#lesson-workspace"><BookOpen className="h-4 w-4" />Build paths</a></Button>
             <Button variant="outline" size="sm" asChild><a href="#knowledge-check"><FileCheck2 className="h-4 w-4" />Knowledge check</a></Button>
             <Button variant="outline" size="sm" asChild>
@@ -92,18 +94,21 @@ const CourseLessonPage = () => {
           </div>
         )}
 
-        <CourseTheoryVideo
-          lesson={lesson}
-          progress={lessonProgress}
-          saving={saveTheory.isPending}
-          onMarkWatched={() =>
-            saveTheory.mutateAsync({
-              lessonId: lesson.id,
-              questionScore: lessonProgress?.questionScore ?? null,
-              passingScorePercent: lesson.knowledgeCheck.passingScorePercent,
-            })
-          }
-        />
+        {lesson.video && (
+          <CourseTheoryVideo
+            lesson={lesson}
+            progress={lessonProgress}
+            saving={saveTheory.isPending}
+            onMarkWatched={() =>
+              saveTheory.mutateAsync({
+                lessonId: lesson.id,
+                questionScore: lessonProgress?.questionScore ?? null,
+                passingScorePercent: lesson.knowledgeCheck.passingScorePercent,
+                completionEligible: lesson.availability === "published",
+              })
+            }
+          />
+        )}
 
         <CoursePathWorkspace lesson={lesson} />
         <CourseKnowledgeCheck lesson={lesson} progress={lessonProgress} />
@@ -114,13 +119,15 @@ const CourseLessonPage = () => {
             <h2 id="completion-heading" className="text-xl font-bold tracking-normal text-slate-950">Publication-aware completion</h2>
           </div>
           <div className="mt-5 divide-y divide-border border-y border-border bg-white">
-            <div className="flex items-center justify-between gap-4 px-4 py-4">
-              <span className="flex items-center gap-3 text-sm font-medium text-slate-800">
-                <LockKeyhole className="h-4 w-4 text-amber-600" />
-                Watch the approved theory recording
-              </span>
-              <span className="text-xs font-semibold text-amber-700">Blocked until publication</span>
-            </div>
+            {lesson.video && (
+              <div className="flex items-center justify-between gap-4 px-4 py-4">
+                <span className="flex items-center gap-3 text-sm font-medium text-slate-800">
+                  <LockKeyhole className="h-4 w-4 text-amber-600" />
+                  Watch the approved theory recording
+                </span>
+                <span className="text-xs font-semibold text-amber-700">Blocked until publication</span>
+              </div>
+            )}
             <div className="flex items-center justify-between gap-4 px-4 py-4">
               <span className="flex items-center gap-3 text-sm font-medium text-slate-800">
                 <CheckCircle2 className={`h-4 w-4 ${lessonProgress?.questionScore !== null && lessonProgress?.questionScore !== undefined && lessonProgress.questionScore >= lesson.knowledgeCheck.passingScorePercent ? "text-emerald-600" : "text-slate-300"}`} />
@@ -137,7 +144,7 @@ const CourseLessonPage = () => {
             <Button variant="outline" asChild><Link to="/course">Back to course overview</Link></Button>
             <div className="text-right">
               <p className="text-xs font-semibold uppercase text-slate-500">Next required lesson</p>
-              <p className="mt-1 text-sm font-bold text-slate-900">AI Fabric Mental Model · in preparation</p>
+              <p className="mt-1 text-sm font-bold text-slate-900">What Is AI Fabric? Architecture And Mental Model · in preparation</p>
             </div>
           </div>
         </section>

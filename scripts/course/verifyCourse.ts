@@ -36,7 +36,9 @@ const main = async () => {
         throw new Error(`Generated lesson mismatch for ${lesson.id}`);
       }
       if (!generatedLesson.markdown?.trim()) throw new Error(`${lesson.id} has empty Markdown`);
-      if (!generatedLesson.video?.transcript?.trim()) throw new Error(`${lesson.id} has no transcript/source brief`);
+      if (frontMatter.video && !generatedLesson.video?.transcript?.trim()) {
+        throw new Error(`${lesson.id} declares theory media but has no transcript/source brief`);
+      }
       renderedLessons += 1;
     }
   }

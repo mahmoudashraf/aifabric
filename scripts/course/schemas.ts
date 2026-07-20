@@ -118,7 +118,7 @@ export const lessonFrontMatterSchema = z.object({
     publicUrl: z.string().url().nullable(),
     transcript: z.string().min(1),
     sourceManifest: z.string().min(1),
-  }),
+  }).optional(),
 });
 
 export const notebookSourceManifestSchema = z.object({
@@ -142,4 +142,3 @@ export type CourseSource = z.infer<typeof courseSchema>;
 export type CourseLessonSource = z.infer<typeof courseLessonSchema>;
 export type KnowledgeCheckSource = z.infer<typeof knowledgeCheckSchema>;
 export type LessonFrontMatter = z.infer<typeof lessonFrontMatterSchema>;
-

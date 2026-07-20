@@ -7,7 +7,9 @@ test("course hub opens the reviewed quickstart", async ({ page }) => {
   await page.getByRole("link", { name: "Start Quickstart" }).click();
   await expect(page).toHaveURL(/\/course\/quickstart$/);
   await expect(page.getByRole("heading", { name: "First Useful Result" })).toBeVisible();
-  await expect(page.getByText("Recording not published yet")).toBeVisible();
+  await expect(page.getByText(/AI Fabric adds application-level AI capabilities to Spring Boot/)).toBeVisible();
+  await expect(page.getByRole("link", { name: "Theory" })).toHaveCount(0);
+  await expect(page.getByText("Recording not published yet")).toHaveCount(0);
 });
 
 test("knowledge check grades locally without requiring sign-in", async ({ page }) => {

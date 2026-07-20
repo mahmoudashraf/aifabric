@@ -6,7 +6,7 @@ import type {
 } from "../types";
 
 export const isTheoryAvailable = (lesson: RenderedCourseLesson) =>
-  lesson.video.status === "published" && Boolean(lesson.video.publicUrl);
+  Boolean(lesson.video?.status === "published" && lesson.video.publicUrl);
 
 export const getLessonDisplayStatus = (
   lesson: CourseLessonSummary,
@@ -20,7 +20,22 @@ export const getLessonDisplayStatus = (
 };
 
 export const canCompleteLesson = (lesson: RenderedCourseLesson, score: number | null) =>
-  isTheoryAvailable(lesson) && score !== null && score >= lesson.knowledgeCheck.passingScorePercent;
+  lesson.availability === "published" &&
+  (!lesson.video || isTheoryAvailable(lesson)) &&
+  score !== null &&
+  score >= lesson.knowledgeCheck.passingScorePercent;
+
+export const shouldPersistLessonCompletion = ({
+  completionEligible,
+  theoryRequired,
+  videoCompletedAt,
+  passed,
+}: {
+  completionEligible: boolean;
+  theoryRequired: boolean;
+  videoCompletedAt: string | null;
+  passed: boolean;
+}) => completionEligible && (!theoryRequired || Boolean(videoCompletedAt)) && passed;
 
 export const calculateCourseProgress = (
   requiredLessonIds: string[],

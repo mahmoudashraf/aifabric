@@ -98,7 +98,7 @@ export interface RenderedCourseLesson extends CourseLessonSummary {
     starterRef: string;
     solutionRef: string;
     sourcePaths: string[];
-    video: {
+    video?: {
       status: "planned" | "script-ready" | "reviewed" | "published";
       targetDurationMinutes: number;
       title: string;
@@ -112,7 +112,7 @@ export interface RenderedCourseLesson extends CourseLessonSummary {
     implementationPrompt: string;
     reviewPrompt: string;
   };
-  video: {
+  video?: {
     status: "planned" | "script-ready" | "reviewed" | "published";
     generator: string;
     purpose: "pre-lesson-theory";

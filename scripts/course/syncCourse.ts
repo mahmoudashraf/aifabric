@@ -14,6 +14,7 @@ import {
   notebookSourceManifestSchema,
   type CourseLessonSource,
   type CourseSource,
+  type LessonFrontMatter,
 } from "./schemas";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
@@ -120,52 +121,41 @@ const syncLesson = async (
     throw new Error(`Version mismatch for ${lesson.id}`);
   }
 
-  if (!lesson.knowledgeCheck || !lesson.assistantPrompt || !lesson.assistantReviewPrompt || !lesson.notebookSourceManifest) {
+  if (!lesson.knowledgeCheck || !lesson.assistantPrompt || !lesson.assistantReviewPrompt) {
     throw new Error(`${lesson.id} is missing required source paths`);
+  }
+  if (Boolean(frontMatter.video) !== Boolean(lesson.notebookSourceManifest)) {
+    throw new Error(`${lesson.id} must declare both video metadata and a NotebookLM source manifest, or neither`);
   }
 
   const knowledgePath = path.resolve(sourceDirectory, lesson.knowledgeCheck);
   const implementationPromptPath = path.resolve(sourceDirectory, lesson.assistantPrompt);
   const reviewPromptPath = path.resolve(sourceDirectory, lesson.assistantReviewPrompt);
-  const notebookManifestPath = path.resolve(sourceDirectory, lesson.notebookSourceManifest);
 
-  const [knowledgeRaw, implementationPrompt, reviewPrompt, notebookRaw] = await Promise.all([
+  const [knowledgeRaw, implementationPrompt, reviewPrompt] = await Promise.all([
     readText(knowledgePath),
     readText(implementationPromptPath),
     readText(reviewPromptPath),
-    readText(notebookManifestPath),
   ]);
 
   const knowledgeCheck = knowledgeCheckSchema.parse(parseYaml(knowledgeRaw));
-  const notebookManifest = notebookSourceManifestSchema.parse(parseYaml(notebookRaw));
 
-  if (knowledgeCheck.lessonId !== lesson.id || notebookManifest.lessonId !== lesson.id) {
+  if (knowledgeCheck.lessonId !== lesson.id) {
     throw new Error(`Lesson source ID mismatch for ${lesson.id}`);
-  }
-  if (
-    notebookManifest.frameworkVersion !== course.frameworkVersion ||
-    notebookManifest.frameworkTag !== course.frameworkTag ||
-    notebookManifest.courseVersion !== course.courseVersion
-  ) {
-    throw new Error(`NotebookLM source version mismatch for ${lesson.id}`);
   }
   if (
     frontMatter.knowledgeCheck.source !== path.basename(knowledgePath) ||
     frontMatter.assistant.implementationPrompt !== path.basename(implementationPromptPath) ||
-    frontMatter.assistant.reviewPrompt !== path.basename(reviewPromptPath) ||
-    frontMatter.video.sourceManifest !== path.relative(path.dirname(lessonPath), notebookManifestPath)
+    frontMatter.assistant.reviewPrompt !== path.basename(reviewPromptPath)
   ) {
     throw new Error(`Lesson source-path contract mismatch for ${lesson.id}`);
-  }
-  if (notebookManifest.status !== frontMatter.video.status) {
-    throw new Error(`NotebookLM publication status mismatch for ${lesson.id}`);
   }
 
   assertUnique(knowledgeCheck.questions.map((question) => question.id), `question IDs in ${lesson.id}`);
   knowledgeCheck.questions.forEach(validateQuestion);
 
   if (frontMatter.availability === "published") {
-    if (!frontMatter.video.publicUrl || frontMatter.video.status !== "published") {
+    if (frontMatter.video && (!frontMatter.video.publicUrl || frontMatter.video.status !== "published")) {
       throw new Error(`Published lesson ${lesson.id} requires a published theory video`);
     }
     if (frontMatter.starterRef === "planned" || frontMatter.solutionRef === "planned") {
@@ -173,32 +163,77 @@ const syncLesson = async (
     }
   }
 
-  const transcriptPath = path.resolve(path.dirname(lessonPath), frontMatter.video.transcript);
-  const transcript = await readText(transcriptPath);
-  if (notebookManifest.outputs.transcript !== relativeFromFramework(transcriptPath)) {
-    throw new Error(`NotebookLM transcript mismatch for ${lesson.id}`);
-  }
-  if (notebookManifest.outputs.videoUrl !== frontMatter.video.publicUrl) {
-    throw new Error(`NotebookLM video URL mismatch for ${lesson.id}`);
-  }
-
-  const notebookSources = await Promise.all(
-    notebookManifest.sources.map(async (source) => {
-      const filePath = path.resolve(frameworkRoot, source.path);
-      assertInsideFramework(filePath);
-      return [filePath, await readText(filePath)] as const;
-    }),
-  );
-
-  const sourceFiles = [
+  const sourceFiles: Array<readonly [string, string]> = [
     [lessonPath, lessonRaw],
     [knowledgePath, knowledgeRaw],
     [implementationPromptPath, implementationPrompt],
     [reviewPromptPath, reviewPrompt],
-    [notebookManifestPath, notebookRaw],
-    [transcriptPath, transcript],
-    ...notebookSources,
-  ] as const;
+  ];
+  const lessonReferenceSources = await Promise.all(
+    frontMatter.sourcePaths.map(async (sourcePath) => {
+      const filePath = path.resolve(frameworkRoot, sourcePath);
+      assertInsideFramework(filePath);
+      return [filePath, await readText(filePath)] as const;
+    }),
+  );
+  sourceFiles.push(...lessonReferenceSources);
+
+  let video:
+    | (NonNullable<LessonFrontMatter["video"]> & {
+        transcript: string;
+        notebookStatus: NonNullable<LessonFrontMatter["video"]>["status"];
+        reviewedAt: string | null;
+        reviewedBy: string | null;
+      })
+    | undefined;
+  if (frontMatter.video && lesson.notebookSourceManifest) {
+    const notebookManifestPath = path.resolve(sourceDirectory, lesson.notebookSourceManifest);
+    const notebookRaw = await readText(notebookManifestPath);
+    const notebookManifest = notebookSourceManifestSchema.parse(parseYaml(notebookRaw));
+
+    if (notebookManifest.lessonId !== lesson.id) {
+      throw new Error(`NotebookLM lesson ID mismatch for ${lesson.id}`);
+    }
+    if (
+      notebookManifest.frameworkVersion !== course.frameworkVersion ||
+      notebookManifest.frameworkTag !== course.frameworkTag ||
+      notebookManifest.courseVersion !== course.courseVersion
+    ) {
+      throw new Error(`NotebookLM source version mismatch for ${lesson.id}`);
+    }
+    if (frontMatter.video.sourceManifest !== path.relative(path.dirname(lessonPath), notebookManifestPath)) {
+      throw new Error(`NotebookLM source-path contract mismatch for ${lesson.id}`);
+    }
+    if (notebookManifest.status !== frontMatter.video.status) {
+      throw new Error(`NotebookLM publication status mismatch for ${lesson.id}`);
+    }
+
+    const transcriptPath = path.resolve(path.dirname(lessonPath), frontMatter.video.transcript);
+    const transcript = await readText(transcriptPath);
+    if (notebookManifest.outputs.transcript !== relativeFromFramework(transcriptPath)) {
+      throw new Error(`NotebookLM transcript mismatch for ${lesson.id}`);
+    }
+    if (notebookManifest.outputs.videoUrl !== frontMatter.video.publicUrl) {
+      throw new Error(`NotebookLM video URL mismatch for ${lesson.id}`);
+    }
+
+    const notebookSources = await Promise.all(
+      notebookManifest.sources.map(async (source) => {
+        const filePath = path.resolve(frameworkRoot, source.path);
+        assertInsideFramework(filePath);
+        return [filePath, await readText(filePath)] as const;
+      }),
+    );
+    sourceFiles.push([notebookManifestPath, notebookRaw], [transcriptPath, transcript], ...notebookSources);
+    video = {
+      ...frontMatter.video,
+      transcript,
+      notebookStatus: notebookManifest.status,
+      reviewedAt: notebookManifest.reviewedAt,
+      reviewedBy: notebookManifest.reviewedBy,
+    };
+  }
+
   sourceFiles.forEach(([filePath, content]) => collectedFiles.set(relativeFromFramework(filePath), checksum(content)));
 
   return {
@@ -214,13 +249,7 @@ const syncLesson = async (
       implementationPrompt,
       reviewPrompt,
     },
-    video: {
-      ...frontMatter.video,
-      transcript,
-      notebookStatus: notebookManifest.status,
-      reviewedAt: notebookManifest.reviewedAt,
-      reviewedBy: notebookManifest.reviewedBy,
-    },
+    video,
     sourcePath: relativeFromFramework(lessonPath),
     sourceUrl: `https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/${course.courseSourceTag === "unreleased" ? "main" : course.courseSourceTag}/${relativeFromFramework(lessonPath)}`,
   };

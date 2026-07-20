@@ -35,6 +35,8 @@ export const useCourseProgress = (courseVersion: string) => {
       score: number;
       passed: boolean;
       videoCompletedAt: string | null;
+      theoryRequired: boolean;
+      completionEligible: boolean;
     }) => {
       if (!auth.user) throw new Error("Sign in to save course progress");
       return submitKnowledgeCheck({
@@ -51,6 +53,7 @@ export const useCourseProgress = (courseVersion: string) => {
       lessonId: string;
       questionScore: number | null;
       passingScorePercent: number;
+      completionEligible: boolean;
     }) => {
       if (!auth.user) throw new Error("Sign in to save course progress");
       return markTheoryWatched({

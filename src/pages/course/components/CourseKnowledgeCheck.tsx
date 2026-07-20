@@ -88,6 +88,8 @@ export const CourseKnowledgeCheck = ({ lesson, progress }: CourseKnowledgeCheckP
         score: nextResult.score,
         passed: nextResult.passed,
         videoCompletedAt: progress?.videoCompletedAt ?? null,
+        theoryRequired: Boolean(lesson.video),
+        completionEligible: lesson.availability === "published",
       });
       setSaved(true);
       toast.success("Knowledge-check result saved");

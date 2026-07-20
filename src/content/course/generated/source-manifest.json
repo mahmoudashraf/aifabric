@@ -5,12 +5,12 @@
   "frameworkVersion": "0.3.3",
   "frameworkTag": "ai-fabric-framework-v0.3.3",
   "courseSourceTag": "unreleased",
-  "sourceCommit": "5700d858d8ca3fccad448c8c6b2e09b589071e50",
-  "generatedAt": "2026-07-20T01:54:54.168Z",
+  "sourceCommit": "d2639e51e8fe7d779a714bf1815b33a0637775a5",
+  "generatedAt": "2026-07-20T13:01:33.037Z",
   "files": [
     {
       "sourcePath": "docs/course/course.yml",
-      "sha256": "db90e2c986e10ac4c59665b2152abbf85ebde6061362c56fdc8fb831d24521be"
+      "sha256": "bed83e9e5384302f30b051472094b31f4394437dcc833544d831a9f3acffeca7"
     },
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/assistant-prompt.md",
@@ -26,43 +26,7 @@
     },
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/lesson.md",
-      "sha256": "9056513aa3e45a0b36bbc269b1a0f5da063963a9ccd1fd24d0da54b52b6c51e4"
-    },
-    {
-      "sourcePath": "docs/course/quickstart/01-first-useful-result/notebooklm/00-lesson-brief.md",
-      "sha256": "9b9ef8b3121a2153ba96a7d1eba28e6177c8e0acc2d5a2a58930765d9639cb1e"
-    },
-    {
-      "sourcePath": "docs/course/quickstart/01-first-useful-result/notebooklm/01-concepts-and-request-flow.md",
-      "sha256": "94b242160eb768a8c6f3d5f64ba32e83d5d03c65db35a4f2417e80bdca71fdad"
-    },
-    {
-      "sourcePath": "docs/course/quickstart/01-first-useful-result/notebooklm/02-reviewed-code-walk.md",
-      "sha256": "92a8e396ec3a630d348fb578a5bd3d73dd4bbd47d97e9b47b3c546ed6c3a01d2"
-    },
-    {
-      "sourcePath": "docs/course/quickstart/01-first-useful-result/notebooklm/03-lab-and-expected-results.md",
-      "sha256": "41f148269c65cfe783fa49261bbc0f79e3c1e6a93969b8e39145ec2026bb4a5c"
-    },
-    {
-      "sourcePath": "docs/course/quickstart/01-first-useful-result/notebooklm/04-failure-and-troubleshooting.md",
-      "sha256": "d002abfa77c67430626a60c57451748b315ad1e3d6ef62d956ece9ad74386d46"
-    },
-    {
-      "sourcePath": "docs/course/quickstart/01-first-useful-result/notebooklm/05-glossary.md",
-      "sha256": "a548fab296dbe8297204a70247b5c8113ac10486dafadacfb260d70578e2bbeb"
-    },
-    {
-      "sourcePath": "docs/course/quickstart/01-first-useful-result/notebooklm/06-video-steering-prompt.md",
-      "sha256": "e04fe866e94569d94a507a2993ed52bb5d56f5d2738d885e7696762985a1cee4"
-    },
-    {
-      "sourcePath": "docs/course/quickstart/01-first-useful-result/notebooklm/07-video-script.md",
-      "sha256": "669f759728bf7b11586a6f8bc41427ec0a7a97c0fa243396cdc60d26e2494aad"
-    },
-    {
-      "sourcePath": "docs/course/quickstart/01-first-useful-result/notebooklm/source-manifest.yml",
-      "sha256": "39567a69256b18bbd3384adaf0c6753877ee9d2f6cd17d5dfc36f00221fea437"
+      "sha256": "fc1e39d23f29877414e8cdc22b01aa1705f3ff678d91b73ad20543ea09f0e58a"
     },
     {
       "sourcePath": "docs/getting-started/02-installation.md",

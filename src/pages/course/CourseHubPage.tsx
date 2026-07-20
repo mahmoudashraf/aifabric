@@ -224,7 +224,7 @@ const CourseHubPage = () => {
             <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
               Lesson content is generated from the framework repository and pinned to AI Fabric
               {` ${courseCatalog.frameworkVersion}`}. Preview, planned, and published states remain visible;
-              missing videos or starter checkpoints are never presented as complete.
+              missing required media or starter checkpoints are never presented as complete.
             </p>
             <div className="mt-4 flex flex-wrap gap-4 font-mono text-xs text-slate-500">
               <span>source {courseCatalog.sourceCommit.slice(0, 12)}</span>

@@ -1,6 +1,7 @@
 import { courseSupabase } from "@/integrations/course-supabase/client";
 import type { CourseJson, CourseTable } from "@/integrations/course-supabase/types";
 
+import { shouldPersistLessonCompletion } from "../lib/completion";
 import type { KnowledgeAnswers, LessonProgress } from "../types";
 
 type CourseProgressRow = CourseTable<"course_progress">;
@@ -60,6 +61,8 @@ interface KnowledgeSubmission {
   score: number;
   passed: boolean;
   videoCompletedAt: string | null;
+  theoryRequired: boolean;
+  completionEligible: boolean;
 }
 
 export const submitKnowledgeCheck = async (submission: KnowledgeSubmission) => {
@@ -82,7 +85,14 @@ export const submitKnowledgeCheck = async (submission: KnowledgeSubmission) => {
         question_score: submission.score,
         questions_submitted_at: now,
         video_completed_at: videoCompletedAt,
-        completed_at: videoCompletedAt && submission.passed ? current?.completed_at ?? now : null,
+        completed_at: shouldPersistLessonCompletion({
+          completionEligible: submission.completionEligible,
+          theoryRequired: submission.theoryRequired,
+          videoCompletedAt,
+          passed: submission.passed,
+        })
+          ? current?.completed_at ?? now
+          : null,
       },
       { onConflict: "user_id,course_version,lesson_id" },
     )
@@ -98,6 +108,7 @@ interface TheoryCompletion {
   lessonId: string;
   questionScore: number | null;
   passingScorePercent: number;
+  completionEligible: boolean;
 }
 
 export const markTheoryWatched = async (completion: TheoryCompletion) => {
@@ -120,10 +131,14 @@ export const markTheoryWatched = async (completion: TheoryCompletion) => {
         question_answers: current?.question_answers ?? {},
         question_score: questionScore,
         questions_submitted_at: current?.questions_submitted_at ?? null,
-        completed_at:
-          questionScore !== null && questionScore >= completion.passingScorePercent
-            ? current?.completed_at ?? now
-            : null,
+        completed_at: shouldPersistLessonCompletion({
+          completionEligible: completion.completionEligible,
+          theoryRequired: true,
+          videoCompletedAt: now,
+          passed: questionScore !== null && questionScore >= completion.passingScorePercent,
+        })
+          ? current?.completed_at ?? now
+          : null,
       },
       { onConflict: "user_id,course_version,lesson_id" },
     )

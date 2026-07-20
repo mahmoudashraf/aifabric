@@ -25,7 +25,10 @@ interface CourseTheoryVideoProps {
 export const CourseTheoryVideo = ({ lesson, progress, onMarkWatched, saving }: CourseTheoryVideoProps) => {
   const auth = useCourseAuth();
   const [transcriptOpen, setTranscriptOpen] = useState(false);
-  const available = lesson.video.status === "published" && Boolean(lesson.video.publicUrl);
+  const video = lesson.video;
+  if (!video) return null;
+
+  const available = video.status === "published" && Boolean(video.publicUrl);
   const sourcePackUrl = lesson.sourceUrl.replace(/lesson\.md$/, "notebooklm/source-manifest.yml");
 
   return (
@@ -37,14 +40,14 @@ export const CourseTheoryVideo = ({ lesson, progress, onMarkWatched, saving }: C
             Theory first
           </div>
           <h2 id="theory-heading" className="mt-2 text-2xl font-bold tracking-normal text-slate-950">
-            {lesson.video.title}
+            {video.title}
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
             Trace the architecture and ownership boundaries before touching the implementation.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Badge variant="outline"><Clock3 className="mr-1 h-3.5 w-3.5" />{lesson.video.targetDurationMinutes} min target</Badge>
+          <Badge variant="outline"><Clock3 className="mr-1 h-3.5 w-3.5" />{video.targetDurationMinutes} min target</Badge>
           <Badge className={available ? "bg-emerald-600" : "bg-amber-500 text-slate-950 hover:bg-amber-500"}>
             {available ? "Published" : "Script ready"}
           </Badge>
@@ -52,10 +55,10 @@ export const CourseTheoryVideo = ({ lesson, progress, onMarkWatched, saving }: C
       </div>
 
       <div className="aspect-video w-full overflow-hidden rounded-md border border-slate-200 bg-slate-950">
-        {available && lesson.video.publicUrl ? (
+        {available && video.publicUrl ? (
           <iframe
-            src={embedUrl(lesson.video.publicUrl)}
-            title={lesson.video.title}
+            src={embedUrl(video.publicUrl)}
+            title={video.title}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
             className="h-full w-full"
@@ -117,7 +120,7 @@ export const CourseTheoryVideo = ({ lesson, progress, onMarkWatched, saving }: C
       <Collapsible open={transcriptOpen} onOpenChange={setTranscriptOpen}>
         <CollapsibleContent>
           <div className="mt-5 border-l-4 border-blue-500 bg-blue-50 px-5 py-4">
-            <p className="whitespace-pre-line text-sm leading-6 text-slate-700">{lesson.video.transcript}</p>
+            <p className="whitespace-pre-line text-sm leading-6 text-slate-700">{video.transcript}</p>
           </div>
         </CollapsibleContent>
       </Collapsible>

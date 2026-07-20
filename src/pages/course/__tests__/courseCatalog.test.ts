@@ -17,17 +17,20 @@ describe("generated course catalog", () => {
 
   it("renders only the explicit preview lesson", () => {
     expect(previewLessons.map((lesson) => lesson.id)).toEqual(["qs-01"]);
-    expect(getRenderedLesson("qs-01")?.video.status).toBe("script-ready");
+    expect(getRenderedLesson("qs-01")?.video).toBeUndefined();
     expect(getRenderedLesson("core-01")).toBeNull();
   });
 
-  it("keeps QS-01 developer-facing and ships its complete theory script", () => {
+  it("keeps QS-01 action-first and hands architecture teaching to the Core track", () => {
     const lesson = getRenderedLesson("qs-01");
 
-    expect(lesson?.markdown).toContain("By the end of this lesson, you will be able to:");
+    expect(lesson?.markdown).toContain(
+      "AI Fabric adds application-level AI capabilities to Spring Boot",
+    );
+    expect(lesson?.markdown).toContain("before the Core track explains the complete architecture");
+    expect(lesson?.markdown).toContain("## Build Sequence");
     expect(lesson?.markdown).not.toMatch(/\bthe learner\b/i);
-    expect(lesson?.video.targetDurationMinutes).toBe(7);
-    expect(lesson?.video.transcript).toContain("## Scene 9: Handoff To The Lab");
-    expect(lesson?.video.transcript).toContain("## Accuracy Guardrails For NotebookLM");
+    expect(lesson?.markdown).not.toContain("NotebookLM pre-lesson theory");
+    expect(lesson?.video).toBeUndefined();
   });
 });
