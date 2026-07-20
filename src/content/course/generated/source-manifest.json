@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "frameworkRepository": "https://github.com/Loom-AI-Labs/ai-fabric-framework",
+  "courseVersion": "0.3.3-course.1-beta",
+  "frameworkVersion": "0.3.3",
+  "frameworkTag": "ai-fabric-framework-v0.3.3",
+  "courseSourceTag": "unreleased",
+  "sourceCommit": "5be57ecdba3e0f2122a91d401612874a33d58630",
+  "generatedAt": "2026-07-19T23:49:57.562Z",
+  "files": [
+    {
+      "sourcePath": "docs/course/course.yml",
+      "sha256": "db90e2c986e10ac4c59665b2152abbf85ebde6061362c56fdc8fb831d24521be"
+    },
+    {
+      "sourcePath": "docs/course/quickstart/01-first-useful-result/assistant-prompt.md",
+      "sha256": "e5030b4b0773900e15c9f15a4a47b27cb708b838acdc4a50e657102c89b5dfd5"
+    },
+    {
+      "sourcePath": "docs/course/quickstart/01-first-useful-result/assistant-review-prompt.md",
+      "sha256": "25f52897513a4093c4d2f8a89699aea2cc9008faf571c3dd6b35135be968d1fc"
+    },
+    {
+      "sourcePath": "docs/course/quickstart/01-first-useful-result/knowledge-check.yml",
+      "sha256": "bbe4038da14478346cb46a400af63efa07ba87f2b75943dcb7a06d6fa25943de"
+    },
+    {
+      "sourcePath": "docs/course/quickstart/01-first-useful-result/lesson.md",
+      "sha256": "aa94cc5607932f33984dbec15fc20a931e47e3fb26bd5dc18c98c11b019bfb4a"
+    },
+    {
+      "sourcePath": "docs/course/quickstart/01-first-useful-result/notebooklm/00-lesson-brief.md",
+      "sha256": "8ede2364680f0b3c01aa4af2b45c7bc60527c28e2a6ecf2a8538d2326fc93282"
+    },
+    {
+      "sourcePath": "docs/course/quickstart/01-first-useful-result/notebooklm/01-concepts-and-request-flow.md",
+      "sha256": "94b242160eb768a8c6f3d5f64ba32e83d5d03c65db35a4f2417e80bdca71fdad"
+    },
+    {
+      "sourcePath": "docs/course/quickstart/01-first-useful-result/notebooklm/02-reviewed-code-walk.md",
+      "sha256": "2753d697c75c821e6bca073e6c3de8d3874b0ac2451304ab88055359e31021cc"
+    },
+    {
+      "sourcePath": "docs/course/quickstart/01-first-useful-result/notebooklm/03-lab-and-expected-results.md",
+      "sha256": "438ef67125554fd2c0575947ecd11ef4f5d5c8a891397ed35aa03c2f4edad5c1"
+    },
+    {
+      "sourcePath": "docs/course/quickstart/01-first-useful-result/notebooklm/04-failure-and-troubleshooting.md",
+      "sha256": "d002abfa77c67430626a60c57451748b315ad1e3d6ef62d956ece9ad74386d46"
+    },
+    {
+      "sourcePath": "docs/course/quickstart/01-first-useful-result/notebooklm/05-glossary.md",
+      "sha256": "a548fab296dbe8297204a70247b5c8113ac10486dafadacfb260d70578e2bbeb"
+    },
+    {
+      "sourcePath": "docs/course/quickstart/01-first-useful-result/notebooklm/06-video-steering-prompt.md",
+      "sha256": "fcdfdaee1a893e8a6ae732b8832344074e4d92803ffba8578711d80984fdbb53"
+    },
+    {
+      "sourcePath": "docs/course/quickstart/01-first-useful-result/notebooklm/source-manifest.yml",
+      "sha256": "be42df5e197654d4e2608ac2d2f24e32765504e65aa570b82ab48cc8802c92f6"
+    },
+    {
+      "sourcePath": "docs/getting-started/02-installation.md",
+      "sha256": "931bdcd08c9246b386d7647381c1e70ba1d5fb1801c5ab1e1185317ce068b3bf"
+    },
+    {
+      "sourcePath": "docs/getting-started/03-first-semantic-search.md",
+      "sha256": "c422dfaa6f6beaa923b6f2cc743f1e975438acd15645196e90d0854410767fc1"
+    },
+    {
+      "sourcePath": "docs/getting-started/08-local-onnx-embeddings.md",
+      "sha256": "037f02e7086210211352c49eb34867f20c8fba98dc913f56468bd49b2fad8c91"
+    },
+    {
+      "sourcePath": "docs/getting-started/09-vector-storage-lucene.md",
+      "sha256": "80aa7109da3eb1bbe8445912d42cbf07b951a6a80463b1099c32b15972db0aa8"
+    }
+  ]
+}

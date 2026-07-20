@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   FileText,
   GitPullRequest,
+  GraduationCap,
   Map,
   Play,
   Shield,
@@ -18,6 +19,13 @@ import {
 import DocsLayout from "@/components/docs/DocsLayout";
 
 const primarySections = [
+  {
+    title: "Structured Course",
+    description: "Follow a version-pinned path from semantic search through governed actions, memory, security, and release evidence.",
+    href: "/course",
+    icon: GraduationCap,
+    tone: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  },
   {
     title: "Getting Started",
     description: "Install AI Fabric 0.3.3, choose the smallest useful module set, and build a first AI workflow.",

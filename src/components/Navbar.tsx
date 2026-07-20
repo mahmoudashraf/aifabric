@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { CalendarCheck, CalendarDays, Github, Menu, X, BookOpen } from "lucide-react";
+import { CalendarCheck, CalendarDays, Github, GraduationCap, Menu, X, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -82,15 +82,13 @@ const Navbar = () => {
             <HashLink to="/#live-demos" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               Live Demos
             </HashLink>
-            <HashLink to="/#features" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-              Capabilities
-            </HashLink>
-            <HashLink to="/#modules" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-              Java Shape
-            </HashLink>
+            <Link to="/course" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              <GraduationCap className="h-4 w-4" />
+              Course
+            </Link>
             <Link to="/docs" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               <BookOpen className="h-4 w-4" />
-              Getting Started
+              Docs
             </Link>
             <Link to="/webinars" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               <CalendarDays className="h-4 w-4" />
@@ -137,15 +135,13 @@ const Navbar = () => {
               <HashLink to="/#live-demos" onClick={closeMenu} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 Live Demos
               </HashLink>
-              <HashLink to="/#features" onClick={closeMenu} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-                Capabilities
-              </HashLink>
-              <HashLink to="/#modules" onClick={closeMenu} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-                Java Shape
-              </HashLink>
+              <Link to="/course" onClick={closeMenu} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+                <GraduationCap className="h-4 w-4" />
+                Course
+              </Link>
               <Link to="/docs" onClick={closeMenu} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 <BookOpen className="h-4 w-4" />
-                Getting Started
+                Docs
               </Link>
               <Link to="/webinars" onClick={closeMenu} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 <CalendarDays className="h-4 w-4" />

@@ -1,0 +1,178 @@
+{
+  "id": "qs-01",
+  "slug": "first-useful-result",
+  "title": "First Useful Result",
+  "description": "Index support knowledge and retrieve it by meaning without cloud credentials.",
+  "durationMinutes": 75,
+  "availability": "preview",
+  "source": "quickstart/01-first-useful-result/lesson.md",
+  "knowledgeCheck": {
+    "schemaVersion": 1,
+    "lessonId": "qs-01",
+    "passingScorePercent": 80,
+    "questions": [
+      {
+        "id": "qs-01-q1",
+        "type": "single-choice",
+        "competency": "request-flow",
+        "prompt": "What makes an application support article retrievable through semantic search?",
+        "options": [
+          {
+            "id": "database-row",
+            "text": "Saving the article in the application database"
+          },
+          {
+            "id": "indexed-vector",
+            "text": "Projecting approved content, generating an embedding, and storing it in the configured vector space"
+          },
+          {
+            "id": "browser-copy",
+            "text": "Sending the full article list from the browser with every query"
+          }
+        ],
+        "correctOptionIds": [
+          "indexed-vector"
+        ],
+        "explanation": "Database persistence and vector retrieval are separate lifecycle steps. AI Fabric can retrieve the article only after approved content has been embedded and indexed.",
+        "sourcePaths": [
+          "docs/getting-started/03-first-semantic-search.md"
+        ]
+      },
+      {
+        "id": "qs-01-q2",
+        "type": "multiple-choice",
+        "competency": "ownership",
+        "prompt": "Which responsibilities remain application-owned in this lesson?",
+        "options": [
+          {
+            "id": "article-lifecycle",
+            "text": "Support article lifecycle and approved content"
+          },
+          {
+            "id": "stable-metadata",
+            "text": "Stable entity IDs and category metadata"
+          },
+          {
+            "id": "onnx-inference",
+            "text": "ONNX model inference implementation"
+          },
+          {
+            "id": "lucene-similarity",
+            "text": "Lucene similarity-search implementation"
+          }
+        ],
+        "correctOptionIds": [
+          "article-lifecycle",
+          "stable-metadata"
+        ],
+        "explanation": "The application owns domain records and approved metadata. Provider modules own model inference and vector-store implementation details behind AI Fabric contracts.",
+        "sourcePaths": [
+          "docs/getting-started/03-first-semantic-search.md",
+          "docs/getting-started/08-local-onnx-embeddings.md"
+        ]
+      },
+      {
+        "id": "qs-01-q3",
+        "type": "single-choice",
+        "competency": "failure-diagnosis",
+        "prompt": "A seeded application returns no semantic evidence. What should be checked first?",
+        "options": [
+          {
+            "id": "add-generic-answer",
+            "text": "Add a generic model answer so the page is never empty"
+          },
+          {
+            "id": "inspect-index-readiness",
+            "text": "Verify the records were indexed and the expected vector space is ready"
+          },
+          {
+            "id": "browser-keywords",
+            "text": "Add browser keyword matching for the expected article title"
+          }
+        ],
+        "correctOptionIds": [
+          "inspect-index-readiness"
+        ],
+        "explanation": "No evidence is an honest state. Verify indexing and vector readiness instead of fabricating intelligence in the model, application, or browser.",
+        "sourcePaths": [
+          "docs/getting-started/03-first-semantic-search.md"
+        ]
+      }
+    ]
+  },
+  "assistantPrompt": "quickstart/01-first-useful-result/assistant-prompt.md",
+  "assistantReviewPrompt": "quickstart/01-first-useful-result/assistant-review-prompt.md",
+  "notebookSourceManifest": "quickstart/01-first-useful-result/notebooklm/source-manifest.yml",
+  "relatedStories": [],
+  "relatedDemos": [],
+  "track": "quickstart",
+  "route": "/course/quickstart",
+  "frontMatter": {
+    "id": "qs-01",
+    "slug": "first-useful-result",
+    "title": "First Useful Result",
+    "track": "quickstart",
+    "order": 1,
+    "durationMinutes": 75,
+    "availability": "preview",
+    "courseVersion": "0.3.3-course.1-beta",
+    "frameworkVersion": "0.3.3",
+    "frameworkTag": "ai-fabric-framework-v0.3.3",
+    "courseSourceTag": "unreleased",
+    "starterRef": "planned",
+    "solutionRef": "planned",
+    "requiresOpenAi": false,
+    "requiresDocker": false,
+    "sourcePaths": [
+      "docs/getting-started/02-installation.md",
+      "docs/getting-started/03-first-semantic-search.md",
+      "docs/getting-started/08-local-onnx-embeddings.md",
+      "docs/getting-started/09-vector-storage-lucene.md"
+    ],
+    "assistant": {
+      "mode": "implement",
+      "implementationPrompt": "assistant-prompt.md",
+      "reviewPrompt": "assistant-review-prompt.md",
+      "validationStatus": "planned"
+    },
+    "knowledgeCheck": {
+      "source": "knowledge-check.yml",
+      "required": true,
+      "passingScorePercent": 80
+    },
+    "video": {
+      "status": "script-ready",
+      "generator": "notebooklm",
+      "purpose": "pre-lesson-theory",
+      "placement": "before-lab",
+      "targetDurationMinutes": 4,
+      "title": "From Application Record To Semantic Evidence",
+      "publicUrl": null,
+      "transcript": "notebooklm/00-lesson-brief.md",
+      "sourceManifest": "notebooklm/source-manifest.yml"
+    }
+  },
+  "markdown": "# First Useful Result\n\n## Outcome\n\nUnderstand and exercise the smallest useful AI Fabric workflow: application-owned support knowledge\nbecomes vector evidence and a differently worded query retrieves the expected article.\n\nThis lesson is currently a course UI preview. Its conceptual material and knowledge check are ready.\nThe standalone learner repository, immutable starter/solution checkpoints, and reviewed NotebookLM\nrecording must be published before this lesson becomes an executable public lab.\n\n## Why This Matters\n\nSemantic retrieval is the foundation beneath later RAG, recommendations, and policy-aware workflows.\nIt is also where a common misunderstanding begins: records in an application database are not\nautomatically available to AI orchestration. The application must project approved content, generate\nan embedding, store a vector with stable metadata, and query the same compatible vector space.\n\n## NotebookLM Pre-Lesson Theory\n\n- Why semantic similarity differs from keyword search and from asking a language model to answer\n  from general knowledge.\n- The request/data flow from an application record to projected content, ONNX embedding, Lucene\n  vector, query embedding, similarity search, and returned evidence.\n- Ownership boundaries between the application, AI Fabric, the embedding provider, and vector\n  storage.\n- Why database rows do not become retrievable evidence until indexing succeeds and why no evidence\n  is safer than an invented answer.\n\n## Architecture And Request Flow\n\n```text\nKnowledgeArticle record\n  -> application chooses approved fields and metadata\n  -> AI Fabric requests an embedding\n  -> local ONNX provider returns a numeric vector\n  -> Lucene stores vector + entity ID + content + metadata\n\nLearner query\n  -> AI Fabric requests a query embedding\n  -> Lucene similarity search\n  -> AI Fabric search response\n  -> application returns evidence ID, score, content, and metadata\n```\n\nOwnership map:\n\n| Boundary | Owns |\n| --- | --- |\n| Application | Support article lifecycle, approved content, stable IDs, categories, endpoint DTO |\n| AI Fabric | Embedding and vector-service contracts, entity configuration, search request/response |\n| ONNX provider | Local text-to-vector inference |\n| Lucene provider | Vector persistence and similarity lookup |\n| Browser | Displays the API result; it does not manufacture retrieval intelligence |\n\n## Starting State\n\nThe final learner repository will provide a Java 21 and Spring Boot 4.1.x starter application with:\n\n- Maven wrapper;\n- AI Fabric `0.3.3` BOM import;\n- no cloud credentials;\n- a local profile;\n- empty support-knowledge fixtures;\n- reset, seed, index, readiness, and search endpoints.\n\nThe starter and solution refs remain deliberately `planned` during this UI preview. Do not present\nthe commands below as a validated clean-checkout lab until those refs exist.\n\n## Files The Executable Lab Will Use\n\n```text\npom.xml\nsrc/main/java/.../SupportAssistantApplication.java\nsrc/main/java/.../knowledge/KnowledgeArticle.java\nsrc/main/java/.../knowledge/KnowledgeArticleService.java\nsrc/main/java/.../web/KnowledgeSearchController.java\nsrc/main/resources/application-local.yml\nsrc/main/resources/ai-entity-config.yml\n```\n\n## Manual Build Path\n\nThe reviewed executable version will guide the learner through:\n\n1. Resolve AI Fabric from Maven Central using the published BOM.\n2. Add the starter, Spring AI provider bridge, ONNX starter, and Lucene vector module.\n3. Configure local ONNX model/tokenizer paths and a dimension-compatible Lucene index path.\n4. Model `KnowledgeArticle` with approved searchable content and category metadata.\n5. Seed five application records without indexing them.\n6. Search before indexing and observe the explicit no-evidence state.\n7. Index the records.\n8. Repeat the paraphrased query and inspect entity ID, score, content, and metadata.\n\n## Coding-Assistant Path\n\nThe coding-assistant path uses the same starter and behavior contract. It does not copy the solution\ncheckpoint. The assistant must inspect current AI Fabric APIs, keep domain state in the application,\nreproduce the no-index state, and run the same tests as the manual path.\n\nThe implementation prompt is marked `planned` until the standalone starter is available and the\nprompt has been exercised from a clean checkout.\n\n## Planned Commands And Requests\n\n```bash\n./mvnw clean verify\n./mvnw spring-boot:run -Dspring-boot.run.profiles=local\n```\n\n```http\nPOST /api/demo/reset\nPOST /api/demo/seed\nGET /api/demo/readiness\nGET /api/knowledge/search?q=How+can+I+recover+access+to+my+account\nPOST /api/demo/index\nGET /api/knowledge/search?q=How+can+I+recover+access+to+my+account\n```\n\nExpected evidence after the published lab is indexed:\n\n- HTTP 200;\n- one known support article ID in the result set;\n- a similarity score;\n- approved article content;\n- category and entity metadata;\n- readiness showing five indexed articles.\n\n## Intentional Failure\n\nSearch after seed but before index.\n\nExpected result:\n\n- the API request succeeds;\n- the result contains no matching evidence;\n- the application does not fabricate a support answer;\n- readiness distinguishes source records from indexed vectors.\n\nThe correction is an explicit indexing operation, not a UI fallback or a prompt that tells the model\nto pretend records were retrieved.\n\n## Field Lesson\n\nConfigured entities and database rows do not prove runtime retrieval readiness. Indexing is a data\nlifecycle operation. Readiness must be demonstrated by the expected evidence ID returning for a\ngolden paraphrased query.\n\n## Tests Required Before Publication\n\n- Clean Maven Central dependency resolution.\n- Application context discovers the required embedding and vector providers.\n- Search before indexing returns no evidence.\n- Search after indexing returns the expected article ID.\n- Response preserves approved metadata.\n- Local profile performs no remote embedding call.\n- Packaged application starts with the same provider posture.\n\n## Done When\n\nFor this preview:\n\n- the learner can trace the complete request/data path;\n- the learner can identify each ownership boundary;\n- the knowledge check is passed.\n\nFor public executable status:\n\n- immutable starter and solution refs exist;\n- commands pass from a clean checkout;\n- the reviewed NotebookLM video is published;\n- the intentional failure and retrieval proof are recorded;\n- the implementation and review prompts pass validation.\n\n## Reset And Cleanup\n\nThe published learner app will expose an explicit reset operation that removes course fixture data\nand the local lesson index without touching unrelated paths. Until the app exists, there is no reset\ncommand to run from this preview.\n\n## Troubleshooting\n\n| Symptom | Inspect first |\n| --- | --- |\n| No evidence after seed | Confirm the index operation ran and readiness reports vectors |\n| ONNX startup failure | Confirm model and tokenizer assets exist at configured paths |\n| Lucene dimension error | Confirm embedding dimensions and index path describe the same model |\n| Cloud-key error in local profile | Confirm ONNX is selected and no live provider is enabled |\n| Useful answer without evidence | Stop: inspect for a hidden fallback or application-authored response |\n\n## Next Lesson\n\nCORE-01 will turn this first flow into a full ownership and module-selection mental model.",
+  "assistant": {
+    "mode": "implement",
+    "validationStatus": "planned",
+    "implementationPrompt": "# QS-01 Assistant Implementation Prompt\n\nStatus: Planned. Do not use this prompt as a validated implementation handoff until the published\nstarter checkpoint replaces `planned`.\n\n```text\nYou are implementing AI Fabric course lesson QS-01: First Useful Result.\n\nUse AI Fabric 0.3.3 / ai-fabric-framework-v0.3.3, Java 21, and Spring Boot 4.1.x.\nWork only from the published QS-01 starter checkpoint when it becomes available. Do not copy the\nsolution checkpoint.\n\nRead first:\n- docs/getting-started/02-installation.md\n- docs/getting-started/03-first-semantic-search.md\n- docs/getting-started/08-local-onnx-embeddings.md\n- docs/getting-started/09-vector-storage-lucene.md\n- this lesson and its intentional-failure contract\n\nGoal:\nCreate a no-cloud-key semantic-search flow that seeds five application-owned support articles,\nreturns no evidence before indexing, indexes them through AI Fabric, and retrieves the expected\narticle by a paraphrased query with entity ID, score, content, and metadata.\n\nBefore editing:\n1. Verify the exact starter ref, clean prerequisites, Java/Maven versions, and worktree state.\n2. Inspect current AI Fabric APIs and dependencies; do not invent annotations, properties, or\n   service methods.\n3. Explain application, AI Fabric, ONNX provider, Lucene, and browser ownership.\n4. Give a concise implementation and test plan.\n\nRequired behavior:\n1. Resolve AI Fabric from Maven Central.\n2. Use local ONNX embeddings and Lucene vector storage.\n3. Keep support article lifecycle and approved metadata in the application.\n4. Make reset, seed, index, readiness, and search explicit.\n5. Reproduce search-before-index and preserve the honest no-evidence response.\n6. Add focused tests for no-index and indexed retrieval behavior.\n\nDo not:\n- create browser or backend keyword shortcuts;\n- return a canned support answer when retrieval is empty;\n- enable a cloud provider or use credentials;\n- expose unrelated domain fields;\n- use -DskipTests;\n- commit, push, deploy, or discard unrelated changes.\n\nStop and report when the starter checkpoint is missing, current APIs contradict the lesson, ONNX\nassets are unavailable, or required source state is incompatible.\n\nFinish with changed files, commands and exact outcomes, failure/recovery evidence, unexecuted checks,\nand the final request/data-flow explanation.\n```\n\n",
+    "reviewPrompt": "# QS-01 Independent Review Prompt\n\nStatus: Planned. Use only after the implementation prompt and starter checkpoint have been validated.\n\n```text\nReview the QS-01 implementation as potentially incomplete or unsafe.\n\nUse AI Fabric 0.3.3 / ai-fabric-framework-v0.3.3, Java 21, Spring Boot 4.1.x, the QS-01 lesson, and\ncurrent framework source/docs as evidence.\n\n1. Inspect the actual diff and repository; do not trust the implementation report.\n2. Verify the app owns support article lifecycle and approved metadata.\n3. Verify AI Fabric APIs and dependencies exist in the pinned release.\n4. Verify local ONNX and Lucene are the effective providers and no cloud call occurs.\n5. Run the declared tests without -DskipTests.\n6. Reproduce search before indexing and prove no canned answer hides missing evidence.\n7. Index, repeat the paraphrased query, and verify the expected ID and metadata.\n8. Identify unrelated changes, hidden fallbacks, weak tests, or unverified claims.\n\nReport findings first, ordered by severity with file/line references. Then list commands and results,\nunverified checks, and a concise request/data-flow assessment. Do not edit unless explicitly asked.\n```\n\n"
+  },
+  "video": {
+    "status": "script-ready",
+    "generator": "notebooklm",
+    "purpose": "pre-lesson-theory",
+    "placement": "before-lab",
+    "targetDurationMinutes": 4,
+    "title": "From Application Record To Semantic Evidence",
+    "publicUrl": null,
+    "transcript": "# QS-01 NotebookLM Lesson Brief\n\n## Purpose\n\nCreate a 3-5 minute pre-lesson architecture explanation titled **From Application Record To Semantic\nEvidence** for Java and Spring Boot developers who have not used AI Fabric.\n\nThis is theory orientation, not a code-along. The learner should finish able to explain why a database\nrow is not vector evidence and trace one semantic-search request end to end.\n\n## Required Topics\n\n1. Semantic similarity versus keyword matching and general model knowledge.\n2. Application record -> approved content/metadata -> ONNX embedding -> Lucene vector.\n3. Query -> query embedding -> similarity search -> evidence response.\n4. Application, AI Fabric, provider, vector store, and browser ownership.\n5. Honest no-evidence behavior before indexing.\n6. What the future executable lab will prove.\n\n## Prohibited Claims\n\n- Do not describe this preview as an executed learner lab.\n- Do not claim the NotebookLM video is already published.\n- Do not invent performance, accuracy, compliance, or production-readiness numbers.\n- Do not describe database records as indexed evidence.\n- Do not imply a language model is required for semantic retrieval.\n\n## Lab Handoff\n\nEnd by asking the learner to predict the result of searching after seed but before index, then proceed\nto the lesson and knowledge check.\n\n",
+    "sourceManifest": "notebooklm/source-manifest.yml",
+    "notebookStatus": "script-ready",
+    "reviewedAt": null,
+    "reviewedBy": null
+  },
+  "sourcePath": "docs/course/quickstart/01-first-useful-result/lesson.md",
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/main/docs/course/quickstart/01-first-useful-result/lesson.md"
+}
