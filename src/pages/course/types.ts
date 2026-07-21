@@ -22,6 +22,7 @@ export interface CourseLessonSummary {
   availability: LessonAvailability;
   route: string;
   source?: string;
+  theoryVideoIds: string[];
   relatedStories: CourseLink[];
   relatedDemos: CourseLink[];
 }
@@ -98,6 +99,7 @@ export interface RenderedCourseLesson extends CourseLessonSummary {
     starterRef: string;
     solutionRef: string;
     sourcePaths: string[];
+    theoryVideoIds: string[];
     video?: {
       status: "planned" | "script-ready" | "reviewed" | "published";
       targetDurationMinutes: number;

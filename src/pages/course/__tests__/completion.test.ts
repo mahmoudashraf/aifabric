@@ -16,6 +16,7 @@ const lesson = (availability: CourseLessonSummary["availability"]): CourseLesson
   durationMinutes: 30,
   availability,
   route: "/course/lesson",
+  theoryVideoIds: [],
   relatedStories: [],
   relatedDemos: [],
 });
@@ -50,6 +51,7 @@ const renderedLesson = (video: RenderedCourseLesson["video"]): RenderedCourseLes
     starterRef: "starter",
     solutionRef: "solution",
     sourcePaths: ["source.md"],
+    theoryVideoIds: [],
     video: video
       ? {
           status: video.status,
@@ -125,5 +127,13 @@ describe("course completion", () => {
     };
 
     expect(canCompleteLesson(renderedLesson(unpublishedVideo), 100)).toBe(false);
+  });
+
+  it("recognizes an assigned published theory collection", () => {
+    const lessonWithTheory = renderedLesson(undefined);
+    lessonWithTheory.theoryVideoIds = ["what-is-ai-fabric", "request-lifecycle"];
+    lessonWithTheory.frontMatter.theoryVideoIds = lessonWithTheory.theoryVideoIds;
+
+    expect(canCompleteLesson(lessonWithTheory, 80)).toBe(true);
   });
 });

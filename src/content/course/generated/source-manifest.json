@@ -6,11 +6,51 @@
   "frameworkTag": "ai-fabric-framework-v0.3.3",
   "courseSourceTag": "unreleased",
   "sourceCommit": "c86219a9f0e0be47aa6645be51f0b5085ddd3dbf",
-  "generatedAt": "2026-07-21T20:46:14.072Z",
+  "generatedAt": "2026-07-21T23:34:51.319Z",
   "files": [
     {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/config/OrchestrationProperties.java",
+      "sha256": "150a0386135fe72741b8bff740dcbbac342f82b67ad73d04570c3a59e21c0e20"
+    },
+    {
+      "sourcePath": "docs/architecture/AI_FABRIC_PUBLIC_ARCHITECTURE.md",
+      "sha256": "73fbc21a5275e5ab6c01cd8f06d289b6b0ee4ab308dca18fec71e32692cc0f6e"
+    },
+    {
+      "sourcePath": "docs/course/core/01-ai-fabric-mental-model/assistant-prompt.md",
+      "sha256": "3f4bb33448b9aba367924d440b626b73a3e56f584b8d7e8695de1a090df20b3e"
+    },
+    {
+      "sourcePath": "docs/course/core/01-ai-fabric-mental-model/assistant-review-prompt.md",
+      "sha256": "d45ddc3aedfc77318a0240dfea1fa63fee36e32f0e96637e8a3fa3eaa757e484"
+    },
+    {
+      "sourcePath": "docs/course/core/01-ai-fabric-mental-model/knowledge-check.yml",
+      "sha256": "4398243fb40fceb19ccdb5c171437ab22a5141c15b3707fe9049a3f1668ec578"
+    },
+    {
+      "sourcePath": "docs/course/core/01-ai-fabric-mental-model/lesson.md",
+      "sha256": "a78ae535f0e80c8039c7ce7e0b7a1a4b6763ec89dda6dac49467abc305f30c79"
+    },
+    {
+      "sourcePath": "docs/course/core/01-ai-fabric-mental-model/notebooklm/AI_FABRIC_ARCHITECTURE_MODULE_MAP_NOTEBOOKLM_SCRIPT.md",
+      "sha256": "ffd7327799f6fc8076c95c650ef2cd765d73041a201d74466af2279b101b3f8d"
+    },
+    {
+      "sourcePath": "docs/course/core/01-ai-fabric-mental-model/notebooklm/AI_FABRIC_CONFIGURATION_EXTENSION_MODEL_NOTEBOOKLM_SCRIPT.md",
+      "sha256": "2274a2322096d447b44c7ff922bf1ffad449fcb75c70f15e38f404390bfa804b"
+    },
+    {
+      "sourcePath": "docs/course/core/01-ai-fabric-mental-model/notebooklm/AI_FABRIC_INTRO_NOTEBOOKLM_SCRIPT.md",
+      "sha256": "da6eef69a0d7581414241774c9b6c0f4786eaeb5cc3373c753772e251e698120"
+    },
+    {
+      "sourcePath": "docs/course/core/01-ai-fabric-mental-model/notebooklm/AI_FABRIC_REQUEST_LIFECYCLE_NOTEBOOKLM_SCRIPT.md",
+      "sha256": "6366248f3e70160f84b46191a455f0d602e170b7e7e1cb65ff2a4a72b1cffc98"
+    },
+    {
       "sourcePath": "docs/course/course.yml",
-      "sha256": "98be802e13448234865312087fc85058e6badff1ddf46db987dfc6121f4f181b"
+      "sha256": "3cd9f1b43032d72eb893db11be37eebee5f601b690193749f39f3aa6259e2295"
     },
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/assistant-prompt.md",
@@ -29,6 +69,10 @@
       "sha256": "fc1e39d23f29877414e8cdc22b01aa1705f3ff678d91b73ad20543ea09f0e58a"
     },
     {
+      "sourcePath": "docs/getting-started/01-choose-your-path.md",
+      "sha256": "057dcd594139d965a7ee0226e3a0bac5b5dea195a5b9ef6c5559b63df991b6d6"
+    },
+    {
       "sourcePath": "docs/getting-started/02-installation.md",
       "sha256": "931bdcd08c9246b386d7647381c1e70ba1d5fb1801c5ab1e1185317ce068b3bf"
     },
@@ -43,6 +87,18 @@
     {
       "sourcePath": "docs/getting-started/09-vector-storage-lucene.md",
       "sha256": "80aa7109da3eb1bbe8445912d42cbf07b951a6a80463b1099c32b15972db0aa8"
+    },
+    {
+      "sourcePath": "docs/guides/03-modules.md",
+      "sha256": "6558b83d24b2b5591f08ca47de0a8942204689c8fd00c660eb400993d3351da7"
+    },
+    {
+      "sourcePath": "docs/llm-context/AI_FABRIC_CAPABILITY_MAP.md",
+      "sha256": "f4cc77f6082fff4676b3fd3592aeae0af429471c3972910929c94cb89f5bd092"
+    },
+    {
+      "sourcePath": "docs/llm-context/AI_FABRIC_MODULE_DECISION_TREE.md",
+      "sha256": "7c7e2ef034a815278d6de65ce35437531b29d254e03bc2a448027ab2a01baabc"
     }
   ]
 }

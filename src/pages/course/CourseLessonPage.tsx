@@ -10,7 +10,7 @@ import {
   PlayCircle,
 } from "lucide-react";
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,22 +20,34 @@ import { CourseLayout } from "./components/CourseLayout";
 import { CoursePathWorkspace } from "./components/CoursePathWorkspace";
 import { CourseTheoryVideo } from "./components/CourseTheoryVideo";
 import { useCourseProgress } from "./hooks/useCourseProgress";
-import { courseCatalog, getRenderedLesson } from "./lib/courseCatalog";
-
-const renderedLesson = getRenderedLesson("qs-01");
-if (!renderedLesson) throw new Error("QS-01 generated course content is missing");
-const lesson = renderedLesson;
+import { hasTheory } from "./lib/completion";
+import { courseCatalog, courseLessons, getLessonByRoute, getRenderedLesson, getTrack } from "./lib/courseCatalog";
+import CourseUnavailablePage from "./CourseUnavailablePage";
 
 const CourseLessonPage = () => {
+  const location = useLocation();
+  const lessonSummary = getLessonByRoute(location.pathname);
+  const lesson = lessonSummary ? getRenderedLesson(lessonSummary.id) : null;
+  const track = lesson ? getTrack(lesson.track) : null;
   const { progress, saveTheory, isError } = useCourseProgress(courseCatalog.courseVersion);
-  const lessonProgress = progress.find((entry) => entry.lessonId === lesson.id);
 
   useEffect(() => {
+    if (!lesson) return undefined;
     document.title = `${lesson.title} | AI Fabric Course`;
     return () => {
       document.title = "AI Fabric";
     };
-  }, []);
+  }, [lesson]);
+
+  if (!lesson) return <CourseUnavailablePage />;
+
+  const lessonProgress = progress.find((entry) => entry.lessonId === lesson.id);
+  const theoryRequired = hasTheory(lesson);
+  const lessonIndex = courseLessons.findIndex((candidate) => candidate.id === lesson.id);
+  const nextLesson = lessonIndex >= 0 ? courseLessons[lessonIndex + 1] : null;
+  const previewDescription = lesson.id === "qs-01"
+    ? "The practical lesson source, assistant prompts, and knowledge check are available for review. This Quickstart intentionally has no theory-video gate. The executable starter and immutable solution refs still need publication, so this preview cannot yet count as complete."
+    : "The complete lesson, assigned theory recordings, assistant analysis prompts, and knowledge check are available for review. Progress can be practiced and saved, but completion remains disabled until the course publishes an immutable checkpoint.";
 
   return (
     <CourseLayout>
@@ -44,12 +56,14 @@ const CourseLessonPage = () => {
           <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-500">
             <Link to="/course" className="hover:text-blue-700">Course</Link>
             <span>/</span>
-            <span>Quickstart</span>
+            <span>{track?.title ?? lesson.track}</span>
             <span>/</span>
-            <span>Lesson 1</span>
+            <span>Lesson {lesson.frontMatter.order}</span>
           </div>
           <div className="mt-5 flex flex-wrap items-center gap-2">
-            <Badge className="border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-50">Preview lesson</Badge>
+            <Badge className="border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-50">
+              {lesson.availability === "published" ? "Published lesson" : "Preview lesson"}
+            </Badge>
             <Badge variant="outline">AI Fabric {lesson.frontMatter.frameworkVersion}</Badge>
             <Badge variant="outline"><Clock3 className="mr-1 h-3.5 w-3.5" />{lesson.durationMinutes} minutes</Badge>
           </div>
@@ -64,16 +78,14 @@ const CourseLessonPage = () => {
               <div>
                 <p className="font-bold text-slate-950">What is ready in this preview</p>
                 <p className="mt-1 text-sm leading-6 text-slate-700">
-                  The practical lesson source, assistant prompts, and knowledge check are available for review.
-                  This Quickstart intentionally has no theory-video gate. The executable starter and immutable
-                  solution refs still need publication, so this preview cannot yet count as complete.
+                  {previewDescription}
                 </p>
               </div>
             </div>
           </div>
 
           <nav className="mt-6 flex flex-wrap gap-2" aria-label="Lesson sections">
-            {lesson.video && (
+            {theoryRequired && (
               <Button variant="outline" size="sm" asChild><a href="#theory"><PlayCircle className="h-4 w-4" />Theory</a></Button>
             )}
             <Button variant="outline" size="sm" asChild><a href="#lesson-workspace"><BookOpen className="h-4 w-4" />Build paths</a></Button>
@@ -94,7 +106,7 @@ const CourseLessonPage = () => {
           </div>
         )}
 
-        {lesson.video && (
+        {theoryRequired && (
           <CourseTheoryVideo
             lesson={lesson}
             progress={lessonProgress}
@@ -119,11 +131,11 @@ const CourseLessonPage = () => {
             <h2 id="completion-heading" className="text-xl font-bold tracking-normal text-slate-950">Publication-aware completion</h2>
           </div>
           <div className="mt-5 divide-y divide-border border-y border-border bg-white">
-            {lesson.video && (
+            {theoryRequired && (
               <div className="flex items-center justify-between gap-4 px-4 py-4">
                 <span className="flex items-center gap-3 text-sm font-medium text-slate-800">
                   <LockKeyhole className="h-4 w-4 text-amber-600" />
-                  Watch the approved theory recording
+                  Watch the assigned theory recording{lesson.theoryVideoIds.length > 1 ? "s" : ""}
                 </span>
                 <span className="text-xs font-semibold text-amber-700">Blocked until publication</span>
               </div>
@@ -144,7 +156,11 @@ const CourseLessonPage = () => {
             <Button variant="outline" asChild><Link to="/course">Back to course overview</Link></Button>
             <div className="text-right">
               <p className="text-xs font-semibold uppercase text-slate-500">Next required lesson</p>
-              <p className="mt-1 text-sm font-bold text-slate-900">What Is AI Fabric? Architecture And Mental Model · in preparation</p>
+              <p className="mt-1 text-sm font-bold text-slate-900">
+                {nextLesson
+                  ? `${nextLesson.title}${nextLesson.availability === "planned" ? " · in preparation" : ""}`
+                  : "Required course sequence complete"}
+              </p>
             </div>
           </div>
         </section>

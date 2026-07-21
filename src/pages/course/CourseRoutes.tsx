@@ -11,6 +11,7 @@ const CourseRoutes = () => (
     <Routes>
       <Route index element={<CourseHubPage />} />
       <Route path="quickstart" element={<CourseLessonPage />} />
+      <Route path=":trackId/:slug" element={<CourseLessonPage />} />
       <Route path="progress" element={<CourseProgressPage />} />
       <Route path="*" element={<CourseUnavailablePage />} />
     </Routes>

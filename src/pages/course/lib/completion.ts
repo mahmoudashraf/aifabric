@@ -4,9 +4,15 @@ import type {
   LessonProgress,
   RenderedCourseLesson,
 } from "../types";
+import { courseTheoryVideos } from "./courseVideoCatalog";
+
+export const hasTheory = (lesson: RenderedCourseLesson) =>
+  lesson.theoryVideoIds.length > 0 || Boolean(lesson.video);
 
 export const isTheoryAvailable = (lesson: RenderedCourseLesson) =>
-  Boolean(lesson.video?.status === "published" && lesson.video.publicUrl);
+  lesson.theoryVideoIds.length > 0
+    ? lesson.theoryVideoIds.every((videoId) => courseTheoryVideos.some((video) => video.id === videoId))
+    : Boolean(lesson.video?.status === "published" && lesson.video.publicUrl);
 
 export const getLessonDisplayStatus = (
   lesson: CourseLessonSummary,
@@ -21,7 +27,7 @@ export const getLessonDisplayStatus = (
 
 export const canCompleteLesson = (lesson: RenderedCourseLesson, score: number | null) =>
   lesson.availability === "published" &&
-  (!lesson.video || isTheoryAvailable(lesson)) &&
+  (!hasTheory(lesson) || isTheoryAvailable(lesson)) &&
   score !== null &&
   score >= lesson.knowledgeCheck.passingScorePercent;
 

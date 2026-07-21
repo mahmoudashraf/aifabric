@@ -102,6 +102,7 @@
   },
   "assistantPrompt": "quickstart/01-first-useful-result/assistant-prompt.md",
   "assistantReviewPrompt": "quickstart/01-first-useful-result/assistant-review-prompt.md",
+  "theoryVideoIds": [],
   "relatedStories": [],
   "relatedDemos": [],
   "track": "quickstart",
@@ -128,6 +129,7 @@
       "docs/getting-started/08-local-onnx-embeddings.md",
       "docs/getting-started/09-vector-storage-lucene.md"
     ],
+    "theoryVideoIds": [],
     "assistant": {
       "mode": "implement",
       "implementationPrompt": "assistant-prompt.md",

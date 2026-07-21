@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("course hub opens the reviewed quickstart", async ({ page }) => {
   await page.goto("/course");
-  await expect(page.getByRole("heading", { name: /Build Production-Oriented AI Workflows/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Build AI-Enabled Applications/ })).toBeVisible();
   await expect(page.getByText("QS-01: First Useful Result")).toBeVisible();
   await page.getByRole("link", { name: "Start Quickstart" }).click();
   await expect(page).toHaveURL(/\/course\/quickstart$/);
@@ -10,6 +10,23 @@ test("course hub opens the reviewed quickstart", async ({ page }) => {
   await expect(page.getByText(/AI Fabric adds application-level AI capabilities to Spring Boot/)).toBeVisible();
   await expect(page.getByRole("link", { name: "Theory" })).toHaveCount(0);
   await expect(page.getByText("Recording not published yet")).toHaveCount(0);
+});
+
+test("Core 01 presents its complete theory and analysis workspace", async ({ page }) => {
+  await page.goto("/course/core/mental-model", { waitUntil: "domcontentloaded" });
+
+  await expect(page.getByRole("heading", { name: "What Is AI Fabric? Architecture And Mental Model" })).toBeVisible();
+  await expect(page.getByLabel("Assigned theory videos").getByRole("button")).toHaveCount(4);
+  await expect(page.getByTitle("What is AI Fabric? lesson video in English")).toHaveAttribute(
+    "src",
+    /hGEfZQeqHks/,
+  );
+
+  await page.getByRole("tab", { name: "Use an assistant" }).click();
+  await expect(page.getByRole("heading", { name: "Implementation prompt" })).toBeVisible();
+  await page.getByRole("tab", { name: "Analyze manually" }).click();
+  await expect(page.getByRole("heading", { name: /Establish The Ownership Boundary/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Check your understanding" })).toBeVisible();
 });
 
 test("knowledge check grades locally without requiring sign-in", async ({ page }) => {
@@ -32,4 +49,9 @@ test("course pages do not overflow the viewport", async ({ page }, testInfo) => 
   }
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(overflow).toBeLessThanOrEqual(1);
+
+  await page.goto("/course/core/mental-model", { waitUntil: "domcontentloaded" });
+  await expect(page.getByRole("heading", { name: "What Is AI Fabric? Architecture And Mental Model" })).toBeVisible();
+  const lessonOverflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(lessonOverflow).toBeLessThanOrEqual(1);
 });

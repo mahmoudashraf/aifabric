@@ -114,6 +114,13 @@ const syncLesson = async (
     throw new Error(`Availability mismatch for ${lesson.id}`);
   }
   if (
+    frontMatter.theoryVideoIds.length !== lesson.theoryVideoIds.length ||
+    frontMatter.theoryVideoIds.some((videoId, index) => videoId !== lesson.theoryVideoIds[index])
+  ) {
+    throw new Error(`Theory-video assignment mismatch for ${lesson.id}`);
+  }
+  assertUnique(frontMatter.theoryVideoIds, `theory video IDs in ${lesson.id}`);
+  if (
     frontMatter.courseVersion !== course.courseVersion ||
     frontMatter.frameworkVersion !== course.frameworkVersion ||
     frontMatter.frameworkTag !== course.frameworkTag
@@ -176,7 +183,14 @@ const syncLesson = async (
       return [filePath, await readText(filePath)] as const;
     }),
   );
-  sourceFiles.push(...lessonReferenceSources);
+  const knowledgeReferenceSources = await Promise.all(
+    [...new Set(knowledgeCheck.questions.flatMap((question) => question.sourcePaths))].map(async (sourcePath) => {
+      const filePath = path.resolve(frameworkRoot, sourcePath);
+      assertInsideFramework(filePath);
+      return [filePath, await readText(filePath)] as const;
+    }),
+  );
+  sourceFiles.push(...lessonReferenceSources, ...knowledgeReferenceSources);
 
   let video:
     | (NonNullable<LessonFrontMatter["video"]> & {

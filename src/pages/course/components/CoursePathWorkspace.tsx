@@ -35,23 +35,28 @@ const PromptBlock = ({ title, prompt }: { title: string; prompt: string }) => {
   );
 };
 
-export const CoursePathWorkspace = ({ lesson }: { lesson: RenderedCourseLesson }) => (
-  <section id="lesson-workspace" className="scroll-mt-32 py-9" aria-labelledby="workspace-heading">
-    <div className="mb-5">
+export const CoursePathWorkspace = ({ lesson }: { lesson: RenderedCourseLesson }) => {
+  const analysisLesson = lesson.assistant.mode === "analyze";
+
+  return (
+    <section id="lesson-workspace" className="scroll-mt-32 py-9" aria-labelledby="workspace-heading">
+      <div className="mb-5">
       <p className="text-xs font-bold uppercase text-blue-700">Choose your path</p>
       <h2 id="workspace-heading" className="mt-2 text-2xl font-bold tracking-normal text-slate-950">
-        Build the same behavior contract
+        {analysisLesson ? "Produce the architecture contract" : "Build the same behavior contract"}
       </h2>
       <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-        Manual and assistant paths share the same source version, expected evidence, failure case, and tests.
+        {analysisLesson
+          ? "Manual and assistant paths use the same pinned sources, required artifacts, failure case, and review criteria."
+          : "Manual and assistant paths share the same source version, expected evidence, failure case, and tests."}
       </p>
-    </div>
+      </div>
 
-    <Tabs defaultValue="manual" className="w-full">
+      <Tabs defaultValue="manual" className="w-full">
       <TabsList className="grid h-11 w-full max-w-md grid-cols-2">
         <TabsTrigger value="manual" className="gap-2">
           <TerminalSquare className="h-4 w-4" />
-          Build manually
+          {analysisLesson ? "Analyze manually" : "Build manually"}
         </TabsTrigger>
         <TabsTrigger value="assistant" className="gap-2">
           <Code2 className="h-4 w-4" />
@@ -69,8 +74,9 @@ export const CoursePathWorkspace = ({ lesson }: { lesson: RenderedCourseLesson }
             <Badge variant="outline" className="bg-white">Starter: {lesson.frontMatter.starterRef}</Badge>
           </div>
           <p className="mt-3 text-sm leading-6 text-slate-700">
-            This prompt is visible for review but remains marked planned until the standalone starter is
-            published and the complete path passes from a clean checkout. Copying it does not change progress.
+            {analysisLesson
+              ? "This prompt produces the same architecture artifacts as the manual path. It remains marked planned until its output receives an independent framework-source review. Copying it does not change progress."
+              : "This prompt is visible for review but remains marked planned until the standalone starter is published and the complete path passes from a clean checkout. Copying it does not change progress."}
           </p>
         </div>
         <PromptBlock title="Implementation prompt" prompt={lesson.assistant.implementationPrompt} />
@@ -82,6 +88,7 @@ export const CoursePathWorkspace = ({ lesson }: { lesson: RenderedCourseLesson }
           </a>
         </Button>
       </TabsContent>
-    </Tabs>
-  </section>
-);
+      </Tabs>
+    </section>
+  );
+};

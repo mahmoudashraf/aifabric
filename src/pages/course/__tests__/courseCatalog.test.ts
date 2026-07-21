@@ -18,10 +18,15 @@ describe("generated course catalog", () => {
     expect(new Set(courseLessons.map((lesson) => lesson.route)).size).toBe(courseLessons.length);
   });
 
-  it("renders only the explicit preview lesson", () => {
-    expect(previewLessons.map((lesson) => lesson.id)).toEqual(["qs-01"]);
+  it("renders the Quickstart and first Core preview lessons", () => {
+    expect(previewLessons.map((lesson) => lesson.id)).toEqual(["qs-01", "core-01"]);
     expect(getRenderedLesson("qs-01")?.video).toBeUndefined();
-    expect(getRenderedLesson("core-01")).toBeNull();
+    expect(getRenderedLesson("core-01")?.theoryVideoIds).toEqual([
+      "what-is-ai-fabric",
+      "architecture-and-modules",
+      "request-lifecycle",
+      "configuration-and-extension-model",
+    ]);
   });
 
   it("keeps QS-01 action-first and hands architecture teaching to the Core track", () => {
@@ -35,5 +40,18 @@ describe("generated course catalog", () => {
     expect(lesson?.markdown).not.toMatch(/\bthe learner\b/i);
     expect(lesson?.markdown).not.toContain("NotebookLM pre-lesson theory");
     expect(lesson?.video).toBeUndefined();
+  });
+
+  it("publishes Core 01 as a user-directed architecture lesson with verifiable outputs", () => {
+    const lesson = getRenderedLesson("core-01");
+
+    expect(lesson?.route).toBe("/course/core/mental-model");
+    expect(lesson?.markdown).toContain("## Step 1: Establish The Ownership Boundary");
+    expect(lesson?.markdown).toContain("### Expected Final Result");
+    expect(lesson?.markdown).toContain("### Intentional Failure");
+    expect(lesson?.markdown).toContain("## Troubleshooting");
+    expect(lesson?.markdown).not.toMatch(/\bthe learner\b/i);
+    expect(lesson?.knowledgeCheck.questions).toHaveLength(6);
+    expect(lesson?.assistant.mode).toBe("analyze");
   });
 });

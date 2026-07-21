@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { courseSchema, knowledgeCheckSchema, lessonFrontMatterSchema } from "./schemas";
+import { courseTheoryVideos } from "../../src/pages/course/lib/courseVideoCatalog";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const repositoryRoot = path.resolve(scriptDirectory, "../..");
@@ -16,6 +17,8 @@ const main = async () => {
   const lessonIds = new Set<string>();
   const routes = new Set<string>();
   let renderedLessons = 0;
+  const assignedTheoryVideos = new Set<string>();
+  const knownTheoryVideos = new Set(courseTheoryVideos.map((video) => video.id));
 
   for (const track of generatedCourse.tracks) {
     for (const lesson of track.lessons) {
@@ -36,6 +39,15 @@ const main = async () => {
         throw new Error(`Generated lesson mismatch for ${lesson.id}`);
       }
       if (!generatedLesson.markdown?.trim()) throw new Error(`${lesson.id} has empty Markdown`);
+      for (const videoId of frontMatter.theoryVideoIds) {
+        if (!knownTheoryVideos.has(videoId)) {
+          throw new Error(`${lesson.id} references unknown theory video ${videoId}`);
+        }
+        if (assignedTheoryVideos.has(videoId)) {
+          throw new Error(`Theory video ${videoId} is assigned to more than one rendered lesson`);
+        }
+        assignedTheoryVideos.add(videoId);
+      }
       if (frontMatter.video && !generatedLesson.video?.transcript?.trim()) {
         throw new Error(`${lesson.id} declares theory media but has no transcript/source brief`);
       }

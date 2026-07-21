@@ -19,6 +19,7 @@ export const courseLessonSchema = z.object({
   assistantPrompt: z.string().min(1).optional(),
   assistantReviewPrompt: z.string().min(1).optional(),
   notebookSourceManifest: z.string().min(1).optional(),
+  theoryVideoIds: z.array(z.string().min(1)).default([]),
   relatedStories: z.array(relatedLinkSchema).default([]),
   relatedDemos: z.array(relatedLinkSchema).default([]),
 });
@@ -97,6 +98,7 @@ export const lessonFrontMatterSchema = z.object({
   requiresOpenAi: z.boolean(),
   requiresDocker: z.boolean(),
   sourcePaths: z.array(z.string().min(1)).min(1),
+  theoryVideoIds: z.array(z.string().min(1)).default([]),
   assistant: z.object({
     mode: z.enum(["implement", "analyze", "reproduce", "verify"]),
     implementationPrompt: z.string().min(1),

@@ -37,6 +37,7 @@
           "knowledgeCheck": "quickstart/01-first-useful-result/knowledge-check.yml",
           "assistantPrompt": "quickstart/01-first-useful-result/assistant-prompt.md",
           "assistantReviewPrompt": "quickstart/01-first-useful-result/assistant-review-prompt.md",
+          "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/quickstart"
@@ -55,7 +56,17 @@
           "title": "What Is AI Fabric? Architecture And Mental Model",
           "description": "Learn why AI Fabric exists, when to use it, how its modules fit together, and what remains application-owned.",
           "durationMinutes": 70,
-          "availability": "planned",
+          "availability": "preview",
+          "source": "core/01-ai-fabric-mental-model/lesson.md",
+          "knowledgeCheck": "core/01-ai-fabric-mental-model/knowledge-check.yml",
+          "assistantPrompt": "core/01-ai-fabric-mental-model/assistant-prompt.md",
+          "assistantReviewPrompt": "core/01-ai-fabric-mental-model/assistant-review-prompt.md",
+          "theoryVideoIds": [
+            "what-is-ai-fabric",
+            "architecture-and-modules",
+            "request-lifecycle",
+            "configuration-and-extension-model"
+          ],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/core/mental-model"
@@ -67,6 +78,7 @@
           "description": "Define content and metadata, then prove the complete vector lifecycle.",
           "durationMinutes": 60,
           "availability": "planned",
+          "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/core/model-and-index-data"
@@ -78,6 +90,7 @@
           "description": "Retrieve approved evidence before generation and expose its source IDs.",
           "durationMinutes": 75,
           "availability": "planned",
+          "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/core/evidence-grounded-rag"
@@ -89,6 +102,7 @@
           "description": "Register typed actions, collect parameters, and confirm writes before execution.",
           "durationMinutes": 85,
           "availability": "planned",
+          "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/core/governed-actions"
@@ -100,6 +114,7 @@
           "description": "Resolve follow-ups and pending confirmations from framework session state.",
           "durationMinutes": 60,
           "availability": "planned",
+          "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/core/backend-conversation-memory"
@@ -111,6 +126,7 @@
           "description": "Apply identity, tenant, access, and PII policy before evidence or execution.",
           "durationMinutes": 85,
           "availability": "planned",
+          "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/core/tenant-security-and-privacy"
@@ -122,6 +138,7 @@
           "description": "Separate deterministic, packaged-runtime, and live-provider release evidence.",
           "durationMinutes": 70,
           "availability": "planned",
+          "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/core/test-and-ship"
@@ -141,6 +158,7 @@
           "description": "Make local and live provider posture explicit without hidden fallback.",
           "durationMinutes": 75,
           "availability": "planned",
+          "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/production/provider-profiles"
@@ -152,6 +170,7 @@
           "description": "Keep source data, embeddings, and vector storage synchronized through change.",
           "durationMinutes": 90,
           "availability": "planned",
+          "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/production/indexing-and-backfill"
@@ -163,6 +182,7 @@
           "description": "Test expected evidence, no-source behavior, and application prompt overlays.",
           "durationMinutes": 70,
           "availability": "planned",
+          "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/production/rag-quality"
@@ -174,6 +194,7 @@
           "description": "Preserve the retrieval contract while making Qdrant operations and failures visible.",
           "durationMinutes": 85,
           "availability": "planned",
+          "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/production/managed-vector-provider"
@@ -185,6 +206,7 @@
           "description": "Package, identify, isolate, clean, and verify the deployed application.",
           "durationMinutes": 60,
           "availability": "planned",
+          "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/production/operations-and-release"
@@ -204,6 +226,7 @@
           "description": "Staged commerce RAG, attachments, governed cart actions, and result projection.",
           "durationMinutes": 45,
           "availability": "planned",
+          "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/case-studies/ai-shopping-experience"
@@ -215,6 +238,7 @@
           "description": "Profile reads, policy-grounded blockers, follow-ups, and governed remedies.",
           "durationMinutes": 45,
           "availability": "planned",
+          "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/case-studies/account-resolver"
@@ -226,6 +250,7 @@
           "description": "Incremental insight generation and allowlisted agentic UI composition.",
           "durationMinutes": 45,
           "availability": "planned",
+          "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/case-studies/behavior-signals"
@@ -237,6 +262,7 @@
           "description": "Tenant-scoped evidence, role policy, denied retrieval, and governed writes.",
           "durationMinutes": 45,
           "availability": "planned",
+          "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/case-studies/tenant-guard"
@@ -248,6 +274,7 @@
           "description": "Backend PII processing, sanitized indexing, and privacy proof without false AI claims.",
           "durationMinutes": 45,
           "availability": "planned",
+          "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/case-studies/privacy-shield"
@@ -267,6 +294,7 @@
           "description": "Assemble release-pinned context and require an ownership map before code.",
           "durationMinutes": 30,
           "availability": "planned",
+          "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/coding-assistants/correct-context"
@@ -278,6 +306,7 @@
           "description": "Use bounded prompts, current APIs, tests, and a fresh findings-first review.",
           "durationMinutes": 55,
           "availability": "planned",
+          "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/coding-assistants/implement-safely"
@@ -286,5 +315,5 @@
     }
   ],
   "sourceCommit": "c86219a9f0e0be47aa6645be51f0b5085ddd3dbf",
-  "generatedAt": "2026-07-21T20:46:14.072Z"
+  "generatedAt": "2026-07-21T23:34:51.319Z"
 }

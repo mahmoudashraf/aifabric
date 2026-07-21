@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 
 import { useCourseAuth } from "../hooks/useCourseAuth";
 import { useCourseProgress } from "../hooks/useCourseProgress";
+import { hasTheory } from "../lib/completion";
 import { canSubmitKnowledgeCheck, scoreKnowledgeCheck } from "../lib/knowledgeCheck";
 import type {
   KnowledgeAnswers,
@@ -88,7 +89,7 @@ export const CourseKnowledgeCheck = ({ lesson, progress }: CourseKnowledgeCheckP
         score: nextResult.score,
         passed: nextResult.passed,
         videoCompletedAt: progress?.videoCompletedAt ?? null,
-        theoryRequired: Boolean(lesson.video),
+        theoryRequired: hasTheory(lesson),
         completionEligible: lesson.availability === "published",
       });
       setSaved(true);
@@ -110,7 +111,7 @@ export const CourseKnowledgeCheck = ({ lesson, progress }: CourseKnowledgeCheckP
         <div>
           <p className="text-xs font-bold uppercase text-blue-700">Knowledge check</p>
           <h2 id="knowledge-heading" className="mt-2 text-2xl font-bold tracking-normal text-slate-950">
-            Prove the request flow
+            Check your understanding
           </h2>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
             This is an educational checkpoint with deterministic answers, not a secured examination.
@@ -194,7 +195,9 @@ export const CourseKnowledgeCheck = ({ lesson, progress }: CourseKnowledgeCheckP
                         checked={(answers[question.id] ?? []).includes("reviewed")}
                         onCheckedChange={(checked) => toggleMultipleAnswer(question.id, "reviewed", checked === true)}
                       />
-                      I reviewed the model answer or criteria against my implementation.
+                      {question.type === "answer-reveal"
+                        ? "I wrote my answer and am ready to compare it with the model response."
+                        : "I completed this review against my own architecture or implementation."}
                     </Label>
                   )}
 
@@ -220,7 +223,13 @@ export const CourseKnowledgeCheck = ({ lesson, progress }: CourseKnowledgeCheckP
                       {question.sourcePaths.map((source) => (
                         <a
                           key={source}
-                          href={`https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/${lesson.frontMatter.frameworkTag}/${source}`}
+                          href={`https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/${
+                            source.startsWith("docs/")
+                              ? lesson.frontMatter.courseSourceTag === "unreleased"
+                                ? "main"
+                                : lesson.frontMatter.courseSourceTag
+                              : lesson.frontMatter.frameworkTag
+                          }/${source}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 text-xs font-medium text-blue-700 hover:underline"
