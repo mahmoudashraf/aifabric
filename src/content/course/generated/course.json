@@ -6,7 +6,7 @@
   "courseId": "ai-fabric-production-oriented-java",
   "courseVersion": "0.3.3-course.1-beta",
   "status": "beta",
-  "title": "Build Production-Oriented AI Workflows with Java and Spring Boot",
+  "title": "AI Fabric Engineering: Build AI-Powered Applications with Java and Spring Boot",
   "subtitle": "Semantic search, evidence-grounded RAG, governed actions, chat memory, and tenant security with AI Fabric",
   "frameworkVersion": "0.3.3",
   "frameworkTag": "ai-fabric-framework-v0.3.3",
@@ -54,7 +54,7 @@
           "slug": "mental-model",
           "title": "What Is AI Fabric? Architecture And Mental Model",
           "description": "Learn why AI Fabric exists, when to use it, how its modules fit together, and what remains application-owned.",
-          "durationMinutes": 40,
+          "durationMinutes": 70,
           "availability": "planned",
           "relatedStories": [],
           "relatedDemos": [],
@@ -285,6 +285,6 @@
       ]
     }
   ],
-  "sourceCommit": "d2639e51e8fe7d779a714bf1815b33a0637775a5",
-  "generatedAt": "2026-07-20T13:01:33.037Z"
+  "sourceCommit": "c86219a9f0e0be47aa6645be51f0b5085ddd3dbf",
+  "generatedAt": "2026-07-21T02:47:04.570Z"
 }

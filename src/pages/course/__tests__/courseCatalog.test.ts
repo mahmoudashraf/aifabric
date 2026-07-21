@@ -4,6 +4,9 @@ import { courseCatalog, courseLessons, getRenderedLesson, previewLessons } from 
 
 describe("generated course catalog", () => {
   it("pins the UI to the supported framework release", () => {
+    expect(courseCatalog.title).toBe(
+      "AI Fabric Engineering: Build AI-Powered Applications with Java and Spring Boot",
+    );
     expect(courseCatalog.frameworkVersion).toBe("0.3.3");
     expect(courseCatalog.frameworkTag).toBe("ai-fabric-framework-v0.3.3");
     expect(courseCatalog.sourceCommit).toMatch(/^[a-f0-9]{40}$/);

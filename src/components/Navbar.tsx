@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { CalendarCheck, CalendarDays, Github, GraduationCap, Library, Menu, X, BookOpen } from "lucide-react";
+import { CalendarCheck, CalendarDays, Github, GraduationCap, Menu, X, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -98,10 +98,6 @@ const Navbar = () => {
               <CalendarCheck className="h-4 w-4" />
               Maintainer Session
             </Link>
-            <Link to="/docs/user-stories" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-              <Library className="h-4 w-4" />
-              Stories
-            </Link>
           </div>
 
           {/* CTA Buttons */}
@@ -154,10 +150,6 @@ const Navbar = () => {
               <Link to="/consultation" onClick={closeMenu} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 <CalendarCheck className="h-4 w-4" />
                 Maintainer Session
-              </Link>
-              <Link to="/docs/user-stories" onClick={closeMenu} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-                <Library className="h-4 w-4" />
-                Stories
               </Link>
               <div className="flex gap-3 pt-2">
                 <Button variant="github" size="sm" asChild>
