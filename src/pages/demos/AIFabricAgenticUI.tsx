@@ -1120,8 +1120,8 @@ export default function AIFabricAgenticUI() {
       <ConsultationCtaBand
         compact
         className="bg-background py-10"
-        title="Exploring agentic UI for your users?"
-        body="Book a free AI Fabric architecture discussion to translate behavior insights into trusted, backend-validated UI composition for your own app."
+        title="Exploring behavior-aware UI?"
+        body="Join a free AI Fabric open-source maintainer session to discuss how behavior insights and backend-validated UI composition may apply to a public or properly redacted workflow."
       />
 
       <Footer />

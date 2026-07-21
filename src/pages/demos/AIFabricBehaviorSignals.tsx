@@ -1238,8 +1238,8 @@ export default function AIFabricBehaviorSignals() {
       <ConsultationCtaBand
         compact
         className="bg-background py-10"
-        title="Want behavior intelligence for your product?"
-        body="Book a free AI Fabric architecture discussion to map raw events, persisted insights, and behavior-aware UI recommendations to your own Java application."
+        title="Exploring behavior intelligence?"
+        body="Join a free AI Fabric open-source maintainer session to discuss raw events, persisted insights, and behavior-aware UI recommendations using a public or properly redacted Java workflow."
       />
 
       <Footer />

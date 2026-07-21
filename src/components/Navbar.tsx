@@ -96,7 +96,7 @@ const Navbar = () => {
             </Link>
             <Link to="/consultation" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               <CalendarCheck className="h-4 w-4" />
-              Consultation
+              Maintainer Session
             </Link>
           </div>
 
@@ -110,7 +110,7 @@ const Navbar = () => {
             </Button>
             <Button variant="hero" size="sm" asChild>
               <Link to="/consultation" className="flex items-center gap-2">
-                Book a Call
+                View Times
               </Link>
             </Button>
           </div>
@@ -149,7 +149,7 @@ const Navbar = () => {
               </Link>
               <Link to="/consultation" onClick={closeMenu} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 <CalendarCheck className="h-4 w-4" />
-                Consultation
+                Maintainer Session
               </Link>
               <div className="flex gap-3 pt-2">
                 <Button variant="github" size="sm" asChild>
@@ -160,7 +160,7 @@ const Navbar = () => {
                 </Button>
                 <Button variant="hero" size="sm" asChild>
                   <Link to="/consultation" onClick={closeMenu} className="flex items-center gap-2">
-                    Book a Call
+                    View Times
                   </Link>
                 </Button>
               </div>

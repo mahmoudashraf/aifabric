@@ -2,7 +2,7 @@ export const webinarContactLinks = {
   consultation: "/consultation",
   discord: "https://discord.gg/cBpR7JQuY",
   linkedin: "https://www.linkedin.com/in/engmahmoudalgammal/",
-  registration: "https://streamyard.com/faupxuggnj",
+  registration: "https://luma.com/zgwhk5sc",
   whatsapp: "https://wa.me/message/O3RF2KNXTHQDF1",
 };
 

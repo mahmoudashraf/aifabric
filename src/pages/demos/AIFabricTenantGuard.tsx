@@ -1504,8 +1504,8 @@ export default function AIFabricTenantGuard() {
       <ConsultationCtaBand
         compact
         className="bg-slate-50 py-10"
-        title="Building tenant-safe AI retrieval?"
-        body="Book a free AI Fabric architecture discussion to map tenant metadata filters, role visibility, governed writes, and cleanup proof to your own multi-tenant app."
+        title="Exploring tenant-safe AI retrieval?"
+        body="Join a free AI Fabric open-source maintainer session to discuss tenant metadata filters, role visibility, governed writes, and cleanup proof using a public or properly redacted workflow."
       />
 
       <Footer />

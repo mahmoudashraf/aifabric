@@ -17,9 +17,9 @@ interface ConsultationCtaBandProps {
 
 export default function ConsultationCtaBand({
   className = "",
-  eyebrow = "Free initial discussion",
-  title = "Evaluating AI Fabric for a similar app?",
-  body = "Book a focused 30-minute architecture discussion with Mahmoud Elgammal. Bring one real Java/Spring Boot workflow and leave with a clearer module path, risk map, and proof-of-concept shape.",
+  eyebrow = "Open-source maintainer session",
+  title = "Exploring AI Fabric for a similar app?",
+  body = "Join a free 30-minute community session with Mahmoud Elgammal. Bring a public or properly redacted Java/Spring Boot workflow and discuss which AI Fabric documentation, demos, modules, or experiments may be relevant.",
   compact = false,
 }: ConsultationCtaBandProps) {
   return (
@@ -34,7 +34,7 @@ export default function ConsultationCtaBand({
               </Badge>
               <Badge className="border-emerald-200 bg-emerald-50 text-emerald-800" variant="outline">
                 <Sparkles className="mr-1 h-3.5 w-3.5" />
-                Java/Spring Boot AI architecture
+                Java/Spring Boot open source
               </Badge>
             </div>
             <h2 className={`${compact ? "mt-3 text-2xl md:text-3xl" : "mt-4 text-3xl md:text-5xl"} font-black tracking-normal text-slate-950`}>
@@ -49,7 +49,7 @@ export default function ConsultationCtaBand({
             <Button asChild size={compact ? "default" : "lg"} className="bg-slate-950 text-white hover:bg-slate-800">
               <Link to="/consultation">
                 <CalendarCheck className="mr-2 h-4 w-4" />
-                Book discussion
+                View session times
               </Link>
             </Button>
             <Button asChild size={compact ? "default" : "lg"} variant="outline" className="border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100">

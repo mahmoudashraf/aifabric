@@ -71,8 +71,8 @@ export default function DemoAboutPage({ architecture, demoLabel, demoPath }: Dem
       <ConsultationCtaBand
         compact
         className="bg-background pb-10"
-        title={`Want to adapt ${demoLabel} to your app?`}
-        body="Book a free AI Fabric architecture discussion to turn this demo architecture into a realistic proof-of-concept plan for your own Spring Boot system."
+        title={`Exploring how ${demoLabel} works?`}
+        body="Join a free AI Fabric open-source maintainer session to relate this demo architecture to a public or properly redacted Spring Boot workflow and find useful follow-up resources."
       />
 
       <Footer />

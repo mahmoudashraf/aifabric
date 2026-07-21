@@ -785,8 +785,8 @@ export default function AIFabricPrivacyShield() {
       <ConsultationCtaBand
         compact
         className="bg-background py-10"
-        title="Need sensitive-data guardrails for AI sessions?"
-        body="Book a free AI Fabric architecture discussion to map PII detection, redacted persistence, and sanitized retrieval to your customer-facing support workflow."
+        title="Exploring sensitive-data guardrails?"
+        body="Join a free AI Fabric open-source maintainer session to discuss how PII detection, redacted persistence, and sanitized retrieval may relate to a public or properly redacted support workflow."
       />
 
       <Footer />

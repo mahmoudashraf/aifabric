@@ -200,8 +200,8 @@ export default function AIFabricFramework() {
         <ConsultationCtaBand
           compact
           className="mb-6 px-0"
-          title="Want this shopping AI pattern in your Spring Boot app?"
-          body="Book a free AI Fabric architecture discussion to map staged RAG evidence, chat memory, cart actions, and checkout confirmations to your own commerce workflow."
+          title="Exploring this shopping AI pattern?"
+          body="Join a free AI Fabric open-source maintainer session to discuss staged RAG evidence, chat memory, cart actions, and checkout confirmations using a public or properly redacted commerce workflow."
         />
 
         {/* Main content tabs */}

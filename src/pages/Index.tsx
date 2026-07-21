@@ -461,7 +461,7 @@ const Index = () => {
                 <Button asChild size="lg" variant="outline" className="h-12 border-blue-200 bg-blue-50 px-6 text-base text-blue-700 hover:bg-blue-100 hover:text-blue-800">
                   <Link to="/consultation">
                     <CalendarCheck className="mr-2 h-4 w-4" />
-                    Book a discussion
+                    Maintainer session
                   </Link>
                 </Button>
                 <Button asChild size="lg" variant="outline" className="h-12 border-violet-200 bg-violet-50 px-6 text-base text-violet-700 hover:bg-violet-100 hover:text-violet-800">
@@ -555,8 +555,8 @@ const Index = () => {
 
         <ConsultationCtaBand
           className="bg-white py-12"
-          title="Want to evaluate AI Fabric against your app?"
-          body="Book a focused 30-minute architecture discussion with Mahmoud Elgammal. Bring one real Java/Spring Boot workflow and leave with a clearer module path, risk map, and proof-of-concept shape."
+          title="Exploring AI Fabric for your application?"
+          body="Join a free AI Fabric open-source maintainer session to discuss a public or properly redacted Java/Spring Boot workflow and find relevant documentation, demos, modules, and experiments."
         />
 
         <section id="features" className="bg-slate-950 px-6 py-16 text-white">

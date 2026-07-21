@@ -66,7 +66,7 @@ const Footer = () => {
                 <li>
                   <Link to="/consultation" className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
                     <CalendarCheck className="h-4 w-4" />
-                    Book a discussion
+                    Open-source maintainer session
                   </Link>
                 </li>
               </ul>

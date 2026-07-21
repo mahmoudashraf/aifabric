@@ -315,8 +315,8 @@ const Demos = () => {
       <ConsultationCtaBand
         compact
         className="bg-background py-10"
-        title="Not sure which demo maps to your use case?"
-        body="Book a free AI Fabric architecture discussion and map your Java/Spring Boot workflow to the right framework modules and proof-of-concept path."
+        title="Wondering which demo is most relevant?"
+        body="Join a free AI Fabric open-source maintainer session to discuss a public or properly redacted Java/Spring Boot workflow and identify demos and framework capabilities worth exploring."
       />
 
       <Footer />
