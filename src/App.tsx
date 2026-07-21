@@ -21,6 +21,8 @@ import AIFabricTenantGuard from "./pages/demos/AIFabricTenantGuard";
 import DemoAboutPage from "./pages/demos/DemoAboutPage";
 import AIFabricFramework from "./pages/demos/AIFabricFramework";
 import { demoBackendArchitectures } from "./pages/demos/components/demoBackendArchitectures";
+import DemoVideoIntro from "./pages/demos/components/DemoVideoIntro";
+import { demoVideoCatalog } from "./pages/demos/components/demoVideoCatalog";
 import MaxAIMode from "./pages/MaxAIMode";
 import ProductDetails from "./pages/ProductDetails";
 import {
@@ -349,8 +351,22 @@ const App = () => (
                 }
               />
               <Route path="/demos/subscription-management-hub/about" element={<Navigate to="/demos/ai-fabric-account-resolver/about" replace />} />
-              <Route path="/demos/ai-fabric-account-resolver" element={<AIFabricAccountResolver />} />
-              <Route path="/demos/subscription-management-hub" element={<AIFabricAccountResolver />} />
+              <Route
+                path="/demos/ai-fabric-account-resolver"
+                element={
+                  <DemoVideoIntro config={demoVideoCatalog.accountResolver}>
+                    <AIFabricAccountResolver />
+                  </DemoVideoIntro>
+                }
+              />
+              <Route
+                path="/demos/subscription-management-hub"
+                element={
+                  <DemoVideoIntro config={demoVideoCatalog.accountResolver}>
+                    <AIFabricAccountResolver />
+                  </DemoVideoIntro>
+                }
+              />
               <Route path="/demos/ai-fabric-agentic-ui" element={<Navigate to="/demos/ai-fabric-behavior-signals/agentic-ui" replace />} />
               <Route path="/demos/ai-fabric-agentic-ui/about" element={<Navigate to="/demos/ai-fabric-behavior-signals/about" replace />} />
               <Route path="/demos/ai-fabric-behavior-signals/agentic-ui/about" element={<Navigate to="/demos/ai-fabric-behavior-signals/about" replace />} />
@@ -365,9 +381,23 @@ const App = () => (
                   />
                 }
               />
-              <Route path="/demos/ai-fabric-behavior-signals" element={<AIFabricBehaviorSignals />} />
+              <Route
+                path="/demos/ai-fabric-behavior-signals"
+                element={
+                  <DemoVideoIntro config={demoVideoCatalog.behaviorSignals}>
+                    <AIFabricBehaviorSignals />
+                  </DemoVideoIntro>
+                }
+              />
               <Route path="/demos/team-sentiment-tracker/about" element={<Navigate to="/demos/ai-fabric-behavior-signals/about" replace />} />
-              <Route path="/demos/team-sentiment-tracker" element={<AIFabricBehaviorSignals />} />
+              <Route
+                path="/demos/team-sentiment-tracker"
+                element={
+                  <DemoVideoIntro config={demoVideoCatalog.behaviorSignals}>
+                    <AIFabricBehaviorSignals />
+                  </DemoVideoIntro>
+                }
+              />
               <Route
                 path="/demos/ai-fabric-privacy-shield/about"
                 element={
@@ -378,7 +408,14 @@ const App = () => (
                   />
                 }
               />
-              <Route path="/demos/ai-fabric-privacy-shield" element={<AIFabricPrivacyShield />} />
+              <Route
+                path="/demos/ai-fabric-privacy-shield"
+                element={
+                  <DemoVideoIntro config={demoVideoCatalog.privacyShield}>
+                    <AIFabricPrivacyShield />
+                  </DemoVideoIntro>
+                }
+              />
               <Route
                 path="/demos/ai-fabric-tenant-guard/about"
                 element={
@@ -389,7 +426,14 @@ const App = () => (
                   />
                 }
               />
-              <Route path="/demos/ai-fabric-tenant-guard" element={<AIFabricTenantGuard />} />
+              <Route
+                path="/demos/ai-fabric-tenant-guard"
+                element={
+                  <DemoVideoIntro config={demoVideoCatalog.tenantGuard}>
+                    <AIFabricTenantGuard />
+                  </DemoVideoIntro>
+                }
+              />
               <Route
                 path={AI_SHOPPING_EXPERIENCE_ABOUT_ROUTE}
                 element={
@@ -400,11 +444,25 @@ const App = () => (
                   />
                 }
               />
-              <Route path={AI_SHOPPING_EXPERIENCE_ROUTE} element={<AIFabricFramework />} />
+              <Route
+                path={AI_SHOPPING_EXPERIENCE_ROUTE}
+                element={
+                  <DemoVideoIntro config={demoVideoCatalog.shopping}>
+                    <AIFabricFramework />
+                  </DemoVideoIntro>
+                }
+              />
               <Route path={`${AI_SHOPPING_EXPERIENCE_ROUTE}/maxAI-Mode`} element={<AIFabricFramework />} />
               <Route path={`${AI_SHOPPING_EXPERIENCE_ROUTE}/product/:id`} element={<ProductDetails />} />
               <Route path={LEGACY_AI_FABRIC_FRAMEWORK_ABOUT_ROUTE} element={<Navigate to={AI_SHOPPING_EXPERIENCE_ABOUT_ROUTE} replace />} />
-              <Route path={LEGACY_AI_FABRIC_FRAMEWORK_ROUTE} element={<AIFabricFramework />} />
+              <Route
+                path={LEGACY_AI_FABRIC_FRAMEWORK_ROUTE}
+                element={
+                  <DemoVideoIntro config={demoVideoCatalog.shopping}>
+                    <AIFabricFramework />
+                  </DemoVideoIntro>
+                }
+              />
               <Route path={`${LEGACY_AI_FABRIC_FRAMEWORK_ROUTE}/maxAI-Mode`} element={<AIFabricFramework />} />
               <Route path={`${LEGACY_AI_FABRIC_FRAMEWORK_ROUTE}/product/:id`} element={<ProductDetails />} />
               <Route path="/maxAI" element={<MaxAIMode />} />
