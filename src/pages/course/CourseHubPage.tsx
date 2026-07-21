@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 
 import { CourseAuthButton } from "./components/CourseAuthButton";
 import { CourseLayout } from "./components/CourseLayout";
+import { CourseVideoLibrary } from "./components/CourseVideoLibrary";
 import { useCourseAuth } from "./hooks/useCourseAuth";
 import { useCourseProgress } from "./hooks/useCourseProgress";
 import {
@@ -114,6 +115,8 @@ const CourseHubPage = () => {
             </div>
           </div>
         </section>
+
+        <CourseVideoLibrary />
 
         <section className="grid gap-8 border-b border-border py-9 lg:grid-cols-[280px_minmax(0,1fr)]">
           <div>
