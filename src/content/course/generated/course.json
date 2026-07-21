@@ -6,7 +6,7 @@
   "courseId": "ai-fabric-production-oriented-java",
   "courseVersion": "0.3.3-course.1-beta",
   "status": "beta",
-  "title": "AI Fabric Engineering: Build AI-Powered Applications with Java and Spring Boot",
+  "title": "Build AI-Enabled Applications with Java and Spring Boot",
   "subtitle": "Semantic search, evidence-grounded RAG, governed actions, chat memory, and tenant security with AI Fabric",
   "frameworkVersion": "0.3.3",
   "frameworkTag": "ai-fabric-framework-v0.3.3",
@@ -286,5 +286,5 @@
     }
   ],
   "sourceCommit": "c86219a9f0e0be47aa6645be51f0b5085ddd3dbf",
-  "generatedAt": "2026-07-21T02:47:04.570Z"
+  "generatedAt": "2026-07-21T20:46:14.072Z"
 }

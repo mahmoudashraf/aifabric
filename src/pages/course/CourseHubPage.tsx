@@ -89,6 +89,9 @@ const CourseHubPage = () => {
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
+              <Button size="lg" variant="outline" asChild>
+                <Link to="/bootcamps">Join a guided bootcamp</Link>
+              </Button>
               {!auth.user && <CourseAuthButton />}
               {auth.user && (
                 <Button size="lg" variant="outline" asChild>

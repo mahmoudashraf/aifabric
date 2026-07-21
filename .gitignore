@@ -18,6 +18,7 @@ dist-ssr
 playwright-report
 test-results
 **/supabase/.temp/
+**/supabase/.branches/
 *.local
 
 # Editor directories and files

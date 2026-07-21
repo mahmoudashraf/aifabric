@@ -13,6 +13,7 @@ import Demos from "./pages/Demos";
 import Consultation from "./pages/Consultation";
 import Webinars from "./pages/Webinars";
 import CourseRoutes from "./pages/course/CourseRoutes";
+import BootcampRoutes from "./pages/bootcamps/BootcampRoutes";
 import AIFabricAccountResolver from "./pages/demos/AIFabricAccountResolver";
 import AIFabricAgenticUI from "./pages/demos/AIFabricAgenticUI";
 import AIFabricBehaviorSignals from "./pages/demos/AIFabricBehaviorSignals";
@@ -337,6 +338,7 @@ const App = () => (
               <Route path="/consultation" element={<Consultation />} />
               <Route path="/webinars" element={<Webinars />} />
               <Route path="/course/*" element={<CourseRoutes />} />
+              <Route path="/bootcamps/*" element={<BootcampRoutes />} />
               {retiredDemoRoutes.map((path) => (
                 <Route key={path} path={path} element={<Navigate to="/demos" replace />} />
               ))}

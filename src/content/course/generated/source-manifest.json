@@ -6,11 +6,11 @@
   "frameworkTag": "ai-fabric-framework-v0.3.3",
   "courseSourceTag": "unreleased",
   "sourceCommit": "c86219a9f0e0be47aa6645be51f0b5085ddd3dbf",
-  "generatedAt": "2026-07-21T02:47:04.570Z",
+  "generatedAt": "2026-07-21T20:46:14.072Z",
   "files": [
     {
       "sourcePath": "docs/course/course.yml",
-      "sha256": "7545536c67608467f467126fd00b4f97148916dcb23b233d76da553734c10267"
+      "sha256": "98be802e13448234865312087fc85058e6badff1ddf46db987dfc6121f4f181b"
     },
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/assistant-prompt.md",

@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { CalendarCheck, CalendarDays, Github, GraduationCap, Menu, X, BookOpen } from "lucide-react";
+import { CalendarCheck, CalendarDays, Github, GraduationCap, Menu, UsersRound, X, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -86,6 +86,10 @@ const Navbar = () => {
               <GraduationCap className="h-4 w-4" />
               Course
             </Link>
+            <Link to="/bootcamps" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              <UsersRound className="h-4 w-4" />
+              Bootcamp
+            </Link>
             <Link to="/docs" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               <BookOpen className="h-4 w-4" />
               Docs
@@ -138,6 +142,10 @@ const Navbar = () => {
               <Link to="/course" onClick={closeMenu} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 <GraduationCap className="h-4 w-4" />
                 Course
+              </Link>
+              <Link to="/bootcamps" onClick={closeMenu} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+                <UsersRound className="h-4 w-4" />
+                Bootcamp
               </Link>
               <Link to="/docs" onClick={closeMenu} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 <BookOpen className="h-4 w-4" />

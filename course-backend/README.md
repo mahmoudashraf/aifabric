@@ -1,8 +1,9 @@
-# AI Fabric Course Backend
+# AI Fabric Learning Backend
 
-The course uses a dedicated Supabase project for learner authentication, progress, and certificate
-requests. It is intentionally separate from the website project that owns registrations, page
-views, and story reactions.
+The course and bootcamp experiences use a dedicated Supabase project for learner authentication,
+progress, certificate requests, cohort enrollment, and bootcamp communication consent. It is
+intentionally separate from the website project that owns registrations, page views, and story
+reactions.
 
 ## Browser Configuration
 
@@ -59,3 +60,46 @@ COURSE_SUPABASE_PUBLISHABLE_KEY=<course-publishable-key> \
 COURSE_SUPABASE_SECRET_KEY=<course-secret-key> \
 npm run course:verify-rls
 ```
+
+## Bootcamp Enrollment
+
+The bootcamp migration creates two backend-driven cohorts:
+
+- an active Arabic-taught cohort with one reusable invitation code;
+- a coming-soon English-taught cohort with an email interest list and optional WhatsApp contact.
+
+Only the invitation-code hash is stored in the migration. The reusable code must remain in private
+operator material and should be rotated by replacing the hash when access needs to change. A code is
+accepted only while its bootcamp remains `active`; it has no expiry or usage limit.
+
+The browser can call only narrow RPC functions. It cannot read the bootcamp, enrollment, or interest
+tables directly. Enrollment email comes from the authenticated Supabase identity, and WhatsApp
+contact requires explicit consent.
+
+Run the bootcamp proof after applying migrations:
+
+```bash
+COURSE_SUPABASE_URL=https://<course-project-ref>.supabase.co \
+COURSE_SUPABASE_PUBLISHABLE_KEY=<course-publishable-key> \
+COURSE_SUPABASE_SECRET_KEY=<course-secret-key> \
+BOOTCAMP_INVITATION_CODE=<private-reusable-code> \
+npm run bootcamp:verify-rls
+```
+
+The proof creates two temporary users, enrolls both with the same invitation code, verifies contact
+isolation and invalid-code rejection, registers anonymous English-cohort interest, and removes all
+test records afterward.
+
+With the website running locally, verify the authenticated browser flow as well:
+
+```bash
+COURSE_SUPABASE_URL=https://<course-project-ref>.supabase.co \
+COURSE_SUPABASE_PUBLISHABLE_KEY=<course-publishable-key> \
+COURSE_SUPABASE_SECRET_KEY=<course-secret-key> \
+BOOTCAMP_INVITATION_CODE=<private-reusable-code> \
+BOOTCAMP_UI_BASE_URL=http://127.0.0.1:4181 \
+npm run bootcamp:verify-ui
+```
+
+This creates a temporary authenticated participant, verifies URL-code capture, submits the WhatsApp
+consent flow, reloads the saved enrollment from Supabase, and deletes the temporary user.
