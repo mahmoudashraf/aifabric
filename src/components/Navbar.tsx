@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { CalendarCheck, CalendarDays, Github, GraduationCap, Menu, X, BookOpen } from "lucide-react";
+import { CalendarCheck, CalendarDays, Github, GraduationCap, Library, Menu, X, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -78,7 +78,7 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden items-center gap-6 md:flex">
+          <div className="hidden items-center gap-6 xl:flex">
             <HashLink to="/#live-demos" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
               Live Demos
             </HashLink>
@@ -98,10 +98,14 @@ const Navbar = () => {
               <CalendarCheck className="h-4 w-4" />
               Maintainer Session
             </Link>
+            <Link to="/docs/user-stories" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              <Library className="h-4 w-4" />
+              Stories
+            </Link>
           </div>
 
           {/* CTA Buttons */}
-          <div className="hidden items-center gap-3 md:flex">
+          <div className="hidden items-center gap-3 xl:flex">
             <Button variant="github" size="sm" asChild>
               <a href="https://github.com/Loom-AI-Labs/ai-fabric-framework" target="_blank" rel="noopener noreferrer">
                 <Github className="h-4 w-4" />
@@ -117,7 +121,7 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="flex h-10 w-10 items-center justify-center rounded-lg border border-border md:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-lg border border-border xl:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -129,7 +133,7 @@ const Navbar = () => {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="border-t border-border py-4 md:hidden"
+            className="border-t border-border py-4 xl:hidden"
           >
             <div className="flex flex-col gap-4">
               <HashLink to="/#live-demos" onClick={closeMenu} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
@@ -150,6 +154,10 @@ const Navbar = () => {
               <Link to="/consultation" onClick={closeMenu} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
                 <CalendarCheck className="h-4 w-4" />
                 Maintainer Session
+              </Link>
+              <Link to="/docs/user-stories" onClick={closeMenu} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+                <Library className="h-4 w-4" />
+                Stories
               </Link>
               <div className="flex gap-3 pt-2">
                 <Button variant="github" size="sm" asChild>

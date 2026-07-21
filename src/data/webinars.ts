@@ -7,20 +7,20 @@ export const webinarContactLinks = {
 };
 
 export const nextWebinar = {
-  title: "AI Fabric Engineering Live - Learn AI Fabric from a Real Spring Boot Workflow",
+  title: "AI Fabric Engineering Live - Convert a Boring Ecommerce App into an AI Shopping Experience",
   dateLabel: "Thursday, July 23, 2026",
   shortDateLabel: "Jul 23, 2026",
   timeLabel: "5:00 PM - 6:00 PM London",
   duration: "60 minute practical live session",
   status: "Registration open",
-  audience: "Java and Spring Boot teams evaluating AI Fabric",
+  audience: "Java and Spring Boot developers building ecommerce experiences",
   summary:
-    "A practical live session on turning a normal Spring Boot app into an AI-enabled workflow with retrieval, governed actions, memory, privacy, and release-ready tests.",
+    "A practical live session on turning a normal Spring Boot ecommerce application into an AI shopping experience using retrieval, governed actions, memory, privacy, and release-ready tests.",
   topics: [
-    "How AI Fabric fits beside existing Spring Boot services",
-    "RAG and vector evidence without losing application ownership",
-    "Governed actions with confirmation and audit-friendly results",
-    "What to test before calling an AI workflow production-ready",
+    "Annotate ecommerce data and keep approved AI evidence synchronized",
+    "Ground product, policy, review, coupon, and support answers with RAG",
+    "Run cart and checkout actions through application-owned confirmation",
+    "Preserve memory and privacy, then verify the workflow for release",
   ],
 };
 
