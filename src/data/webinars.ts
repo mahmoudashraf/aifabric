@@ -8,9 +8,9 @@ export const webinarContactLinks = {
 
 export const nextWebinar = {
   title: "AI Fabric Engineering Live - Convert a Boring Ecommerce App into an AI Shopping Experience",
-  dateLabel: "Thursday, July 23, 2026",
-  shortDateLabel: "Jul 23, 2026",
-  timeLabel: "5:00 PM - 6:00 PM London",
+  dateLabel: "Sunday, July 26, 2026",
+  shortDateLabel: "Jul 26, 2026",
+  timeLabel: "1:00 PM - 2:00 PM GMT+1",
   duration: "60 minute practical live session",
   status: "Registration open",
   audience: "Java and Spring Boot developers building ecommerce experiences",
