@@ -47,6 +47,19 @@ describe("CourseVideoLibrary", () => {
     expect(screen.getByText(/the arabic recording for this topic is not available yet/i)).toBeInTheDocument();
   });
 
+  it("shows the Arabic request-lifecycle recording when it is available", () => {
+    render(<CourseVideoLibrary />);
+
+    fireEvent.click(screen.getByRole("button", { name: "العربية" }));
+    fireEvent.click(screen.getByRole("button", { name: /request lifecycle/i }));
+
+    expect(screen.getByTitle("Request lifecycle course video in Arabic")).toHaveAttribute(
+      "src",
+      expect.stringContaining("k5El0gzVnGY"),
+    );
+    expect(screen.queryByText(/the arabic recording for this topic is not available yet/i)).not.toBeInTheDocument();
+  });
+
   it("restores the saved video language on a later visit", () => {
     window.localStorage.setItem(COURSE_VIDEO_LANGUAGE_KEY, "ar");
 
