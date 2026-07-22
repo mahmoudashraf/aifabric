@@ -5,6 +5,10 @@ test("course hub opens the reviewed quickstart", async ({ page }) => {
   await expect(page.getByRole("heading", { name: /Build AI-Enabled Applications/ })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Quickstart + Core path" })).toBeVisible();
   await expect(page.getByText("8 published lessons")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Browse learner checkpoints" })).toHaveAttribute(
+    "href",
+    "https://github.com/Loom-AI-Labs/ai-fabric-course-support-assistant",
+  );
   await page.getByRole("link", { name: "Start Quickstart" }).click();
   await expect(page).toHaveURL(/\/course\/quickstart$/);
   await expect(page.getByRole("heading", { name: "First Useful Result" })).toBeVisible();

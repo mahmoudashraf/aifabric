@@ -6,6 +6,7 @@ import {
   Clock3,
   Code2,
   Database,
+  ExternalLink,
   GitBranch,
   GraduationCap,
   LockKeyhole,
@@ -117,6 +118,12 @@ const CourseHubPage = () => {
               <span className="flex items-center gap-1.5"><Clock3 className="h-3.5 w-3.5" />{formatDuration(availableDurationMinutes)}</span>
               <span>{publishedLessons.length} published lessons</span>
             </div>
+            <Button variant="link" size="sm" className="mt-3 h-auto p-0" asChild>
+              <a href={courseCatalog.learnerRepository} target="_blank" rel="noopener noreferrer">
+                Browse learner checkpoints
+                <ExternalLink className="h-3.5 w-3.5" />
+              </a>
+            </Button>
           </div>
         </section>
 
