@@ -21,6 +21,7 @@ import { useCourseAuth } from "../hooks/useCourseAuth";
 import { useCourseProgress } from "../hooks/useCourseProgress";
 import { hasTheory } from "../lib/completion";
 import { canSubmitKnowledgeCheck, scoreKnowledgeCheck } from "../lib/knowledgeCheck";
+import { courseEvidenceSourceUrl } from "../lib/sourceLinks";
 import type {
   KnowledgeAnswers,
   KnowledgeCheckResult,
@@ -223,13 +224,7 @@ export const CourseKnowledgeCheck = ({ lesson, progress }: CourseKnowledgeCheckP
                       {question.sourcePaths.map((source) => (
                         <a
                           key={source}
-                          href={`https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/${
-                            source.startsWith("docs/")
-                              ? lesson.frontMatter.courseSourceTag === "unreleased"
-                                ? "main"
-                                : lesson.frontMatter.courseSourceTag
-                              : lesson.frontMatter.frameworkTag
-                          }/${source}`}
+                          href={courseEvidenceSourceUrl(lesson.frontMatter, source)}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 text-xs font-medium text-blue-700 hover:underline"

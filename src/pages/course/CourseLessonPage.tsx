@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { CourseKnowledgeCheck } from "./components/CourseKnowledgeCheck";
 import { CourseLayout } from "./components/CourseLayout";
 import { CoursePathWorkspace } from "./components/CoursePathWorkspace";
+import { CourseProviderSetup } from "./components/CourseProviderSetup";
 import { CourseTheoryVideo } from "./components/CourseTheoryVideo";
 import { useCourseProgress } from "./hooks/useCourseProgress";
 import { hasTheory } from "./lib/completion";
@@ -139,6 +140,8 @@ const CourseLessonPage = () => {
               </div>
             </div>
           </div>
+
+          <CourseProviderSetup lesson={lesson} />
 
           <nav className="mt-6 flex flex-wrap gap-2" aria-label="Lesson sections">
             {theoryRequired && (

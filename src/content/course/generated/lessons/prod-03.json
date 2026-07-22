@@ -1,0 +1,233 @@
+{
+  "id": "prod-03",
+  "slug": "prompt-overlays",
+  "title": "Prompt Management And Application Overlays",
+  "description": "Extend curated prompt bundles with narrow application-owned overlays and regression proof.",
+  "durationMinutes": 80,
+  "availability": "preview",
+  "source": "production/03-prompt-overlays/lesson.md",
+  "knowledgeCheck": {
+    "schemaVersion": 1,
+    "lessonId": "prod-03",
+    "passingScorePercent": 80,
+    "questions": [
+      {
+        "id": "prod-03-q1",
+        "type": "single-choice",
+        "competency": "resolution-order",
+        "prompt": "Which version wins when the same template exists in all three candidates?",
+        "options": [
+          {
+            "id": "a",
+            "text": "v1-course-support"
+          },
+          {
+            "id": "b",
+            "text": "v1-support"
+          },
+          {
+            "id": "c",
+            "text": "v1"
+          }
+        ],
+        "correctOptionIds": [
+          "a"
+        ],
+        "explanation": "Candidate versions are resolved in order and the first matching complete template wins.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/prompt/PromptTemplateResolver.java"
+        ]
+      },
+      {
+        "id": "prod-03-q2",
+        "type": "single-choice",
+        "competency": "overlay-model",
+        "prompt": "How does an AI Fabric prompt overlay modify a template?",
+        "options": [
+          {
+            "id": "a",
+            "text": "It patches individual Markdown lines"
+          },
+          {
+            "id": "b",
+            "text": "It supplies a complete template for one family, version, and name key"
+          },
+          {
+            "id": "c",
+            "text": "It changes Java authorization annotations"
+          }
+        ],
+        "correctOptionIds": [
+          "b"
+        ],
+        "explanation": "Overlay resolution selects one complete classpath resource; it is not textual patching.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/prompt/ClasspathPromptTemplateStore.java"
+        ]
+      },
+      {
+        "id": "prod-03-q3",
+        "type": "multiple-choice",
+        "competency": "regression-proof",
+        "prompt": "What should deterministic prompt tests assert?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Resolved version"
+          },
+          {
+            "id": "b",
+            "text": "Required placeholders and critical policy invariants"
+          },
+          {
+            "id": "c",
+            "text": "Exact prose from a hosted model"
+          },
+          {
+            "id": "d",
+            "text": "Packaged classpath availability"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b",
+          "d"
+        ],
+        "explanation": "Model prose varies; template resolution, resources, placeholders, and required rules are deterministic.",
+        "sourcePaths": [
+          "docs/course/production/03-prompt-overlays/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-03-q4",
+        "type": "single-choice",
+        "competency": "policy-boundary",
+        "prompt": "Can an instruction in answer.md replace actions-enabled false?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Yes, prompts are deterministic authorization"
+          },
+          {
+            "id": "b",
+            "text": "No, prompt guidance and server policy have different responsibilities"
+          }
+        ],
+        "correctOptionIds": [
+          "b"
+        ],
+        "explanation": "Modes, trusted context, validation, authorization, and confirmation enforce behavior.",
+        "sourcePaths": [
+          "docs/course/production/03-prompt-overlays/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-03-q5",
+        "type": "answer-reveal",
+        "competency": "diagnostics",
+        "prompt": "Why does the prompt diagnostics endpoint expose versions but not template bodies?",
+        "modelAnswer": "Version identities prove which bundle resolved and help operators detect packaging mistakes. Returning prompt bodies adds no readiness proof and may expose internal guidance, proprietary language, sensitive examples, or future secrets.",
+        "sourcePaths": [
+          "docs/course/production/03-prompt-overlays/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-03-q6",
+        "type": "implementation-defense",
+        "competency": "application-delta",
+        "prompt": "Defend overriding only three prompt keys while allowing action selection to fall back to v1.",
+        "modelAnswer": "The application owns only behavior that is domain-specific: support follow-up classification, compound follow-up handling, and support answer projection. The framework action selector remains suitable and is inherited. This minimizes copied defaults, preserves future framework improvements, and makes the application delta explicit and testable.",
+        "reviewCriteria": [
+          "Identifies application-owned behavior",
+          "Explains ordered fallback",
+          "Avoids copying every framework prompt",
+          "Requires regression and packaging tests"
+        ],
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/config/PromptBundleProperties.java"
+        ]
+      }
+    ]
+  },
+  "assistantPrompt": "production/03-prompt-overlays/assistant-prompt.md",
+  "assistantReviewPrompt": "production/03-prompt-overlays/assistant-review-prompt.md",
+  "notebookSourceManifest": "production/03-prompt-overlays/notebooklm/source-manifest.yml",
+  "theoryVideoIds": [],
+  "relatedStories": [],
+  "relatedDemos": [],
+  "track": "production",
+  "route": "/course/production/prompt-overlays",
+  "frontMatter": {
+    "id": "prod-03",
+    "slug": "prompt-overlays",
+    "title": "Prompt Management And Application Overlays",
+    "track": "production",
+    "order": 3,
+    "durationMinutes": 80,
+    "availability": "preview",
+    "courseVersion": "0.3.3-course.1-beta",
+    "frameworkVersion": "0.3.3",
+    "frameworkTag": "ai-fabric-framework-v0.3.3",
+    "courseSourceTag": "ai-fabric-course-v0.3.3.1",
+    "starterRef": "course-0.3.3-p02-modes-positions",
+    "solutionRef": "course-0.3.3-p03-prompt-overlays",
+    "requiresOpenAi": false,
+    "requiresDocker": false,
+    "optionalProviderExercises": [
+      "openai"
+    ],
+    "sourcePaths": [
+      "docs/course/production/03-prompt-overlays/notebooklm/AI_FABRIC_PROMPT_BUNDLES_CURATED_OVERLAYS_NOTEBOOKLM_SCRIPT.md",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/config/PromptBundleProperties.java",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/prompt/PromptTemplateResolver.java",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/prompt/ClasspathPromptTemplateStore.java",
+      "ai-infrastructure-module/curated/ai-fabric-curated-support/src/main/resources/prompts/rag/generation/v1-support/answer.md"
+    ],
+    "theoryVideoIds": [],
+    "assistant": {
+      "mode": "implement",
+      "implementationPrompt": "assistant-prompt.md",
+      "reviewPrompt": "assistant-review-prompt.md",
+      "validationStatus": "passed"
+    },
+    "knowledgeCheck": {
+      "source": "knowledge-check.yml",
+      "required": true,
+      "passingScorePercent": 80
+    },
+    "video": {
+      "status": "script-ready",
+      "generator": "NotebookLM",
+      "purpose": "pre-lesson-theory",
+      "placement": "before-lab",
+      "targetDurationMinutes": 10,
+      "title": "Prompt Bundles, Curated Packs, And Application Overlays",
+      "publicUrl": null,
+      "transcript": "notebooklm/AI_FABRIC_PROMPT_BUNDLES_CURATED_OVERLAYS_NOTEBOOKLM_SCRIPT.md",
+      "sourceManifest": "notebooklm/source-manifest.yml"
+    }
+  },
+  "markdown": "# Prompt Management And Application Overlays\n\n## Start Here\n\nFramework defaults should improve without forcing every application to copy them. Application\nlanguage should evolve without editing a dependency JAR. AI Fabric solves this with an ordered prompt\nbundle: application overlays first, curated pack next, framework base last.\n\nIn this lesson you will retain the existing `v1-course-support` follow-up classifiers, add one\ncomplete support-answer template, verify base fallback, and expose safe version diagnostics.\n\n> Start from `course-0.3.3-p02-modes-positions`; compare with\n> `course-0.3.3-p03-prompt-overlays`. The executable checkpoint is verified. Publication still waits\n> for the reviewed theory recording.\n\n## Resolution Model\n\n```text\nresolve(family, name)\n  |\n  +-- prompts/<family>/v1-course-support/<name>.md  application\n  +-- prompts/<family>/v1-support/<name>.md         curated support\n  +-- prompts/<family>/v1/<name>.md                 framework base\n  `-- fail: no template found\n```\n\nAn overlay replaces one complete template key. It is not a line-by-line patch. Add only the template\nkeys your application must own and let all other keys fall through.\n\n## What You Will Prove\n\n- candidate order is `v1-course-support`, `v1-support`, `v1`;\n- classifier, compound-intent, and answer templates resolve from the application;\n- action selection still resolves from `v1`;\n- overlay resources are packaged in the JAR;\n- diagnostics return versions, never prompt text;\n- deterministic tests verify invariants instead of exact generated prose.\n\n## Prerequisites\n\n```bash\ngit clone https://github.com/Loom-AI-Labs/ai-fabric-course-support-assistant.git\ncd ai-fabric-course-support-assistant\ngit switch --detach course-0.3.3-p02-modes-positions\ngit switch -c lesson/prod-03-prompt-overlays\n./mvnw --batch-mode --no-transfer-progress clean verify\n```\n\nThe required path is keyless and does not need Docker.\n\n## Step 1: Keep Ordered Overlay Configuration\n\n```yaml\nai:\n  prompts:\n    bundle:\n      overlays:\n        - v1-course-support\n        - v1-support\n```\n\nAI Fabric appends its base version, producing the three candidates. Order matters: the first matching\nclasspath template wins.\n\n## Step 2: Add A Narrow Answer Overlay\n\nCreate:\n\n```text\nsrc/main/resources/prompts/rag/generation/v1-course-support/answer.md\n```\n\nThe template must contain `{{query}}` and `{{context}}`. Make the evidence boundary explicit, keep\nconfirmed facts separate from next steps, forbid internal metadata, and forbid claims that a write\noccurred unless action evidence proves it.\n\nDo not place authorization rules only in this file. Mode policy and action authorization from\nPROD-02 remain authoritative even if the prompt is ignored.\n\n## Step 3: Test Overlay And Fallback Resolution\n\nUse `PromptTemplateResolver` through the real Spring context:\n\n```java\nassertThat(resolver.resolve(\"rag/generation\", \"answer\")\n    .template().key().version()).isEqualTo(\"v1-course-support\");\n\nassertThat(resolver.resolve(\"intent-extraction/multi-step\", \"select-actions\")\n    .template().key().version()).isEqualTo(\"v1\");\n```\n\nAlso resolve the two existing follow-up templates and assert their critical behavioral rules. This\nprotects the reason the application owns them without coupling tests to every word.\n\n## Step 4: Prove Packaging\n\nAssert the classloader can load the overlay path. A source-tree test alone can pass while a packaged\nJAR omits the resource.\n\nThe packaged smoke calls `GET /api/demo/prompts` and expects:\n\n```json\n{\n  \"candidateVersions\": [\"v1-course-support\", \"v1-support\", \"v1\"],\n  \"resolvedVersions\": {\n    \"intent-classifier\": \"v1-course-support\",\n    \"compound-intent\": \"v1-course-support\",\n    \"support-answer\": \"v1-course-support\",\n    \"action-selector\": \"v1\"\n  }\n}\n```\n\nThe endpoint must not return template content. Prompts can contain security guidance, proprietary\nlanguage, or future sensitive examples and are not a public diagnostics payload.\n\n## Intentional Failure\n\nTemporarily rename `answer.md`, run `CoursePromptOverlayContractTest`, and observe the version fall\nback to `v1-support`. The assertion must fail because this lesson expects the application override.\nRestore the file before continuing.\n\n## Optional OpenAI Observation\n\nSupply `OPENAI_API_KEY` through the environment and compare a grounded support answer before and\nafter the overlay. Record it as model observation only. The deterministic contract is resolution,\npackaging, placeholders, evidence boundaries, and policy enforcement.\n\n## Verification\n\n```bash\n./mvnw --batch-mode --no-transfer-progress clean verify\n./scripts/smoke-packaged.sh\n```\n\nExpected readiness checkpoint: `course-0.3.3-p03-prompt-overlays`; capability\n`promptOverlays=true`.\n\n## Done When\n\n- application templates resolve first;\n- curated/base templates still resolve for untouched keys;\n- required placeholders are present;\n- prompt bodies are absent from diagnostics;\n- all mode, action, memory, privacy, and packaged tests still pass;\n- no prompt is treated as an authorization control.\n\n## Reset\n\n```bash\n./scripts/reset-course.sh\ngit switch --detach course-0.3.3-p02-modes-positions\n```\n\n## Next Lesson\n\nPROD-04 separates application source rows from derived semantic evidence and backfills existing\narticles through a durable migration job.",
+  "assistant": {
+    "mode": "implement",
+    "validationStatus": "passed",
+    "implementationPrompt": "# Coding Assistant Prompt: Implement PROD-03 Prompt Overlays\n\nWork from `course-0.3.3-p02-modes-positions` in the learner repository.\n\nImplement a complete `v1-course-support` RAG answer template while preserving the existing\nclassifier overlays and inherited framework action selector. Add safe diagnostics exposing only\ncandidate and resolved versions. Add tests for ordering, critical rules, required placeholders,\nbase fallback, packaged classpath resources, and absence of prompt bodies from diagnostics. Update\nreadiness, packaged smoke, HTTP requests, and checkpoint docs.\n\nDo not edit framework defaults, duplicate unrelated prompts, assert exact hosted-model prose, expose\nprompt content, or use prompt wording as authorization. Run `clean verify` and packaged smoke.\n",
+    "reviewPrompt": "# Independent Review Prompt: PROD-03 Prompt Overlays\n\nReview `course-0.3.3-p02-modes-positions..course-0.3.3-p03-prompt-overlays`.\n\nLead with findings. Verify ordered overlay resolution, complete-template semantics, required\nplaceholders, narrow application ownership, curated/base fallback, packaged resources, safe version-\nonly diagnostics, and deterministic regression tests. Confirm authorization remains in modes,\ntrusted context, action policy, validation, and confirmation. Require full and packaged gates.\n"
+  },
+  "video": {
+    "status": "script-ready",
+    "generator": "NotebookLM",
+    "purpose": "pre-lesson-theory",
+    "placement": "before-lab",
+    "targetDurationMinutes": 10,
+    "title": "Prompt Bundles, Curated Packs, And Application Overlays",
+    "publicUrl": null,
+    "transcript": "# NotebookLM Video Script: Prompt Bundles, Curated Packs, And Application Overlays\n\n## Production Instruction\n\nProduce a ten-minute technical video for Java developers. Explain AI Fabric prompt architecture from\nthis script only. Keep the application example central.\n\n## Opening\n\nPrompts in a production framework need two properties that are often in tension. Framework defaults\nmust improve centrally, while an application must own its domain language and special follow-up\nbehavior. Copying every prompt into every Spring Boot app destroys the first property. Editing prompts\ninside a dependency destroys the second.\n\nAI Fabric uses versioned classpath prompt bundles and ordered overlays.\n\n## The Resource Key\n\nEvery prompt has a family, version, and name and is stored as:\n\n```text\nprompts/<family>/<version>/<name>.md\n```\n\nFor the Support Knowledge Assistant, resolution tries `v1-course-support`, then `v1-support`, then\nthe framework base `v1`. The first existing complete template wins.\n\nEmphasize that this is whole-template selection, not a Markdown patch. The application should add\nonly keys whose complete behavior it genuinely owns.\n\n## Curated Packs\n\nThe curated support module supplies coherent support defaults: support-safe intent handling and\nevidence-grounded answer behavior. The application overlay adds only its delta, including recent-\nturn follow-up rules and a stricter answer projection. An untouched action-selection template still\ncomes from `v1`.\n\nDescribe this diagram:\n\n```text\napplication JAR: v1-course-support\n             |\ncurated support JAR: v1-support\n             |\nframework core JAR: v1\n             |\nPromptTemplateResolver -> one resolved template\n```\n\n## Prompt Versus Policy\n\nPrompt rules guide probabilistic output. They may tell a model to use recent conversation, avoid\noutside facts, or emit structured JSON. They cannot authorize a write, grant tenant access, validate\nparameters, or consume confirmation. Those controls remain in modes, authenticated context, access\npolicy, typed action schemas, and execution services.\n\n## Regression Proof\n\nDo not assert exact generated prose. Assert deterministic properties: candidate order, resolved\nversion, required placeholders, critical safety rules, fallback for untouched keys, classpath\npackaging, and absence of prompt bodies from public diagnostics.\n\nAn optional real-provider run can reveal model behavior changes, but it is observation rather than\nthe release contract.\n\n## Incorrect Architecture\n\nOne incorrect design copies every framework prompt and edits one line. The app is then stranded on\nold defaults. Another places security solely in prompt prose. A third exposes full prompts through a\nhealth endpoint. All three confuse ownership or disclose unnecessary internals.\n\n## Visible Failure\n\nIf an expected application template is renamed, resolution falls back to the curated support\nversion. The app still starts, but the regression test fails because the effective contract changed.\nIf no candidate exists, resolution fails clearly rather than inventing a template.\n\n## Lab Bridge\n\nIn PROD-03 you will add the application answer template, test overlay-first and base-fallback\nresolution, prove the resource is in the packaged JAR, and expose only safe version diagnostics.\nThe following lesson then applies the same ownership discipline to application data and vector\nevidence during migration.\n",
+    "sourceManifest": "notebooklm/source-manifest.yml",
+    "notebookStatus": "script-ready",
+    "reviewedAt": null,
+    "reviewedBy": null
+  },
+  "sourcePath": "docs/course/production/03-prompt-overlays/lesson.md",
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/main/docs/course/production/03-prompt-overlays/lesson.md"
+}

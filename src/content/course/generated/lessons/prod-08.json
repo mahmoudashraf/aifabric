@@ -1,0 +1,252 @@
+{
+  "id": "prod-08",
+  "slug": "production-ready",
+  "title": "Operations And Release Readiness",
+  "description": "Package, identify, restart, clean, and verify the deployed application with separate keyless and keyed evidence.",
+  "durationMinutes": 70,
+  "availability": "preview",
+  "source": "production/08-production-ready/lesson.md",
+  "knowledgeCheck": {
+    "schemaVersion": 1,
+    "lessonId": "prod-08",
+    "passingScorePercent": 80,
+    "questions": [
+      {
+        "id": "prod-08-q1",
+        "type": "multiple-choice",
+        "competency": "readiness",
+        "prompt": "Which concerns should release readiness report independently?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Application database"
+          },
+          {
+            "id": "b",
+            "text": "Vector provider"
+          },
+          {
+            "id": "c",
+            "text": "Session and pending-work storage"
+          },
+          {
+            "id": "d",
+            "text": "Generation provider posture"
+          },
+          {
+            "id": "e",
+            "text": "One process-up boolean only"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "explanation": "Independent component status identifies the failed dependency and keeps optional providers distinct from required stores.",
+        "sourcePaths": [
+          "docs/course/production/08-production-ready/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-08-q2",
+        "type": "single-choice",
+        "competency": "build-identity",
+        "prompt": "Why does the Docker build receive SOURCE_COMMIT explicitly?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The image can prove its source revision without copying the local .git directory"
+          },
+          {
+            "id": "b",
+            "text": "It replaces application versioning"
+          },
+          {
+            "id": "c",
+            "text": "It lets the browser choose a deployed commit"
+          }
+        ],
+        "correctOptionIds": [
+          "a"
+        ],
+        "explanation": "Release evidence needs an immutable source identity even when the secure build context excludes repository history.",
+        "sourcePaths": [
+          "docs/course/production/08-production-ready/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-08-q3",
+        "type": "single-choice",
+        "competency": "provider-posture",
+        "prompt": "What should happen when the OpenAI profile is explicitly selected without its key?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Startup fails with a clear provider configuration error"
+          },
+          {
+            "id": "b",
+            "text": "A local provider silently writes an answer"
+          },
+          {
+            "id": "c",
+            "text": "Readiness reports OpenAI as verified"
+          }
+        ],
+        "correctOptionIds": [
+          "a"
+        ],
+        "explanation": "Explicit provider selection makes the credential required; fallback is disabled so missing configuration remains visible.",
+        "sourcePaths": [
+          "docs/course/production/08-production-ready/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-08-q4",
+        "type": "multiple-choice",
+        "competency": "restart-proof",
+        "prompt": "Which evidence makes an application restart test meaningful?",
+        "options": [
+          {
+            "id": "a",
+            "text": "A changed process start time"
+          },
+          {
+            "id": "b",
+            "text": "Preserved source and vector state"
+          },
+          {
+            "id": "c",
+            "text": "Preserved backend conversation and work state"
+          },
+          {
+            "id": "d",
+            "text": "A quality scorecard after restart"
+          },
+          {
+            "id": "e",
+            "text": "Re-seeding everything after restart"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "explanation": "Re-seeding would hide lost persistence. The test must observe retained state and retained behavior.",
+        "sourcePaths": [
+          "docs/course/production/08-production-ready/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-08-q5",
+        "type": "answer-reveal",
+        "competency": "retention-ownership",
+        "prompt": "What may the lesson retention operation delete, and what must it preserve?",
+        "modelAnswer": "It may delete expired course chat sessions plus old completed migration and completed/failed/dead-letter indexing records. It must preserve application-owned knowledge, policy, account, and ticket rows and must not erase vector evidence as an incidental side effect. The operation is admin-scoped and explicitly enabled.",
+        "sourcePaths": [
+          "docs/course/production/08-production-ready/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-08-q6",
+        "type": "implementation-defense",
+        "competency": "evidence-separation",
+        "prompt": "Defend keeping OpenAI evidence separate from the keyless release summary.",
+        "modelAnswer": "The keyless gate proves deterministic code, real local ONNX, real Lucene/Qdrant, storage, restart, and policy behavior. It cannot prove a hosted model invocation. The separate artifact records PASS, FAIL, or NOT_RUN based on whether a protected key and real request were used, preventing local success from becoming a false live-provider claim.",
+        "reviewCriteria": [
+          "Identifies what the keyless gate genuinely proves",
+          "Rejects inferred hosted-provider success",
+          "Requires explicit PASS, FAIL, or NOT_RUN status",
+          "Keeps credentials out of reports"
+        ],
+        "sourcePaths": [
+          "docs/course/production/08-production-ready/lesson.md"
+        ]
+      }
+    ]
+  },
+  "assistantPrompt": "production/08-production-ready/assistant-prompt.md",
+  "assistantReviewPrompt": "production/08-production-ready/assistant-review-prompt.md",
+  "notebookSourceManifest": "production/08-production-ready/notebooklm/source-manifest.yml",
+  "theoryVideoIds": [],
+  "relatedStories": [],
+  "relatedDemos": [],
+  "track": "production",
+  "route": "/course/production/production-ready",
+  "frontMatter": {
+    "id": "prod-08",
+    "slug": "production-ready",
+    "title": "Operations And Release Readiness",
+    "track": "production",
+    "order": 8,
+    "durationMinutes": 70,
+    "availability": "preview",
+    "courseVersion": "0.3.3-course.1-beta",
+    "frameworkVersion": "0.3.3",
+    "frameworkTag": "ai-fabric-framework-v0.3.3",
+    "courseSourceTag": "ai-fabric-course-v0.3.3.1",
+    "starterRef": "course-0.3.3-p07-qdrant",
+    "solutionRef": "course-0.3.3-p08-production-ready",
+    "requiresOpenAi": false,
+    "requiresDocker": true,
+    "optionalProviderExercises": [
+      "openai"
+    ],
+    "sourcePaths": [
+      "docs/course/production/04-migration-backfill/notebooklm/AI_FABRIC_STATE_STORAGE_MAP_NOTEBOOKLM_SCRIPT.md",
+      "ai-infrastructure-module/ai-fabric-chat-session/src/main/java/ai/fabric/chat/spi/ChatSessionStorageProvider.java",
+      "ai-infrastructure-module/ai-fabric-migration/src/main/java/ai/fabric/migration/repository/MigrationJobRepository.java",
+      "ai-infrastructure-module/ai-fabric-indexing/src/main/java/ai/fabric/repository/IndexingQueueRepository.java"
+    ],
+    "theoryVideoIds": [],
+    "assistant": {
+      "mode": "implement",
+      "implementationPrompt": "assistant-prompt.md",
+      "reviewPrompt": "assistant-review-prompt.md",
+      "validationStatus": "passed"
+    },
+    "knowledgeCheck": {
+      "source": "knowledge-check.yml",
+      "required": true,
+      "passingScorePercent": 80
+    },
+    "video": {
+      "status": "script-ready",
+      "generator": "NotebookLM",
+      "purpose": "pre-lesson-theory",
+      "placement": "before-lab",
+      "targetDurationMinutes": 10,
+      "title": "State And Storage In An AI Fabric Application",
+      "publicUrl": null,
+      "transcript": "../04-migration-backfill/notebooklm/AI_FABRIC_STATE_STORAGE_MAP_NOTEBOOKLM_SCRIPT.md",
+      "sourceManifest": "notebooklm/source-manifest.yml"
+    }
+  },
+  "markdown": "# Operations And Release Readiness\n\nYou have built a useful AI application. This lesson proves that the exact artifact you release can\nstart, identify itself, reach each required store, survive restart, clean only eligible operational\nstate, and reject an explicitly selected provider whose credential is missing.\n\nRelease readiness is broader than `GET /actuator/health`. A running process can still have the\nwrong commit, an unavailable vector provider, volatile conversation state, stalled indexing work,\nor a hidden provider fallback. You will turn those concerns into independent evidence.\n\n## Outcome\n\nYou will:\n\n- build a non-root container from the exact Git commit;\n- inject source commit, branch, and build time without copying `.git` into the image;\n- expose safe readiness for build, database, vector, session, indexing, migration, and generation;\n- keep disabled optional generation distinct from a failed required provider;\n- persist source data, Qdrant vectors, chat turns, migration jobs, and indexing state across restart;\n- add admin-scoped release-probe and retention operations;\n- prove retention does not delete application-owned source rows or reusable vector evidence;\n- prove OpenAI selection without `OPENAI_API_KEY` fails visibly;\n- retain required keyless and optional keyed evidence in separate machine-readable files.\n\n## Start Here\n\n```bash\ngit clone https://github.com/Loom-AI-Labs/ai-fabric-course-support-assistant.git\ncd ai-fabric-course-support-assistant\ngit switch --detach course-0.3.3-p07-qdrant\n./mvnw --batch-mode --no-transfer-progress clean verify\n./scripts/download-onnx-model.sh\n```\n\nDocker must be running. The required path uses ONNX, H2, and local Docker Qdrant. It needs no API\nkey.\n\n## Step 1: Classify Runtime State\n\nBefore writing a health endpoint, decide who owns each state:\n\n```text\napplication source rows       durable, application-owned\nQdrant evidence               durable provider state, derived and rebuildable\nchat sessions and turns       durable AI workflow state\nmigration and indexing rows   durable operational state\nprompt/cache snapshots        versioned or ephemeral, never source truth\nprovider credentials          external secret store, never diagnostic output\n```\n\nRestart proof must cover every durable category. Cleanup may remove expired workflow and completed\noperational rows, but it must preserve application source truth. This checkpoint deliberately also\npreserves vector evidence during routine operational cleanup; a separate reindex procedure owns\nvector replacement.\n\n## Step 2: Add A Production-Like Profile\n\n`application-operations.yml` uses a file-backed H2 database, graceful shutdown, and explicit\nmaintenance controls:\n\n```yaml\nserver:\n  shutdown: graceful\n\nspring:\n  datasource:\n    url: jdbc:h2:file:${COURSE_DB_PATH:./data/operations/course-support};MODE=PostgreSQL;AUTO_SERVER=FALSE\n  jpa:\n    hibernate:\n      ddl-auto: update\n  lifecycle:\n    timeout-per-shutdown-phase: 20s\n\ncourse:\n  release:\n    runtime-mode: production-keyless\n  operations:\n    maintenance-enabled: ${COURSE_OPERATIONS_MAINTENANCE_ENABLED:true}\n    release-probes-enabled: ${COURSE_RELEASE_PROBES_ENABLED:true}\n    completed-record-retention: ${COURSE_COMPLETED_RECORD_RETENTION:PT168H}\n    conversation-retention: ${COURSE_CONVERSATION_RETENTION:PT168H}\n```\n\nThe profile is production-like evidence, not a recommendation to use H2 for a real multi-instance\ndeployment. Replace H2 with your application database while retaining the ownership and readiness\ncontract.\n\n## Step 3: Expose Independent Readiness\n\nAdd `GET /api/demo/operations/readiness`. Return a stable component map rather than one ambiguous\nboolean:\n\n```json\n{\n  \"checkpoint\": \"course-0.3.3-p08-production-ready\",\n  \"status\": \"READY\",\n  \"components\": {\n    \"build\": { \"status\": \"UP\", \"required\": true },\n    \"database\": { \"status\": \"UP\", \"required\": true },\n    \"vector\": { \"status\": \"UP\", \"required\": true },\n    \"sessions\": { \"status\": \"UP\", \"required\": true },\n    \"indexing\": { \"status\": \"UP\", \"required\": true },\n    \"migration\": { \"status\": \"UP\", \"required\": true },\n    \"generationProvider\": { \"status\": \"DISABLED\", \"required\": false }\n  }\n}\n```\n\nEach required component catches its own probe failure and reports a stable public error code. One\nbroken store must not erase the status of the others. Diagnostics may identify provider type,\ntransport, safe counts, and source revision. They must not include API keys, database passwords,\nraw prompts, PII, or full provider exception details.\n\n`DISABLED` is healthy only because generation is optional in this keyless runtime. If generation is\nenabled with OpenAI selected, it becomes required. Missing credentials then produce `DOWN` or,\nthrough AI Fabric's startup validator, prevent the application from starting.\n\n## Step 4: Build A Source-Identified Container\n\nThe multi-stage `Dockerfile`:\n\n- runs `clean verify`; it never uses `-DskipTests`;\n- downloads the ONNX model during the build;\n- requires `SOURCE_COMMIT` and `BUILD_TIME` build arguments;\n- records the commit in `org.opencontainers.image.revision`;\n- passes source identity to `/api/demo/health`;\n- runs as a dedicated non-root user;\n- includes only the JAR and required ONNX assets in the runtime image.\n\nBuild it manually:\n\n```bash\ndocker build \\\n  --build-arg SOURCE_COMMIT=\"$(git rev-parse HEAD)\" \\\n  --build-arg SOURCE_BRANCH=\"$(git branch --show-current)\" \\\n  --build-arg BUILD_TIME=\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" \\\n  -t ai-fabric-course-support-assistant:prod08 .\n```\n\nThe Docker build context excludes `.git`. Tests receive the explicit source commit, while runtime\nhealth reads the same immutable value. A developer's working tree is not a deployment identity.\n\n## Step 5: Start Durable Application And Vector Storage\n\n```bash\nexport SOURCE_COMMIT=\"$(git rev-parse HEAD)\"\nexport SOURCE_BRANCH=\"$(git branch --show-current)\"\nexport BUILD_TIME=\"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"\ndocker compose -f compose.release.yml up --build -d\ncurl --fail http://localhost:8080/actuator/health\ncurl -s http://localhost:8080/api/demo/health | jq\ncurl -s http://localhost:8080/api/demo/operations/readiness | jq\n```\n\n`compose.release.yml` pins Qdrant `v1.16.1` and mounts separate named volumes for H2 and Qdrant.\nThe application uses the canonical `COURSE_RELEASE_RUNTIME_MODE` property override so the selected\nQdrant profile cannot mislabel the combined release posture.\n\nVerify that the OCI revision, `/api/demo/health.commit`, and `SOURCE_COMMIT` are equal. Actuator\nproves process health; operations readiness proves the application dependencies and state contract.\n\n## Step 6: Create Honest Persistence Evidence\n\nSeed source rows and run migration through the existing admin boundary. Then call:\n\n```bash\ncurl -s -X POST http://localhost:8080/api/admin/operations/release-probes \\\n  -H 'Authorization: Bearer course-alex-local-token' | jq\n```\n\nThe endpoint stores one backend chat turn and returns:\n\n```json\n{\n  \"storedTurns\": 1,\n  \"modelInvoked\": false\n}\n```\n\nThe assistant text says that a persistence probe was recorded and no model was invoked. This is\noperational evidence, not fake intelligence. It must never be presented as a generated answer or a\nlive-provider test.\n\n## Step 7: Restart And Prove Durability\n\nRestart only the application container, retaining both volumes. After restart, assert:\n\n- `startedAt` changed while source commit did not;\n- nine source articles remain;\n- nine Qdrant vectors remain;\n- the release conversation and its exact turn remain;\n- completed migration and indexing records remain;\n- both tenant golden RAG suites still pass.\n\nState count alone is insufficient. The golden scorecard proves that retained vectors still satisfy\nexpected IDs, forbidden IDs, tenant boundaries, and current source fragments.\n\n## Step 8: Apply A Bounded Retention Policy\n\n`POST /api/admin/operations/retention/cleanup` requires `migration:admin` and explicit maintenance\nenablement. It removes only:\n\n- expired course-user chat sessions;\n- completed migration jobs older than the configured cutoff;\n- completed, failed, or dead-letter indexing rows older than the cutoff.\n\nIt reports before, after, and removed counts plus source/vector preservation booleans. It does not\nremove knowledge articles, policies, accounts, tickets, or vector evidence.\n\nThe automated gate uses zero-duration cutoffs only in its disposable environment. Production\nretention must use reviewed durations and scheduled execution. This endpoint is an application\nexample; your production scheduler, authorization, audit, and backup policy remain application and\nplatform responsibilities.\n\n## Step 9: Prove Missing Required Credentials Fail\n\nRun the built image with `SPRING_PROFILES_ACTIVE=openai` and no key. AI Fabric's provider validator\nmust stop startup with:\n\n```text\nOpenAI API key is required when OpenAI is selected.\n```\n\nThe process must return non-zero. Do not catch this error and start with a local response provider.\nThe keyless release remains valid because generation is disabled there; the OpenAI profile is a\ndifferent, explicitly selected contract.\n\n## Required Verification\n\n```bash\n./mvnw --batch-mode --no-transfer-progress clean verify\n./scripts/download-onnx-model.sh\nCOURSE_SMOKE_USE_EXISTING_JAR=true ./scripts/smoke-packaged.sh\nCOURSE_SMOKE_USE_EXISTING_JAR=true ./scripts/smoke-qdrant.sh\n./scripts/smoke-release.sh\n./scripts/smoke-openai-optional.sh\njq . target/course-release-evidence/release-keyless-summary.json\njq . target/course-release-evidence/openai-keyed-summary.json\n```\n\nExpected checkpoint: `course-0.3.3-p08-production-ready`. The Java suite contains 71 tests.\n`release-keyless-summary.json` must report `PASS` and the exact source commit.\n`openai-keyed-summary.json` may report `NOT_RUN` when no key was supplied; that is honest evidence,\nnot a skipped required gate.\n\n## Optional Live OpenAI Evidence\n\nProvide the key only through your shell, IDE secret field, CI secret, or deployment secret store:\n\n```bash\nexport OPENAI_API_KEY='<set locally; never commit>'\nexport AI_ORCHESTRATION_MODEL='gpt-4o-mini'\nexport AI_GENERATION_MODEL='gpt-4o-mini'\n./scripts/smoke-openai-optional.sh\njq . target/course-release-evidence/openai-keyed-summary.json\n```\n\nThe script starts the packaged `openai` profile, indexes real ONNX evidence, calls the real provider,\nand records provider/model posture plus structured result status. It does not store the key or\nborrow success from deterministic test providers. A keyed failure is `FAIL`, not a local fallback.\n\n## Intentional Failures\n\n1. Omit `SOURCE_COMMIT` during image build. The build must fail before producing an unidentified\n   image.\n2. Stop Qdrant. The vector component reports `DOWN`; no Lucene fallback makes readiness green.\n3. Start the OpenAI profile without `OPENAI_API_KEY`. Startup fails with the configuration error.\n4. Call cleanup without admin scope. The request is denied and state is unchanged.\n5. Remove the persistent application volume and restart. The gate detects missing source, chat, and\n   operational state instead of claiming normal restart survival.\n\n## Done When\n\n- all 71 tests pass without skipping;\n- packaged Lucene and Docker Qdrant gates remain green;\n- the image runs as non-root and reports the exact OCI/source revision;\n- required components are independently `UP` and optional generation is honestly `DISABLED`;\n- source, vector, session, migration, and indexing state survive an application restart;\n- deterministic RAG quality passes before and after restart;\n- cleanup removes eligible operational records while preserving source and vectors;\n- selected OpenAI without a key fails startup visibly;\n- optional OpenAI evidence is a separate `PASS`, `FAIL`, or `NOT_RUN` artifact;\n- CI retains test and release evidence for the source commit.\n\n## Reset And Cleanup\n\n```bash\ndocker compose -f compose.release.yml down -v\n./scripts/reset-course.sh\ngit switch --detach course-0.3.3-p07-qdrant\n```\n\n`down -v` removes only the named course volumes from this compose project. Do not run destructive\ndatabase or vector cleanup against a shared environment.\n\n## Troubleshooting\n\n**Readiness says build is DOWN:** inspect the image revision label and `SOURCE_COMMIT`. Do not replace\nan unknown revision with a handwritten version string.\n\n**Health says `qdrant-local` instead of `production-keyless`:** use the canonical\n`COURSE_RELEASE_RUNTIME_MODE` environment variable. A generic alias in base YAML can lose to a\nprofile-specific property.\n\n**Tests pass locally but fail in Docker:** `.git` is absent by design. Supply source metadata as\nbuild arguments to the test and runtime stages.\n\n**H2 or Qdrant state disappears:** verify named volumes and paths. Container restart proof is invalid\nwhen storage is inside the disposable writable layer.\n\n**Cleanup reports zero removed:** records are newer than the configured retention cutoffs. Use a\ndisposable environment for zero-duration tests; do not weaken production retention to satisfy a\nsmoke check.\n\n**OpenAI evidence says `NOT_RUN`:** no key was supplied. The required release is still complete, but\nyou must not claim live-provider verification.\n\n## Production Track Complete\n\nYou have now configured provider purpose routing, orchestration modes, application prompt overlays,\ninitial migration, continuous Data Sync, deterministic RAG quality, Qdrant, and release operations\nin one continuing Spring Boot application. The next course section studies deployed applications\nthat combine these capabilities in different domains.",
+  "assistant": {
+    "mode": "implement",
+    "validationStatus": "passed",
+    "implementationPrompt": "# Coding Assistant Prompt: PROD-08\n\nImplement the operations and release-readiness checkpoint in the continuing Support Knowledge\nAssistant.\n\nConstraints:\n\n- start from `course-0.3.3-p07-qdrant`;\n- preserve every existing Lucene/Qdrant, tenant, privacy, action, memory, migration, Data Sync, and\n  quality contract;\n- add a source-labelled, multi-stage, non-root Docker image whose build runs tests normally;\n- exclude `.git` and inject source commit, branch, and build time explicitly;\n- add a durable production-like profile and compose stack for the application database and pinned\n  Qdrant;\n- expose safe independent readiness for build, database, vector, sessions, indexing, migration,\n  and generation-provider posture;\n- mark disabled optional generation as optional, while making an explicitly selected provider with\n  missing credentials fail visibly;\n- add admin-scoped, explicitly enabled release-probe and retention operations;\n- label the persistence probe truthfully as non-LLM work;\n- prove application restart preserves source, vector, chat, migration, and indexing state;\n- prove cleanup removes only eligible operational state and preserves source/vector ownership;\n- retain keyless and optional OpenAI evidence in separate JSON artifacts;\n- add CI, HTTP requests, release documentation, tests, and cleanup for every Docker resource;\n- never expose credentials, fake provider success, reseed after restart, or use `-DskipTests`.\n\nBefore editing, map current state ownership, health metadata, profiles, security scopes, repositories,\nsmokes, and CI. Run the complete exact-commit release gate and report optional OpenAI as `NOT_RUN`\nwhen no protected key is supplied.\n",
+    "reviewPrompt": "# Independent Review Prompt: PROD-08\n\nReview the PROD-08 checkpoint findings-first.\n\nVerify:\n\n- all previous course behavior still passes;\n- the Docker build runs tests and the runtime image is non-root;\n- image revision, API commit, and checked-out commit match;\n- `.git` and credentials are absent from the image and reports;\n- database, vector, session, indexing, migration, and provider readiness are independent;\n- disabled optional generation is not misreported as a failure or a live-provider pass;\n- the application database, Qdrant evidence, backend chat, migration, and indexing state survive an\n  application-only restart without reseeding;\n- the quality scorecard passes after restart;\n- release-probe text states that no model ran;\n- cleanup requires admin scope and explicit enablement;\n- retention removes only eligible operational rows/sessions and preserves source rows/vectors;\n- selected OpenAI without a key fails startup with the validator error and no fallback;\n- optional keyed evidence is `PASS`, `FAIL`, or `NOT_RUN` in a separate artifact;\n- scripts clean up containers, networks, volumes, and images on failure;\n- CI retains exact-commit reports.\n\nRun the clean Java suite, packaged Lucene smoke, Docker Qdrant smoke, and release-container smoke.\nCite file/line and JSON evidence for every finding. Do not approve from Actuator health alone.\n"
+  },
+  "video": {
+    "status": "script-ready",
+    "generator": "NotebookLM",
+    "purpose": "pre-lesson-theory",
+    "placement": "before-lab",
+    "targetDurationMinutes": 10,
+    "title": "State And Storage In An AI Fabric Application",
+    "publicUrl": null,
+    "transcript": "# NotebookLM Video Script: State And Storage In An AI Fabric Application\n\n## Production Instruction\n\nProduce an eleven-minute technical video for Java and Spring Boot developers. Use this script as the\ncomplete source. Keep the Support Knowledge Assistant example central and distinguish durable\nbusiness state, durable AI workflow state, derived evidence, and ephemeral runtime state.\n\n## Opening\n\nAdding AI Fabric to a Spring Boot app does not create one new universal AI database. A production AI\nworkflow crosses stores with different owners and recovery rules. Confusing them creates stale\nanswers, leaked evidence, lost confirmations, and misleading readiness checks.\n\nThe central rule is simple: the application database remains business truth. AI Fabric adds\nspecialized state around it.\n\n## The Storage Map\n\nDescribe this diagram:\n\n```text\nApplication database\n  knowledge articles, users, tickets, raw business events\n       |\n       +--> migration job --> indexing queue --> vector provider\n       |                                          derived evidence\n       |\n       +--> application actions mutate business truth\n\nAI workflow state\n  chat sessions and turns\n  pending confirmations and action drafts\n  behavior insights\n  optional registered actions\n\nRuntime state\n  caches, model clients, diagnostics snapshots\n```\n\nThe application database owns article text, tenant ownership, publication status, and internal\nnotes. The vector provider owns a derived semantic projection with stable entity IDs and retrieval\nmetadata. It must be possible to rebuild vectors from source truth.\n\n## Initial Backfill\n\nWhen AI Fabric is introduced to an existing system, rows already exist. A migration job scans them\nin bounded batches and records progress. It creates durable indexing work. The indexing worker then\nprojects allowed content, generates embeddings, and updates the vector provider.\n\nThere are therefore three different completion questions: has the source scan completed, has the\nqueue drained without dead letters, and are the expected vectors retrievable? A production readiness\nAPI should answer all three.\n\n## Continuous Synchronization\n\nBackfill is not live synchronization. After initial migration, trusted create, update, and delete\nevents keep derived evidence aligned with source truth. An update reuses the stable entity ID. A\ndelete removes the corresponding vector. Failed synchronization remains visible and retryable.\n\nThe next lesson implements that boundary directly.\n\n## Conversation And Action State\n\nChat sessions and turns are durable application conversations, not vector evidence. Pending actions\nand drafts preserve confirmation context. Production systems should use a durable implementation\nwhen a confirmation must survive restart. The browser sends only the new user message; the backend\nloads authorized history.\n\nAction execution still belongs to the application transaction. AI Fabric may discover, validate,\nand gate an action, but the domain database records the actual business mutation.\n\n## Behavior And Registry State\n\nRaw behavior events remain in the application or event platform and are supplied through\n`ExternalEventProvider`. AI Fabric can store derived behavior insights. The optional action registry\nstores approved action definitions; it does not replace domain authorization or execution code.\n\n## Ephemeral State\n\nCaches, model clients, and diagnostics snapshots may be rebuilt after restart. Correctness cannot\ndepend on an ephemeral cache. A model cache may improve connection reuse; it cannot become a hidden\nsession store or authorization source.\n\n## Incorrect Architecture\n\nAn incorrect design writes business updates only to vectors. A user then changes an article in the\nsource database, but search still returns the old vector. Another design calls a migration job\ncomplete as soon as rows are scanned while the indexing worker is stopped. Both make derived state\nlook authoritative or ready when it is not.\n\n## Visible Failure\n\nIf indexing fails, keep the source row, migration progress, queue failure, and missing vector\nobservable. Do not return a canned AI answer or silently write a different store. Operators need to\nknow which stage failed and whether retry is safe.\n\n## Lab Bridge\n\nIn PROD-04, you will bind an existing repository, run a bounded admin migration, inspect source,\njob, queue, and vector state separately, and prove an idempotent rerun. PROD-05 then applies trusted\ncreate, update, and delete synchronization to keep that evidence current.\n",
+    "sourceManifest": "notebooklm/source-manifest.yml",
+    "notebookStatus": "script-ready",
+    "reviewedAt": null,
+    "reviewedBy": null
+  },
+  "sourcePath": "docs/course/production/08-production-ready/lesson.md",
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/main/docs/course/production/08-production-ready/lesson.md"
+}

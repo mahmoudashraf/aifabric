@@ -1,0 +1,233 @@
+{
+  "id": "prod-02",
+  "slug": "modes-positions",
+  "title": "Modes, Positions, And Orchestration Policy",
+  "description": "Map application positions to server-owned capability bundles without trusting arbitrary client mode names.",
+  "durationMinutes": 75,
+  "availability": "preview",
+  "source": "production/02-modes-positions/lesson.md",
+  "knowledgeCheck": {
+    "schemaVersion": 1,
+    "lessonId": "prod-02",
+    "passingScorePercent": 80,
+    "questions": [
+      {
+        "id": "prod-02-q1",
+        "type": "single-choice",
+        "competency": "position-versus-mode",
+        "prompt": "What does an application position represent?",
+        "options": [
+          {
+            "id": "a",
+            "text": "A product or UI context that the application may map to a mode"
+          },
+          {
+            "id": "b",
+            "text": "An authorization decision made by the browser"
+          },
+          {
+            "id": "c",
+            "text": "An LLM provider name"
+          }
+        ],
+        "correctOptionIds": [
+          "a"
+        ],
+        "explanation": "Position describes application context; a server-owned mode controls orchestration capabilities.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/orchestration/OrchestrationContext.java"
+        ]
+      },
+      {
+        "id": "prod-02-q2",
+        "type": "single-choice",
+        "competency": "enforcement",
+        "prompt": "Which setting deterministically prevents write intents from executing in support_assistant?",
+        "options": [
+          {
+            "id": "a",
+            "text": "actions-preferred false"
+          },
+          {
+            "id": "b",
+            "text": "actions-enabled false"
+          },
+          {
+            "id": "c",
+            "text": "A prompt asking the model not to write"
+          }
+        ],
+        "correctOptionIds": [
+          "b"
+        ],
+        "explanation": "actions-enabled is the server policy gate; prompts and preferences are guidance.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/config/OrchestrationProperties.java"
+        ]
+      },
+      {
+        "id": "prod-02-q3",
+        "type": "multiple-choice",
+        "competency": "strict-routing",
+        "prompt": "Which failures should remain visible?",
+        "options": [
+          {
+            "id": "a",
+            "text": "An unknown application position under strict position routing"
+          },
+          {
+            "id": "b",
+            "text": "An unknown explicit mode under strict Core routing"
+          },
+          {
+            "id": "c",
+            "text": "A disabled action should be executed through fallback"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b"
+        ],
+        "explanation": "Unknown routing inputs are contract failures; fallback must not create authority.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/orchestration/pipeline/steps/OrchestrationPolicyResolutionStep.java"
+        ]
+      },
+      {
+        "id": "prod-02-q4",
+        "type": "single-choice",
+        "competency": "precedence",
+        "prompt": "What happens when a request supplies both position ticket and explicit mode support_assistant?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The position always overrides the explicit mode"
+          },
+          {
+            "id": "b",
+            "text": "The explicit mode is preserved and Core validates it"
+          },
+          {
+            "id": "c",
+            "text": "The browser gains both modes"
+          }
+        ],
+        "correctOptionIds": [
+          "b"
+        ],
+        "explanation": "Explicit selection wins over application position mapping, but only Core-defined modes are accepted.",
+        "sourcePaths": [
+          "docs/course/production/02-modes-positions/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-02-q5",
+        "type": "answer-reveal",
+        "competency": "compatibility",
+        "prompt": "Why does this checkpoint keep the no-hint default action-capable?",
+        "modelAnswer": "Earlier Core checkpoints already expose governed action flows without mode or position fields. Keeping support_resolver as the server default preserves that public behavior while the knowledge position demonstrates retrieval-only policy explicitly.",
+        "sourcePaths": [
+          "docs/course/production/02-modes-positions/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-02-q6",
+        "type": "implementation-defense",
+        "competency": "architecture",
+        "prompt": "Defend the placement of SupportModeResolver in the application instead of Core.",
+        "modelAnswer": "Positions are application vocabulary such as knowledge and ticket. The application owns their meaning and maps them to allowlisted server modes. Core remains product-agnostic and resolves the selected mode into deterministic retrieval, action, suggestion, and budget policy. Authentication and action authorization remain independent controls.",
+        "reviewCriteria": [
+          "Separates application context from framework mode enforcement",
+          "Keeps Core mode allowlisting authoritative",
+          "Does not treat position or prompt text as authorization",
+          "Preserves visible unknown-input failures"
+        ],
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/config/OrchestrationProperties.java",
+          "examples/real-apps/chat-capabilities-demo/src/main/java/com/ai/fabric/realapps/chat/web/CommerceModeResolver.java"
+        ]
+      }
+    ]
+  },
+  "assistantPrompt": "production/02-modes-positions/assistant-prompt.md",
+  "assistantReviewPrompt": "production/02-modes-positions/assistant-review-prompt.md",
+  "notebookSourceManifest": "production/02-modes-positions/notebooklm/source-manifest.yml",
+  "theoryVideoIds": [],
+  "relatedStories": [],
+  "relatedDemos": [],
+  "track": "production",
+  "route": "/course/production/modes-positions",
+  "frontMatter": {
+    "id": "prod-02",
+    "slug": "modes-positions",
+    "title": "Modes, Positions, And Orchestration Policy",
+    "track": "production",
+    "order": 2,
+    "durationMinutes": 75,
+    "availability": "preview",
+    "courseVersion": "0.3.3-course.1-beta",
+    "frameworkVersion": "0.3.3",
+    "frameworkTag": "ai-fabric-framework-v0.3.3",
+    "courseSourceTag": "ai-fabric-course-v0.3.3.1",
+    "starterRef": "course-0.3.3-p01-provider-routing",
+    "solutionRef": "course-0.3.3-p02-modes-positions",
+    "requiresOpenAi": false,
+    "requiresDocker": false,
+    "optionalProviderExercises": [
+      "openai"
+    ],
+    "sourcePaths": [
+      "docs/course/production/02-modes-positions/notebooklm/AI_FABRIC_MODES_POSITIONS_ORCHESTRATION_POLICY_NOTEBOOKLM_SCRIPT.md",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/config/OrchestrationProperties.java",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/orchestration/OrchestrationContext.java",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/orchestration/pipeline/steps/OrchestrationPolicyResolutionStep.java",
+      "examples/real-apps/chat-capabilities-demo/src/main/java/com/ai/fabric/realapps/chat/web/CommerceModeResolver.java"
+    ],
+    "theoryVideoIds": [],
+    "assistant": {
+      "mode": "implement",
+      "implementationPrompt": "assistant-prompt.md",
+      "reviewPrompt": "assistant-review-prompt.md",
+      "validationStatus": "passed"
+    },
+    "knowledgeCheck": {
+      "source": "knowledge-check.yml",
+      "required": true,
+      "passingScorePercent": 80
+    },
+    "video": {
+      "status": "script-ready",
+      "generator": "NotebookLM",
+      "purpose": "pre-lesson-theory",
+      "placement": "before-lab",
+      "targetDurationMinutes": 10,
+      "title": "Modes, Positions, And Orchestration Policy",
+      "publicUrl": null,
+      "transcript": "notebooklm/AI_FABRIC_MODES_POSITIONS_ORCHESTRATION_POLICY_NOTEBOOKLM_SCRIPT.md",
+      "sourceManifest": "notebooklm/source-manifest.yml"
+    }
+  },
+  "markdown": "# Modes, Positions, And Orchestration Policy\n\n## Start Here\n\nYou already route LLM work by purpose. Now you will control which AI capabilities are available for\neach application surface without allowing a browser to invent privileges.\n\nYou will add two server-owned modes:\n\n- `support_assistant`: retrieval is enabled and mutating actions are disabled;\n- `support_resolver`: retrieval and governed actions are enabled.\n\nThe application maps `knowledge` and `ticket` positions to those modes. AI Fabric Core then resolves\nand enforces the selected capability bundle. Position mapping remains application-owned because a UI\nposition describes product context; it is not authorization.\n\n> Start from `course-0.3.3-p01-provider-routing`. The verified solution is\n> `course-0.3.3-p02-modes-positions`. The lesson remains preview until its theory recording is\n> reviewed and published.\n\n## What You Will Prove\n\n1. A position and a mode are different signals.\n2. Explicit approved mode selection takes precedence over position mapping.\n3. Unknown positions fail at the application boundary when strict position routing is enabled.\n4. Unknown modes reach Core and fail under `strict-mode-routing`.\n5. A retrieval-only mode cannot execute a write even when intent extraction proposes one.\n6. The established no-option API remains action-capable for Core-course compatibility.\n\n## Request Flow\n\n```text\nPOST /api/assistant/orchestrate\n  message + optional position/mode\n             |\n             v\nSupportModeResolver\n  explicit mode? keep it for Core validation\n  known position? map it\n  no hint? use server default\n             |\n             v\nOrchestrationContext(position, mode, trusted identity)\n             |\n             v\nOrchestrationPolicyResolutionStep\n  allowlist + strict mode validation + capability bundle\n             |\n             v\nretrieval / clarification / governed confirmation\n```\n\nThe resolver never authorizes an action. Authentication, tenant policy, action access, typed\nparameters, confirmation, and execution remain server controls.\n\n## Prerequisites\n\n```bash\ngit clone https://github.com/Loom-AI-Labs/ai-fabric-course-support-assistant.git\ncd ai-fabric-course-support-assistant\ngit switch --detach course-0.3.3-p01-provider-routing\ngit switch -c lesson/prod-02-modes-positions\n./mvnw --batch-mode --no-transfer-progress clean verify\n```\n\nNo external key or Docker service is required.\n\n## Step 1: Define Server-Owned Modes\n\nAdd the following under `ai.orchestration` in `application.yml`:\n\n```yaml\ndefault-mode: support_resolver\nstrict-mode-routing: true\nstrict-position-routing: true\nposition-routing:\n  knowledge: support_assistant\n  ticket: support_resolver\nmodes:\n  support_assistant:\n    actions-enabled: false\n    actions-preferred: false\n    retrieval-enabled: true\n    information-mode: DETERMINISTIC_RAG_GENERATE\n    suggestions-enabled: false\n    rag:\n      fanout-enabled: false\n      top-k-per-space: 5\n      retrieval-vector-spaces-allowlist: [knowledge-article]\n  support_resolver:\n    actions-enabled: true\n    actions-preferred: true\n    retrieval-enabled: true\n    information-mode: DETERMINISTIC_RAG_GENERATE\n    suggestions-enabled: false\n    rag:\n      fanout-enabled: false\n      top-k-per-space: 3\n      retrieval-vector-spaces-allowlist: [knowledge-article]\n```\n\n`actions-preferred` guides orchestration; `actions-enabled` is the deterministic gate. Prompt text\ndoes not replace either setting.\n\n## Step 2: Add The Application Position Resolver\n\nCreate `SupportModeResolver`. Its precedence is:\n\n1. preserve an explicitly requested mode so Core can validate it;\n2. map a known position from `position-routing`;\n3. use the server default when neither hint is supplied;\n4. reject an unknown position when strict application routing is enabled.\n\nDo not silently turn an unknown explicit mode into a safe-looking default. That hides a client or\ndeployment defect.\n\n## Step 3: Extend The HTTP Contract Narrowly\n\nAdd optional `mode` and `position` fields to `AssistantQueryRequest`. Constrain both to 64 characters\nand `[A-Za-z0-9_-]+`. Keep identity, tenant, session owner, action context, pending work, and history\nout of the request body.\n\nPass the resolved mode and position into `OrchestrationContext`. Add only the non-sensitive routing\nsource to metadata for diagnostics.\n\n## Step 4: Prove The Capability Bundles\n\nRun:\n\n```bash\n./mvnw --batch-mode --no-transfer-progress -Dtest=ModesAndPositionsIntegrationTest test\n```\n\nThe test provider returns a structured `create_support_ticket` intent. The application does not\ntext-match the user message.\n\nExpected retrieval-only result:\n\n```json\n{\n  \"type\": \"CLARIFICATION_REQUIRED\",\n  \"data\": {\"reason\": \"ACTIONS_DISABLED_BY_POLICY\"},\n  \"metadata\": {\n    \"orchestrationPolicy\": {\n      \"mode\": \"support_assistant\",\n      \"position\": \"knowledge\",\n      \"actionsEnabled\": false,\n      \"retrievalEnabled\": true\n    }\n  }\n}\n```\n\nExpected resolver result:\n\n```json\n{\n  \"type\": \"CONFIRMATION_REQUIRED\",\n  \"data\": {\"action\": \"create_support_ticket\"},\n  \"metadata\": {\n    \"orchestrationPolicy\": {\n      \"mode\": \"support_resolver\",\n      \"position\": \"ticket\",\n      \"actionsEnabled\": true\n    }\n  }\n}\n```\n\n## Intentional Failures\n\nSend `mode: untrusted_admin`. Core returns `ERROR` with `Unsupported mode: untrusted_admin`.\n\nSend `position: admin-console` without a mode. The application returns HTTP 400 with\n`Unsupported support position: admin-console`.\n\nThese are separate failures because they belong to separate ownership boundaries.\n\n## Optional OpenAI Observation\n\nWith `OPENAI_API_KEY` supplied only through your environment, repeat the two position requests using\nthe `openai` profile. Observe natural intent extraction, then verify the same deterministic policy\nmetadata. This observation does not replace the keyless tests.\n\n## Full Verification\n\n```bash\n./mvnw --batch-mode --no-transfer-progress clean verify\n./scripts/smoke-packaged.sh\n```\n\nExpected: all tests pass, packaged ONNX/Lucene smoke passes, and readiness reports\n`course-0.3.3-p02-modes-positions` with `modeRouting=true`.\n\n## Done When\n\n- Core-course action tests still pass with no routing hints.\n- `knowledge` blocks writes and retains retrieval.\n- `ticket` reaches governed confirmation.\n- explicit approved mode wins over position mapping.\n- unknown mode and position failures remain visible.\n- no client field controls identity, tenant, or authorization.\n\n## Reset\n\n```bash\n./scripts/reset-course.sh\ngit switch --detach course-0.3.3-p01-provider-routing\n```\n\n## Troubleshooting\n\n| Symptom | Check |\n| --- | --- |\n| Every action is disabled | Ensure the no-hint default is `support_resolver`; use `knowledge` only for retrieval-only requests. |\n| Unknown mode silently works | Confirm `strict-mode-routing: true` and pass the explicit mode into Core. |\n| Position YAML has no effect | Core intentionally does not map UI positions; verify `SupportModeResolver` is invoked. |\n| Browser can change tenant | Remove tenant/identity fields from the request and use authenticated server context. |\n\n## Next Lesson\n\nPROD-03 moves follow-up guidance into a narrow classpath prompt overlay while keeping these policy\ncontrols in configuration and Java.",
+  "assistant": {
+    "mode": "implement",
+    "validationStatus": "passed",
+    "implementationPrompt": "# Coding Assistant Prompt: Implement PROD-02 Modes And Positions\n\nWork in `Loom-AI-Labs/ai-fabric-course-support-assistant` from tag\n`course-0.3.3-p01-provider-routing`.\n\nImplement the PROD-02 lesson contract without changing AI Fabric framework code:\n\n1. Add `support_assistant` retrieval-only and `support_resolver` governed-action modes.\n2. Keep `support_resolver` as the no-hint default to preserve Core lesson behavior.\n3. Add application-owned mapping from `knowledge` and `ticket` positions.\n4. Preserve explicit mode input for strict Core validation; do not silently replace unknown modes.\n5. Add optional validated `mode` and `position` request fields. Do not accept identity, tenant,\n   pending action, history, or authorization context from the browser.\n6. Add deterministic tests for default, mapped positions, explicit mode precedence, unknown mode,\n   unknown position, retrieval-enabled metadata, and action gating.\n7. Update readiness, packaged smoke, requests, and README checkpoint inventory.\n\nRun targeted compatibility tests first, then `clean verify` and the packaged smoke. Report exact\ntests and any behavior changes. Do not use message keyword matching or prompt text as policy.\n",
+    "reviewPrompt": "# Independent Review Prompt: PROD-02 Modes And Positions\n\nReview the diff from `course-0.3.3-p01-provider-routing` to\n`course-0.3.3-p02-modes-positions` findings-first.\n\nVerify:\n\n- no-hint Core action behavior is preserved;\n- positions are mapped only in application code;\n- explicit mode is still validated by Core strict routing;\n- unknown modes and positions fail visibly;\n- `actions-enabled`, not prompt wording, blocks writes;\n- HTTP input cannot supply trusted identity, tenant, history, or pending work;\n- policy metadata proves the effective mode, position, and capabilities;\n- tests use provider-boundary structured fixtures rather than application text matching;\n- `clean verify` and packaged ONNX/Lucene smoke pass.\n\nList correctness or security findings before summary. Do not approve based only on compilation.\n"
+  },
+  "video": {
+    "status": "script-ready",
+    "generator": "NotebookLM",
+    "purpose": "pre-lesson-theory",
+    "placement": "before-lab",
+    "targetDurationMinutes": 10,
+    "title": "Modes, Positions, And Orchestration Policy",
+    "publicUrl": null,
+    "transcript": "# NotebookLM Video Script: Modes, Positions, And Orchestration Policy\n\n## Production Instruction\n\nCreate a focused ten-minute technical explanation for Java and Spring Boot developers. AI Fabric is\nthe subject. Use only this script. Do not present a generic chatbot tutorial.\n\n## Opening\n\nA production AI endpoint should not expose the same capabilities everywhere. A knowledge page may\nretrieve approved support articles but must never create a ticket. A ticket workspace may retrieve\nthe same evidence and offer a governed write, but only after server authorization and confirmation.\n\nAI Fabric models that distinction with positions, modes, and orchestration policy. They are related,\nbut they are not interchangeable.\n\n## Position\n\nA position is application context. In the Support Knowledge Assistant, `knowledge` means the user is\nreading help content and `ticket` means the user is working in a support-resolution surface. These\nnames belong to the application. Another app might use `catalog`, `checkout`, or `account`.\n\nAn application position is not an authorization claim. A browser saying `ticket` cannot grant itself\npermission to write.\n\n## Mode\n\nA mode is a server-defined AI Fabric capability bundle. In this lesson, `support_assistant` enables\nretrieval and disables actions. `support_resolver` enables retrieval and governed actions. Modes can\nalso constrain vector spaces, document budgets, context size, suggestions, deep retrieval, and\nplanner behavior.\n\nThe server allowlists modes in `ai.orchestration.modes`. With strict mode routing enabled, an unknown\nmode fails visibly. It does not quietly become a default.\n\n## The Ownership Boundary\n\nDescribe this diagram on screen:\n\n```text\nbrowser position or approved mode\n          |\n          v\napplication position resolver\n          |\n          v\nOrchestrationContext\n          |\n          v\nAI Fabric policy resolution\n          |\n          +-- retrieval gate and budgets\n          +-- action gate\n          +-- suggestions and planning policy\n          |\n          v\nidentity + tenant + action authorization + confirmation\n```\n\nThe application maps its own position vocabulary. AI Fabric Core stays application-neutral and\nenforces the selected server mode. Security controls remain separate.\n\n## Precedence\n\nIf a request explicitly asks for an approved mode, the application preserves it and Core validates\nit. If no mode is supplied, a known position may map to a mode. If neither is supplied, the server\ndefault applies. Unknown positions fail at the application boundary when strict position routing is\nenabled.\n\nThis precedence makes diagnostics understandable. Policy metadata can report the effective mode,\nposition, source, action gate, retrieval gate, and RAG budgets.\n\n## Concrete Flow\n\nConsider the message, \"Create a ticket about missing recovery emails.\"\n\nAt position `knowledge`, the test provider emits a structured action intent. AI Fabric still returns\n`CLARIFICATION_REQUIRED` with reason `ACTIONS_DISABLED_BY_POLICY`. The model cannot override the\nmode.\n\nAt position `ticket`, the application maps to `support_resolver`. AI Fabric discovers the typed\naction, resolves trusted account context, and returns `CONFIRMATION_REQUIRED`. The action still has\nnot executed. Confirmation and authorization remain mandatory.\n\n## Incorrect Architecture\n\nAn incorrect design accepts arbitrary mode names from JavaScript and maps names like `admin` to more\npowerful behavior. A second incorrect design puts \"never execute actions\" in a prompt while leaving\nactions enabled. Both assign authority to untrusted or probabilistic inputs.\n\nThe correct design uses a small allowlisted application map, strict Core mode routing, deterministic\ncapability flags, authenticated context, and action-level policy.\n\n## Visible Failure\n\nIf the browser sends `untrusted_admin`, Core returns an unsupported-mode error. If it sends an unknown\nposition without a mode, the application returns HTTP 400. Neither failure is hidden by fallback.\n\n## Lab Bridge\n\nIn PROD-02 you will configure both modes, implement `SupportModeResolver`, extend the request with\nbounded optional routing fields, and prove every branch through the real orchestration pipeline.\nYou will finish by rerunning all earlier action and memory tests so new policy does not erase existing\nframework behavior.\n",
+    "sourceManifest": "notebooklm/source-manifest.yml",
+    "notebookStatus": "script-ready",
+    "reviewedAt": null,
+    "reviewedBy": null
+  },
+  "sourcePath": "docs/course/production/02-modes-positions/lesson.md",
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/main/docs/course/production/02-modes-positions/lesson.md"
+}

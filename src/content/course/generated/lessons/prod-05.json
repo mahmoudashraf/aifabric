@@ -1,0 +1,235 @@
+{
+  "id": "prod-05",
+  "slug": "live-data-sync",
+  "title": "Keep Application Data Synchronized",
+  "description": "Apply trusted create, update, and delete changes without leaving stale vector evidence.",
+  "durationMinutes": 85,
+  "availability": "preview",
+  "source": "production/05-live-data-sync/lesson.md",
+  "knowledgeCheck": {
+    "schemaVersion": 1,
+    "lessonId": "prod-05",
+    "passingScorePercent": 80,
+    "questions": [
+      {
+        "id": "prod-05-q1",
+        "type": "single-choice",
+        "competency": "lifecycle",
+        "prompt": "What is the main difference between migration and live Data Sync?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Migration scans existing rows as a controlled job; Data Sync handles later trusted operations"
+          },
+          {
+            "id": "b",
+            "text": "Data Sync owns the business database"
+          },
+          {
+            "id": "c",
+            "text": "Migration is only for cloud vector providers"
+          }
+        ],
+        "correctOptionIds": [
+          "a"
+        ],
+        "explanation": "They converge on vector evidence but have different invocation, progress, and recovery contracts.",
+        "sourcePaths": [
+          "docs/course/production/05-live-data-sync/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-05-q2",
+        "type": "multiple-choice",
+        "competency": "trusted-boundary",
+        "prompt": "Which values must the application derive instead of trusting from a browser request?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Verified subject and scopes"
+          },
+          {
+            "id": "b",
+            "text": "Tenant identity"
+          },
+          {
+            "id": "c",
+            "text": "Allowed vector space"
+          },
+          {
+            "id": "d",
+            "text": "User-authored article title and body"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b",
+          "c"
+        ],
+        "explanation": "Domain content is input; identity, tenant, and infrastructure routing are server-owned context.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-data-sync/src/main/java/ai/fabric/datasync/dto/DataSyncVerifiedAuthContext.java"
+        ]
+      },
+      {
+        "id": "prod-05-q3",
+        "type": "single-choice",
+        "competency": "stable-identity",
+        "prompt": "How does a whole-article update replace existing evidence instead of creating a second vector?",
+        "options": [
+          {
+            "id": "a",
+            "text": "It uses the same logical article ID and no new chunk ID"
+          },
+          {
+            "id": "b",
+            "text": "It changes tenant metadata"
+          },
+          {
+            "id": "c",
+            "text": "It creates a new random ID for every version"
+          }
+        ],
+        "correctOptionIds": [
+          "a"
+        ],
+        "explanation": "Stable logical identity makes upsert retry-safe and allows delete to address the same evidence.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-data-sync/src/main/java/ai/fabric/datasync/service/DataSyncService.java"
+        ]
+      },
+      {
+        "id": "prod-05-q4",
+        "type": "single-choice",
+        "competency": "bypass-policy",
+        "prompt": "When should allowTrustedPlatformInternalSyncBypass be enabled?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Whenever a frontend sends a system-looking auth context"
+          },
+          {
+            "id": "b",
+            "text": "Only behind a trusted backend that verifies and injects the exact platform/system context"
+          },
+          {
+            "id": "c",
+            "text": "For every local development profile"
+          }
+        ],
+        "correctOptionIds": [
+          "b"
+        ],
+        "explanation": "The bypass is disabled by default because request DTO fields are not proof of identity.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-data-sync/src/main/java/ai/fabric/datasync/AIDataSyncProperties.java"
+        ]
+      },
+      {
+        "id": "prod-05-q5",
+        "type": "answer-reveal",
+        "competency": "partial-failure",
+        "prompt": "What should an operator do when one reconciliation operation succeeds and one fails?",
+        "modelAnswer": "Keep the application source rows authoritative, inspect each operation result and trace, correct the failed projection or provider condition, and retry only the failed stable IDs. Do not describe the whole batch as successful or roll back an already completed external vector operation by guessing.",
+        "sourcePaths": [
+          "docs/course/production/05-live-data-sync/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-05-q6",
+        "type": "implementation-defense",
+        "competency": "transactional-boundary",
+        "prompt": "Defend throwing when an article upsert fails while still requiring reconciliation.",
+        "modelAnswer": "Throwing rolls back the local source transaction when normalization, authorization, embedding, or vector write reports failure. However, the source database and external vector provider do not share one transaction, so commit-time or network ambiguity can still create divergence. Stable IDs, traces, visible errors, and a bounded reconciliation endpoint are still required.",
+        "reviewCriteria": [
+          "Explains local rollback",
+          "Rejects claims of a distributed transaction",
+          "Keeps source data authoritative",
+          "Requires stable-ID reconciliation"
+        ],
+        "sourcePaths": [
+          "docs/course/production/05-live-data-sync/lesson.md"
+        ]
+      }
+    ]
+  },
+  "assistantPrompt": "production/05-live-data-sync/assistant-prompt.md",
+  "assistantReviewPrompt": "production/05-live-data-sync/assistant-review-prompt.md",
+  "notebookSourceManifest": "production/05-live-data-sync/notebooklm/source-manifest.yml",
+  "theoryVideoIds": [],
+  "relatedStories": [],
+  "relatedDemos": [],
+  "track": "production",
+  "route": "/course/production/live-data-sync",
+  "frontMatter": {
+    "id": "prod-05",
+    "slug": "live-data-sync",
+    "title": "Keep Application Data Synchronized",
+    "track": "production",
+    "order": 5,
+    "durationMinutes": 85,
+    "availability": "preview",
+    "courseVersion": "0.3.3-course.1-beta",
+    "frameworkVersion": "0.3.3",
+    "frameworkTag": "ai-fabric-framework-v0.3.3",
+    "courseSourceTag": "ai-fabric-course-v0.3.3.1",
+    "starterRef": "course-0.3.3-p04-migration-backfill",
+    "solutionRef": "course-0.3.3-p05-live-data-sync",
+    "requiresOpenAi": false,
+    "requiresDocker": false,
+    "optionalProviderExercises": [],
+    "sourcePaths": [
+      "docs/course/production/05-live-data-sync/notebooklm/AI_FABRIC_MIGRATION_BACKFILL_LIVE_SYNC_NOTEBOOKLM_SCRIPT.md",
+      "ai-infrastructure-module/ai-fabric-data-sync/src/main/java/ai/fabric/datasync/service/DataSyncService.java",
+      "ai-infrastructure-module/ai-fabric-data-sync/src/main/java/ai/fabric/datasync/AIDataSyncProperties.java",
+      "ai-infrastructure-module/ai-fabric-data-sync/src/main/java/ai/fabric/datasync/dto/DataSyncVerifiedAuthContext.java",
+      "ai-infrastructure-module/ai-fabric-data-sync/src/main/java/ai/fabric/datasync/normalize/DataSyncEntityNormalizer.java"
+    ],
+    "theoryVideoIds": [],
+    "assistant": {
+      "mode": "implement",
+      "implementationPrompt": "assistant-prompt.md",
+      "reviewPrompt": "assistant-review-prompt.md",
+      "validationStatus": "passed"
+    },
+    "knowledgeCheck": {
+      "source": "knowledge-check.yml",
+      "required": true,
+      "passingScorePercent": 80
+    },
+    "video": {
+      "status": "script-ready",
+      "generator": "NotebookLM",
+      "purpose": "pre-lesson-theory",
+      "placement": "before-lab",
+      "targetDurationMinutes": 11,
+      "title": "From Existing Data To Continuous AI Evidence",
+      "publicUrl": null,
+      "transcript": "notebooklm/AI_FABRIC_MIGRATION_BACKFILL_LIVE_SYNC_NOTEBOOKLM_SCRIPT.md",
+      "sourceManifest": "notebooklm/source-manifest.yml"
+    }
+  },
+  "markdown": "# Keep Application Data Synchronized\n\n## Start Here\n\nPROD-04 established the initial vector state. Your application is still changing: support articles\nare created, corrected, and deleted. This lesson routes those trusted source operations through AI\nFabric Data Sync so semantic evidence converges on current business truth.\n\n> Start from `course-0.3.3-p04-migration-backfill`; compare with\n> `course-0.3.3-p05-live-data-sync`. The solution passed 58 deterministic tests and a packaged\n> ONNX/Lucene sync lifecycle. No external provider key or Docker service is required.\n\n## Migration And Sync Are Different\n\n```text\ninitial installation                     normal application operation\nexisting rows -> migration -> queue       authenticated create/update/delete\n                         -> vectors                              |\n                                                               v\n                                                        DataSyncService\n                                                               |\n                                                               v\n                                                            vectors\n```\n\nMigration has jobs, scanning progress, filters, pause/resume, and an indexing queue. Data Sync is a\ntrusted runtime write boundary with per-operation traces, stable IDs, normalization limits, access\ncontrol, and direct vector upsert/delete results.\n\n## What You Will Prove\n\n- the application, not the browser, supplies verified auth context and tenant identity;\n- only `knowledge-article` is available through the public domain API;\n- source rows remain authoritative and do not contain vector/provider details;\n- create produces searchable evidence;\n- update preserves the logical ID and replaces stale text;\n- delete removes both source state and derived evidence;\n- unauthorized and low-level raw requests produce no side effects;\n- invalid projection rolls back the source transaction;\n- batch limit and partial reconciliation failures remain visible;\n- traces distinguish correlation ID, source version, and idempotency key.\n\n## Prerequisites\n\n```bash\ngit clone https://github.com/Loom-AI-Labs/ai-fabric-course-support-assistant.git\ncd ai-fabric-course-support-assistant\ngit switch --detach course-0.3.3-p04-migration-backfill\ngit switch -c lesson/prod-05-live-data-sync\n./mvnw --batch-mode --no-transfer-progress clean verify\n```\n\n## Step 1: Enable The Module Conservatively\n\nAdd `ai-fabric-data-sync` at `${ai-fabric.version}` and configure:\n\n```yaml\nai:\n  data-sync:\n    enabled: true\n    base-path: /api/internal/ai-data-sync\n    max-batch-size: 2\n    max-content-chars: 1000\n    max-field-value-chars: 2000\n    allow-trusted-platform-internal-sync-bypass: false\n```\n\nKeep `allow-trusted-platform-internal-sync-bypass=false`. The low-level request contains a verified\nauth context DTO, but a public client cannot make its own JSON verified. The solution denies\n`/api/internal/ai-data-sync/**` and invokes `DataSyncService` behind an application-owned endpoint.\n\n## Step 2: Extend The Server Policy\n\nAlex receives `data-sync:upsert` and `data-sync:delete`; Riley intentionally does not. Extend the\napplication `EntityAccessPolicy` only for:\n\n```text\nresourceId = vectorSpace:knowledge-article\nWRITE  -> data-sync:upsert\nDELETE -> data-sync:delete\n```\n\nThe public controller has no `vectorSpace`, `tenantId`, or auth-context fields. It accepts domain\narticle inputs, loads the authenticated principal, verifies source ownership, and fixes the vector\nspace in Java.\n\n## Step 3: Build The Safe Projection\n\nAdd a JPA `@Version` field to `KnowledgeArticle`. Use the application article ID as the Data Sync\nlogical ID and send the current version through `DataSyncIdentity`. Project only fields approved for\nAI evidence:\n\n```text\nid, title, body, category, tenantId, status, visibility, visibleToUser\n```\n\nDo not include `internalNotes`. Derive a content fingerprint for retry evidence, and build\n`DataSyncTrace.authContext` from `CoursePrincipal`, never from request JSON.\n\nThe response projection may expose safe operational facts: operation, vector space, logical ID,\ncorrelation request ID, idempotency key, source version, and success/error code. It should not echo\nthe full auth context or provider metadata.\n\n## Step 4: Implement Create And Update\n\n`POST /api/knowledge/articles` creates the source row and upserts its evidence. `PUT\n/api/knowledge/articles/{id}` loads the row by authenticated tenant, updates it, flushes the source\nversion, and upserts the same logical vector ID.\n\n```bash\nexport COURSE_TOKEN=course-alex-local-token\ncurl -s -X POST http://localhost:8080/api/knowledge/articles \\\n  -H \"Authorization: Bearer $COURSE_TOKEN\" \\\n  -H 'Content-Type: application/json' \\\n  -d '{\"id\":\"article-live-sync\",\"title\":\"Enroll a passkey\",\"body\":\"Register a passkey in Security Settings before removing the password.\",\"category\":\"authentication\"}'\n\ncurl -s -X PUT http://localhost:8080/api/knowledge/articles/article-live-sync \\\n  -H \"Authorization: Bearer $COURSE_TOKEN\" \\\n  -H 'Content-Type: application/json' \\\n  -d '{\"title\":\"Replace a password with a security key\",\"body\":\"Register the hardware security key, verify it, then revoke the previous login method.\"}'\n```\n\nExpected: both operations report logical ID `article-live-sync`; the update reports source version\n`1`; the vector count rises only once; search returns the new hardware-key text and not the original\npasskey sentence.\n\nIf normalization, embedding, policy, or vector storage fails, throw a runtime exception so the\nsource transaction rolls back. This narrows inconsistency but does not create a distributed\ntransaction with an external vector store. Production systems still need reconciliation.\n\n## Step 5: Delete Stale Evidence\n\n```bash\ncurl -s -X DELETE http://localhost:8080/api/knowledge/articles/article-live-sync \\\n  -H \"Authorization: Bearer $COURSE_TOKEN\"\n```\n\nThe service verifies tenant ownership, removes the vector using the same logical ID, then removes\nthe source row. The test asserts both are absent and search cannot return the deleted evidence.\n\n## Step 6: Reconcile In Bounded Batches\n\n`POST /api/knowledge/sync/reconcile` accepts only source article IDs and rebuilds operations from\npersisted rows in the authenticated tenant. It is a repair path, not a second source API.\n\nThree IDs exceed `max-batch-size=2` and return HTTP `400` with `BATCH_TOO_LARGE`, zero successes, and\nzero vector side effects. A two-row test deliberately uses one oversized source projection. The\nvalid operation succeeds, the invalid one returns `INVALID_REQUEST`, and source rows remain\nunchanged. Partial failure is a result to inspect and repair, never a hidden success.\n\n## Intentional Failures\n\n1. Call create with Riley's token. Expect `403`; no row or vector is created.\n2. Call `/api/internal/ai-data-sync/upsert` directly. Expect an inaccessible route (`401`, `403`, or\n   `404`, depending on the active security entry point), never `2xx`.\n3. Submit more than 1,000 normalized characters. Expect `400/INVALID_REQUEST`; the source insert is\n   rolled back.\n4. Reconcile three IDs. Expect `400/BATCH_TOO_LARGE` and no operation execution.\n\n## Verification\n\n```bash\n./mvnw --batch-mode --no-transfer-progress clean verify\n./scripts/download-onnx-model.sh\nCOURSE_SMOKE_USE_EXISTING_JAR=true ./scripts/smoke-packaged.sh\njq '.liveDataSync' target/course-release-evidence/packaged-smoke-summary.json\n```\n\nExpected checkpoint: `course-0.3.3-p05-live-data-sync`; capability `liveDataSync=true`.\n\n## Done When\n\n- the raw Data Sync route cannot be used as a public identity boundary;\n- the public API derives tenant, auth context, vector space, and metadata server-side;\n- create/update/delete preserve source and evidence lifecycle rules;\n- update keeps one stable logical vector ID and removes stale text;\n- delete leaves no source row or retrievable vector;\n- rollback, authorization, batch limit, and partial failure tests pass;\n- 58 tests and the packaged ONNX/Lucene lifecycle pass.\n\n## Reset\n\n```bash\n./scripts/reset-course.sh\ngit switch --detach course-0.3.3-p04-migration-backfill\n```\n\n## Troubleshooting\n\n**`DataSyncService` is missing:** confirm the module dependency, `ai.data-sync.enabled=true`, vector\nprovider configuration, and embeddings feature flag.\n\n**Access is always denied:** verify the backend-built auth context has the subject, tenant, and exact\noperation scope, and that `EntityAccessPolicy` permits only `vectorSpace:knowledge-article`.\n\n**Update creates a second vector:** omit chunk identity for whole-record sync and keep the logical\narticle ID stable. A chunk ID intentionally changes the effective target identity.\n\n**Delete says `Not found`:** distinguish idempotent vector absence from source ownership. The domain\nAPI must still verify and delete the correct source row.\n\n**A batch partially fails:** inspect every result, retain source truth, and rerun only failed stable\nIDs after correcting the projection/provider problem.\n\n## Next Lesson\n\nPROD-06 turns retrieval expectations, no-source behavior, tenant isolation, and prompt rules into a\nrepeatable quality scorecard.",
+  "assistant": {
+    "mode": "implement",
+    "validationStatus": "passed",
+    "implementationPrompt": "# Coding Assistant Prompt: Implement PROD-05 Live Data Sync\n\nWork from `course-0.3.3-p04-migration-backfill` in the learner repository.\n\nAdd the released Data Sync module and an application-owned knowledge article create/update/delete\nboundary. Derive verified auth context, tenant, scopes, vector space, metadata, source version, and\ntrace server-side. Keep the raw framework DTO endpoint externally inaccessible and keep trusted\nplatform bypass disabled. Add a bounded reconciliation endpoint and tests for stable identity,\nstale-content replacement, delete, access denial, invalid-content rollback, batch limit, and visible\npartial failure. Extend readiness, release evidence, HTTP requests, and packaged ONNX/Lucene smoke.\n\nDo not accept client auth context or vector space, put internal notes in evidence, claim a distributed\ntransaction, hide per-operation failures, or require a cloud key. Run `clean verify` and packaged\nsmoke.\n",
+    "reviewPrompt": "# Independent Review Prompt: PROD-05 Live Data Sync\n\nReview `course-0.3.3-p04-migration-backfill..course-0.3.3-p05-live-data-sync`.\n\nLead with findings. Verify the public boundary derives identity, tenant, scope, vector space, and\nprojection from trusted backend state; internal bypass is false; the low-level endpoint is not\npublic; private fields are absent; IDs remain stable; source rollback and external-store limits are\ndescribed honestly; stale update/delete evidence is tested; and batch denial, limits, and partial\nfailure have no hidden success. Require clean tests and packaged ONNX/Lucene proof.\n"
+  },
+  "video": {
+    "status": "script-ready",
+    "generator": "NotebookLM",
+    "purpose": "pre-lesson-theory",
+    "placement": "before-lab",
+    "targetDurationMinutes": 11,
+    "title": "From Existing Data To Continuous AI Evidence",
+    "publicUrl": null,
+    "transcript": "# NotebookLM Video Script: From Existing Data To Continuous AI Evidence\n\n## Production Instruction\n\nProduce an eleven-minute technical video for Java and Spring Boot developers. Use only this script.\nShow one continuing Support Knowledge Assistant and make source ownership, stable identity, security,\nand recovery visible.\n\n## Opening\n\nAdding semantic search to an existing application has two time horizons. First, historical rows must\nbe backfilled. Then every trusted create, update, and delete must keep derived AI evidence aligned\nwith current application truth. Solving only the first horizon creates a demo that becomes stale the\nmoment a real user changes data.\n\nAI Fabric separates migration from live Data Sync.\n\n## Initial Backfill Flow\n\nDescribe this diagram:\n\n```text\nexisting application rows\n       |\n       v\nmigration job -- bounded scan, filters, pause/resume\n       |\n       v\ndurable indexing queue -- retry and failure state\n       |\n       v\nembedding provider -> vector provider\n```\n\nMigration establishes initial derived evidence. Job completion means scanning and enqueueing\nfinished. Queue drain and expected retrievable vectors prove readiness.\n\n## Live Synchronization Flow\n\n```text\nauthenticated domain request\n       |\napplication verifies user, tenant, source ownership, allowed dataset\n       |\napplication transaction changes source row\n       |\nData Sync normalizes allowed fields, checks access, embeds, upserts/deletes stable ID\n       |\nsafe result and correlation trace\n```\n\nThe browser supplies article content and intent to create, update, or delete. It does not supply a\ntrusted tenant, auth context, arbitrary vector space, or provider route. The backend derives those\nvalues from verified identity and persisted source state.\n\n## Stable Identity\n\nUse the source article ID as the whole-record logical ID. A source version and content fingerprint\nprovide retry evidence. Updating article `article-live-sync` upserts that same logical ID, replacing\nold text. Deleting it addresses the same ID. Chunk IDs are useful for document chunks but would\nintentionally create distinct effective IDs, so omit them for this whole-record example.\n\n## Access And Bypass\n\nAI Fabric Data Sync requires verified auth context and delegates to `EntityAccessPolicy`. The\nframework includes an opt-in platform/system bypass, but it remains disabled unless a trusted\nbackend verifies and injects the exact system identity and scope. A frontend cannot prove trust by\nsending system-shaped JSON.\n\nThe Support Knowledge Assistant exposes domain-specific endpoints and denies the raw Data Sync DTO\nroute. Its policy permits only `vectorSpace:knowledge-article` and exact upsert/delete scopes.\n\n## Normalization And Privacy\n\nThe application projects approved article fields. Internal notes never enter Data Sync. The\nnormalizer uses configured searchable and metadata fields, bounds content and field lengths, and\nfails closed on invalid or oversized input. Embedding and vector failures remain explicit.\n\n## Consistency And Recovery\n\nThrowing on an upsert failure can roll back the local database transaction, but a relational\ndatabase and external vector provider do not share one atomic transaction. A response may be lost\nafter a vector write, or a source commit may fail afterward. Stable IDs, correlation traces,\nidempotent retries, and reconciliation remain necessary.\n\nA reconciliation endpoint reloads source rows, builds bounded operations, and reports every result.\nOne failed operation does not become a generic success. An oversized batch is rejected before side\neffects.\n\n## Incorrect Architecture\n\nAn incorrect design publishes the raw Data Sync controller and lets the browser submit tenant and\nauth-context fields. Another uses a random vector ID for every update. The first permits identity\nforgery; the second leaves stale versions retrievable and makes delete unreliable.\n\n## Visible Failure\n\nWhen one row exceeds normalization limits, the batch reports one success and one\n`INVALID_REQUEST`. Source rows remain unchanged. Operators can identify the failed stable ID,\ncorrect it, and retry it. No fallback invents evidence and no success card hides the failure.\n\n## Lab Bridge\n\nIn PROD-05, you will implement that trusted boundary, prove stable create/update/delete behavior,\ndeny raw access, and exercise reconciliation failures with local ONNX and Lucene. PROD-06 then turns\nthe resulting evidence behavior into a deterministic RAG quality gate.\n",
+    "sourceManifest": "notebooklm/source-manifest.yml",
+    "notebookStatus": "script-ready",
+    "reviewedAt": null,
+    "reviewedBy": null
+  },
+  "sourcePath": "docs/course/production/05-live-data-sync/lesson.md",
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/main/docs/course/production/05-live-data-sync/lesson.md"
+}

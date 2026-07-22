@@ -7,6 +7,13 @@ import core05Data from "@/content/course/generated/lessons/core-05.json";
 import core06Data from "@/content/course/generated/lessons/core-06.json";
 import core07Data from "@/content/course/generated/lessons/core-07.json";
 import prod01Data from "@/content/course/generated/lessons/prod-01.json";
+import prod02Data from "@/content/course/generated/lessons/prod-02.json";
+import prod03Data from "@/content/course/generated/lessons/prod-03.json";
+import prod04Data from "@/content/course/generated/lessons/prod-04.json";
+import prod05Data from "@/content/course/generated/lessons/prod-05.json";
+import prod06Data from "@/content/course/generated/lessons/prod-06.json";
+import prod07Data from "@/content/course/generated/lessons/prod-07.json";
+import prod08Data from "@/content/course/generated/lessons/prod-08.json";
 import quickstartData from "@/content/course/generated/lessons/qs-01.json";
 
 import type {
@@ -28,6 +35,13 @@ const renderedLessons: Record<string, RenderedCourseLesson> = {
   "core-06": core06Data as RenderedCourseLesson,
   "core-07": core07Data as RenderedCourseLesson,
   "prod-01": prod01Data as RenderedCourseLesson,
+  "prod-02": prod02Data as RenderedCourseLesson,
+  "prod-03": prod03Data as RenderedCourseLesson,
+  "prod-04": prod04Data as RenderedCourseLesson,
+  "prod-05": prod05Data as RenderedCourseLesson,
+  "prod-06": prod06Data as RenderedCourseLesson,
+  "prod-07": prod07Data as RenderedCourseLesson,
+  "prod-08": prod08Data as RenderedCourseLesson,
 };
 
 export const courseTracks = courseCatalog.tracks;

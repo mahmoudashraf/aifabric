@@ -1,0 +1,236 @@
+{
+  "id": "prod-07",
+  "slug": "qdrant",
+  "title": "Move To A Managed Vector Provider",
+  "description": "Preserve the retrieval contract while proving Qdrant lifecycle, filtering, readiness, and failure behavior.",
+  "durationMinutes": 90,
+  "availability": "preview",
+  "source": "production/07-qdrant/lesson.md",
+  "knowledgeCheck": {
+    "schemaVersion": 1,
+    "lessonId": "prod-07",
+    "passingScorePercent": 80,
+    "questions": [
+      {
+        "id": "prod-07-q1",
+        "type": "single-choice",
+        "competency": "provider-contract",
+        "prompt": "What should application business code change when Lucene is replaced by Qdrant?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Only provider dependency and configuration; the retrieval contract remains"
+          },
+          {
+            "id": "b",
+            "text": "Every controller must call the Qdrant SDK"
+          },
+          {
+            "id": "c",
+            "text": "Tenant filters must be removed"
+          }
+        ],
+        "correctOptionIds": [
+          "a"
+        ],
+        "explanation": "AI Fabric's vector contract keeps application services independent of the native provider client.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/rag/VectorDatabaseService.java"
+        ]
+      },
+      {
+        "id": "prod-07-q2",
+        "type": "multiple-choice",
+        "competency": "parity-proof",
+        "prompt": "Which checks establish useful provider parity?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Embedding dimensions"
+          },
+          {
+            "id": "b",
+            "text": "Tenant metadata filtering and post-hit checks"
+          },
+          {
+            "id": "c",
+            "text": "Upsert, delete, count, and readiness"
+          },
+          {
+            "id": "d",
+            "text": "Process startup alone"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b",
+          "c"
+        ],
+        "explanation": "Startup does not prove storage connectivity or lifecycle semantics.",
+        "sourcePaths": [
+          "docs/course/production/07-qdrant/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-07-q3",
+        "type": "single-choice",
+        "competency": "dimensions",
+        "prompt": "What should happen before switching to an embedding model with different dimensions?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Use a new compatible collection or controlled reindex"
+          },
+          {
+            "id": "b",
+            "text": "Pad vectors silently"
+          },
+          {
+            "id": "c",
+            "text": "Disable Qdrant validation"
+          }
+        ],
+        "correctOptionIds": [
+          "a"
+        ],
+        "explanation": "A collection has a fixed vector dimension contract.",
+        "sourcePaths": [
+          "docs/course/production/07-qdrant/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-07-q4",
+        "type": "single-choice",
+        "competency": "failure-visibility",
+        "prompt": "What is the expected behavior when selected Qdrant is unreachable?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Return a visible provider failure and preserve source truth"
+          },
+          {
+            "id": "b",
+            "text": "Silently switch to Lucene"
+          },
+          {
+            "id": "c",
+            "text": "Report a successful index count"
+          }
+        ],
+        "correctOptionIds": [
+          "a"
+        ],
+        "explanation": "Fallback is disabled so operations cannot claim success against another store.",
+        "sourcePaths": [
+          "docs/course/production/07-qdrant/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-07-q5",
+        "type": "answer-reveal",
+        "competency": "tenancy",
+        "prompt": "Why are collection prefixes and tenant metadata both needed in this lesson?",
+        "modelAnswer": "The collection prefix isolates this application's entity collections from unrelated applications. Tenant metadata separates authenticated tenants inside the shared knowledge collection. Exact provider filtering narrows results and application post-hit verification fails closed if the adapter returns an invalid hit.",
+        "sourcePaths": [
+          "docs/course/production/07-qdrant/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-07-q6",
+        "type": "implementation-defense",
+        "competency": "cloud-evidence",
+        "prompt": "Defend labelling Qdrant Cloud separately from the local Docker proof.",
+        "modelAnswer": "Docker proves the adapter contract against a pinned real Qdrant server without credentials. Cloud adds endpoint, TLS, authentication, and deployment-specific behavior. It remains NOT RUN until the same contract is executed with protected secrets; local success must not be presented as cloud verification.",
+        "reviewCriteria": [
+          "Distinguishes adapter and deployment evidence",
+          "Requires protected secrets",
+          "Requires the same lifecycle and filter assertions",
+          "Rejects inferred cloud success"
+        ],
+        "sourcePaths": [
+          "docs/course/production/07-qdrant/lesson.md"
+        ]
+      }
+    ]
+  },
+  "assistantPrompt": "production/07-qdrant/assistant-prompt.md",
+  "assistantReviewPrompt": "production/07-qdrant/assistant-review-prompt.md",
+  "notebookSourceManifest": "production/07-qdrant/notebooklm/source-manifest.yml",
+  "theoryVideoIds": [],
+  "relatedStories": [],
+  "relatedDemos": [],
+  "track": "production",
+  "route": "/course/production/qdrant",
+  "frontMatter": {
+    "id": "prod-07",
+    "slug": "qdrant",
+    "title": "Move To A Managed Vector Provider",
+    "track": "production",
+    "order": 7,
+    "durationMinutes": 90,
+    "availability": "preview",
+    "courseVersion": "0.3.3-course.1-beta",
+    "frameworkVersion": "0.3.3",
+    "frameworkTag": "ai-fabric-framework-v0.3.3",
+    "courseSourceTag": "ai-fabric-course-v0.3.3.1",
+    "starterRef": "course-0.3.3-p06-rag-quality",
+    "solutionRef": "course-0.3.3-p07-qdrant",
+    "requiresOpenAi": false,
+    "requiresDocker": true,
+    "optionalProviderExercises": [
+      "qdrant-cloud"
+    ],
+    "sourcePaths": [
+      "docs/course/production/04-migration-backfill/notebooklm/AI_FABRIC_STATE_STORAGE_MAP_NOTEBOOKLM_SCRIPT.md",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/rag/VectorDatabaseService.java",
+      "ai-infrastructure-module/victor-databases/ai-fabric-vector-qdrant/src/main/java/ai/fabric/vector/qdrant/QdrantVectorAutoConfiguration.java",
+      "ai-infrastructure-module/victor-databases/ai-fabric-vector-qdrant/src/main/java/ai/fabric/vector/qdrant/QdrantVectorDatabaseService.java"
+    ],
+    "theoryVideoIds": [],
+    "assistant": {
+      "mode": "implement",
+      "implementationPrompt": "assistant-prompt.md",
+      "reviewPrompt": "assistant-review-prompt.md",
+      "validationStatus": "passed"
+    },
+    "knowledgeCheck": {
+      "source": "knowledge-check.yml",
+      "required": true,
+      "passingScorePercent": 80
+    },
+    "video": {
+      "status": "script-ready",
+      "generator": "NotebookLM",
+      "purpose": "pre-lesson-theory",
+      "placement": "before-lab",
+      "targetDurationMinutes": 10,
+      "title": "State And Storage In An AI Fabric Application",
+      "publicUrl": null,
+      "transcript": "../04-migration-backfill/notebooklm/AI_FABRIC_STATE_STORAGE_MAP_NOTEBOOKLM_SCRIPT.md",
+      "sourceManifest": "notebooklm/source-manifest.yml"
+    }
+  },
+  "markdown": "# Move To A Managed Vector Provider\n\nYou will replace Lucene with Docker Qdrant without changing the application retrieval contract.\nThis is a provider substitution exercise, not a rewrite of RAG, tenant policy, migration, or Data\nSync.\n\n## Outcome\n\nYou will:\n\n- add the published `ai-fabric-vector-qdrant` module beside Lucene;\n- select Qdrant through a dedicated Spring profile;\n- keep ONNX embeddings and 384 dimensions;\n- create a scoped collection and required payload index;\n- prove metadata filtering and post-hit tenant verification;\n- rerun the PROD-06 golden scorecard unchanged;\n- prove create, stable update, delete, count, and readiness behavior;\n- make an unreachable Qdrant fail visibly with no Lucene fallback;\n- optionally point the same profile at Qdrant Cloud through runtime secrets.\n\n## Start Here\n\n```bash\ngit clone https://github.com/Loom-AI-Labs/ai-fabric-course-support-assistant.git\ncd ai-fabric-course-support-assistant\ngit switch --detach course-0.3.3-p06-rag-quality\n./mvnw --batch-mode --no-transfer-progress clean verify\n./scripts/download-onnx-model.sh\n```\n\nDocker must be running. No API key is required for local Qdrant.\n\n## What Changes And What Does Not\n\n```text\nunchanged:\n  application source database\n  -> AI Fabric projection\n  -> ONNX embedding (384 dimensions)\n  -> tenant/status/visibility filters\n  -> RAG quality contract\n\nchanged:\n  Lucene VectorDatabaseService\n  -> Qdrant VectorDatabaseService\n```\n\nApplication controllers and services continue to depend on `VectorDatabaseService`,\n`AICoreService`, and `DataSyncService`. No Qdrant SDK appears in application business code.\n\n## Step 1: Add The Provider Module\n\nAdd the Maven Central artifact under the existing AI Fabric BOM:\n\n```xml\n<dependency>\n  <groupId>io.github.loom-ai-labs</groupId>\n  <artifactId>ai-fabric-vector-qdrant</artifactId>\n</dependency>\n```\n\nKeep `ai-fabric-vector-lucene`; the `local` profile remains the portable, keyless Lucene gate. The\nactive `ai.vector-db.type` selects one provider.\n\n## Step 2: Add A Qdrant Profile\n\n`application-qdrant.yml` selects:\n\n```yaml\nai:\n  providers:\n    embedding-provider: onnx\n    enable-fallback: false\n    qdrant:\n      enabled: true\n      host: ${AI_PROVIDERS_QDRANT_HOST:127.0.0.1}\n      port: ${AI_PROVIDERS_QDRANT_PORT:6333}\n      grpc-port: ${AI_PROVIDERS_QDRANT_GRPC_PORT:6334}\n      api-key: ${AI_PROVIDERS_QDRANT_API_KEY:}\n      prefer-grpc: ${AI_PROVIDERS_QDRANT_PREFER_GRPC:false}\n      collection-prefix: ${AI_PROVIDERS_QDRANT_COLLECTION_PREFIX:course_prod07__}\n  vector-db:\n    type: qdrant\n```\n\nThe prefix isolates course collections from unrelated applications using the same local instance.\nIt is not a substitute for tenant metadata: both course tenants intentionally share one entity-type\ncollection and are separated by exact metadata filters plus application post-hit checks.\n\n## Step 3: Start Qdrant\n\nManual durable environment:\n\n```bash\ndocker compose -f compose.qdrant.yml up -d\ncurl --fail http://localhost:6333/readyz\n./mvnw spring-boot:run -Dspring-boot.run.profiles=qdrant\n```\n\nThe compose file pins `qdrant/qdrant:v1.16.1` and uses a named volume. Do not use an unpinned\n`latest` image in release proof.\n\n## Step 4: Index And Inspect The Collection\n\n```bash\ncurl -s -X POST http://localhost:8080/api/demo/seed\ncurl -s -X POST http://localhost:8080/api/demo/index | jq\ncurl -s http://localhost:6333/collections/course_prod07__knowledge-article | jq\n```\n\nVerify:\n\n- collection vector size is `384`;\n- distance is `Cosine`;\n- `knowledgeSourceHandleRef` has a keyword payload schema;\n- the application reports nine indexed knowledge vectors.\n\nDimensions are an application/provider contract. Switching to an embedding model with different\ndimensions requires a separately named collection or controlled reindex; do not write mixed vector\nsizes into an existing collection.\n\n## Step 5: Inspect Typed Provider Readiness\n\n`/api/demo/readiness` now projects safe capabilities from `VectorDatabaseService`:\n\n```json\n{\n  \"vectorProvider\": {\n    \"provider\": \"qdrant\",\n    \"nativeClient\": \"qdrant-rest-api\",\n    \"transport\": \"rest\",\n    \"scopePrefix\": \"course_prod07__\",\n    \"searchMetadataFiltering\": true,\n    \"scanMetadataFiltering\": true,\n    \"durableStorage\": true,\n    \"productionProfileSafe\": true\n  }\n}\n```\n\nThe API does not expose the Qdrant API key. Provider health, source counts, vector counts, migration\nqueue state, and generation-provider state are different readiness concerns; PROD-08 separates them\nfurther.\n\n## Step 6: Reuse The Quality Contract\n\nRun both existing suites without changing expected IDs:\n\n```bash\ncurl -s http://localhost:8080/api/quality/rag/golden \\\n  -H 'Authorization: Bearer course-alex-local-token' | jq\ncurl -s http://localhost:8080/api/quality/rag/golden \\\n  -H 'Authorization: Bearer course-riley-local-token' | jq\n```\n\nTenant Blue retrieves `article-vpn-blue`; Tenant Red retrieves `article-vpn-red`; restricted and\ncross-tenant IDs remain absent. A provider migration is not complete merely because nine points\nexist.\n\n## Step 7: Prove Lifecycle Parity\n\nCreate, update, and delete `article-qdrant-sync` through the same trusted application endpoints used\nin PROD-05. The create and update responses must return the same vector ID. After delete, source and\nQdrant counts return to nine and search cannot return the deleted evidence.\n\nQdrant uses provider-durable storage, but vector evidence is still derived. Application source rows\nremain authoritative and reconciliation remains necessary after ambiguous network failures.\n\n## Step 8: Prove Visible Failure\n\nThe Docker smoke starts a second packaged app configured to an unused Qdrant port. Source seeding\nsucceeds because it is application-owned. Indexing returns HTTP `503` with\n`AI evidence operation failed`.\n\nIt does not:\n\n- switch to Lucene;\n- return a fake success count;\n- delete source rows;\n- expose endpoint internals in the public error.\n\n## Required Verification\n\n```bash\n./mvnw --batch-mode --no-transfer-progress clean verify\nCOURSE_SMOKE_USE_EXISTING_JAR=true ./scripts/smoke-packaged.sh\nCOURSE_SMOKE_USE_EXISTING_JAR=true ./scripts/smoke-qdrant.sh\njq . target/course-release-evidence/qdrant-smoke-summary.json\n```\n\nExpected checkpoint: `course-0.3.3-p07-qdrant`. The Java suite contains 64 tests. Both the packaged\nLucene gate and Docker Qdrant gate are blocking.\n\n## Optional Qdrant Cloud\n\nStore these only in your shell, IDE secret field, CI secrets, or deployment secret store:\n\n```bash\nexport AI_PROVIDERS_QDRANT_HOST='https://<cluster-host>'\nexport AI_PROVIDERS_QDRANT_GRPC_PORT='6334'\nexport AI_PROVIDERS_QDRANT_API_KEY='<secret>'\nexport AI_PROVIDERS_QDRANT_PREFER_GRPC='true'\nexport AI_PROVIDERS_QDRANT_COLLECTION_PREFIX='course_cloud__'\n./mvnw spring-boot:run -Dspring-boot.run.profiles=qdrant\n```\n\nConfirm the endpoint and TLS/port values from your Qdrant deployment. Never commit the key or put it\nin an HTTP request file. Cloud proof is `NOT RUN` until the same dimensions, filtering, lifecycle,\nreadiness, and failure assertions execute against that deployment. OpenAI is unrelated and not\nrequired.\n\n## Intentional Failures\n\n1. Set `AI_PROVIDERS_QDRANT_PORT` to an unused port. Indexing returns `503`; no fallback occurs.\n2. Change ONNX dimensions without recreating/reindexing the collection. The provider rejects the\n   mismatch; do not coerce vectors.\n3. Remove tenant filters from a test request. The independent post-hit boundary must reject any\n   cross-tenant result.\n4. Stop Qdrant after source update. Retain source truth and reconcile after provider recovery.\n\n## Done When\n\n- the normal 64-test build passes;\n- the packaged Lucene gate still passes;\n- Docker Qdrant reports 384 dimensions and the required payload schema;\n- provider readiness identifies Qdrant REST and the collection prefix without secrets;\n- both tenant golden suites pass unchanged;\n- create/update use one stable vector ID and delete restores the count;\n- unreachable Qdrant returns 503 with no Lucene or canned fallback;\n- Qdrant Cloud remains explicitly optional and honestly labelled.\n\n## Reset And Cleanup\n\n```bash\ndocker compose -f compose.qdrant.yml down -v\n./scripts/reset-course.sh\ngit switch --detach course-0.3.3-p06-rag-quality\n```\n\nThe automated smoke removes its temporary container. The manual compose command above removes the\nnamed course volume only when you include `-v`.\n\n## Troubleshooting\n\n**The app starts but indexing fails:** Qdrant is connected lazily. Check `/readyz`, host/port,\ntransport, API key, and the operation error; process startup alone is not provider readiness.\n\n**Collection size is not 384:** the active embedding profile changed or the collection is stale.\nUse a new prefix or perform a controlled clear and reindex.\n\n**Filtered search uses fallback:** inspect `searchFilterMode`, verified payload indexes, and Qdrant\npayload schema. Never remove the application post-hit check.\n\n**Cloud gRPC cannot connect:** use an `https://` host to enable TLS in the current adapter, verify the\ngRPC port, and keep `prefer-grpc=true`; use the REST profile when your deployment exposes REST only.\n\n## Next Lesson\n\nPROD-08 turns all accumulated tests into an operations and release gate with restart, persistence,\ncleanup, build identity, and separately retained optional-provider evidence.",
+  "assistant": {
+    "mode": "implement",
+    "validationStatus": "passed",
+    "implementationPrompt": "# Coding Assistant Prompt: PROD-07\n\nImplement the managed-vector checkpoint in the continuing Support Knowledge Assistant.\n\nConstraints:\n\n- start from `course-0.3.3-p06-rag-quality`;\n- add the published AI Fabric Qdrant module; do not call its native SDK from application code;\n- retain Lucene for the normal local gate and select Qdrant through a separate profile;\n- retain ONNX and prove 384-dimensional Qdrant configuration;\n- use a pinned Docker Qdrant image and isolated collection prefix;\n- expose a safe typed provider-readiness projection with no API key;\n- rerun both tenant golden suites unchanged;\n- prove payload schema, stable upsert identity, delete/count, and provider durability diagnostics;\n- configure fallback false and prove an unreachable selected Qdrant returns a visible failure;\n- add CI, cleanup, exact commands, and a separate optional Qdrant Cloud section;\n- never commit a cloud key or claim cloud verification when it was not run.\n\nBefore editing, map the current vector interface, Lucene profile, ONNX dimensions, tenant filters,\nData Sync lifecycle, quality suite, and packaged smoke. Report exact local Docker evidence and any\noptional cloud status after implementation.\n",
+    "reviewPrompt": "# Independent Review Prompt: PROD-07\n\nReview the PROD-07 checkpoint findings-first.\n\nVerify:\n\n- application code still depends on AI Fabric contracts, not Qdrant SDK types;\n- Lucene and Qdrant profiles select exactly one vector provider;\n- ONNX dimensions match the Qdrant collection;\n- collection prefix and payload schema are explicit;\n- tenant filters and post-hit verification remain unchanged;\n- both golden scorecards pass against Qdrant;\n- create/update/delete/count and stable vector identity are exercised;\n- typed diagnostics describe the effective REST/gRPC transport without exposing keys;\n- unreachable selected Qdrant fails visibly with no Lucene fallback;\n- Docker resources are always cleaned up;\n- cloud claims are `NOT RUN` unless protected-key evidence exists;\n- clean tests, packaged Lucene smoke, and Docker Qdrant smoke all pass.\n\nRun the documented gates and cite file/line evidence for every finding. Do not approve from startup\nhealth alone.\n"
+  },
+  "video": {
+    "status": "script-ready",
+    "generator": "NotebookLM",
+    "purpose": "pre-lesson-theory",
+    "placement": "before-lab",
+    "targetDurationMinutes": 10,
+    "title": "State And Storage In An AI Fabric Application",
+    "publicUrl": null,
+    "transcript": "# NotebookLM Video Script: State And Storage In An AI Fabric Application\n\n## Production Instruction\n\nProduce an eleven-minute technical video for Java and Spring Boot developers. Use this script as the\ncomplete source. Keep the Support Knowledge Assistant example central and distinguish durable\nbusiness state, durable AI workflow state, derived evidence, and ephemeral runtime state.\n\n## Opening\n\nAdding AI Fabric to a Spring Boot app does not create one new universal AI database. A production AI\nworkflow crosses stores with different owners and recovery rules. Confusing them creates stale\nanswers, leaked evidence, lost confirmations, and misleading readiness checks.\n\nThe central rule is simple: the application database remains business truth. AI Fabric adds\nspecialized state around it.\n\n## The Storage Map\n\nDescribe this diagram:\n\n```text\nApplication database\n  knowledge articles, users, tickets, raw business events\n       |\n       +--> migration job --> indexing queue --> vector provider\n       |                                          derived evidence\n       |\n       +--> application actions mutate business truth\n\nAI workflow state\n  chat sessions and turns\n  pending confirmations and action drafts\n  behavior insights\n  optional registered actions\n\nRuntime state\n  caches, model clients, diagnostics snapshots\n```\n\nThe application database owns article text, tenant ownership, publication status, and internal\nnotes. The vector provider owns a derived semantic projection with stable entity IDs and retrieval\nmetadata. It must be possible to rebuild vectors from source truth.\n\n## Initial Backfill\n\nWhen AI Fabric is introduced to an existing system, rows already exist. A migration job scans them\nin bounded batches and records progress. It creates durable indexing work. The indexing worker then\nprojects allowed content, generates embeddings, and updates the vector provider.\n\nThere are therefore three different completion questions: has the source scan completed, has the\nqueue drained without dead letters, and are the expected vectors retrievable? A production readiness\nAPI should answer all three.\n\n## Continuous Synchronization\n\nBackfill is not live synchronization. After initial migration, trusted create, update, and delete\nevents keep derived evidence aligned with source truth. An update reuses the stable entity ID. A\ndelete removes the corresponding vector. Failed synchronization remains visible and retryable.\n\nThe next lesson implements that boundary directly.\n\n## Conversation And Action State\n\nChat sessions and turns are durable application conversations, not vector evidence. Pending actions\nand drafts preserve confirmation context. Production systems should use a durable implementation\nwhen a confirmation must survive restart. The browser sends only the new user message; the backend\nloads authorized history.\n\nAction execution still belongs to the application transaction. AI Fabric may discover, validate,\nand gate an action, but the domain database records the actual business mutation.\n\n## Behavior And Registry State\n\nRaw behavior events remain in the application or event platform and are supplied through\n`ExternalEventProvider`. AI Fabric can store derived behavior insights. The optional action registry\nstores approved action definitions; it does not replace domain authorization or execution code.\n\n## Ephemeral State\n\nCaches, model clients, and diagnostics snapshots may be rebuilt after restart. Correctness cannot\ndepend on an ephemeral cache. A model cache may improve connection reuse; it cannot become a hidden\nsession store or authorization source.\n\n## Incorrect Architecture\n\nAn incorrect design writes business updates only to vectors. A user then changes an article in the\nsource database, but search still returns the old vector. Another design calls a migration job\ncomplete as soon as rows are scanned while the indexing worker is stopped. Both make derived state\nlook authoritative or ready when it is not.\n\n## Visible Failure\n\nIf indexing fails, keep the source row, migration progress, queue failure, and missing vector\nobservable. Do not return a canned AI answer or silently write a different store. Operators need to\nknow which stage failed and whether retry is safe.\n\n## Lab Bridge\n\nIn PROD-04, you will bind an existing repository, run a bounded admin migration, inspect source,\njob, queue, and vector state separately, and prove an idempotent rerun. PROD-05 then applies trusted\ncreate, update, and delete synchronization to keep that evidence current.\n",
+    "sourceManifest": "notebooklm/source-manifest.yml",
+    "notebookStatus": "script-ready",
+    "reviewedAt": null,
+    "reviewedBy": null
+  },
+  "sourcePath": "docs/course/production/07-qdrant/lesson.md",
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/main/docs/course/production/07-qdrant/lesson.md"
+}

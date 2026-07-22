@@ -1,0 +1,235 @@
+{
+  "id": "prod-06",
+  "slug": "rag-quality",
+  "title": "RAG Quality And Prompt Regression",
+  "description": "Gate expected evidence, no-source behavior, tenant boundaries, and prompt changes deterministically.",
+  "durationMinutes": 75,
+  "availability": "preview",
+  "source": "production/06-rag-quality/lesson.md",
+  "knowledgeCheck": {
+    "schemaVersion": 1,
+    "lessonId": "prod-06",
+    "passingScorePercent": 80,
+    "questions": [
+      {
+        "id": "prod-06-q1",
+        "type": "single-choice",
+        "competency": "deterministic-gates",
+        "prompt": "What should block a RAG release before generated wording is reviewed?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Missing expected evidence or returned forbidden tenant evidence"
+          },
+          {
+            "id": "b",
+            "text": "A different sentence structure from the previous model run"
+          },
+          {
+            "id": "c",
+            "text": "A lower token count"
+          }
+        ],
+        "correctOptionIds": [
+          "a"
+        ],
+        "explanation": "Evidence identity and policy boundaries are deterministic release contracts; prose is model-dependent.",
+        "sourcePaths": [
+          "docs/course/production/06-rag-quality/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-06-q2",
+        "type": "single-choice",
+        "competency": "no-source",
+        "prompt": "What is the correct behavior when the vector index contains no approved evidence?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Skip generation and return a visible no-evidence result"
+          },
+          {
+            "id": "b",
+            "text": "Ask the LLM to answer from general knowledge"
+          },
+          {
+            "id": "c",
+            "text": "Search another tenant"
+          }
+        ],
+        "correctOptionIds": [
+          "a"
+        ],
+        "explanation": "No-source behavior must remain explicit and cannot widen the factual or tenant boundary.",
+        "sourcePaths": [
+          "docs/course/production/06-rag-quality/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-06-q3",
+        "type": "multiple-choice",
+        "competency": "freshness",
+        "prompt": "Which checks detect a stale vector after a source update?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The stable evidence ID is observed"
+          },
+          {
+            "id": "b",
+            "text": "A required fragment from the new source is present"
+          },
+          {
+            "id": "c",
+            "text": "A forbidden fragment from the old source is absent"
+          },
+          {
+            "id": "d",
+            "text": "The model answer sounds confident"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b",
+          "c"
+        ],
+        "explanation": "Stable identity plus current/old content checks prove replacement; confidence does not.",
+        "sourcePaths": [
+          "docs/course/production/06-rag-quality/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-06-q4",
+        "type": "single-choice",
+        "competency": "prompt-regression",
+        "prompt": "Why does the prompt gate assert slots and resolution versions instead of exact generated prose?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Template structure is deterministic while model wording can vary"
+          },
+          {
+            "id": "b",
+            "text": "Prompt content is an authorization mechanism"
+          },
+          {
+            "id": "c",
+            "text": "Citation IDs are unnecessary"
+          }
+        ],
+        "correctOptionIds": [
+          "a"
+        ],
+        "explanation": "Prompt packaging can be tested deterministically without pretending that model sentences are stable.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/prompt/PromptTemplateResolver.java"
+        ]
+      },
+      {
+        "id": "prod-06-q5",
+        "type": "answer-reveal",
+        "competency": "scorecard-semantics",
+        "prompt": "Why can a quality endpoint return HTTP 200 with passed=false?",
+        "modelAnswer": "HTTP 200 means the evaluation operation completed. The structured result means the evaluated retrieval contract failed. CI must inspect passed and failureCodes rather than treating transport success as quality success.",
+        "sourcePaths": [
+          "docs/course/production/06-rag-quality/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-06-q6",
+        "type": "implementation-defense",
+        "competency": "live-evaluation",
+        "prompt": "Defend keeping an optional OpenAI answer run separate from the keyless scorecard.",
+        "modelAnswer": "The keyless scorecard deterministically proves evidence IDs, tenant exclusions, freshness, no-source behavior, and prompt packaging. A live OpenAI run observes one provider/model configuration and may vary. It can add compatibility evidence but cannot override a failed retrieval or security gate, and skipped keyed work must remain NOT RUN.",
+        "reviewCriteria": [
+          "Separates deterministic and model-dependent evidence",
+          "Keeps tenant and evidence gates blocking",
+          "Requires visible provider failure",
+          "Labels skipped keyed work accurately"
+        ],
+        "sourcePaths": [
+          "docs/course/production/06-rag-quality/lesson.md"
+        ]
+      }
+    ]
+  },
+  "assistantPrompt": "production/06-rag-quality/assistant-prompt.md",
+  "assistantReviewPrompt": "production/06-rag-quality/assistant-review-prompt.md",
+  "notebookSourceManifest": "production/06-rag-quality/notebooklm/source-manifest.yml",
+  "theoryVideoIds": [],
+  "relatedStories": [],
+  "relatedDemos": [],
+  "track": "production",
+  "route": "/course/production/rag-quality",
+  "frontMatter": {
+    "id": "prod-06",
+    "slug": "rag-quality",
+    "title": "RAG Quality And Prompt Regression",
+    "track": "production",
+    "order": 6,
+    "durationMinutes": 75,
+    "availability": "preview",
+    "courseVersion": "0.3.3-course.1-beta",
+    "frameworkVersion": "0.3.3",
+    "frameworkTag": "ai-fabric-framework-v0.3.3",
+    "courseSourceTag": "ai-fabric-course-v0.3.3.1",
+    "starterRef": "course-0.3.3-p05-live-data-sync",
+    "solutionRef": "course-0.3.3-p06-rag-quality",
+    "requiresOpenAi": false,
+    "requiresDocker": false,
+    "optionalProviderExercises": [
+      "openai"
+    ],
+    "sourcePaths": [
+      "docs/course/production/03-prompt-overlays/notebooklm/AI_FABRIC_PROMPT_BUNDLES_CURATED_OVERLAYS_NOTEBOOKLM_SCRIPT.md",
+      "ai-infrastructure-module/ai-fabric-rag/src/main/java/ai/fabric/rag/evaluation/springai/SpringAiRagEvaluationService.java",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/prompt/PromptTemplateResolver.java"
+    ],
+    "theoryVideoIds": [],
+    "assistant": {
+      "mode": "implement",
+      "implementationPrompt": "assistant-prompt.md",
+      "reviewPrompt": "assistant-review-prompt.md",
+      "validationStatus": "passed"
+    },
+    "knowledgeCheck": {
+      "source": "knowledge-check.yml",
+      "required": true,
+      "passingScorePercent": 80
+    },
+    "video": {
+      "status": "script-ready",
+      "generator": "NotebookLM",
+      "purpose": "pre-lesson-theory",
+      "placement": "before-lab",
+      "targetDurationMinutes": 10,
+      "title": "Prompt Bundles, Curated Packs, And Application Overlays",
+      "publicUrl": null,
+      "transcript": "../03-prompt-overlays/notebooklm/AI_FABRIC_PROMPT_BUNDLES_CURATED_OVERLAYS_NOTEBOOKLM_SCRIPT.md",
+      "sourceManifest": "notebooklm/source-manifest.yml"
+    }
+  },
+  "markdown": "# RAG Quality And Prompt Regression\n\nYou already have evidence-grounded RAG. This lesson makes its important behavior measurable before\nyou ask a model to phrase an answer.\n\nA convincing answer can still be wrong because retrieval selected the wrong source, crossed a tenant\nboundary, retained stale text, or had no evidence for the claim. Your release gate therefore starts\nwith deterministic evidence contracts. Live model output is a separate observation.\n\n## Outcome\n\nYou will:\n\n- define tenant-aware golden questions;\n- assert expected and forbidden evidence IDs;\n- detect missing and stale source fragments;\n- distinguish an empty index from insufficient context;\n- test prompt overlay structure without comparing generated prose;\n- keep retrieval and generation failures visible;\n- run the scorecard against real ONNX embeddings and Lucene in the packaged JAR;\n- optionally observe a live OpenAI answer after the deterministic gate passes.\n\n## Start Here\n\n```bash\ngit clone https://github.com/Loom-AI-Labs/ai-fabric-course-support-assistant.git\ncd ai-fabric-course-support-assistant\ngit switch --detach course-0.3.3-p05-live-data-sync\n./mvnw --batch-mode --no-transfer-progress clean verify\n```\n\nNo provider key is required for the lesson.\n\n## Quality Boundary\n\n```text\napplication source rows\n  -> AI Fabric projection and vector evidence\n  -> authenticated tenant filter\n  -> retrieved evidence IDs and content\n  -> deterministic quality decision\n  -> optional LLM answer observation\n```\n\nThe first five steps are release-blocking. The last step is useful evidence about one model and one\nconfiguration, but it cannot repair a failed retrieval case.\n\n## Step 1: Define Golden Questions\n\n`RagQualityCatalog` keeps application-owned expectations. Tenant Blue cases include account lockout,\nbilling method, and VPN recovery. Tenant Red has its own VPN case.\n\nEach case declares:\n\n- a stable case ID;\n- a natural user question;\n- required evidence IDs;\n- forbidden evidence IDs;\n- fragments that prove current source content;\n- fragments that must not appear.\n\nDo not use an expected answer paragraph. Exact prose changes across models and prompt revisions. A\nstable source ID and current source fragment are stronger contracts.\n\n## Step 2: Evaluate Evidence, Not Eloquence\n\n`RagQualityService` calls the same tenant-filtered `KnowledgeEvidenceService` used by the app. It\nreturns a structured result with observed IDs, missing IDs, forbidden IDs, missing fragments, stale\nfragments, and failure codes.\n\n```bash\ncurl -s http://localhost:8080/api/quality/rag/golden \\\n  -H 'Authorization: Bearer course-alex-local-token' | jq\n```\n\nExpected fields:\n\n```json\n{\n  \"suiteId\": \"support-knowledge-golden-v1\",\n  \"passed\": true,\n  \"totalCases\": 3,\n  \"failedCases\": 0\n}\n```\n\nRun the same endpoint with Riley's token. The result must contain `article-vpn-red` and must not\ncontain `article-vpn-blue` or `article-payroll-red-restricted`.\n\nThe request has no tenant field. Identity and tenant still come from the verified backend principal.\n\n## Step 3: Distinguish No Source From Insufficient Context\n\nAn empty index is an expected lifecycle state:\n\n```bash\ncurl -s -X POST http://localhost:8080/api/demo/vectors/clear\ncurl -s -X POST http://localhost:8080/api/quality/rag/evaluate \\\n  -H 'Authorization: Bearer course-alex-local-token' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n    \"caseId\":\"empty-index\",\n    \"question\":\"How do I recover access?\",\n    \"expectNoEvidence\":true\n  }' | jq\n```\n\nThis passes only when no evidence is returned.\n\nAfter restoring the index, ask for a source the corpus does not contain:\n\n```bash\ncurl -s -X POST http://localhost:8080/api/demo/index\ncurl -s -X POST http://localhost:8080/api/quality/rag/evaluate \\\n  -H 'Authorization: Bearer course-alex-local-token' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n    \"caseId\":\"missing-retention-policy\",\n    \"question\":\"How long are audit logs retained?\",\n    \"expectedEvidenceIds\":[\"article-audit-retention\"]\n  }' | jq\n```\n\nThe HTTP request succeeds because evaluation ran, while the result has `passed=false` and\n`EXPECTED_EVIDENCE_MISSING`. Do not convert that result into generic model advice.\n\n## Step 4: Detect Stale Evidence\n\nUpdate the billing article through the trusted Data Sync flow, then evaluate:\n\n```bash\ncurl -s -X POST http://localhost:8080/api/quality/rag/evaluate \\\n  -H 'Authorization: Bearer course-alex-local-token' \\\n  -H 'Content-Type: application/json' \\\n  -d '{\n    \"caseId\":\"fresh-billing-copy\",\n    \"question\":\"Where can I download my invoice?\",\n    \"expectedEvidenceIds\":[\"article-billing-method\"],\n    \"requiredContentFragments\":[\"download the invoice\"],\n    \"forbiddenContentFragments\":[\"replacement method\"]\n  }' | jq\n```\n\nThe case fails with `REQUIRED_CONTENT_MISSING` when the new source did not reach the vector store and\nwith `STALE_CONTENT_RETURNED` when old evidence remains retrievable.\n\n## Step 5: Gate Prompt Resources Structurally\n\nPrompt regressions should prove resolution and required slots without freezing model wording:\n\n```bash\ncurl -s http://localhost:8080/api/quality/prompts \\\n  -H 'Authorization: Bearer course-alex-local-token' | jq\n```\n\nThe contract checks:\n\n- support answer resolves from `v1-course-support`;\n- an omitted action-selection prompt falls back to base `v1`;\n- the answer template retains `{{query}}` and `{{context}}` slots;\n- no prompt body is returned by the diagnostics endpoint.\n\nPrompts guide model behavior. Tenant filters, access policy, typed action schemas, and confirmation\nremain the enforcement layer.\n\n## Step 6: Keep Failures Visible\n\n`SupportAssistantServiceTest` proves a failed retrieval returns `RETRIEVAL_FAILED`, skips generation,\nand does not expose adapter details. Invalid citations or provider errors return\n`GENERATION_FAILED` with no canned answer.\n\nThe packaged `local` profile deliberately has generation disabled. Calling `/api/assistant/query`\nafter indexing returns HTTP `503` and `LLM_GENERATION_FAILED`; the application does not silently\nsubstitute a deterministic sentence.\n\n## Step 7: Run The Required Gate\n\n```bash\n./mvnw --batch-mode --no-transfer-progress clean verify\n./scripts/download-onnx-model.sh\nCOURSE_SMOKE_USE_EXISTING_JAR=true ./scripts/smoke-packaged.sh\njq '.ragQuality' target/course-release-evidence/packaged-smoke-summary.json\n```\n\nExpected checkpoint: `course-0.3.3-p06-rag-quality`.\n\nThe suite contains 63 tests. The packaged smoke runs both tenant suites, insufficient-context,\nstale-source, empty-index, prompt-structure, and disabled-generation cases with real ONNX/Lucene.\n\n## Optional OpenAI Observation\n\nSet the key only in your shell, IDE secret field, CI secret, or deployment secret store:\n\n```bash\nexport OPENAI_ENABLED=true\nexport OPENAI_API_KEY='<set locally; never commit>'\nexport OPENAI_MODEL='gpt-4o-mini'\n./mvnw spring-boot:run -Dspring-boot.run.profiles=openai\n```\n\nRun the deterministic golden endpoint first. Then call `/api/assistant/query` and retain provider,\nmodel, purpose, status, usage, and citation IDs. Do not assert exact answer prose. If the key is\nmissing or invalid, the live call must fail visibly; it must not return the local test fixture or a\ncanned answer.\n\n## Intentional Failures\n\n1. Expect `article-audit-retention`. The case returns `passed=false` and\n   `EXPECTED_EVIDENCE_MISSING`.\n2. Add `article-vpn-red` as required for Alex. The case fails; the app must not widen the tenant\n   filter to satisfy the test.\n3. Require old billing text after an update. The freshness contract fails.\n4. Start the OpenAI profile without a valid key and invoke generation. The provider failure remains\n   visible.\n\n## Done When\n\n- both tenant golden suites pass with expected and forbidden IDs;\n- empty index and insufficient context are represented separately;\n- stale source text is rejected after Data Sync update;\n- prompt resolution and required slots pass without an exact answer assertion;\n- retrieval and generation failures have no hidden fallback;\n- 63 tests and the packaged ONNX/Lucene scorecard pass;\n- optional OpenAI evidence is labelled `PASS`, `FAIL`, or `NOT RUN` independently.\n\n## Reset\n\n```bash\n./scripts/reset-course.sh\ngit switch --detach course-0.3.3-p05-live-data-sync\n```\n\n## Troubleshooting\n\n**A golden case misses its ID:** inspect the indexed count, tenant metadata, threshold, source\nprojection, and actual observed IDs. Do not lower policy boundaries merely to make the case pass.\n\n**A case returns extra same-tenant documents:** extra candidates are allowed unless the case names\nthem as forbidden. Add a forbidden ID only when its presence would make the supplied context unsafe\nor materially wrong.\n\n**HTTP is 200 while `passed=false`:** evaluation completed successfully and found a quality failure.\nCI must gate on the result field, not only the HTTP status.\n\n**Live wording changes:** expected. Assert citations and evidence facts. Treat generated text as an\nobservation unless a structured response contract provides stable fields.\n\n## Next Lesson\n\nPROD-07 replaces Lucene with local Docker Qdrant while preserving this exact retrieval and quality\ncontract.",
+  "assistant": {
+    "mode": "implement",
+    "validationStatus": "passed",
+    "implementationPrompt": "# Coding Assistant Prompt: PROD-06\n\nImplement the RAG quality checkpoint in the continuing Support Knowledge Assistant.\n\nConstraints:\n\n- start from `course-0.3.3-p05-live-data-sync`;\n- keep AI Fabric `0.3.3`, Java 21, Spring Boot 4.1.x, ONNX, and Lucene;\n- derive tenant identity from the authenticated backend principal;\n- add tenant-aware golden questions with expected and forbidden evidence IDs;\n- support required current fragments, forbidden stale fragments, and explicit no-evidence cases;\n- return structured failure codes; do not grade exact generated prose;\n- expose prompt resolution version and required-slot flags without exposing prompt bodies;\n- retain visible retrieval/generation failures and disabled provider behavior;\n- add focused tests, full clean verification, and packaged-JAR HTTP proof;\n- document OpenAI only as an optional runtime-secret observation;\n- do not add fallback text, fake generation, text-matching intent logic, or secrets.\n\nBefore editing, identify the source database, vector evidence service, tenant boundary, prompt\nresolver, packaged smoke, and current test fixtures. After editing, report exact test counts and\nwhether optional OpenAI work ran.\n",
+    "reviewPrompt": "# Independent Review Prompt: PROD-06\n\nReview the PROD-06 checkpoint findings-first.\n\nVerify:\n\n- golden cases use the real application retrieval path;\n- the request cannot select or forge a tenant;\n- both tenants have positive and forbidden-ID proof;\n- empty-index and missing-expected-source cases are distinct;\n- freshness checks can catch both missing new content and returned old content;\n- scorecard HTTP success is not mistaken for `passed=true`;\n- prompt tests check resolution and slots without freezing answer prose or exposing prompt bodies;\n- retrieval/provider failures return no canned answer;\n- keyless tests and packaged ONNX/Lucene smoke are blocking;\n- optional OpenAI evidence is separate and honestly labelled;\n- no secret, raw internal note, tenant metadata, or provider detail leaks publicly.\n\nRun `./mvnw --batch-mode --no-transfer-progress clean verify`, then the packaged smoke. Report file\nand line references for every issue. Do not approve based only on unit tests or fluent model output.\n"
+  },
+  "video": {
+    "status": "script-ready",
+    "generator": "NotebookLM",
+    "purpose": "pre-lesson-theory",
+    "placement": "before-lab",
+    "targetDurationMinutes": 10,
+    "title": "Prompt Bundles, Curated Packs, And Application Overlays",
+    "publicUrl": null,
+    "transcript": "# NotebookLM Video Script: Prompt Bundles, Curated Packs, And Application Overlays\n\n## Production Instruction\n\nProduce a ten-minute technical video for Java developers. Explain AI Fabric prompt architecture from\nthis script only. Keep the application example central.\n\n## Opening\n\nPrompts in a production framework need two properties that are often in tension. Framework defaults\nmust improve centrally, while an application must own its domain language and special follow-up\nbehavior. Copying every prompt into every Spring Boot app destroys the first property. Editing prompts\ninside a dependency destroys the second.\n\nAI Fabric uses versioned classpath prompt bundles and ordered overlays.\n\n## The Resource Key\n\nEvery prompt has a family, version, and name and is stored as:\n\n```text\nprompts/<family>/<version>/<name>.md\n```\n\nFor the Support Knowledge Assistant, resolution tries `v1-course-support`, then `v1-support`, then\nthe framework base `v1`. The first existing complete template wins.\n\nEmphasize that this is whole-template selection, not a Markdown patch. The application should add\nonly keys whose complete behavior it genuinely owns.\n\n## Curated Packs\n\nThe curated support module supplies coherent support defaults: support-safe intent handling and\nevidence-grounded answer behavior. The application overlay adds only its delta, including recent-\nturn follow-up rules and a stricter answer projection. An untouched action-selection template still\ncomes from `v1`.\n\nDescribe this diagram:\n\n```text\napplication JAR: v1-course-support\n             |\ncurated support JAR: v1-support\n             |\nframework core JAR: v1\n             |\nPromptTemplateResolver -> one resolved template\n```\n\n## Prompt Versus Policy\n\nPrompt rules guide probabilistic output. They may tell a model to use recent conversation, avoid\noutside facts, or emit structured JSON. They cannot authorize a write, grant tenant access, validate\nparameters, or consume confirmation. Those controls remain in modes, authenticated context, access\npolicy, typed action schemas, and execution services.\n\n## Regression Proof\n\nDo not assert exact generated prose. Assert deterministic properties: candidate order, resolved\nversion, required placeholders, critical safety rules, fallback for untouched keys, classpath\npackaging, and absence of prompt bodies from public diagnostics.\n\nAn optional real-provider run can reveal model behavior changes, but it is observation rather than\nthe release contract.\n\n## Incorrect Architecture\n\nOne incorrect design copies every framework prompt and edits one line. The app is then stranded on\nold defaults. Another places security solely in prompt prose. A third exposes full prompts through a\nhealth endpoint. All three confuse ownership or disclose unnecessary internals.\n\n## Visible Failure\n\nIf an expected application template is renamed, resolution falls back to the curated support\nversion. The app still starts, but the regression test fails because the effective contract changed.\nIf no candidate exists, resolution fails clearly rather than inventing a template.\n\n## Lab Bridge\n\nIn PROD-03 you will add the application answer template, test overlay-first and base-fallback\nresolution, prove the resource is in the packaged JAR, and expose only safe version diagnostics.\nThe following lesson then applies the same ownership discipline to application data and vector\nevidence during migration.\n",
+    "sourceManifest": "notebooklm/source-manifest.yml",
+    "notebookStatus": "script-ready",
+    "reviewedAt": null,
+    "reviewedBy": null
+  },
+  "sourcePath": "docs/course/production/06-rag-quality/lesson.md",
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/main/docs/course/production/06-rag-quality/lesson.md"
+}

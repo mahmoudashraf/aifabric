@@ -1,0 +1,236 @@
+{
+  "id": "prod-04",
+  "slug": "migration-backfill",
+  "title": "Backfill Existing Application Data",
+  "description": "Migrate existing source records into semantic evidence with bounded, resumable, idempotent jobs.",
+  "durationMinutes": 95,
+  "availability": "preview",
+  "source": "production/04-migration-backfill/lesson.md",
+  "knowledgeCheck": {
+    "schemaVersion": 1,
+    "lessonId": "prod-04",
+    "passingScorePercent": 80,
+    "questions": [
+      {
+        "id": "prod-04-q1",
+        "type": "single-choice",
+        "competency": "state-ownership",
+        "prompt": "Which store remains the business source of truth after migration?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The vector provider"
+          },
+          {
+            "id": "b",
+            "text": "The application database"
+          },
+          {
+            "id": "c",
+            "text": "The migration job table"
+          }
+        ],
+        "correctOptionIds": [
+          "b"
+        ],
+        "explanation": "Vector evidence is derived and rebuildable; application-owned source rows remain authoritative.",
+        "sourcePaths": [
+          "docs/course/production/04-migration-backfill/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-04-q2",
+        "type": "multiple-choice",
+        "competency": "readiness",
+        "prompt": "What must be true before the app can claim that a full backfill is retrievable?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The migration job is completed"
+          },
+          {
+            "id": "b",
+            "text": "Pending and processing queue counts are zero"
+          },
+          {
+            "id": "c",
+            "text": "Expected vectors exist and dead-letter count is zero"
+          },
+          {
+            "id": "d",
+            "text": "The browser received HTTP 200 from the start request"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b",
+          "c"
+        ],
+        "explanation": "Start acceptance is not readiness; source scan, asynchronous work, failures, and final evidence all matter.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-migration/src/main/java/ai/fabric/migration/service/DataMigrationService.java",
+          "ai-infrastructure-module/ai-fabric-indexing/src/main/java/ai/fabric/indexing/queue/IndexingQueueService.java"
+        ]
+      },
+      {
+        "id": "prod-04-q3",
+        "type": "single-choice",
+        "competency": "privacy-boundary",
+        "prompt": "Why is internalNotes excluded before a migration entry is serialized?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The durable queue payload is already part of the AI data path"
+          },
+          {
+            "id": "b",
+            "text": "Lucene automatically removes private fields later"
+          },
+          {
+            "id": "c",
+            "text": "It makes the migration run faster only"
+          }
+        ],
+        "correctOptionIds": [
+          "a"
+        ],
+        "explanation": "Sensitive fields must be removed before durable queue, embedding, retrieval, and prompt stages.",
+        "sourcePaths": [
+          "docs/course/production/04-migration-backfill/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-04-q4",
+        "type": "single-choice",
+        "competency": "metrics-honesty",
+        "prompt": "How should the app report exact per-job skipped rows on AI Fabric 0.3.3?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Compute processed minus queued"
+          },
+          {
+            "id": "b",
+            "text": "Report that the exact metric is not exposed"
+          },
+          {
+            "id": "c",
+            "text": "Treat every filtered row as failed"
+          }
+        ],
+        "correctOptionIds": [
+          "b"
+        ],
+        "explanation": "The release reports scanned and failed rows; deriving skipped from unrelated counters is misleading.",
+        "sourcePaths": [
+          "docs/course/production/04-migration-backfill/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-04-q5",
+        "type": "answer-reveal",
+        "competency": "idempotency",
+        "prompt": "What evidence proves an idempotent rerun with reindexExisting=false?",
+        "modelAnswer": "Stable entity/vector identities, an unchanged vector count, and no increase in durable queue entries prove that the rerun scanned the source without duplicating indexing work.",
+        "sourcePaths": [
+          "docs/course/production/04-migration-backfill/lesson.md"
+        ]
+      },
+      {
+        "id": "prod-04-q6",
+        "type": "implementation-defense",
+        "competency": "security-boundary",
+        "prompt": "Defend exposing a knowledge-article-specific migration API instead of accepting any entity type from the client.",
+        "modelAnswer": "The application owns which datasets may be migrated and who may administer them. A fixed endpoint plus a server-verified migration:admin scope prevents an untrusted caller from selecting arbitrary repositories or entity types. AI Fabric executes the bounded job after that application boundary has been enforced.",
+        "reviewCriteria": [
+          "Identifies application ownership",
+          "Requires server-verified identity and scope",
+          "Rejects arbitrary client-selected entity classes",
+          "Keeps lifecycle errors visible"
+        ],
+        "sourcePaths": [
+          "docs/course/production/04-migration-backfill/lesson.md"
+        ]
+      }
+    ]
+  },
+  "assistantPrompt": "production/04-migration-backfill/assistant-prompt.md",
+  "assistantReviewPrompt": "production/04-migration-backfill/assistant-review-prompt.md",
+  "notebookSourceManifest": "production/04-migration-backfill/notebooklm/source-manifest.yml",
+  "theoryVideoIds": [],
+  "relatedStories": [],
+  "relatedDemos": [],
+  "track": "production",
+  "route": "/course/production/migration-backfill",
+  "frontMatter": {
+    "id": "prod-04",
+    "slug": "migration-backfill",
+    "title": "Backfill Existing Application Data",
+    "track": "production",
+    "order": 4,
+    "durationMinutes": 95,
+    "availability": "preview",
+    "courseVersion": "0.3.3-course.1-beta",
+    "frameworkVersion": "0.3.3",
+    "frameworkTag": "ai-fabric-framework-v0.3.3",
+    "courseSourceTag": "ai-fabric-course-v0.3.3.1",
+    "starterRef": "course-0.3.3-p03-prompt-overlays",
+    "solutionRef": "course-0.3.3-p04-migration-backfill",
+    "requiresOpenAi": false,
+    "requiresDocker": false,
+    "optionalProviderExercises": [],
+    "sourcePaths": [
+      "docs/course/production/04-migration-backfill/notebooklm/AI_FABRIC_STATE_STORAGE_MAP_NOTEBOOKLM_SCRIPT.md",
+      "ai-infrastructure-module/ai-fabric-migration/src/main/java/ai/fabric/migration/service/DataMigrationService.java",
+      "ai-infrastructure-module/ai-fabric-migration/src/main/java/ai/fabric/migration/domain/MigrationJob.java",
+      "ai-infrastructure-module/ai-fabric-indexing/src/main/java/ai/fabric/indexing/queue/IndexingQueueService.java",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/annotation/AICapable.java"
+    ],
+    "theoryVideoIds": [],
+    "assistant": {
+      "mode": "implement",
+      "implementationPrompt": "assistant-prompt.md",
+      "reviewPrompt": "assistant-review-prompt.md",
+      "validationStatus": "passed"
+    },
+    "knowledgeCheck": {
+      "source": "knowledge-check.yml",
+      "required": true,
+      "passingScorePercent": 80
+    },
+    "video": {
+      "status": "script-ready",
+      "generator": "NotebookLM",
+      "purpose": "pre-lesson-theory",
+      "placement": "before-lab",
+      "targetDurationMinutes": 11,
+      "title": "State And Storage In An AI Fabric Application",
+      "publicUrl": null,
+      "transcript": "notebooklm/AI_FABRIC_STATE_STORAGE_MAP_NOTEBOOKLM_SCRIPT.md",
+      "sourceManifest": "notebooklm/source-manifest.yml"
+    }
+  },
+  "markdown": "# Backfill Existing Application Data\n\n## Start Here\n\nYour support database already contains useful articles before AI Fabric is installed. Saving those\nrows again just to trigger indexing is unsafe and unrealistic. This lesson adds an explicit,\nadmin-scoped migration that reads existing application-owned rows, creates durable indexing work,\nand proves when semantic evidence is actually retrievable.\n\n> Start from `course-0.3.3-p03-prompt-overlays`; compare with\n> `course-0.3.3-p04-migration-backfill`. The checkpoint passed 55 deterministic tests and a packaged\n> ONNX/Lucene migration smoke. No external API key or Docker service is required.\n\n## The Four Observable States\n\n```text\napplication source DB        migration DB          indexing DB           vector provider\nknowledge_article rows  ->   migration_job    ->   ai_indexing_queue ->  knowledge-article vectors\nbusiness truth               scan/control          durable work          derived evidence\n```\n\nThese stores answer different questions:\n\n- source rows say what the application currently knows;\n- the migration job says what was scanned and whether the job can pause, resume, or cancel;\n- the indexing queue says whether asynchronous embedding/indexing work is pending or failed;\n- the vector provider says what evidence can be retrieved now.\n\n`COMPLETED` on a migration job means source scanning and enqueueing completed. It does not, by\nitself, prove the queue drained or vectors are queryable.\n\n## What You Will Prove\n\n- only a principal with `migration:admin` can control a backfill;\n- `@AICapable.migrationRepository` binds the source repository explicitly;\n- bounded batches and optional filters use stable source IDs;\n- pause, resume, cancel, missing-job, and invalid-transition outcomes are visible;\n- private `internalNotes` never enter the durable queue payload;\n- tenant-filtered retrieval works after queue drain;\n- rerunning with `reindexExisting=false` keeps vector IDs and queue counts stable;\n- job, queue, and vector readiness remain separate in diagnostics.\n\n## Prerequisites\n\n```bash\ngit clone https://github.com/Loom-AI-Labs/ai-fabric-course-support-assistant.git\ncd ai-fabric-course-support-assistant\ngit switch --detach course-0.3.3-p03-prompt-overlays\ngit switch -c lesson/prod-04-migration-backfill\n./mvnw --batch-mode --no-transfer-progress clean verify\n```\n\n## Step 1: Add The Migration Module\n\nAdd `io.github.loom-ai-labs:ai-fabric-migration-core` at the same `${ai-fabric.version}` used by\nthe other framework modules. Do not add a framework source checkout or an unpublished example\nmodule.\n\nThe standalone application must scan the persistence types it actually uses:\n\n```java\n@EntityScan(basePackages = {\n    \"dev.aifabric.course.support\",\n    \"ai.fabric.chat.domain\",\n    \"ai.fabric.entity\",\n    \"ai.fabric.migration.domain\"\n})\n@EnableJpaRepositories(basePackages = {\n    \"dev.aifabric.course.support\",\n    \"ai.fabric.repository\",\n    \"ai.fabric.migration.repository\"\n})\n```\n\nFor AI Fabric `0.3.3`, this explicit registration keeps the learner app's entities, chat-session\nentities, indexing queue, and migration jobs in one intentional persistence unit.\n\n## Step 2: Bind The Source Repository\n\nUpdate the article annotation:\n\n```java\n@AICapable(\n    entityType = KnowledgeArticle.ENTITY_TYPE,\n    migrationRepository = KnowledgeArticleRepository.class\n)\n```\n\nAdd a stable `createdAt` field so date filters have a real source field. Keep `id` stable across\nruns. Mark `internalNotes` with `@JsonIgnore`: migration serializes the entity into a durable queue\npayload, so fields that must never become AI evidence need an explicit serialization boundary.\n\n## Step 3: Configure Bounded Work\n\n```yaml\nai:\n  indexing:\n    enabled: true\n    async:\n      enabled: true\n      fixed-delay: PT0.1S\n      batch-size: 25\n  migration:\n    enabled: true\n    batch-size: 25\n    rate-limit: 0\n    max-concurrent-jobs: 1\n    entity-fields:\n      knowledge-article:\n        created-at-field: createdAt\n```\n\nThe migration service needs field metadata even when a request has no filter, because it validates\nthe entity's filter contract before scanning. Keep concurrency and batch limits conservative until\nyou have measured source-database, embedding, and vector-provider capacity.\n\n## Step 4: Expose An Application-Owned Admin Boundary\n\nCreate an endpoint fixed to `knowledge-article`; do not accept an arbitrary entity class or tenant\nfrom the request. Resolve the server-verified principal and require `migration:admin` before calling\n`DataMigrationService`.\n\nThe checkpoint exposes:\n\n```text\nPOST /api/admin/migrations/knowledge-articles\nGET  /api/admin/migrations/knowledge-articles\nGET  /api/admin/migrations/knowledge-articles/{jobId}\nPOST /api/admin/migrations/knowledge-articles/{jobId}/pause\nPOST /api/admin/migrations/knowledge-articles/{jobId}/resume\nPOST /api/admin/migrations/knowledge-articles/{jobId}/cancel\n```\n\nReturn `404` for an unknown/non-knowledge job and `409` for an invalid transition. The response can\ncombine migration progress with queue and vector counts, but label each field by what it proves.\n\n## Step 5: Run The Backfill\n\nStart the packaged application or use `./mvnw spring-boot:run`, then:\n\n```bash\nexport COURSE_TOKEN=course-alex-local-token\ncurl -s -X POST http://localhost:8080/api/demo/reset\ncurl -s -X POST http://localhost:8080/api/demo/seed\ncurl -s -X POST http://localhost:8080/api/admin/migrations/knowledge-articles \\\n  -H \"Authorization: Bearer $COURSE_TOKEN\" \\\n  -H 'Content-Type: application/json' \\\n  -d '{\"batchSize\":3,\"rateLimit\":0,\"reindexExisting\":false}'\n```\n\nPoll the returned `jobId`. First wait for `status=COMPLETED`; then wait for:\n\n```json\n{\n  \"currentIndexedVectors\": 9,\n  \"pendingQueueEntries\": 0,\n  \"processingQueueEntries\": 0,\n  \"deadLetterQueueEntries\": 0,\n  \"indexingCaughtUp\": true,\n  \"fullSourceVectorCoverage\": true\n}\n```\n\nFor a filtered migration, `fullSourceVectorCoverage` is intentionally absent. One selected row does\nnot prove all source rows have vector evidence.\n\n## Step 6: Prove Retrieval And Idempotency\n\n```bash\ncurl -s 'http://localhost:8080/api/knowledge/search?q=I%20cannot%20sign%20in%20after%20too%20many%20attempts' \\\n  -H \"Authorization: Bearer $COURSE_TOKEN\"\n```\n\nExpected first evidence ID: `policy-account-lockout-01`. A Tenant Red principal can retrieve its own\nVPN article but cannot see Tenant Blue evidence or administer migration.\n\nRun the same full migration again with `reindexExisting=false`. Expect nine vectors and the same\ncompleted queue-entry count. AI Fabric `0.3.3` reports scanned and failed rows but does not expose an\nexact per-job skipped count. Do not derive `skipped = processed - queued`; filtered scans and\nexisting-vector decisions make that number misleading.\n\n## Intentional Failure\n\nUse Riley's token against the start endpoint and expect HTTP `403`. Then try pausing a completed job\nand expect HTTP `409`. Neither request may create new queue entries or vectors.\n\nAs a second operational failure, stop the indexing worker after the job starts. The job may reach\n`COMPLETED`, while `pendingQueueEntries` stays positive and `indexingCaughtUp` stays false. That is\nthe correct visible result.\n\n## Verification\n\n```bash\n./mvnw --batch-mode --no-transfer-progress clean verify\n./scripts/download-onnx-model.sh\nCOURSE_SMOKE_USE_EXISTING_JAR=true ./scripts/smoke-packaged.sh\njq '.migration, .migrationRerun' \\\n  target/course-release-evidence/packaged-smoke-summary.json\n```\n\nExpected checkpoint: `course-0.3.3-p04-migration-backfill`; capability\n`migrationBackfill=true`.\n\n## Done When\n\n- all nine pre-existing source rows can be backfilled without rewriting them;\n- admin denial and lifecycle transition failures are tested;\n- queue payloads exclude private notes;\n- job completion and indexing readiness are reported separately;\n- tenant-safe search returns the expected stable evidence IDs;\n- an idempotent rerun adds no duplicate work or vectors;\n- 55 tests and the packaged ONNX/Lucene migration smoke pass.\n\n## Reset\n\n```bash\n./scripts/reset-course.sh\ngit switch --detach course-0.3.3-p03-prompt-overlays\n```\n\n## Troubleshooting\n\n**No `MigrationJobRepository` bean:** include `ai.fabric.migration.repository` in repository scanning\nand `ai.fabric.migration.domain` in entity scanning.\n\n**Chat entities are no longer managed:** explicit `@EntityScan` replaces implicit package scanning;\ninclude `ai.fabric.chat.domain` as well as the application and indexing packages.\n\n**Job is complete but search is empty:** inspect pending, processing, failed, and dead-letter queue\ncounts. Wait for `indexingCaughtUp=true`; do not rerun blindly.\n\n**Private text appears in a queue payload:** fix the source serialization/projection boundary before\ncontinuing. Deleting it only from the final response is too late.\n\n**Filtered migration reports nine processed rows:** in `0.3.3`, processed is scanned source rows. Use\nvector IDs/counts to prove selected output and do not publish a fictional skipped count.\n\n## Next Lesson\n\nPROD-05 keeps this initial vector state synchronized when trusted application operations create,\nupdate, or delete source rows.",
+  "assistant": {
+    "mode": "implement",
+    "validationStatus": "passed",
+    "implementationPrompt": "# Coding Assistant Prompt: Implement PROD-04 Migration Backfill\n\nWork from `course-0.3.3-p03-prompt-overlays` in the learner repository.\n\nAdd the released migration module, explicitly register required JPA entities/repositories, bind\n`KnowledgeArticleRepository` through `@AICapable.migrationRepository`, and expose a fixed\nknowledge-article admin API with bounded filters and pause/resume/cancel operations. Report source\nprogress, queue state, and vector readiness separately. Exclude private source fields before durable\nqueue serialization. Add tests for authorization, lifecycle transitions, filters, tenant-safe\nretrieval, idempotent rerun, and failure visibility. Extend readiness, HTTP examples, and packaged\nsmoke.\n\nDo not make vectors the source of truth, accept an arbitrary client entity type, fabricate an exact\nskipped count, treat job completion as vector readiness, or require a cloud key. Run `clean verify`\nand the packaged ONNX/Lucene smoke.\n",
+    "reviewPrompt": "# Independent Review Prompt: PROD-04 Migration Backfill\n\nReview `course-0.3.3-p03-prompt-overlays..course-0.3.3-p04-migration-backfill`.\n\nLead with findings. Verify explicit source-repository registration, stable IDs, bounded job control,\nserver-owned admin scope, private-field exclusion before queue persistence, legal state transitions,\nfiltered migration semantics, queue/dead-letter visibility, tenant-safe retrieval, and idempotent\nrerun proof. Reject any claim that `COMPLETED` alone means retrievable or that AI Fabric 0.3.3\nprovides an exact skipped count. Require clean tests and packaged ONNX/Lucene evidence.\n"
+  },
+  "video": {
+    "status": "script-ready",
+    "generator": "NotebookLM",
+    "purpose": "pre-lesson-theory",
+    "placement": "before-lab",
+    "targetDurationMinutes": 11,
+    "title": "State And Storage In An AI Fabric Application",
+    "publicUrl": null,
+    "transcript": "# NotebookLM Video Script: State And Storage In An AI Fabric Application\n\n## Production Instruction\n\nProduce an eleven-minute technical video for Java and Spring Boot developers. Use this script as the\ncomplete source. Keep the Support Knowledge Assistant example central and distinguish durable\nbusiness state, durable AI workflow state, derived evidence, and ephemeral runtime state.\n\n## Opening\n\nAdding AI Fabric to a Spring Boot app does not create one new universal AI database. A production AI\nworkflow crosses stores with different owners and recovery rules. Confusing them creates stale\nanswers, leaked evidence, lost confirmations, and misleading readiness checks.\n\nThe central rule is simple: the application database remains business truth. AI Fabric adds\nspecialized state around it.\n\n## The Storage Map\n\nDescribe this diagram:\n\n```text\nApplication database\n  knowledge articles, users, tickets, raw business events\n       |\n       +--> migration job --> indexing queue --> vector provider\n       |                                          derived evidence\n       |\n       +--> application actions mutate business truth\n\nAI workflow state\n  chat sessions and turns\n  pending confirmations and action drafts\n  behavior insights\n  optional registered actions\n\nRuntime state\n  caches, model clients, diagnostics snapshots\n```\n\nThe application database owns article text, tenant ownership, publication status, and internal\nnotes. The vector provider owns a derived semantic projection with stable entity IDs and retrieval\nmetadata. It must be possible to rebuild vectors from source truth.\n\n## Initial Backfill\n\nWhen AI Fabric is introduced to an existing system, rows already exist. A migration job scans them\nin bounded batches and records progress. It creates durable indexing work. The indexing worker then\nprojects allowed content, generates embeddings, and updates the vector provider.\n\nThere are therefore three different completion questions: has the source scan completed, has the\nqueue drained without dead letters, and are the expected vectors retrievable? A production readiness\nAPI should answer all three.\n\n## Continuous Synchronization\n\nBackfill is not live synchronization. After initial migration, trusted create, update, and delete\nevents keep derived evidence aligned with source truth. An update reuses the stable entity ID. A\ndelete removes the corresponding vector. Failed synchronization remains visible and retryable.\n\nThe next lesson implements that boundary directly.\n\n## Conversation And Action State\n\nChat sessions and turns are durable application conversations, not vector evidence. Pending actions\nand drafts preserve confirmation context. Production systems should use a durable implementation\nwhen a confirmation must survive restart. The browser sends only the new user message; the backend\nloads authorized history.\n\nAction execution still belongs to the application transaction. AI Fabric may discover, validate,\nand gate an action, but the domain database records the actual business mutation.\n\n## Behavior And Registry State\n\nRaw behavior events remain in the application or event platform and are supplied through\n`ExternalEventProvider`. AI Fabric can store derived behavior insights. The optional action registry\nstores approved action definitions; it does not replace domain authorization or execution code.\n\n## Ephemeral State\n\nCaches, model clients, and diagnostics snapshots may be rebuilt after restart. Correctness cannot\ndepend on an ephemeral cache. A model cache may improve connection reuse; it cannot become a hidden\nsession store or authorization source.\n\n## Incorrect Architecture\n\nAn incorrect design writes business updates only to vectors. A user then changes an article in the\nsource database, but search still returns the old vector. Another design calls a migration job\ncomplete as soon as rows are scanned while the indexing worker is stopped. Both make derived state\nlook authoritative or ready when it is not.\n\n## Visible Failure\n\nIf indexing fails, keep the source row, migration progress, queue failure, and missing vector\nobservable. Do not return a canned AI answer or silently write a different store. Operators need to\nknow which stage failed and whether retry is safe.\n\n## Lab Bridge\n\nIn PROD-04, you will bind an existing repository, run a bounded admin migration, inspect source,\njob, queue, and vector state separately, and prove an idempotent rerun. PROD-05 then applies trusted\ncreate, update, and delete synchronization to keep that evidence current.\n",
+    "sourceManifest": "notebooklm/source-manifest.yml",
+    "notebookStatus": "script-ready",
+    "reviewedAt": null,
+    "reviewedBy": null
+  },
+  "sourcePath": "docs/course/production/04-migration-backfill/lesson.md",
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/main/docs/course/production/04-migration-backfill/lesson.md"
+}

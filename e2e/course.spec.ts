@@ -199,6 +199,44 @@ test("PROD-01 presents verified provider routing with an honest script-ready vid
   await expect(page.getByRole("heading", { name: "Check your understanding" })).toBeVisible();
 });
 
+test("PROD-08 presents the exact-commit production release gate", async ({ page }) => {
+  await page.goto("/course/production/production-ready", { waitUntil: "domcontentloaded" });
+
+  await expect(
+    page.getByRole("heading", { name: "Operations And Release Readiness", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByText("Preview lesson", { exact: true })).toBeVisible();
+  await expect(page.getByText("No external key required", { exact: true })).toBeVisible();
+  await expect(page.getByText("Optional OpenAI exercise", { exact: true })).toBeVisible();
+  await expect(page.getByText(/course-0\.3\.3-p08-production-ready is verified/)).toBeVisible();
+  await expect(page.getByRole("link", { name: "Starter checkpoint" })).toHaveAttribute(
+    "href",
+    /course-0\.3\.3-p07-qdrant$/,
+  );
+  await expect(page.getByRole("link", { name: "Solution checkpoint" })).toHaveAttribute(
+    "href",
+    /course-0\.3\.3-p08-production-ready$/,
+  );
+  await expect(page.getByRole("link", { name: "Canonical source" })).toHaveAttribute(
+    "href",
+    /\/blob\/main\/docs\/course\/production\/08-production-ready\/lesson\.md$/,
+  );
+
+  await page.getByRole("button", { name: /Runtime and optional provider setup/ }).click();
+  await expect(page.getByText("Docker required", { exact: true })).toBeVisible();
+  await expect(page.getByText("Required path is keyless", { exact: true })).toBeVisible();
+  await expect(page.locator("pre").filter({ hasText: "OPENAI_API_KEY=<set in your secret store>" })).toBeVisible();
+  await expect(page.locator('input[type="password"]')).toHaveCount(0);
+
+  await page.getByRole("tab", { name: "Use an assistant" }).click();
+  await expect(
+    page.locator("pre").filter({ hasText: "# Coding Assistant Prompt: PROD-08" }),
+  ).toBeVisible();
+  await page.getByRole("tab", { name: "Build manually" }).click();
+  await expect(page.getByRole("heading", { name: "Classify Runtime State" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Check your understanding" })).toBeVisible();
+});
+
 test("knowledge check grades locally without requiring sign-in", async ({ page }) => {
   await page.goto("/course/quickstart#knowledge-check");
   await page.getByLabel(/Projecting approved content/).check();
@@ -211,6 +249,8 @@ test("knowledge check grades locally without requiring sign-in", async ({ page }
 });
 
 test("course pages do not overflow the viewport", async ({ page }, testInfo) => {
+  test.setTimeout(180_000);
+
   await page.goto("/course");
   if (testInfo.project.name === "mobile-chromium") {
     await expect(page.getByRole("button", { name: "Lessons" })).toBeVisible();
@@ -283,4 +323,13 @@ test("course pages do not overflow the viewport", async ({ page }, testInfo) => 
     () => document.documentElement.scrollWidth - window.innerWidth,
   );
   expect(providerLessonOverflow).toBeLessThanOrEqual(1);
+
+  await page.goto("/course/production/production-ready", { waitUntil: "domcontentloaded" });
+  await expect(
+    page.getByRole("heading", { name: "Operations And Release Readiness", exact: true }),
+  ).toBeVisible();
+  const operationsLessonOverflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - window.innerWidth,
+  );
+  expect(operationsLessonOverflow).toBeLessThanOrEqual(1);
 });

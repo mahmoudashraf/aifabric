@@ -22,8 +22,17 @@ describe("generated course catalog", () => {
     expect(new Set(courseLessons.map((lesson) => lesson.route)).size).toBe(courseLessons.length);
   });
 
-  it("publishes the Quickstart and Core path while previewing the verified first Production checkpoint", () => {
-    expect(previewLessons.map((lesson) => lesson.id)).toEqual(["prod-01"]);
+  it("publishes the Quickstart and Core path while previewing all verified Production checkpoints", () => {
+    expect(previewLessons.map((lesson) => lesson.id)).toEqual([
+      "prod-01",
+      "prod-02",
+      "prod-03",
+      "prod-04",
+      "prod-05",
+      "prod-06",
+      "prod-07",
+      "prod-08",
+    ]);
     expect(publishedLessons.map((lesson) => lesson.id)).toEqual([
       "qs-01",
       "core-01",
@@ -58,7 +67,7 @@ describe("generated course catalog", () => {
     ]);
   });
 
-  it("previews PROD-01 with an immutable checkpoint, keyless path, and script-ready theory", () => {
+  it("previews all Production lessons with immutable checkpoints and complete UI content", () => {
     const production = courseCatalog.tracks.find((track) => track.id === "production");
     const lesson = getRenderedLesson("prod-01");
 
@@ -84,6 +93,23 @@ describe("generated course catalog", () => {
     expect(lesson?.markdown).toContain("## Step 8: Optional Real OpenAI Exercise");
     expect(lesson?.knowledgeCheck.questions).toHaveLength(7);
     expect(lesson?.assistant.validationStatus).toBe("passed");
+
+    for (const summary of production?.lessons ?? []) {
+      const rendered = getRenderedLesson(summary.id);
+      expect(rendered, `${summary.id} should be imported by the UI`).not.toBeNull();
+      expect(rendered?.frontMatter.starterRef).not.toBe("planned");
+      expect(rendered?.frontMatter.solutionRef).not.toBe("planned");
+      expect(rendered?.frontMatter.requiresOpenAi).toBe(false);
+      expect(rendered?.assistant.validationStatus).toBe("passed");
+      expect(rendered?.knowledgeCheck.questions.length).toBeGreaterThanOrEqual(5);
+    }
+
+    const releaseLesson = getRenderedLesson("prod-08");
+    expect(releaseLesson?.route).toBe("/course/production/production-ready");
+    expect(releaseLesson?.frontMatter.requiresDocker).toBe(true);
+    expect(releaseLesson?.frontMatter.optionalProviderExercises).toEqual(["openai"]);
+    expect(releaseLesson?.markdown).toContain("## Step 7: Restart And Prove Durability");
+    expect(releaseLesson?.markdown).toContain("## Step 9: Prove Missing Required Credentials Fail");
   });
 
   it("keeps QS-01 action-first and hands architecture teaching to the Core track", () => {
