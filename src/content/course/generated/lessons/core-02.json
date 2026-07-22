@@ -1,0 +1,268 @@
+{
+  "id": "core-02",
+  "slug": "model-and-index-data",
+  "title": "Model And Index Application Data",
+  "description": "Define content and metadata, then prove the complete vector lifecycle.",
+  "durationMinutes": 60,
+  "availability": "preview",
+  "source": "core/02-model-and-index-data/lesson.md",
+  "knowledgeCheck": {
+    "schemaVersion": 1,
+    "lessonId": "core-02",
+    "passingScorePercent": 80,
+    "questions": [
+      {
+        "id": "core-02-q1",
+        "type": "single-choice",
+        "competency": "evidence-lifecycle",
+        "prompt": "What proves that a saved KnowledgeArticle is available for semantic retrieval?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The database transaction committed"
+          },
+          {
+            "id": "b",
+            "text": "The entity has an @AICapable annotation"
+          },
+          {
+            "id": "c",
+            "text": "A lifecycle check retrieves the expected stable entity ID from the configured vector provider"
+          },
+          {
+            "id": "d",
+            "text": "The application has an LLM API key"
+          }
+        ],
+        "correctOptionIds": [
+          "c"
+        ],
+        "explanation": "Configuration describes intent; retrieved vector evidence proves that projection, embedding, and storage completed.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/service/AICapabilityService.java"
+        ]
+      },
+      {
+        "id": "core-02-q2",
+        "type": "multiple-choice",
+        "competency": "field-projection",
+        "prompt": "Which fields belong in the approved AI-facing projection for this lesson?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Title and body as searchable content"
+          },
+          {
+            "id": "b",
+            "text": "Tenant, category, and publication status as structured metadata"
+          },
+          {
+            "id": "c",
+            "text": "Internal staff notes because the entity already contains them"
+          },
+          {
+            "id": "d",
+            "text": "Stable entity identity"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b",
+          "d"
+        ],
+        "explanation": "Projection is allowlisted. Searchable prose, required metadata, and stable identity are included; internal notes remain excluded.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/annotation/AISearchable.java",
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/annotation/AIContext.java"
+        ]
+      },
+      {
+        "id": "core-02-q3",
+        "type": "single-choice",
+        "competency": "configuration-precedence",
+        "prompt": "What happens when explicit YAML entity configuration conflicts with annotation defaults?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Annotation defaults always win"
+          },
+          {
+            "id": "b",
+            "text": "Explicit YAML remains authoritative"
+          },
+          {
+            "id": "c",
+            "text": "Both values are ignored"
+          },
+          {
+            "id": "d",
+            "text": "The vector provider chooses"
+          }
+        ],
+        "correctOptionIds": [
+          "b"
+        ],
+        "explanation": "AI Fabric's annotation contract documents YAML configuration above annotation defaults and framework defaults.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/annotation/AISearchable.java"
+        ]
+      },
+      {
+        "id": "core-02-q4",
+        "type": "single-choice",
+        "competency": "update-delete-lifecycle",
+        "prompt": "Which test best protects an article update and delete lifecycle?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Verify repository save and delete methods were called"
+          },
+          {
+            "id": "b",
+            "text": "Verify the controller returned HTTP 200"
+          },
+          {
+            "id": "c",
+            "text": "Reindex the same stable ID, prove stale content is absent, remove its vector, then prove it cannot be retrieved"
+          },
+          {
+            "id": "d",
+            "text": "Compare two generated answers"
+          }
+        ],
+        "correctOptionIds": [
+          "c"
+        ],
+        "explanation": "Vector state is the behavior under test; repository or controller success alone cannot prove index consistency.",
+        "sourcePaths": [
+          "docs/getting-started/09-vector-storage-lucene.md"
+        ]
+      },
+      {
+        "id": "core-02-q5",
+        "type": "multiple-choice",
+        "competency": "embedding-compatibility",
+        "prompt": "Which changes can require a controlled vector-index rebuild?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Changing the embedding model"
+          },
+          {
+            "id": "b",
+            "text": "Changing embedding dimensions"
+          },
+          {
+            "id": "c",
+            "text": "Changing the Lucene index location or vector-space convention"
+          },
+          {
+            "id": "d",
+            "text": "Renaming an unrelated controller method"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b",
+          "c"
+        ],
+        "explanation": "Model, dimensions, preprocessing, and storage conventions define the compatible vector space.",
+        "sourcePaths": [
+          "docs/getting-started/09-vector-storage-lucene.md"
+        ]
+      },
+      {
+        "id": "core-02-q6",
+        "type": "single-choice",
+        "competency": "tenant-metadata",
+        "prompt": "Semantic search still finds an article, but its tenantId metadata is missing. Should the lifecycle test pass?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Yes, similarity is the only indexing requirement"
+          },
+          {
+            "id": "b",
+            "text": "Yes, the browser can add tenantId later"
+          },
+          {
+            "id": "c",
+            "text": "No, required security metadata is part of evidence readiness"
+          },
+          {
+            "id": "d",
+            "text": "No, because tenantId should be embedded into searchable prose"
+          }
+        ],
+        "correctOptionIds": [
+          "c"
+        ],
+        "explanation": "Later tenant policy depends on trusted metadata being present in stored evidence; client-supplied scope cannot repair an incomplete index.",
+        "sourcePaths": [
+          "docs/course/core/02-model-and-index-data/notebooklm/AI_FABRIC_SEARCHABLE_EVIDENCE_NOTEBOOKLM_SCRIPT.md"
+        ]
+      }
+    ]
+  },
+  "assistantPrompt": "core/02-model-and-index-data/assistant-prompt.md",
+  "assistantReviewPrompt": "core/02-model-and-index-data/assistant-review-prompt.md",
+  "theoryVideoIds": [
+    "searchable-evidence"
+  ],
+  "relatedStories": [],
+  "relatedDemos": [],
+  "track": "core",
+  "route": "/course/core/model-and-index-data",
+  "frontMatter": {
+    "id": "core-02",
+    "slug": "model-and-index-data",
+    "title": "Model And Index Application Data",
+    "track": "core",
+    "order": 2,
+    "durationMinutes": 60,
+    "availability": "preview",
+    "courseVersion": "0.3.3-course.1-beta",
+    "frameworkVersion": "0.3.3",
+    "frameworkTag": "ai-fabric-framework-v0.3.3",
+    "courseSourceTag": "unreleased",
+    "starterRef": "planned",
+    "solutionRef": "planned",
+    "requiresOpenAi": false,
+    "requiresDocker": false,
+    "sourcePaths": [
+      "docs/course/core/02-model-and-index-data/notebooklm/AI_FABRIC_SEARCHABLE_EVIDENCE_NOTEBOOKLM_SCRIPT.md",
+      "docs/getting-started/03-first-semantic-search.md",
+      "docs/getting-started/09-vector-storage-lucene.md",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/annotation/AICapable.java",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/annotation/AISearchable.java",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/annotation/AIContext.java",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/service/AICapabilityService.java",
+      "examples/real-apps/smart-faq-assistant/src/main/resources/ai-entity-config.yml",
+      "examples/real-apps/smart-faq-assistant/src/main/java/com/ai/fabric/realapps/faq/service/FaqArticleService.java",
+      "examples/real-apps/smart-faq-assistant/src/test/java/com/ai/fabric/realapps/faq/service/FaqArticleServiceTest.java"
+    ],
+    "theoryVideoIds": [
+      "searchable-evidence"
+    ],
+    "assistant": {
+      "mode": "implement",
+      "implementationPrompt": "assistant-prompt.md",
+      "reviewPrompt": "assistant-review-prompt.md",
+      "validationStatus": "planned"
+    },
+    "knowledgeCheck": {
+      "source": "knowledge-check.yml",
+      "required": true,
+      "passingScorePercent": 80
+    }
+  },
+  "markdown": "# Model And Index Application Data\n\n## Start Here\n\nYour database records are not automatically AI evidence. A record becomes retrievable only after\nyour application selects an approved projection, an embedding provider converts that content into a\ncompatible vector, and the configured vector provider stores the vector with stable identity and\nmetadata.\n\nIn this lesson, you will extend the Support Knowledge Assistant from CORE-01 with a\n`KnowledgeArticle` lifecycle. You will define what can be searched, preserve trusted metadata, and\nprove create, update, query, and delete behavior. No LLM or cloud key is required.\n\n> **Current lesson status: Preview.** The lesson, searchable-evidence theory video, assistant\n> prompts, and knowledge check are ready. The standalone starter and immutable checkpoint refs are\n> still `planned`, so the commands and endpoint names below define the reviewed lab contract rather\n> than a clean-checkout completion claim.\n\n## What You Will Build\n\nThe executable checkpoint will add this vertical slice:\n\n```text\nKnowledgeArticleController\n  -> KnowledgeArticleService -> KnowledgeArticleRepository\n                            \\\n                             -> AICapabilityService -> embedding provider -> Lucene\n\nKnowledgeSearchController\n  -> AICoreService.performSearch -> embedding provider -> Lucene -> evidence result\n```\n\nBy the end, you will be able to:\n\n- distinguish domain data, an AI-facing projection, and stored vector evidence;\n- choose `@AISearchable` content without exposing the whole entity;\n- preserve stable entity, tenant, category, and status metadata;\n- explain annotation and YAML precedence;\n- prove no-index, create, update, filtered-search, and delete behavior;\n- diagnose a successful database write that did not produce current vector evidence.\n\n## Step 1: Define The Evidence Contract\n\nCreate `evidence-contract.md` before writing Java. Use this table:\n\n| Field | Domain purpose | AI projection | Reason |\n| --- | --- | --- | --- |\n| `id` | Stable article identity | Stored entity identity | Connect evidence to the source record |\n| `title` | Reader-facing title | Searchable content | Carries the article's primary meaning |\n| `body` | Approved support guidance | Searchable content | Contains the answer users need to retrieve |\n| `category` | Support taxonomy | Context metadata | Supports filtering and evidence display |\n| `tenantId` | Ownership boundary | Context metadata | Supports later trusted tenant filtering |\n| `status` | Publication state | Context metadata | Lets the app exclude non-published evidence |\n| `internalNotes` | Staff-only workflow | Excluded | Must not enter embeddings, metadata, or responses |\n\nYour projection is a data policy. `@AICapable` and field configuration describe that policy; they do\nnot transfer ownership of the record to AI Fabric.\n\n## Step 2: Model Approved Fields\n\nThe planned starter will use the current annotation contract:\n\n```java\n@Entity\n@AICapable(entityType = \"knowledge-article\")\npublic class KnowledgeArticle {\n    @Id\n    private String id;\n\n    @AISearchable(weight = 2.0, required = true)\n    private String title;\n\n    @AISearchable(maxLength = 8_000, required = true)\n    private String body;\n\n    @AIContext(description = \"Support taxonomy used for filtering\")\n    private String category;\n\n    @AIContext(description = \"Application-owned tenant identifier\")\n    private String tenantId;\n\n    @AIContext(description = \"Publication state\")\n    private String status;\n\n    private String internalNotes;\n}\n```\n\nRead the annotations literally:\n\n- `@AICapable` resolves the entity type and capability configuration.\n- `@AISearchable` marks approved prose extracted for embedding and search.\n- `@AIContext` contributes approved structured metadata; it does not make a field searchable prose.\n- An ordinary field such as `internalNotes` remains outside the AI-facing projection.\n\nDo not accept a design that serializes the complete entity and removes sensitive fields afterward.\nSelect approved fields first.\n\n## Step 3: Resolve Annotation And YAML Configuration\n\nAdd an explicit entity entry so the enabled capabilities are reviewable:\n\n```yaml\nai-entities:\n  knowledge-article:\n    entity-type: knowledge-article\n    features: [embedding, search]\n    auto-embedding: true\n    indexable: true\n    enable-search: true\n    metadata-fields:\n      - name: category\n        type: string\n      - name: tenantId\n        type: string\n      - name: status\n        type: string\n```\n\nAI Fabric can discover searchable and context fields from annotations. YAML can explicitly configure\nentity behavior and fields, and explicit YAML wins when it conflicts with annotation defaults.\n\nAdd a focused configuration test with these assertions:\n\n```text\nresolved entity type = knowledge-article\nfeatures include embedding and search\nindexable = true\nmetadata fields include category, tenantId, status\ninternalNotes is absent from searchable, embeddable, and metadata fields\n```\n\nThe test protects intent. It still does not prove that a vector exists.\n\n## Step 4: Make The Lifecycle Explicit\n\nKeep repository persistence and vector lifecycle visible in the application service:\n\n```text\ncreate:\n  save domain record -> process saved record for AI -> prove retrievable evidence\n\nupdate:\n  load and authorize record -> save changed record -> reindex same entity identity\n\ndelete:\n  load and authorize record -> delete source record -> remove vector by entity type and ID\n\nbackfill:\n  page existing records -> index each approved record -> record success/failure totals\n```\n\nFor the learning checkpoint, use synchronous verification around local providers so each test can\nobserve the final vector state. A production application may enqueue asynchronous work, but then its\nproof must include queue acceptance, worker completion, retry/dead-letter state, and final vector\nreadiness.\n\nOne important implementation detail is visible in the current capability service: processing and\nstorage paths can log and return after missing content, missing identity, or provider failure. A\nsuccessful domain save is therefore not enough. Assert the resulting evidence.\n\n## Step 5: Prove Search Before And After Indexing\n\nSeed this article without invoking the indexing path:\n\n```json\n{\n  \"id\": \"article-account-lockout\",\n  \"title\": \"Recover a locked account\",\n  \"body\": \"Wait fifteen minutes, then use account recovery to verify your email and reset access.\",\n  \"category\": \"authentication\",\n  \"tenantId\": \"tenant-blue\",\n  \"status\": \"PUBLISHED\"\n}\n```\n\nSearch with different wording:\n\n```text\nHow can I sign in after too many failed attempts?\n```\n\nBefore indexing, the expected response is an empty evidence list. After indexing, the expected\nevidence contains:\n\n```json\n{\n  \"entityType\": \"knowledge-article\",\n  \"entityId\": \"article-account-lockout\",\n  \"content\": \"Recover a locked account ...\",\n  \"score\": \"a numeric similarity score\",\n  \"metadata\": {\n    \"category\": \"authentication\",\n    \"tenantId\": \"tenant-blue\",\n    \"status\": \"PUBLISHED\"\n  }\n}\n```\n\nThe exact score is provider- and corpus-dependent. Assert identity, content, required metadata, and\nrelative retrieval behavior instead of inventing a universal percentage.\n\n## Step 6: Run The Complete Lifecycle Test\n\nAdd one integration test that performs all of these operations in order:\n\n1. save an article without indexing and prove the query returns no matching evidence;\n2. index it and prove a paraphrased query returns the stable entity ID;\n3. prove `category`, `tenantId`, and `status` are present in evidence metadata;\n4. update the title and body, reindex the same ID, and prove stale text is no longer returned;\n5. delete the article and remove its vector;\n6. prove the entity cannot be retrieved and no stale vector remains.\n\nAlso keep focused unit tests for request construction and malformed result rows. The full lifecycle\ntest protects provider integration; the focused tests explain failures quickly.\n\n### Expected Test Report\n\n```text\nsource records before seed: 0\nsource records after seed: 1\nmatching vectors before index: 0\nmatching vectors after index: 1\nstable entity id preserved: yes\nrequired metadata present: yes\nstale content after update: 0\nmatching vectors after delete: 0\n```\n\n## Step 7: Trigger And Correct The Metadata Failure\n\nRemove `tenantId` from the AI-facing metadata configuration, reindex the article, and run the\nlifecycle test.\n\nThe test must fail even if semantic retrieval still finds the article. The evidence is incomplete\nfor later tenant enforcement.\n\nCorrect it by restoring `tenantId`, rebuilding the affected vector, and rerunning the same test.\n\n### Why This Failure Matters\n\nMetadata added only at query time cannot repair vectors that were indexed without the trusted value.\nLater lessons can enforce tenant policy only when identity comes from trusted application context\nand indexed evidence carries the required scope.\n\n## Planned Commands And Requests\n\nThese become executable when the starter and solution refs are published:\n\n```bash\n./mvnw clean verify\n./mvnw spring-boot:run -Dspring-boot.run.profiles=local\n```\n\n```http\nPOST /api/demo/reset\nPOST /api/knowledge/seed-without-index\nGET /api/knowledge/search?q=How+can+I+sign+in+after+too+many+failed+attempts\nPOST /api/knowledge/index\nGET /api/knowledge/search?q=How+can+I+sign+in+after+too+many+failed+attempts\nPUT /api/knowledge/article-account-lockout\nDELETE /api/knowledge/article-account-lockout\nGET /api/demo/vector-readiness\n```\n\n## Common Mistakes\n\n| Mistake | Observable risk | Correct approach |\n| --- | --- | --- |\n| Treating a database row as indexed evidence | Search is empty while the UI claims data is ready | Measure source and vector readiness separately |\n| Marking every field searchable | Sensitive or irrelevant data enters embeddings | Define an allowlisted projection |\n| Changing the embedding model without rebuilding | Query and stored vectors become incompatible | Treat model, dimensions, and index path as schema |\n| Generating a new entity ID on update | Old vectors survive beside the new record | Reindex the same stable identity |\n| Deleting only the database row | Stale evidence remains retrievable | Remove the vector and prove absence |\n| Testing only the indexing method call | Logged/skipped provider work can look successful | Assert stored and retrieved evidence |\n| Using a fixed score assertion | A legitimate provider or corpus change breaks the test | Assert expected identity and bounded ranking behavior |\n\n## Troubleshooting\n\n| Symptom | Inspect |\n| --- | --- |\n| No evidence after indexing | Resolved entity config, stable `id`, approved content, provider availability, and vector path |\n| Search returns the wrong entity type | `entityType` on stored vectors and `AISearchRequest` |\n| Metadata is missing | `@AIContext`, YAML metadata fields, and the stored vector record |\n| Updates return old wording | Stable identity and the update/reindex path |\n| Deleted records still appear | Application delete event and `removeVector(entityType, entityId)` proof |\n| Search fails after a model change | Embedding dimensions and index compatibility |\n\n## Done When\n\nYou are done with this preview lesson when:\n\n- your evidence contract excludes unapproved domain fields;\n- annotation/YAML resolution is covered by a focused test;\n- the no-index state returns no evidence rather than a canned answer;\n- create, update, search, and delete are proven against vector state;\n- required metadata survives indexing and retrieval;\n- the intentional metadata failure is observable and corrected;\n- you score at least 80 percent on the knowledge check.\n\n## Next Lesson\n\nCORE-03 uses this searchable evidence to build a RAG response that cites source IDs, refuses to\ninvent support guidance when evidence is absent, and keeps retrieval distinct from generation.",
+  "assistant": {
+    "mode": "implement",
+    "validationStatus": "planned",
+    "implementationPrompt": "# CORE-02 Coding-Assistant Implementation Prompt\n\nStatus: Planned. Do not use this prompt as a validated implementation handoff until the published\nstarter checkpoint replaces `planned`.\n\n```text\nYou are implementing AI Fabric course lesson CORE-02: Model And Index Application Data.\n\nUse AI Fabric 0.3.3 / ai-fabric-framework-v0.3.3, Java 21, and Spring Boot 4.1.x. Work only from the\npublished CORE-02 starter checkpoint when it becomes available. Do not copy a solution checkpoint.\n\nRead first:\n- docs/course/core/02-model-and-index-data/lesson.md\n- docs/getting-started/03-first-semantic-search.md\n- docs/getting-started/09-vector-storage-lucene.md\n- current AICapable, AISearchable, AIContext, AICapabilityService, AISearchRequest, and vector APIs\n\nGoal:\nAdd an application-owned KnowledgeArticle model, an allowlisted AI-facing projection, explicit local\nindexing, and a lifecycle test that proves no-index, create, update, metadata, and delete behavior.\n\nBefore editing:\n1. Verify the exact starter ref, Java/Maven versions, tests, and worktree state.\n2. Inspect current pinned APIs; do not invent annotations, properties, services, or result shapes.\n3. Produce a field projection table that excludes internalNotes.\n4. Explain application, AI Fabric, embedding-provider, and vector-provider ownership.\n5. Give a concise implementation and test plan.\n\nRequired behavior:\n1. Preserve a stable entity ID across create and update.\n2. Mark only approved title/body prose searchable.\n3. preserve category, tenantId, and status as structured metadata.\n4. Return no evidence before indexing.\n5. Retrieve the expected ID with paraphrased wording after indexing.\n6. Reindex updates without retaining stale content.\n7. Remove vectors on delete and prove absence.\n8. Add a deliberate missing-tenant-metadata failure and recovery test.\n9. Keep local embedding and Lucene failures visible; do not fabricate success output.\n\nTesting:\n- configuration resolution test;\n- focused request/result mapping tests;\n- full create/update/search/delete lifecycle integration test;\n- metadata completeness assertion;\n- clean `./mvnw clean verify` from the starter project.\n\nDo not:\n- serialize the entire entity into the AI projection;\n- embed internalNotes or trusted scope identifiers as prose;\n- treat a committed database row as indexing proof;\n- assert a universal similarity percentage;\n- hide missing provider/index behavior behind a canned answer;\n- add an LLM or cloud credential;\n- use -DskipTests;\n- commit, push, deploy, or discard unrelated changes.\n\nStop and report when the starter checkpoint is missing, current APIs contradict the lesson, local\nprovider assets are unavailable, or the required lifecycle cannot be observed.\n\nFinish with changed files, exact command outcomes, before-index and after-index evidence, metadata\nproof, update/delete proof, unexecuted checks, and the final data-flow explanation.\n```\n",
+    "reviewPrompt": "# CORE-02 Independent Review Prompt\n\nReview a developer's CORE-02 implementation against AI Fabric Framework 0.3.3, the current CORE-02\ncourse source, and the pinned Java APIs.\n\nUse a findings-first review. Order findings by severity and cite the changed file or test plus the\ncourse or pinned framework source that supports each finding. Do not accept method-call verification\nas vector-lifecycle proof.\n\nCheck for these failure classes:\n\n- the full domain entity, internal notes, or sensitive data entering the AI projection;\n- unstable entity IDs producing duplicate or stale vectors;\n- missing tenant, category, or publication metadata;\n- a database commit or indexing invocation presented as completed indexing;\n- search-before-index returning canned evidence or an invented answer;\n- updates that leave old content retrievable;\n- deletes that remove only the database row;\n- fixed similarity-score assertions with no provider/corpus justification;\n- embedding model or dimension changes using an incompatible existing index;\n- provider failures swallowed while readiness still reports success;\n- client-provided tenant metadata treated as trusted scope.\n\nThen report:\n\n1. findings with severity;\n2. missing proof or unexecuted checks;\n3. whether the projection is an explicit allowlist;\n4. whether identity and required metadata survive retrieval;\n5. whether create, update, search, and delete are proven against vector state;\n6. whether the intentional metadata failure fails for the correct reason;\n7. the smallest corrections required to pass CORE-02.\n\nThe lesson passes only when stored and retrieved evidence, not logs or controller status, proves the\ncomplete lifecycle.\n"
+  },
+  "sourcePath": "docs/course/core/02-model-and-index-data/lesson.md",
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/main/docs/course/core/02-model-and-index-data/lesson.md"
+}

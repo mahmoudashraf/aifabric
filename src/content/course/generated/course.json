@@ -77,8 +77,14 @@
           "title": "Model And Index Application Data",
           "description": "Define content and metadata, then prove the complete vector lifecycle.",
           "durationMinutes": 60,
-          "availability": "planned",
-          "theoryVideoIds": [],
+          "availability": "preview",
+          "source": "core/02-model-and-index-data/lesson.md",
+          "knowledgeCheck": "core/02-model-and-index-data/knowledge-check.yml",
+          "assistantPrompt": "core/02-model-and-index-data/assistant-prompt.md",
+          "assistantReviewPrompt": "core/02-model-and-index-data/assistant-review-prompt.md",
+          "theoryVideoIds": [
+            "searchable-evidence"
+          ],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/core/model-and-index-data"
@@ -314,6 +320,6 @@
       ]
     }
   ],
-  "sourceCommit": "c86219a9f0e0be47aa6645be51f0b5085ddd3dbf",
-  "generatedAt": "2026-07-21T23:34:51.319Z"
+  "sourceCommit": "54549697038b36d162c73408f2aa691eb24e95d2",
+  "generatedAt": "2026-07-21T23:59:39.129Z"
 }

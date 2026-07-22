@@ -18,8 +18,8 @@ describe("generated course catalog", () => {
     expect(new Set(courseLessons.map((lesson) => lesson.route)).size).toBe(courseLessons.length);
   });
 
-  it("renders the Quickstart and first Core preview lessons", () => {
-    expect(previewLessons.map((lesson) => lesson.id)).toEqual(["qs-01", "core-01"]);
+  it("renders the Quickstart and available Core preview lessons", () => {
+    expect(previewLessons.map((lesson) => lesson.id)).toEqual(["qs-01", "core-01", "core-02"]);
     expect(getRenderedLesson("qs-01")?.video).toBeUndefined();
     expect(getRenderedLesson("core-01")?.theoryVideoIds).toEqual([
       "what-is-ai-fabric",
@@ -53,5 +53,18 @@ describe("generated course catalog", () => {
     expect(lesson?.markdown).not.toMatch(/\bthe learner\b/i);
     expect(lesson?.knowledgeCheck.questions).toHaveLength(6);
     expect(lesson?.assistant.mode).toBe("analyze");
+  });
+
+  it("publishes Core 02 as an evidence-lifecycle lab", () => {
+    const lesson = getRenderedLesson("core-02");
+
+    expect(lesson?.route).toBe("/course/core/model-and-index-data");
+    expect(lesson?.theoryVideoIds).toEqual(["searchable-evidence"]);
+    expect(lesson?.markdown).toContain("## Step 1: Define The Evidence Contract");
+    expect(lesson?.markdown).toContain("## Step 6: Run The Complete Lifecycle Test");
+    expect(lesson?.markdown).toContain("## Step 7: Trigger And Correct The Metadata Failure");
+    expect(lesson?.markdown).not.toMatch(/\bthe learner\b/i);
+    expect(lesson?.knowledgeCheck.questions).toHaveLength(6);
+    expect(lesson?.assistant.mode).toBe("implement");
   });
 });

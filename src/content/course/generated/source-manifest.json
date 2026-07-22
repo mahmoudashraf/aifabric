@@ -5,12 +5,28 @@
   "frameworkVersion": "0.3.3",
   "frameworkTag": "ai-fabric-framework-v0.3.3",
   "courseSourceTag": "unreleased",
-  "sourceCommit": "c86219a9f0e0be47aa6645be51f0b5085ddd3dbf",
-  "generatedAt": "2026-07-21T23:34:51.319Z",
+  "sourceCommit": "54549697038b36d162c73408f2aa691eb24e95d2",
+  "generatedAt": "2026-07-21T23:59:39.129Z",
   "files": [
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/annotation/AICapable.java",
+      "sha256": "b5987206912cd4f656eec149efd17adfa4ed0c52bb40f332c587f9d798574267"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/annotation/AIContext.java",
+      "sha256": "a584a3beacd0826b1c58c28cac467b97409d624e01e66c04f41c5e1e6cecc13d"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/annotation/AISearchable.java",
+      "sha256": "7f44b5fd278f1702e0a11a92e5c96a89913e32bfee65c9feb373357946b4c1e5"
+    },
     {
       "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/config/OrchestrationProperties.java",
       "sha256": "150a0386135fe72741b8bff740dcbbac342f82b67ad73d04570c3a59e21c0e20"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/service/AICapabilityService.java",
+      "sha256": "d99795a2e5a79bee889a8b967454834fc6c71a50a997564dbfb344886f8eeafa"
     },
     {
       "sourcePath": "docs/architecture/AI_FABRIC_PUBLIC_ARCHITECTURE.md",
@@ -49,8 +65,28 @@
       "sha256": "6366248f3e70160f84b46191a455f0d602e170b7e7e1cb65ff2a4a72b1cffc98"
     },
     {
+      "sourcePath": "docs/course/core/02-model-and-index-data/assistant-prompt.md",
+      "sha256": "039201c230035b065229d455e73325d1e1f258a67b47e5a939075ace3385324e"
+    },
+    {
+      "sourcePath": "docs/course/core/02-model-and-index-data/assistant-review-prompt.md",
+      "sha256": "41348b6d2f9b04c85225ebb9e6d5ed7b66d31b14a1b04e5670c8a976be76d0ee"
+    },
+    {
+      "sourcePath": "docs/course/core/02-model-and-index-data/knowledge-check.yml",
+      "sha256": "828be42129a19c8fe0ac85257398009f2b29813981143ed7588214bf55d06fb8"
+    },
+    {
+      "sourcePath": "docs/course/core/02-model-and-index-data/lesson.md",
+      "sha256": "f88301382a5911249d6c7f09162531f864cc0a317dccf8dad2e6cd7d15b0a21c"
+    },
+    {
+      "sourcePath": "docs/course/core/02-model-and-index-data/notebooklm/AI_FABRIC_SEARCHABLE_EVIDENCE_NOTEBOOKLM_SCRIPT.md",
+      "sha256": "858959fedec6493a2463fdcd58c0a43231525cf343091ccc83aa3413169fd4bc"
+    },
+    {
       "sourcePath": "docs/course/course.yml",
-      "sha256": "3cd9f1b43032d72eb893db11be37eebee5f601b690193749f39f3aa6259e2295"
+      "sha256": "1e6c1a82120a0a3b0635c1f8b86786c9b5915ac65ed2b83272e684b85f7ba027"
     },
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/assistant-prompt.md",
@@ -99,6 +135,18 @@
     {
       "sourcePath": "docs/llm-context/AI_FABRIC_MODULE_DECISION_TREE.md",
       "sha256": "7c7e2ef034a815278d6de65ce35437531b29d254e03bc2a448027ab2a01baabc"
+    },
+    {
+      "sourcePath": "examples/real-apps/smart-faq-assistant/src/main/java/com/ai/fabric/realapps/faq/service/FaqArticleService.java",
+      "sha256": "2f9768c8f0ab7846259ab8906fae018cdce42a93654fc8cfdb82dfa154cfa015"
+    },
+    {
+      "sourcePath": "examples/real-apps/smart-faq-assistant/src/main/resources/ai-entity-config.yml",
+      "sha256": "2dbe4dc07715757998a2192d0b453e84d7819b8ccabd8c3c9f2159849ab05af9"
+    },
+    {
+      "sourcePath": "examples/real-apps/smart-faq-assistant/src/test/java/com/ai/fabric/realapps/faq/service/FaqArticleServiceTest.java",
+      "sha256": "1533b899b9bd3a12b7c5d88750577a41b861a97d38360965ec0aedf7003281ff"
     }
   ]
 }

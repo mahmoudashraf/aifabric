@@ -29,6 +29,25 @@ test("Core 01 presents its complete theory and analysis workspace", async ({ pag
   await expect(page.getByRole("heading", { name: "Check your understanding" })).toBeVisible();
 });
 
+test("Core 02 presents the searchable-evidence lifecycle lab", async ({ page }) => {
+  await page.goto("/course/core/model-and-index-data", { waitUntil: "domcontentloaded" });
+
+  await expect(page.getByRole("heading", { name: "Model And Index Application Data" })).toBeVisible();
+  await expect(page.getByLabel("Assigned theory videos").getByRole("button")).toHaveCount(1);
+  await expect(page.getByTitle("Searchable evidence lesson video in English")).toHaveAttribute(
+    "src",
+    /G_qBre7Be1s/,
+  );
+  await expect(page.getByRole("heading", { name: "Define The Evidence Contract" })).toBeVisible();
+
+  await page.getByRole("tab", { name: "Use an assistant" }).click();
+  await expect(
+    page.locator("pre").filter({ hasText: "# CORE-02 Coding-Assistant Implementation Prompt" }),
+  ).toBeVisible();
+  await page.getByRole("tab", { name: "Build manually" }).click();
+  await expect(page.getByRole("heading", { name: "Check your understanding" })).toBeVisible();
+});
+
 test("knowledge check grades locally without requiring sign-in", async ({ page }) => {
   await page.goto("/course/quickstart#knowledge-check");
   await page.getByLabel(/Projecting approved content/).check();
@@ -54,4 +73,11 @@ test("course pages do not overflow the viewport", async ({ page }, testInfo) => 
   await expect(page.getByRole("heading", { name: "What Is AI Fabric? Architecture And Mental Model" })).toBeVisible();
   const lessonOverflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(lessonOverflow).toBeLessThanOrEqual(1);
+
+  await page.goto("/course/core/model-and-index-data", { waitUntil: "domcontentloaded" });
+  await expect(page.getByRole("heading", { name: "Model And Index Application Data" })).toBeVisible();
+  const indexingLessonOverflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - window.innerWidth,
+  );
+  expect(indexingLessonOverflow).toBeLessThanOrEqual(1);
 });
