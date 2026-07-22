@@ -113,8 +113,14 @@
           "title": "Governed Actions And Confirmation",
           "description": "Register typed actions, collect parameters, and confirm writes before execution.",
           "durationMinutes": 85,
-          "availability": "planned",
-          "theoryVideoIds": [],
+          "availability": "preview",
+          "source": "core/04-governed-actions/lesson.md",
+          "knowledgeCheck": "core/04-governed-actions/knowledge-check.yml",
+          "assistantPrompt": "core/04-governed-actions/assistant-prompt.md",
+          "assistantReviewPrompt": "core/04-governed-actions/assistant-review-prompt.md",
+          "theoryVideoIds": [
+            "governed-actions-and-confirmation"
+          ],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/core/governed-actions"
@@ -326,6 +332,6 @@
       ]
     }
   ],
-  "sourceCommit": "78fb2cee9104784aa981c8e6cc32fe2ad4cb7d61",
-  "generatedAt": "2026-07-22T00:12:31.678Z"
+  "sourceCommit": "07a995d435b4f748d533afff6e98623c6818747e",
+  "generatedAt": "2026-07-22T00:29:09.190Z"
 }

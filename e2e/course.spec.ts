@@ -67,6 +67,26 @@ test("Core 03 presents the evidence-grounded RAG lab", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Check your understanding" })).toBeVisible();
 });
 
+test("Core 04 presents the governed-action confirmation lab", async ({ page }) => {
+  await page.goto("/course/core/governed-actions", { waitUntil: "domcontentloaded" });
+
+  await expect(
+    page.getByRole("heading", { name: "Governed Actions And Confirmation", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByLabel("Assigned theory videos").getByRole("button")).toHaveCount(1);
+  await expect(
+    page.getByTitle("Governed actions and confirmation lesson video in English"),
+  ).toHaveAttribute("src", /bTZ08ApmpUQ/);
+  await expect(page.getByRole("heading", { name: "Test The Confirmation State Machine" })).toBeVisible();
+
+  await page.getByRole("tab", { name: "Use an assistant" }).click();
+  await expect(
+    page.locator("pre").filter({ hasText: "# CORE-04 Coding-Assistant Implementation Prompt" }),
+  ).toBeVisible();
+  await page.getByRole("tab", { name: "Build manually" }).click();
+  await expect(page.getByRole("heading", { name: "Check your understanding" })).toBeVisible();
+});
+
 test("knowledge check grades locally without requiring sign-in", async ({ page }) => {
   await page.goto("/course/quickstart#knowledge-check");
   await page.getByLabel(/Projecting approved content/).check();
@@ -106,4 +126,13 @@ test("course pages do not overflow the viewport", async ({ page }, testInfo) => 
     () => document.documentElement.scrollWidth - window.innerWidth,
   );
   expect(ragLessonOverflow).toBeLessThanOrEqual(1);
+
+  await page.goto("/course/core/governed-actions", { waitUntil: "domcontentloaded" });
+  await expect(
+    page.getByRole("heading", { name: "Governed Actions And Confirmation", exact: true }),
+  ).toBeVisible();
+  const actionLessonOverflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - window.innerWidth,
+  );
+  expect(actionLessonOverflow).toBeLessThanOrEqual(1);
 });

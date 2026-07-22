@@ -5,8 +5,8 @@
   "frameworkVersion": "0.3.3",
   "frameworkTag": "ai-fabric-framework-v0.3.3",
   "courseSourceTag": "unreleased",
-  "sourceCommit": "78fb2cee9104784aa981c8e6cc32fe2ad4cb7d61",
-  "generatedAt": "2026-07-22T00:12:31.678Z",
+  "sourceCommit": "07a995d435b4f748d533afff6e98623c6818747e",
+  "generatedAt": "2026-07-22T00:29:09.190Z",
   "files": [
     {
       "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/annotation/AICapable.java",
@@ -33,6 +33,34 @@
       "sha256": "51edaee62c41358b314782dfa133fb375670434ef284e40567f0bd58dea5801a"
     },
     {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/action/ActionAccessMode.java",
+      "sha256": "9e68791e911189fb90989fda7c7cf7bc048cee08e9dde4a4ba9feee00491b198"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/action/ActionContext.java",
+      "sha256": "e06a0a5aed2c4ee278e153786aac9f772bb875f7031519ec4a50cca491cda8c4"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/action/ActionResult.java",
+      "sha256": "164a8285e5d2754c9df05f3dadf3e90c56d30540819f7b062b5f151bb2cc18c8"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/action/AIActionRegistry.java",
+      "sha256": "3ec5d17678d9eed87513d37c2084f9b0f02cac6a2d06c4afe1a4d008b5f16ef9"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/action/annotation/AIAction.java",
+      "sha256": "85f5e9256cb1483d904ae0023fcffb6b146c506e203669a5b755bf7096f9adc5"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/action/annotation/Param.java",
+      "sha256": "aaa20d83cb7509c23b77e4201685ed6f2c96e09cfa87b824fc1bc44f538cff11"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/action/PendingActionStore.java",
+      "sha256": "1b3de21eb16c2a54fcbd4dbb8bfea4c9002bd8bb853baa6cb82d20b9d6defb99"
+    },
+    {
       "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/orchestration/pipeline/steps/RagResponseGenerationSupport.java",
       "sha256": "7d6aac04b5b22d4874c75668b39a061c3684e19b8744253957a2cac8c8bf90ed"
     },
@@ -43,6 +71,14 @@
     {
       "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/spi/RAGProvider.java",
       "sha256": "a1b964547f5af970af4efcc57a53b4519ce0f433b4cabe7dabd343c5a8191816"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/test/java/ai/fabric/intent/action/AIActionRegistryTest.java",
+      "sha256": "c5645afe3fd23ada127ec8f82cee70cb8e26e28c6543418ed2310eef82ad86f3"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/test/java/ai/fabric/intent/orchestration/pipeline/steps/IntentHandlingStepRequiredParamsPlaceholderTest.java",
+      "sha256": "9eb7889a2ad85f10476653adfab941131d1377842939bb0e67d5c3c616b7356c"
     },
     {
       "sourcePath": "ai-infrastructure-module/ai-fabric-rag/src/main/java/ai/fabric/rag/config/RAGAutoConfiguration.java",
@@ -129,8 +165,28 @@
       "sha256": "76aaa09679e2cdceb3ff3a4df45d17b17bc2c51b97650564fd74b66547efad3e"
     },
     {
+      "sourcePath": "docs/course/core/04-governed-actions/assistant-prompt.md",
+      "sha256": "59da4a0a148a90084e8e8bf19c08654d931b2905a6d92753cdccd3f2f174ed3e"
+    },
+    {
+      "sourcePath": "docs/course/core/04-governed-actions/assistant-review-prompt.md",
+      "sha256": "1dccf0d24db14a1f47817380414692d184800950ca37f95777e53add9f464a75"
+    },
+    {
+      "sourcePath": "docs/course/core/04-governed-actions/knowledge-check.yml",
+      "sha256": "7cc139ce8881cf038b4da502ba7796fb6c43558b67d807df33f6fcafb97ec0f1"
+    },
+    {
+      "sourcePath": "docs/course/core/04-governed-actions/lesson.md",
+      "sha256": "58bdef69f7f9db4094d10e9c0c992846e79cfbe34b37b9b4cc086de23a0fabea"
+    },
+    {
+      "sourcePath": "docs/course/core/04-governed-actions/notebooklm/AI_FABRIC_GOVERNED_ACTIONS_CONFIRMATION_NOTEBOOKLM_SCRIPT.md",
+      "sha256": "914cf7d808e62b5ac99b2e46a13c2d5ee3f02c6ecc3f85ca020a6bf2928fabe6"
+    },
+    {
       "sourcePath": "docs/course/course.yml",
-      "sha256": "b337c713dcea8d19a27321dc9add55fde87c0221ca8de1d95cedfb8266ab01fc"
+      "sha256": "365d10c16ab2d930c41b2564f8210fb2bc749f981ae69388ce584eee5b6a80e0"
     },
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/assistant-prompt.md",
@@ -165,6 +221,10 @@
       "sha256": "2f4b1f0ee79e8404d972a25933255de93b83884acc7a35f7dc37739406228aa9"
     },
     {
+      "sourcePath": "docs/getting-started/05-first-governed-action.md",
+      "sha256": "6bd4740e9fab021155e5bf7c762dcc65a602459a7a26c1e8a09f3e21f9825dac"
+    },
+    {
       "sourcePath": "docs/getting-started/08-local-onnx-embeddings.md",
       "sha256": "037f02e7086210211352c49eb34867f20c8fba98dc913f56468bd49b2fad8c91"
     },
@@ -187,6 +247,10 @@
     {
       "sourcePath": "docs/llm-context/AI_FABRIC_MODULE_DECISION_TREE.md",
       "sha256": "7c7e2ef034a815278d6de65ce35437531b29d254e03bc2a448027ab2a01baabc"
+    },
+    {
+      "sourcePath": "examples/real-apps/chat-capabilities-demo/src/main/java/com/ai/fabric/realapps/chat/support/action/CreateSupportTicketActionHandler.java",
+      "sha256": "dcb7b0089f348a8aba6ba96c549130591de81070f9ebd6126b08c4c3e69b78b7"
     },
     {
       "sourcePath": "examples/real-apps/smart-faq-assistant/src/main/java/com/ai/fabric/realapps/faq/service/FaqArticleService.java",

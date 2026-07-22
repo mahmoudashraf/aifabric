@@ -24,6 +24,7 @@ describe("generated course catalog", () => {
       "core-01",
       "core-02",
       "core-03",
+      "core-04",
     ]);
     expect(getRenderedLesson("qs-01")?.video).toBeUndefined();
     expect(getRenderedLesson("core-01")?.theoryVideoIds).toEqual([
@@ -81,6 +82,19 @@ describe("generated course catalog", () => {
     expect(lesson?.markdown).toContain("## Step 3: Retrieve Documents And Context");
     expect(lesson?.markdown).toContain("## Step 4: Stop On Retrieval Failure Or No Evidence");
     expect(lesson?.markdown).toContain("## Step 8: Reproduce The Empty-Index Failure");
+    expect(lesson?.markdown).not.toMatch(/\bthe learner\b/i);
+    expect(lesson?.knowledgeCheck.questions).toHaveLength(6);
+    expect(lesson?.assistant.mode).toBe("implement");
+  });
+
+  it("publishes Core 04 as a governed-action state-machine lab", () => {
+    const lesson = getRenderedLesson("core-04");
+
+    expect(lesson?.route).toBe("/course/core/governed-actions");
+    expect(lesson?.theoryVideoIds).toEqual(["governed-actions-and-confirmation"]);
+    expect(lesson?.markdown).toContain("## Step 4: Keep Context-Owned Values Out Of `@Param`");
+    expect(lesson?.markdown).toContain("## Step 7: Test The Confirmation State Machine");
+    expect(lesson?.markdown).toContain("### Duplicate Confirm");
     expect(lesson?.markdown).not.toMatch(/\bthe learner\b/i);
     expect(lesson?.knowledgeCheck.questions).toHaveLength(6);
     expect(lesson?.assistant.mode).toBe("implement");
