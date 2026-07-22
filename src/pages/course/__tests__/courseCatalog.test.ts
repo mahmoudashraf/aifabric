@@ -19,7 +19,12 @@ describe("generated course catalog", () => {
   });
 
   it("renders the Quickstart and available Core preview lessons", () => {
-    expect(previewLessons.map((lesson) => lesson.id)).toEqual(["qs-01", "core-01", "core-02"]);
+    expect(previewLessons.map((lesson) => lesson.id)).toEqual([
+      "qs-01",
+      "core-01",
+      "core-02",
+      "core-03",
+    ]);
     expect(getRenderedLesson("qs-01")?.video).toBeUndefined();
     expect(getRenderedLesson("core-01")?.theoryVideoIds).toEqual([
       "what-is-ai-fabric",
@@ -63,6 +68,19 @@ describe("generated course catalog", () => {
     expect(lesson?.markdown).toContain("## Step 1: Define The Evidence Contract");
     expect(lesson?.markdown).toContain("## Step 6: Run The Complete Lifecycle Test");
     expect(lesson?.markdown).toContain("## Step 7: Trigger And Correct The Metadata Failure");
+    expect(lesson?.markdown).not.toMatch(/\bthe learner\b/i);
+    expect(lesson?.knowledgeCheck.questions).toHaveLength(6);
+    expect(lesson?.assistant.mode).toBe("implement");
+  });
+
+  it("publishes Core 03 as a fail-closed grounded-RAG lab", () => {
+    const lesson = getRenderedLesson("core-03");
+
+    expect(lesson?.route).toBe("/course/core/evidence-grounded-rag");
+    expect(lesson?.theoryVideoIds).toEqual(["evidence-grounded-rag"]);
+    expect(lesson?.markdown).toContain("## Step 3: Retrieve Documents And Context");
+    expect(lesson?.markdown).toContain("## Step 4: Stop On Retrieval Failure Or No Evidence");
+    expect(lesson?.markdown).toContain("## Step 8: Reproduce The Empty-Index Failure");
     expect(lesson?.markdown).not.toMatch(/\bthe learner\b/i);
     expect(lesson?.knowledgeCheck.questions).toHaveLength(6);
     expect(lesson?.assistant.mode).toBe("implement");

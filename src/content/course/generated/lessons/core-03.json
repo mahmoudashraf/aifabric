@@ -1,0 +1,268 @@
+{
+  "id": "core-03",
+  "slug": "evidence-grounded-rag",
+  "title": "Evidence-Grounded RAG",
+  "description": "Retrieve approved evidence before generation and expose its source IDs.",
+  "durationMinutes": 75,
+  "availability": "preview",
+  "source": "core/03-evidence-grounded-rag/lesson.md",
+  "knowledgeCheck": {
+    "schemaVersion": 1,
+    "lessonId": "core-03",
+    "passingScorePercent": 80,
+    "questions": [
+      {
+        "id": "core-03-q1",
+        "type": "single-choice",
+        "competency": "rag-boundary",
+        "prompt": "What does the default AI Fabric RAGService return from performRAGQuery?",
+        "options": [
+          {
+            "id": "a",
+            "text": "A generated answer with no evidence"
+          },
+          {
+            "id": "b",
+            "text": "Retrieved documents, context, and retrieval metadata for downstream generation"
+          },
+          {
+            "id": "c",
+            "text": "A database transaction result"
+          },
+          {
+            "id": "d",
+            "text": "An authorization decision"
+          }
+        ],
+        "correctOptionIds": [
+          "b"
+        ],
+        "explanation": "The default RAGService is retrieval-only; generation belongs to orchestration or a higher-level application service.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-rag/src/main/java/ai/fabric/rag/service/RAGService.java"
+        ]
+      },
+      {
+        "id": "core-03-q2",
+        "type": "multiple-choice",
+        "competency": "grounding-proof",
+        "prompt": "Which artifacts make a public answer verifiably evidence-grounded?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Stable IDs for the retrieved documents"
+          },
+          {
+            "id": "b",
+            "text": "Approved evidence snippets or titles"
+          },
+          {
+            "id": "c",
+            "text": "Safe retrieval and generation diagnostics"
+          },
+          {
+            "id": "d",
+            "text": "Fluent wording by itself"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b",
+          "c"
+        ],
+        "explanation": "Grounding proof requires inspectable sources and execution state; fluent text alone proves nothing about retrieval.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/dto/RAGResponse.java"
+        ]
+      },
+      {
+        "id": "core-03-q3",
+        "type": "single-choice",
+        "competency": "no-evidence",
+        "prompt": "What should the application do when retrieval succeeds but returns zero approved documents?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Ask the LLM to answer from general knowledge"
+          },
+          {
+            "id": "b",
+            "text": "Return NO_EVIDENCE and do not invoke generation"
+          },
+          {
+            "id": "c",
+            "text": "Return a hard-coded support answer"
+          },
+          {
+            "id": "d",
+            "text": "Search every configured vector space"
+          }
+        ],
+        "correctOptionIds": [
+          "b"
+        ],
+        "explanation": "Empty retrieval is an explicit application state; generation must not manufacture an answer that appears grounded.",
+        "sourcePaths": [
+          "docs/getting-started/04-first-rag-chat.md"
+        ]
+      },
+      {
+        "id": "core-03-q4",
+        "type": "multiple-choice",
+        "competency": "rag-readiness",
+        "prompt": "Which conditions are independently required for a live grounded answer?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Approved indexed evidence"
+          },
+          {
+            "id": "b",
+            "text": "Compatible embedding and vector providers"
+          },
+          {
+            "id": "c",
+            "text": "A usable RAGProvider and allowed evidence space"
+          },
+          {
+            "id": "d",
+            "text": "An available generation provider"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "explanation": "A healthy LLM cannot repair an empty index, and indexed evidence cannot replace missing generation or policy readiness.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-rag/src/main/java/ai/fabric/rag/config/RAGAutoConfiguration.java"
+        ]
+      },
+      {
+        "id": "core-03-q5",
+        "type": "single-choice",
+        "competency": "vector-space-policy",
+        "prompt": "The intent model proposes the vector space knowledge-article. What authorizes the search?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The model proposal itself"
+          },
+          {
+            "id": "b",
+            "text": "The browser position value"
+          },
+          {
+            "id": "c",
+            "text": "Server-owned configuration, mode policy, and trusted caller scope"
+          },
+          {
+            "id": "d",
+            "text": "The similarity threshold"
+          }
+        ],
+        "correctOptionIds": [
+          "c"
+        ],
+        "explanation": "Model output requests work; server policy validates and authorizes eligible evidence spaces.",
+        "sourcePaths": [
+          "docs/course/core/03-evidence-grounded-rag/notebooklm/AI_FABRIC_EVIDENCE_GROUNDED_RAG_NOTEBOOKLM_SCRIPT.md"
+        ]
+      },
+      {
+        "id": "core-03-q6",
+        "type": "single-choice",
+        "competency": "quality-testing",
+        "prompt": "Which assertion is most stable for a golden RAG question?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The answer must match one exact paragraph"
+          },
+          {
+            "id": "b",
+            "text": "The top score must always equal 92 percent"
+          },
+          {
+            "id": "c",
+            "text": "The expected evidence ID must be retrieved and remain attached to the answer"
+          },
+          {
+            "id": "d",
+            "text": "The provider model name must never change"
+          }
+        ],
+        "correctOptionIds": [
+          "c"
+        ],
+        "explanation": "Generated wording and similarity values can vary; expected evidence identity is the stable grounding contract.",
+        "sourcePaths": [
+          "examples/real-apps/smart-faq-assistant/src/test/java/com/ai/fabric/realapps/faq/service/FaqQualityServiceTest.java"
+        ]
+      }
+    ]
+  },
+  "assistantPrompt": "core/03-evidence-grounded-rag/assistant-prompt.md",
+  "assistantReviewPrompt": "core/03-evidence-grounded-rag/assistant-review-prompt.md",
+  "theoryVideoIds": [
+    "evidence-grounded-rag"
+  ],
+  "relatedStories": [],
+  "relatedDemos": [],
+  "track": "core",
+  "route": "/course/core/evidence-grounded-rag",
+  "frontMatter": {
+    "id": "core-03",
+    "slug": "evidence-grounded-rag",
+    "title": "Evidence-Grounded RAG",
+    "track": "core",
+    "order": 3,
+    "durationMinutes": 75,
+    "availability": "preview",
+    "courseVersion": "0.3.3-course.1-beta",
+    "frameworkVersion": "0.3.3",
+    "frameworkTag": "ai-fabric-framework-v0.3.3",
+    "courseSourceTag": "unreleased",
+    "starterRef": "planned",
+    "solutionRef": "planned",
+    "requiresOpenAi": true,
+    "requiresDocker": false,
+    "sourcePaths": [
+      "docs/course/core/03-evidence-grounded-rag/notebooklm/AI_FABRIC_EVIDENCE_GROUNDED_RAG_NOTEBOOKLM_SCRIPT.md",
+      "docs/getting-started/04-first-rag-chat.md",
+      "docs/getting-started/13-production-checklist.md",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/spi/RAGProvider.java",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/dto/RAGRequest.java",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/dto/RAGResponse.java",
+      "ai-infrastructure-module/ai-fabric-rag/src/main/java/ai/fabric/rag/config/RAGAutoConfiguration.java",
+      "ai-infrastructure-module/ai-fabric-rag/src/main/java/ai/fabric/rag/service/RAGService.java",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/orchestration/pipeline/steps/RagResponseGenerationSupport.java",
+      "examples/real-apps/smart-faq-assistant/src/test/java/com/ai/fabric/realapps/faq/service/FaqQualityServiceTest.java"
+    ],
+    "theoryVideoIds": [
+      "evidence-grounded-rag"
+    ],
+    "assistant": {
+      "mode": "implement",
+      "implementationPrompt": "assistant-prompt.md",
+      "reviewPrompt": "assistant-review-prompt.md",
+      "validationStatus": "planned"
+    },
+    "knowledgeCheck": {
+      "source": "knowledge-check.yml",
+      "required": true,
+      "passingScorePercent": 80
+    }
+  },
+  "markdown": "# Evidence-Grounded RAG\n\n## Start Here\n\nCORE-02 proved that approved application records can become searchable evidence. In this lesson,\nyou will add generation after retrieval and keep the two operations independently visible.\n\nThe result is not merely an answer string. Your endpoint will return:\n\n1. a generated answer;\n2. the exact evidence records that supported it;\n3. the execution status and selected mode;\n4. safe diagnostics that distinguish retrieval from generation.\n\nWhen no approved evidence exists, the application will return an explicit `NO_EVIDENCE` state and\nwill not ask the model to improvise from general knowledge.\n\n> **Current lesson status: Preview.** The lesson, theory video, assistant prompts, and knowledge\n> check are ready. The standalone starter and immutable checkpoints remain `planned`. A real OpenAI\n> profile is part of the intended manual proof; tests must use controlled provider doubles and must\n> never hide a failed live provider behind a fake answer.\n\n## What You Will Learn\n\nBy the end of the lesson, you will be able to:\n\n- explain why AI Fabric's default `RAGService` is retrieval-only;\n- build a `RAGRequest` for one approved evidence space;\n- distinguish a retrieved document, generated wording, and application policy;\n- project source IDs and snippets without leaking internal vector data;\n- prevent generation when retrieval is empty or failed;\n- test expected evidence independently from answer style;\n- diagnose a configured RAG mode with no usable `RAGProvider` or indexed evidence.\n\n## Step 1: Add The RAG Runtime Contract\n\nThe planned checkpoint adds the RAG module and a real generation provider alongside the embedding\nand Lucene modules already used in CORE-02:\n\n```xml\n<dependency>\n  <groupId>io.github.loom-ai-labs</groupId>\n  <artifactId>ai-fabric-rag</artifactId>\n</dependency>\n<dependency>\n  <groupId>io.github.loom-ai-labs</groupId>\n  <artifactId>ai-fabric-provider-spring-ai</artifactId>\n</dependency>\n```\n\nConfigure retrieval explicitly:\n\n```yaml\nai:\n  service:\n    features:\n      enable-generation: true\n      enable-embeddings: true\n      enable-search: true\n      enable-rag: true\n  infrastructure:\n    rag:\n      enabled: true\n      default-limit: 5\n      default-threshold: 0.55\n```\n\nThe current `RAGAutoConfiguration` creates the default provider only when the RAG feature and its\nrequired embedding, vector, and search dependencies are present. Add an application-context test\nthat asserts exactly one usable `RAGProvider` exists. A dependency in `pom.xml` is not runtime proof.\n\n## Step 2: Add Approved Policy Evidence\n\nContinue using `KnowledgeArticle` and add this published support policy through the same explicit\nseed and index lifecycle:\n\n```json\n{\n  \"id\": \"policy-account-lockout-01\",\n  \"title\": \"Account lockout recovery\",\n  \"body\": \"After repeated failed sign-in attempts, wait fifteen minutes. Then use account recovery to verify the registered email and reset access.\",\n  \"category\": \"authentication-policy\",\n  \"tenantId\": \"tenant-blue\",\n  \"status\": \"PUBLISHED\"\n}\n```\n\nDo not put prompt commands such as \"always answer...\" into policy records. Policies are\nuser-friendly source material. Generation rules belong in managed prompts and orchestration policy.\n\nBefore adding generation, prove this query retrieves `policy-account-lockout-01`:\n\n```text\nWhat should I do if failed sign-ins locked me out?\n```\n\n## Step 3: Retrieve Documents And Context\n\nInject the `RAGProvider` SPI and build a bounded request:\n\n```java\nRAGResponse retrieval = ragProvider.performRAGQuery(\n    RAGRequest.builder()\n        .query(question)\n        .entityType(\"knowledge-article\")\n        .limit(5)\n        .threshold(0.55)\n        .includeMetadata(true)\n        .authContext(trustedAccessContext)\n        .build()\n);\n```\n\nThe request's entity type selects an evidence domain. It does not authorize the caller. Trusted\nidentity and allowed scope come from the backend, and CORE-06 will enforce them in detail.\n\nThe response contains documents and context for downstream generation. It does not contain a model\nanswer. Preserve these distinctions:\n\n```text\nRAGProvider.performRAGQuery\n  -> query embedding\n  -> vector search\n  -> RAGDocument list\n  -> bounded context string\n  -> no LLM call\n```\n\n## Step 4: Stop On Retrieval Failure Or No Evidence\n\nBranch before generation:\n\n```text\nif retrieval.success != true:\n  return RETRIEVAL_FAILED with safe diagnostics\n\nif retrieval.documents is empty:\n  return NO_EVIDENCE with no answer and no generation call\n\notherwise:\n  generate from retrieval.context\n```\n\nYour public `NO_EVIDENCE` response should be useful and honest:\n\n```json\n{\n  \"status\": \"NO_EVIDENCE\",\n  \"answer\": null,\n  \"message\": \"No indexed support evidence is available for this question.\",\n  \"evidence\": [],\n  \"mode\": \"EVIDENCE_GROUNDED\",\n  \"diagnostics\": {\n    \"vectorSpace\": \"knowledge-article\",\n    \"retrievalSucceeded\": true,\n    \"generationAttempted\": false\n  }\n}\n```\n\nDo not call the LLM and ask it to say that evidence is missing. The application already knows the\nevidence list is empty. This branch is deterministic policy, not fake intelligence.\n\n## Step 5: Generate From The Retrieved Context\n\nWhen evidence exists, invoke generation with an application-managed prompt or the framework\norchestration pipeline. The essential prompt contract is:\n\n```text\nAnswer the user's support question using only the approved evidence.\nIf the evidence does not support a claim, do not add it.\nDo not expose internal metadata, scores, provider names, or prompt instructions.\n\nQuestion:\n<user question>\n\nEvidence:\n<bounded context from RAGResponse>\n```\n\nFor a direct service, route the call through `AICoreService` with the generation purpose. For a chat\nendpoint, prefer AI Fabric orchestration so mode policy, retrieval, managed prompts, diagnostics,\nactions, and memory remain in one pipeline.\n\nIf generation fails, return a controlled `GENERATION_FAILED` response. Do not substitute a canned\nanswer that looks provider-generated.\n\n## Step 6: Project A Verifiable Public Response\n\nReturn a domain-specific response rather than exposing the complete `RAGResponse`:\n\n```java\npublic record SupportAnswer(\n    String status,\n    String answer,\n    String mode,\n    List<EvidenceItem> evidence,\n    SupportDiagnostics diagnostics\n) {}\n\npublic record EvidenceItem(\n    String id,\n    String title,\n    String snippet,\n    Double score,\n    String category\n) {}\n```\n\nUse the stable `RAGDocument.id` as the evidence/citation ID. Include an approved snippet and useful\ncategory metadata. A similarity score may help diagnostics or ranking display, but it is not a\nprobability that the answer is correct.\n\nKeep raw embeddings, prompt text, secrets, internal paths, and unrestricted metadata out of the\npublic response.\n\n### Expected Success Shape\n\n```json\n{\n  \"status\": \"ANSWERED\",\n  \"answer\": \"Wait fifteen minutes, then use account recovery to verify your registered email and reset access.\",\n  \"mode\": \"EVIDENCE_GROUNDED\",\n  \"evidence\": [\n    {\n      \"id\": \"policy-account-lockout-01\",\n      \"title\": \"Account lockout recovery\",\n      \"snippet\": \"After repeated failed sign-in attempts...\",\n      \"score\": 0.0,\n      \"category\": \"authentication-policy\"\n    }\n  ],\n  \"diagnostics\": {\n    \"vectorSpace\": \"knowledge-article\",\n    \"retrievalSucceeded\": true,\n    \"generationAttempted\": true,\n    \"requestId\": \"provider-generated request identifier when available\"\n  }\n}\n```\n\nThe `0.0` score above is a shape placeholder, not an expected value. Tests must use the actual\nresult and avoid claiming a universal score.\n\n## Step 7: Add Layered Tests\n\nAdd these deterministic tests:\n\n### Retrieval Contract Test\n\n- Given indexed policy evidence, the request uses `knowledge-article`, limit `5`, and threshold\n  `0.55`.\n- The expected policy ID is present in returned documents.\n- The projected evidence excludes embeddings and unsafe metadata.\n\n### No-Evidence Test\n\n- Given a successful retrieval with zero documents, status is `NO_EVIDENCE`.\n- `answer` is absent.\n- The generation provider is never called.\n- Diagnostics say `generationAttempted=false`.\n\n### Retrieval-Failure Test\n\n- Given `RAGResponse.success=false`, status is `RETRIEVAL_FAILED`.\n- The safe error code is visible.\n- The generation provider is never called.\n\n### Grounded-Generation Test\n\n- Given the expected policy document and a controlled model response, status is `ANSWERED`.\n- The exact evidence ID remains attached to the answer.\n- The prompt contains the approved evidence and does not contain `internalNotes`.\n\n### Golden Evidence Test\n\nRun a small set of paraphrased questions and fail the gate when the expected source ID is absent.\nAnswer wording can vary; expected evidence identity is the stable assertion.\n\n## Step 8: Reproduce The Empty-Index Failure\n\n1. Run the successful policy question and record its evidence ID.\n2. Clear the `knowledge-article` vectors while leaving source rows in the database.\n3. Repeat the same question.\n4. Verify `NO_EVIDENCE`, an empty evidence list, and no generation call.\n5. Reseed or reindex the existing source records.\n6. Repeat the question and verify `policy-account-lockout-01` returns.\n\nThis failure proves why retrieval configuration is not retrieval readiness. The application had a\nRAG module, an LLM provider, and database data throughout. Only indexed evidence made grounding\npossible.\n\n## Planned Commands And Requests\n\n```bash\n./mvnw clean verify\nOPENAI_API_KEY=<set-locally> ./mvnw spring-boot:run -Dspring-boot.run.profiles=openai\n```\n\n```http\nPOST /api/demo/reset\nPOST /api/knowledge/seed-and-index\nPOST /api/assistant/query\nPOST /api/demo/vectors/clear\nPOST /api/assistant/query\nPOST /api/knowledge/reindex\nPOST /api/assistant/query\n```\n\nNever place the API key in source, example requests, test fixtures, logs, screenshots, or course\nprogress data.\n\n## Common Mistakes\n\n| Mistake | Why it misleads | Correct approach |\n| --- | --- | --- |\n| Calling `performRAGQuery` and assuming it generated text | The default provider is retrieval-only | Treat documents/context and generation as separate stages |\n| Calling the LLM when evidence is empty | General model knowledge can look grounded | Return explicit `NO_EVIDENCE` and skip generation |\n| Returning only the answer | Users and tests cannot inspect grounding | Project stable evidence IDs and snippets |\n| Treating scores as correctness probabilities | Similarity ranks retrieval, not truth | Assert expected sources and evaluate answers separately |\n| Trusting an LLM-proposed vector space | Model intent is not authorization | Validate against server-owned configuration and policy |\n| Hiding generation failure with a template answer | The UI appears healthy while the provider failed | Return a visible controlled failure state |\n| Returning raw RAG metadata | Internal prompts, paths, or provider data can leak | Allowlist public diagnostics and evidence fields |\n\n## Troubleshooting\n\n| Symptom | Inspect |\n| --- | --- |\n| No `RAGProvider` bean | RAG dependency, feature flags, and embedding/search/vector beans |\n| Documents are empty | CORE-02 lifecycle proof, entity type, threshold, and index location |\n| Wrong evidence domain | Effective mode and allowed vector spaces |\n| Context exists but answer fails | Generation feature, purpose-specific LLM provider, prompt, and provider error |\n| Answer exists without evidence | No-evidence branch and UI/API projection |\n| Evidence ID is missing | Vector identity mapping into `RAGDocument.id` |\n| Sensitive metadata appears | Index projection and response allowlist |\n\n## Done When\n\nYou are done with this preview lesson when:\n\n- the runtime proves a usable `RAGProvider` exists;\n- retrieval returns the expected support-policy ID before generation;\n- the public response separates answer, evidence, mode, and diagnostics;\n- empty or failed retrieval prevents generation;\n- generation failure remains visible;\n- a golden evidence test fails when the expected source is absent;\n- clearing and rebuilding the index produces the documented state transition;\n- you score at least 80 percent on the knowledge check.\n\n## Next Lesson\n\nCORE-04 adds typed application actions. The model may understand a request, but application policy,\nconfirmation state, and a registered handler will remain responsible for every write.",
+  "assistant": {
+    "mode": "implement",
+    "validationStatus": "planned",
+    "implementationPrompt": "# CORE-03 Coding-Assistant Implementation Prompt\n\nStatus: Planned. Do not use this prompt as a validated implementation handoff until the published\nstarter checkpoint replaces `planned`.\n\n```text\nYou are implementing AI Fabric course lesson CORE-03: Evidence-Grounded RAG.\n\nUse AI Fabric 0.3.3 / ai-fabric-framework-v0.3.3, Java 21, and Spring Boot 4.1.x. Work only from the\npublished CORE-03 starter checkpoint when it becomes available. Do not copy a solution checkpoint.\n\nRead first:\n- docs/course/core/03-evidence-grounded-rag/lesson.md\n- docs/getting-started/04-first-rag-chat.md\n- current RAGProvider, RAGRequest, RAGResponse, RAGAutoConfiguration, and RAGService APIs\n- the starter's existing CORE-02 indexing lifecycle tests\n\nGoal:\nAdd evidence-grounded support answers that retrieve approved knowledge before generation, expose\nstable evidence IDs, skip generation when evidence is absent, and keep retrieval and provider\nfailures visible.\n\nBefore editing:\n1. Verify the exact starter ref, tests, provider profile, environment-variable names, and worktree.\n2. Inspect pinned APIs and current application configuration; do not invent methods or properties.\n3. Explain the retrieval-only RAGProvider boundary and the separate generation boundary.\n4. Define the public response allowlist for answer, evidence, mode, and diagnostics.\n5. Give a concise implementation and test plan.\n\nRequired behavior:\n1. Add ai-fabric-rag and prove a usable RAGProvider exists at runtime.\n2. Index the approved account-lockout policy through the CORE-02 lifecycle.\n3. Query only the allowed knowledge-article evidence space.\n4. Return RETRIEVAL_FAILED for a failed RAGResponse and do not call generation.\n5. Return NO_EVIDENCE for an empty document list and do not call generation.\n6. Generate only from bounded retrieved context when evidence exists.\n7. Return stable evidence IDs, approved snippets, and safe diagnostics.\n8. Expose generation failure; do not substitute a canned answer.\n9. Add a golden evidence set that fails when an expected source ID is absent.\n\nTesting:\n- application-context RAGProvider test;\n- request and public projection tests;\n- no-evidence and retrieval-failure tests verifying no generation call;\n- controlled grounded-generation test;\n- golden expected-source test;\n- empty-index then reindex integration proof;\n- clean `./mvnw clean verify`.\n\nDo not:\n- claim performRAGQuery generates an answer;\n- call an LLM when no evidence was retrieved;\n- treat an LLM-proposed vector space as authorization;\n- return raw embeddings, prompts, secrets, paths, or unrestricted metadata;\n- assert a fixed universal score or exact generated paragraph;\n- hide a provider failure behind deterministic success wording;\n- commit API keys or use -DskipTests;\n- commit, push, deploy, or discard unrelated changes.\n\nStop and report when the starter checkpoint is missing, the live provider key is unavailable for a\nrequested live run, pinned APIs contradict the lesson, or retrieval readiness cannot be proven.\n\nFinish with changed files, exact command outcomes, RAGProvider readiness, retrieved source IDs,\nno-evidence proof, generation proof, failure evidence, unexecuted checks, and the final request flow.\n```\n",
+    "reviewPrompt": "# CORE-03 Independent Review Prompt\n\nReview a developer's CORE-03 implementation against AI Fabric Framework 0.3.3, the current CORE-03\ncourse source, and pinned RAG and generation APIs.\n\nUse a findings-first review. Order findings by severity and cite changed files/tests plus the course\nor pinned source. Review retrieval, generation, and public projection as separate boundaries.\n\nCheck for these failure classes:\n\n- `RAGService` or `performRAGQuery` incorrectly described as generating an answer;\n- generation invoked after empty or failed retrieval;\n- database rows presented as evidence without vector retrieval;\n- answer returned without stable evidence IDs;\n- model-proposed vector space treated as authorization;\n- unbounded or unapproved context sent to the model;\n- raw embeddings, prompts, secrets, paths, or internal metadata returned publicly;\n- similarity score presented as answer correctness;\n- exact generated wording used as the only quality assertion;\n- retrieval or generation failure hidden behind a canned success response;\n- missing `RAGProvider` or empty index reported as healthy RAG readiness;\n- policy records containing prompt-control instructions instead of user-facing policy text.\n\nThen report:\n\n1. findings with severity;\n2. missing proof or unexecuted checks;\n3. whether retrieval and generation remain independently observable;\n4. whether no-evidence and failure paths prevent generation;\n5. whether every answered response exposes approved evidence identity;\n6. whether the golden test fails when an expected source is absent;\n7. the smallest corrections required to pass CORE-03.\n\nThe lesson passes only when the answer is downstream of approved retrieved evidence and callers can\ninspect that evidence without receiving internal provider or prompt data.\n"
+  },
+  "sourcePath": "docs/course/core/03-evidence-grounded-rag/lesson.md",
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/main/docs/course/core/03-evidence-grounded-rag/lesson.md"
+}

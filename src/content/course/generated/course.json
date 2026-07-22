@@ -95,8 +95,14 @@
           "title": "Evidence-Grounded RAG",
           "description": "Retrieve approved evidence before generation and expose its source IDs.",
           "durationMinutes": 75,
-          "availability": "planned",
-          "theoryVideoIds": [],
+          "availability": "preview",
+          "source": "core/03-evidence-grounded-rag/lesson.md",
+          "knowledgeCheck": "core/03-evidence-grounded-rag/knowledge-check.yml",
+          "assistantPrompt": "core/03-evidence-grounded-rag/assistant-prompt.md",
+          "assistantReviewPrompt": "core/03-evidence-grounded-rag/assistant-review-prompt.md",
+          "theoryVideoIds": [
+            "evidence-grounded-rag"
+          ],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/core/evidence-grounded-rag"
@@ -320,6 +326,6 @@
       ]
     }
   ],
-  "sourceCommit": "54549697038b36d162c73408f2aa691eb24e95d2",
-  "generatedAt": "2026-07-21T23:59:39.129Z"
+  "sourceCommit": "78fb2cee9104784aa981c8e6cc32fe2ad4cb7d61",
+  "generatedAt": "2026-07-22T00:12:31.678Z"
 }

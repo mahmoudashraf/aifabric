@@ -48,6 +48,25 @@ test("Core 02 presents the searchable-evidence lifecycle lab", async ({ page }) 
   await expect(page.getByRole("heading", { name: "Check your understanding" })).toBeVisible();
 });
 
+test("Core 03 presents the evidence-grounded RAG lab", async ({ page }) => {
+  await page.goto("/course/core/evidence-grounded-rag", { waitUntil: "domcontentloaded" });
+
+  await expect(page.getByRole("heading", { name: "Evidence-Grounded RAG", exact: true })).toBeVisible();
+  await expect(page.getByLabel("Assigned theory videos").getByRole("button")).toHaveCount(1);
+  await expect(page.getByTitle("Evidence-grounded RAG lesson video in English")).toHaveAttribute(
+    "src",
+    /T-h-BMjwaXc/,
+  );
+  await expect(page.getByRole("heading", { name: "Stop On Retrieval Failure Or No Evidence" })).toBeVisible();
+
+  await page.getByRole("tab", { name: "Use an assistant" }).click();
+  await expect(
+    page.locator("pre").filter({ hasText: "# CORE-03 Coding-Assistant Implementation Prompt" }),
+  ).toBeVisible();
+  await page.getByRole("tab", { name: "Build manually" }).click();
+  await expect(page.getByRole("heading", { name: "Check your understanding" })).toBeVisible();
+});
+
 test("knowledge check grades locally without requiring sign-in", async ({ page }) => {
   await page.goto("/course/quickstart#knowledge-check");
   await page.getByLabel(/Projecting approved content/).check();
@@ -80,4 +99,11 @@ test("course pages do not overflow the viewport", async ({ page }, testInfo) => 
     () => document.documentElement.scrollWidth - window.innerWidth,
   );
   expect(indexingLessonOverflow).toBeLessThanOrEqual(1);
+
+  await page.goto("/course/core/evidence-grounded-rag", { waitUntil: "domcontentloaded" });
+  await expect(page.getByRole("heading", { name: "Evidence-Grounded RAG", exact: true })).toBeVisible();
+  const ragLessonOverflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - window.innerWidth,
+  );
+  expect(ragLessonOverflow).toBeLessThanOrEqual(1);
 });

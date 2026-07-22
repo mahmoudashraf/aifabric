@@ -5,8 +5,8 @@
   "frameworkVersion": "0.3.3",
   "frameworkTag": "ai-fabric-framework-v0.3.3",
   "courseSourceTag": "unreleased",
-  "sourceCommit": "54549697038b36d162c73408f2aa691eb24e95d2",
-  "generatedAt": "2026-07-21T23:59:39.129Z",
+  "sourceCommit": "78fb2cee9104784aa981c8e6cc32fe2ad4cb7d61",
+  "generatedAt": "2026-07-22T00:12:31.678Z",
   "files": [
     {
       "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/annotation/AICapable.java",
@@ -25,8 +25,32 @@
       "sha256": "150a0386135fe72741b8bff740dcbbac342f82b67ad73d04570c3a59e21c0e20"
     },
     {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/dto/RAGRequest.java",
+      "sha256": "7adfdfad8057b4f14b49ec243a8d1dd3511a2b067ee7189fcb61177aaf30bdce"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/dto/RAGResponse.java",
+      "sha256": "51edaee62c41358b314782dfa133fb375670434ef284e40567f0bd58dea5801a"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/orchestration/pipeline/steps/RagResponseGenerationSupport.java",
+      "sha256": "7d6aac04b5b22d4874c75668b39a061c3684e19b8744253957a2cac8c8bf90ed"
+    },
+    {
       "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/service/AICapabilityService.java",
       "sha256": "d99795a2e5a79bee889a8b967454834fc6c71a50a997564dbfb344886f8eeafa"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/spi/RAGProvider.java",
+      "sha256": "a1b964547f5af970af4efcc57a53b4519ce0f433b4cabe7dabd343c5a8191816"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-rag/src/main/java/ai/fabric/rag/config/RAGAutoConfiguration.java",
+      "sha256": "9cb503e3f8907a9cbfc0e1a1112a3a6043bb397d7f2d3a2b691ad4a9e0cd5bc0"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-rag/src/main/java/ai/fabric/rag/service/RAGService.java",
+      "sha256": "d0cb77159b0fde0203bffecb9bc02b083980f0ae8c6fed3eba3b700513bc314e"
     },
     {
       "sourcePath": "docs/architecture/AI_FABRIC_PUBLIC_ARCHITECTURE.md",
@@ -85,8 +109,28 @@
       "sha256": "858959fedec6493a2463fdcd58c0a43231525cf343091ccc83aa3413169fd4bc"
     },
     {
+      "sourcePath": "docs/course/core/03-evidence-grounded-rag/assistant-prompt.md",
+      "sha256": "95766561227499c6c3b7abf3d94312935e7fb46ff8f818bb33a0e18a6193714a"
+    },
+    {
+      "sourcePath": "docs/course/core/03-evidence-grounded-rag/assistant-review-prompt.md",
+      "sha256": "91b42b4cc235d8f96914c13d606bbc6eda37eaa691fbb6d56ec9c33f8444dfd2"
+    },
+    {
+      "sourcePath": "docs/course/core/03-evidence-grounded-rag/knowledge-check.yml",
+      "sha256": "bc9e16aace6f6b0e2100fc5ce0da5bea9c446c801778eb7c6feabd9a3e425258"
+    },
+    {
+      "sourcePath": "docs/course/core/03-evidence-grounded-rag/lesson.md",
+      "sha256": "3f083a63f714be5804c2d5d731edfdbff631ba31bb7bb29f9c04dbf6fc89a391"
+    },
+    {
+      "sourcePath": "docs/course/core/03-evidence-grounded-rag/notebooklm/AI_FABRIC_EVIDENCE_GROUNDED_RAG_NOTEBOOKLM_SCRIPT.md",
+      "sha256": "76aaa09679e2cdceb3ff3a4df45d17b17bc2c51b97650564fd74b66547efad3e"
+    },
+    {
       "sourcePath": "docs/course/course.yml",
-      "sha256": "1e6c1a82120a0a3b0635c1f8b86786c9b5915ac65ed2b83272e684b85f7ba027"
+      "sha256": "b337c713dcea8d19a27321dc9add55fde87c0221ca8de1d95cedfb8266ab01fc"
     },
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/assistant-prompt.md",
@@ -117,12 +161,20 @@
       "sha256": "c422dfaa6f6beaa923b6f2cc743f1e975438acd15645196e90d0854410767fc1"
     },
     {
+      "sourcePath": "docs/getting-started/04-first-rag-chat.md",
+      "sha256": "2f4b1f0ee79e8404d972a25933255de93b83884acc7a35f7dc37739406228aa9"
+    },
+    {
       "sourcePath": "docs/getting-started/08-local-onnx-embeddings.md",
       "sha256": "037f02e7086210211352c49eb34867f20c8fba98dc913f56468bd49b2fad8c91"
     },
     {
       "sourcePath": "docs/getting-started/09-vector-storage-lucene.md",
       "sha256": "80aa7109da3eb1bbe8445912d42cbf07b951a6a80463b1099c32b15972db0aa8"
+    },
+    {
+      "sourcePath": "docs/getting-started/13-production-checklist.md",
+      "sha256": "e454b5a5336cfcb7210b9563937e14a9b82274b3765877ff5c9b306636a03351"
     },
     {
       "sourcePath": "docs/guides/03-modules.md",
@@ -147,6 +199,10 @@
     {
       "sourcePath": "examples/real-apps/smart-faq-assistant/src/test/java/com/ai/fabric/realapps/faq/service/FaqArticleServiceTest.java",
       "sha256": "1533b899b9bd3a12b7c5d88750577a41b861a97d38360965ec0aedf7003281ff"
+    },
+    {
+      "sourcePath": "examples/real-apps/smart-faq-assistant/src/test/java/com/ai/fabric/realapps/faq/service/FaqQualityServiceTest.java",
+      "sha256": "9c1e8474426d783e51595b85bced2534b3f92f59d8ea1d9375f9f7a6a63075a4"
     }
   ]
 }
