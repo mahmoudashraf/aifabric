@@ -131,8 +131,14 @@
           "title": "Backend-Owned Conversation Memory",
           "description": "Resolve follow-ups and pending confirmations from framework session state.",
           "durationMinutes": 60,
-          "availability": "planned",
-          "theoryVideoIds": [],
+          "availability": "preview",
+          "source": "core/05-backend-conversation-memory/lesson.md",
+          "knowledgeCheck": "core/05-backend-conversation-memory/knowledge-check.yml",
+          "assistantPrompt": "core/05-backend-conversation-memory/assistant-prompt.md",
+          "assistantReviewPrompt": "core/05-backend-conversation-memory/assistant-review-prompt.md",
+          "theoryVideoIds": [
+            "backend-conversation-memory"
+          ],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/core/backend-conversation-memory"
@@ -332,6 +338,6 @@
       ]
     }
   ],
-  "sourceCommit": "07a995d435b4f748d533afff6e98623c6818747e",
-  "generatedAt": "2026-07-22T00:29:09.190Z"
+  "sourceCommit": "60511b00854d2dfb33094c51bde7007b0a00f4bd",
+  "generatedAt": "2026-07-22T00:48:25.383Z"
 }

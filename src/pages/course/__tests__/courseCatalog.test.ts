@@ -25,6 +25,7 @@ describe("generated course catalog", () => {
       "core-02",
       "core-03",
       "core-04",
+      "core-05",
     ]);
     expect(getRenderedLesson("qs-01")?.video).toBeUndefined();
     expect(getRenderedLesson("core-01")?.theoryVideoIds).toEqual([
@@ -95,6 +96,19 @@ describe("generated course catalog", () => {
     expect(lesson?.markdown).toContain("## Step 4: Keep Context-Owned Values Out Of `@Param`");
     expect(lesson?.markdown).toContain("## Step 7: Test The Confirmation State Machine");
     expect(lesson?.markdown).toContain("### Duplicate Confirm");
+    expect(lesson?.markdown).not.toMatch(/\bthe learner\b/i);
+    expect(lesson?.knowledgeCheck.questions).toHaveLength(6);
+    expect(lesson?.assistant.mode).toBe("implement");
+  });
+
+  it("publishes Core 05 as a backend-owned conversation-memory lab", () => {
+    const lesson = getRenderedLesson("core-05");
+
+    expect(lesson?.route).toBe("/course/core/backend-conversation-memory");
+    expect(lesson?.theoryVideoIds).toEqual(["backend-conversation-memory"]);
+    expect(lesson?.markdown).toContain("## Step 2: Reduce The Client Request To Current-Turn Data");
+    expect(lesson?.markdown).toContain("## Step 6: Preserve And Consume Pending Confirmation");
+    expect(lesson?.markdown).toContain("## Step 9: Keep Transient Requests Out Of Memory");
     expect(lesson?.markdown).not.toMatch(/\bthe learner\b/i);
     expect(lesson?.knowledgeCheck.questions).toHaveLength(6);
     expect(lesson?.assistant.mode).toBe("implement");

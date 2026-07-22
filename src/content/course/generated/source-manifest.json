@@ -5,9 +5,53 @@
   "frameworkVersion": "0.3.3",
   "frameworkTag": "ai-fabric-framework-v0.3.3",
   "courseSourceTag": "unreleased",
-  "sourceCommit": "07a995d435b4f748d533afff6e98623c6818747e",
-  "generatedAt": "2026-07-22T00:29:09.190Z",
+  "sourceCommit": "60511b00854d2dfb33094c51bde7007b0a00f4bd",
+  "generatedAt": "2026-07-22T00:48:25.383Z",
   "files": [
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-chat-session/src/main/java/ai/fabric/chat/config/ChatSessionBaseConfiguration.java",
+      "sha256": "1a08e434950d8557a0fb078ecabd429f047041e56e2987c9edf85b23356a539c"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-chat-session/src/main/java/ai/fabric/chat/config/ChatSessionProperties.java",
+      "sha256": "35daf07dbc43c01faffb142eba7b49d90295ddb1147156e09325a3f22d8dbc92"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-chat-session/src/main/java/ai/fabric/chat/pipeline/ConversationEnrichmentStep.java",
+      "sha256": "f3a8b72f048c061b9701817a25f7296682d28c214ae8c22b9576a469c9f2d4af"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-chat-session/src/main/java/ai/fabric/chat/pipeline/ConversationRecordingStep.java",
+      "sha256": "50e3099a59eeb337d321125c6c4563855ee3baaa70aed7aee9afd036434f7221"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-chat-session/src/main/java/ai/fabric/chat/service/ChatSessionServiceImpl.java",
+      "sha256": "88b4d73575f76ae3f6be897bc5a8940b271f6afd80bf0efd67577b78af378e07"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-chat-session/src/main/java/ai/fabric/chat/spi/ChatSessionAccessControlPolicy.java",
+      "sha256": "007c6719c72eba5c903093afcc448b1dcdb96df99f485afb23c97bf10afb3243"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-chat-session/src/main/java/ai/fabric/chat/storage/ChatSessionPendingActionStore.java",
+      "sha256": "b9ab0930914e52ac1975dc7f4f5a3220b751d9c7b6fd42a716e42f9176c71285"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-chat-session/src/test/java/ai/fabric/chat/pipeline/ConversationEnrichmentStepTest.java",
+      "sha256": "8a747891778db2dc80bd39bc1c3a41d3f1d3e3b4d155a2f8a2e2aa9fc954d80c"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-chat-session/src/test/java/ai/fabric/chat/pipeline/ConversationRecordingStepTest.java",
+      "sha256": "2d292c17389079530203019e2e5b9012bb427ba1a73ee4263342080de15d6823"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-chat-session/src/test/java/ai/fabric/chat/service/ChatSessionServiceImplTest.java",
+      "sha256": "0ce454fa94f338ca3184ffa7d1a03ba14f39aca710a4f55922b01014648de39b"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-chat-session/src/test/java/ai/fabric/chat/storage/ChatSessionPendingActionStoreTest.java",
+      "sha256": "5d54effa6b254ad78b9824deaa76d975433d4b4475fa297b0dff2eac19550421"
+    },
     {
       "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/annotation/AICapable.java",
       "sha256": "b5987206912cd4f656eec149efd17adfa4ed0c52bb40f332c587f9d798574267"
@@ -185,8 +229,28 @@
       "sha256": "914cf7d808e62b5ac99b2e46a13c2d5ee3f02c6ecc3f85ca020a6bf2928fabe6"
     },
     {
+      "sourcePath": "docs/course/core/05-backend-conversation-memory/assistant-prompt.md",
+      "sha256": "92294d074445382d1181362ee00a8a24ef6c2d69b1041ae271431f5f58deb595"
+    },
+    {
+      "sourcePath": "docs/course/core/05-backend-conversation-memory/assistant-review-prompt.md",
+      "sha256": "97725f91bb28e27942e5e2995b2ae156f964518f809e9c3a864f48a4f0c67b2f"
+    },
+    {
+      "sourcePath": "docs/course/core/05-backend-conversation-memory/knowledge-check.yml",
+      "sha256": "0658cbb4a6ca15483cc99743786f18468d53287b145d42150092085ad83678eb"
+    },
+    {
+      "sourcePath": "docs/course/core/05-backend-conversation-memory/lesson.md",
+      "sha256": "b3b86ec6b0ff5d312011a9d79b8510a09d6f50a9ea12363ea2f8de4f23ccf3d0"
+    },
+    {
+      "sourcePath": "docs/course/core/05-backend-conversation-memory/notebooklm/AI_FABRIC_BACKEND_CONVERSATION_MEMORY_NOTEBOOKLM_SCRIPT.md",
+      "sha256": "12750c537ad1b7911e08597af57f1d17d7efe043f3d6a194804052f82a3f0df6"
+    },
+    {
       "sourcePath": "docs/course/course.yml",
-      "sha256": "365d10c16ab2d930c41b2564f8210fb2bc749f981ae69388ce584eee5b6a80e0"
+      "sha256": "4b60aa4381e1d7a1c03aa7d87daf3f7afa768c285dbdf290221fcbbb3ddb25be"
     },
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/assistant-prompt.md",
@@ -225,6 +289,10 @@
       "sha256": "6bd4740e9fab021155e5bf7c762dcc65a602459a7a26c1e8a09f3e21f9825dac"
     },
     {
+      "sourcePath": "docs/getting-started/06-chat-session-memory.md",
+      "sha256": "90f370238bdf6d08c551dba7a986883ac060aa2be029d2466339cf250e6b6f8e"
+    },
+    {
       "sourcePath": "docs/getting-started/08-local-onnx-embeddings.md",
       "sha256": "037f02e7086210211352c49eb34867f20c8fba98dc913f56468bd49b2fad8c91"
     },
@@ -247,6 +315,10 @@
     {
       "sourcePath": "docs/llm-context/AI_FABRIC_MODULE_DECISION_TREE.md",
       "sha256": "7c7e2ef034a815278d6de65ce35437531b29d254e03bc2a448027ab2a01baabc"
+    },
+    {
+      "sourcePath": "examples/real-apps/ai-fabric-account-resolver/src/main/resources/prompts/intent-extraction/multi-step/v1-account-resolver/classify.md",
+      "sha256": "93fb9a9548978a25caccf241ba831830200ab37f3e18c9be3feec1e38d950908"
     },
     {
       "sourcePath": "examples/real-apps/chat-capabilities-demo/src/main/java/com/ai/fabric/realapps/chat/support/action/CreateSupportTicketActionHandler.java",
