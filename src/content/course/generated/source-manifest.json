@@ -5,8 +5,8 @@
   "frameworkVersion": "0.3.3",
   "frameworkTag": "ai-fabric-framework-v0.3.3",
   "courseSourceTag": "unreleased",
-  "sourceCommit": "60511b00854d2dfb33094c51bde7007b0a00f4bd",
-  "generatedAt": "2026-07-22T00:48:25.383Z",
+  "sourceCommit": "c90db3a147e807654c1642a6d8c13289bb5ed577",
+  "generatedAt": "2026-07-22T00:59:28.110Z",
   "files": [
     {
       "sourcePath": "ai-infrastructure-module/ai-fabric-chat-session/src/main/java/ai/fabric/chat/config/ChatSessionBaseConfiguration.java",
@@ -51,6 +51,14 @@
     {
       "sourcePath": "ai-infrastructure-module/ai-fabric-chat-session/src/test/java/ai/fabric/chat/storage/ChatSessionPendingActionStoreTest.java",
       "sha256": "5d54effa6b254ad78b9824deaa76d975433d4b4475fa297b0dff2eac19550421"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/access/AIAccessControlService.java",
+      "sha256": "bea7cdf9d2a7f3e0397a98a637a0624d857cd9c50727e9a7e868fc6338860070"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/access/policy/EntityAccessPolicy.java",
+      "sha256": "3407389db45da119012b706c63e89822473c2c69cbfaa2bdbdd9439cb1f39001"
     },
     {
       "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/annotation/AICapable.java",
@@ -105,8 +113,24 @@
       "sha256": "1b3de21eb16c2a54fcbd4dbb8bfea4c9002bd8bb853baa6cb82d20b9d6defb99"
     },
     {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/orchestration/OrchestrationAuthContextResolver.java",
+      "sha256": "cb6b12c831f5254abc43977c70d09904587735babe7c1e2b71a5b4a9a67edf30"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/orchestration/OrchestrationContextMetadataKeys.java",
+      "sha256": "b3df73c2f60b7213f9b6624386aac5dc64ec32b44d2a4776117873d587bccbd3"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/orchestration/pipeline/steps/AccessControlStep.java",
+      "sha256": "44fadecb77e7e79af6ccd806cfbdd433575d2ff87a80aad8c7c358cbed8b4f0b"
+    },
+    {
       "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/orchestration/pipeline/steps/RagResponseGenerationSupport.java",
       "sha256": "7d6aac04b5b22d4874c75668b39a061c3684e19b8744253957a2cac8c8bf90ed"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/orchestration/pipeline/steps/ResponseSanitizationStep.java",
+      "sha256": "5755c5c7812eca48fa51529e7c79cfb1df37e9da43c4c55aa7fd829bca0ac22c"
     },
     {
       "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/service/AICapabilityService.java",
@@ -117,12 +141,24 @@
       "sha256": "a1b964547f5af970af4efcc57a53b4519ce0f433b4cabe7dabd343c5a8191816"
     },
     {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/util/VectorMetadataFilterSupport.java",
+      "sha256": "78abfe9b05b136f1bea0977d6ebff5f08b35131322fab69f8bd66780ab1cb88c"
+    },
+    {
       "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/test/java/ai/fabric/intent/action/AIActionRegistryTest.java",
       "sha256": "c5645afe3fd23ada127ec8f82cee70cb8e26e28c6543418ed2310eef82ad86f3"
     },
     {
       "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/test/java/ai/fabric/intent/orchestration/pipeline/steps/IntentHandlingStepRequiredParamsPlaceholderTest.java",
       "sha256": "9eb7889a2ad85f10476653adfab941131d1377842939bb0e67d5c3c616b7356c"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-pii/src/main/java/ai/fabric/config/PIIDetectionProperties.java",
+      "sha256": "7765856710ee7783fd2ae2d20a7feca5ee43704e59c25d76e286038b239a578d"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-pii/src/main/java/ai/fabric/intent/orchestration/pipeline/steps/PIIDetectionStep.java",
+      "sha256": "2136cf5411c512e415d9432c87942b716d693f48d93c0ca4453aef38a6bd6279"
     },
     {
       "sourcePath": "ai-infrastructure-module/ai-fabric-rag/src/main/java/ai/fabric/rag/config/RAGAutoConfiguration.java",
@@ -249,8 +285,28 @@
       "sha256": "12750c537ad1b7911e08597af57f1d17d7efe043f3d6a194804052f82a3f0df6"
     },
     {
+      "sourcePath": "docs/course/core/06-tenant-security-and-privacy/assistant-prompt.md",
+      "sha256": "6c877b29640f892ee82176da10596c42aba89d897f0e329cfdec1c52b13e2b52"
+    },
+    {
+      "sourcePath": "docs/course/core/06-tenant-security-and-privacy/assistant-review-prompt.md",
+      "sha256": "a3a4007ae084608b700297578e3a1a4f683300347e82244cfe624d88af06a1af"
+    },
+    {
+      "sourcePath": "docs/course/core/06-tenant-security-and-privacy/knowledge-check.yml",
+      "sha256": "382e2d76ab853e20cb075aa5f2cfea59169ad439f3aa4a81893a00b0eff7bffc"
+    },
+    {
+      "sourcePath": "docs/course/core/06-tenant-security-and-privacy/lesson.md",
+      "sha256": "178e9d8c68ad7f47e4f781510fe83316ec86e67b28cc6bf67bd37c20251ded32"
+    },
+    {
+      "sourcePath": "docs/course/core/06-tenant-security-and-privacy/notebooklm/AI_FABRIC_TENANT_SECURITY_PRIVACY_NOTEBOOKLM_SCRIPT.md",
+      "sha256": "9c404fb8c2b46e32458a7e9f84c37205687cb0d843e01d233bf13f14162c6f41"
+    },
+    {
       "sourcePath": "docs/course/course.yml",
-      "sha256": "4b60aa4381e1d7a1c03aa7d87daf3f7afa768c285dbdf290221fcbbb3ddb25be"
+      "sha256": "29f6b05647ddd2ce95d1dd783eb7a9331bb4101def311563acfe900c61e722d1"
     },
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/assistant-prompt.md",
@@ -301,6 +357,10 @@
       "sha256": "80aa7109da3eb1bbe8445912d42cbf07b951a6a80463b1099c32b15972db0aa8"
     },
     {
+      "sourcePath": "docs/getting-started/10-security-access-policy.md",
+      "sha256": "5cb554dd5dd5bfcc49f61206f212ad6d7b1c77e44789581adc80bdddb0b23f62"
+    },
+    {
       "sourcePath": "docs/getting-started/13-production-checklist.md",
       "sha256": "e454b5a5336cfcb7210b9563937e14a9b82274b3765877ff5c9b306636a03351"
     },
@@ -325,6 +385,14 @@
       "sha256": "dcb7b0089f348a8aba6ba96c549130591de81070f9ebd6126b08c4c3e69b78b7"
     },
     {
+      "sourcePath": "examples/real-apps/privacy-first-customer-facing-support/src/main/java/com/ai/fabric/realapps/privacyfirst/service/SupportMessageService.java",
+      "sha256": "151b608df8c3c1daf6633b728485d42e2df63f27b8f76caa344c1c6f00116237"
+    },
+    {
+      "sourcePath": "examples/real-apps/privacy-first-customer-facing-support/src/test/java/com/ai/fabric/realapps/privacyfirst/service/SupportMessageServiceTest.java",
+      "sha256": "47bb4df4fb6596164f5f1ff022d94ecb15e34bd59bd4e0cb0bc48f22bd760724"
+    },
+    {
       "sourcePath": "examples/real-apps/smart-faq-assistant/src/main/java/com/ai/fabric/realapps/faq/service/FaqArticleService.java",
       "sha256": "2f9768c8f0ab7846259ab8906fae018cdce42a93654fc8cfdb82dfa154cfa015"
     },
@@ -339,6 +407,10 @@
     {
       "sourcePath": "examples/real-apps/smart-faq-assistant/src/test/java/com/ai/fabric/realapps/faq/service/FaqQualityServiceTest.java",
       "sha256": "9c1e8474426d783e51595b85bced2534b3f92f59d8ea1d9375f9f7a6a63075a4"
+    },
+    {
+      "sourcePath": "examples/real-apps/tenant-knowledge-portal/src/main/java/com/ai/fabric/realapps/tenantportal/service/TenantKnowledgeService.java",
+      "sha256": "410bdca29092eb63e496bd8c1d57f29a9adc68e5ee746518bea4a75d1e39af38"
     }
   ]
 }

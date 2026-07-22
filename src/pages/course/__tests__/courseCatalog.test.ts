@@ -26,6 +26,7 @@ describe("generated course catalog", () => {
       "core-03",
       "core-04",
       "core-05",
+      "core-06",
     ]);
     expect(getRenderedLesson("qs-01")?.video).toBeUndefined();
     expect(getRenderedLesson("core-01")?.theoryVideoIds).toEqual([
@@ -109,6 +110,19 @@ describe("generated course catalog", () => {
     expect(lesson?.markdown).toContain("## Step 2: Reduce The Client Request To Current-Turn Data");
     expect(lesson?.markdown).toContain("## Step 6: Preserve And Consume Pending Confirmation");
     expect(lesson?.markdown).toContain("## Step 9: Keep Transient Requests Out Of Memory");
+    expect(lesson?.markdown).not.toMatch(/\bthe learner\b/i);
+    expect(lesson?.knowledgeCheck.questions).toHaveLength(6);
+    expect(lesson?.assistant.mode).toBe("implement");
+  });
+
+  it("publishes Core 06 as a pre-generation tenant and privacy boundary lab", () => {
+    const lesson = getRenderedLesson("core-06");
+
+    expect(lesson?.route).toBe("/course/core/tenant-security-and-privacy");
+    expect(lesson?.theoryVideoIds).toEqual(["tenant-security-and-privacy"]);
+    expect(lesson?.markdown).toContain("## Step 4: Implement A Fail-Closed Entry Policy");
+    expect(lesson?.markdown).toContain("## Step 7: Verify Hits Before Building Generation Context");
+    expect(lesson?.markdown).toContain("## Step 12: Run The Boundary Regression Matrix");
     expect(lesson?.markdown).not.toMatch(/\bthe learner\b/i);
     expect(lesson?.knowledgeCheck.questions).toHaveLength(6);
     expect(lesson?.assistant.mode).toBe("implement");

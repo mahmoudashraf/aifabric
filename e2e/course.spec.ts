@@ -107,6 +107,28 @@ test("Core 05 presents the backend-owned conversation-memory lab", async ({ page
   await expect(page.getByRole("heading", { name: "Check your understanding" })).toBeVisible();
 });
 
+test("Core 06 presents the tenant-security and privacy boundary lab", async ({ page }) => {
+  await page.goto("/course/core/tenant-security-and-privacy", { waitUntil: "domcontentloaded" });
+
+  await expect(
+    page.getByRole("heading", { name: "Tenant Security And Privacy", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByLabel("Assigned theory videos").getByRole("button")).toHaveCount(1);
+  await expect(
+    page.getByTitle("Tenant security and privacy lesson video in English"),
+  ).toHaveAttribute("src", /mhO8CrOqpt0/);
+  await expect(
+    page.getByRole("heading", { name: "Verify Hits Before Building Generation Context" }),
+  ).toBeVisible();
+
+  await page.getByRole("tab", { name: "Use an assistant" }).click();
+  await expect(
+    page.locator("pre").filter({ hasText: "# CORE-06 Coding-Assistant Implementation Prompt" }),
+  ).toBeVisible();
+  await page.getByRole("tab", { name: "Build manually" }).click();
+  await expect(page.getByRole("heading", { name: "Check your understanding" })).toBeVisible();
+});
+
 test("knowledge check grades locally without requiring sign-in", async ({ page }) => {
   await page.goto("/course/quickstart#knowledge-check");
   await page.getByLabel(/Projecting approved content/).check();
@@ -164,4 +186,13 @@ test("course pages do not overflow the viewport", async ({ page }, testInfo) => 
     () => document.documentElement.scrollWidth - window.innerWidth,
   );
   expect(memoryLessonOverflow).toBeLessThanOrEqual(1);
+
+  await page.goto("/course/core/tenant-security-and-privacy", { waitUntil: "domcontentloaded" });
+  await expect(
+    page.getByRole("heading", { name: "Tenant Security And Privacy", exact: true }),
+  ).toBeVisible();
+  const securityLessonOverflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - window.innerWidth,
+  );
+  expect(securityLessonOverflow).toBeLessThanOrEqual(1);
 });

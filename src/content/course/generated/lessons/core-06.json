@@ -1,0 +1,273 @@
+{
+  "id": "core-06",
+  "slug": "tenant-security-and-privacy",
+  "title": "Tenant Security And Privacy",
+  "description": "Apply identity, tenant, access, and PII policy before evidence or execution.",
+  "durationMinutes": 85,
+  "availability": "preview",
+  "source": "core/06-tenant-security-and-privacy/lesson.md",
+  "knowledgeCheck": {
+    "schemaVersion": 1,
+    "lessonId": "core-06",
+    "passingScorePercent": 80,
+    "questions": [
+      {
+        "id": "core-06-q1",
+        "type": "single-choice",
+        "competency": "security-ordering",
+        "prompt": "When must tenant evidence policy be applied?",
+        "options": [
+          {
+            "id": "a",
+            "text": "After generation, before React renders citations"
+          },
+          {
+            "id": "b",
+            "text": "Before forbidden evidence can enter generation context"
+          },
+          {
+            "id": "c",
+            "text": "Only when a user asks about another tenant"
+          },
+          {
+            "id": "d",
+            "text": "After the LLM decides whether the evidence is sensitive"
+          }
+        ],
+        "correctOptionIds": [
+          "b"
+        ],
+        "explanation": "A model cannot undo disclosure after forbidden evidence has entered its prompt or provider request.",
+        "sourcePaths": [
+          "docs/course/core/06-tenant-security-and-privacy/notebooklm/AI_FABRIC_TENANT_SECURITY_PRIVACY_NOTEBOOKLM_SCRIPT.md"
+        ]
+      },
+      {
+        "id": "core-06-q2",
+        "type": "multiple-choice",
+        "competency": "policy-scope",
+        "prompt": "Which statements about EntityAccessPolicy are correct?",
+        "options": [
+          {
+            "id": "a",
+            "text": "It receives canonical subject context and immutable request/entity metadata"
+          },
+          {
+            "id": "b",
+            "text": "A missing policy becomes an implicit grant"
+          },
+          {
+            "id": "c",
+            "text": "It gates request access but does not automatically filter every vector record"
+          },
+          {
+            "id": "d",
+            "text": "A policy exception must not become a successful decision"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "c",
+          "d"
+        ],
+        "explanation": "The policy is fail-closed entry authorization; retrieval and action boundaries still need narrower enforcement.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/access/policy/EntityAccessPolicy.java",
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/access/AIAccessControlService.java"
+        ]
+      },
+      {
+        "id": "core-06-q3",
+        "type": "single-choice",
+        "competency": "portable-filtering",
+        "prompt": "Which visibility filter best fits AI Fabric's portable metadata contract?",
+        "options": [
+          {
+            "id": "a",
+            "text": "visibility != restricted"
+          },
+          {
+            "id": "b",
+            "text": "visibleToUser = true"
+          },
+          {
+            "id": "c",
+            "text": "ask the LLM to omit restricted documents"
+          },
+          {
+            "id": "d",
+            "text": "retrieve everything and hide restricted cards"
+          }
+        ],
+        "correctOptionIds": [
+          "b"
+        ],
+        "explanation": "The portable subset is exact-match oriented, so applications should index and query a reviewed positive flag.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/util/VectorMetadataFilterSupport.java"
+        ]
+      },
+      {
+        "id": "core-06-q4",
+        "type": "multiple-choice",
+        "competency": "action-authorization",
+        "prompt": "What must happen before a cross-record write enters pending confirmation?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Resolve tenant and subject from trusted backend context"
+          },
+          {
+            "id": "b",
+            "text": "Verify role, object ownership, and current state"
+          },
+          {
+            "id": "c",
+            "text": "Treat the user's confirmation as the authorization grant"
+          },
+          {
+            "id": "d",
+            "text": "Deny an unauthorized target without creating pending work"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b",
+          "d"
+        ],
+        "explanation": "Confirmation records approval after authorization; it cannot make a forbidden operation permissible.",
+        "sourcePaths": [
+          "docs/course/core/06-tenant-security-and-privacy/notebooklm/AI_FABRIC_TENANT_SECURITY_PRIVACY_NOTEBOOKLM_SCRIPT.md"
+        ]
+      },
+      {
+        "id": "core-06-q5",
+        "type": "single-choice",
+        "competency": "pii-posture",
+        "prompt": "What is the default PII configuration posture?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Enabled with REDACT"
+          },
+          {
+            "id": "b",
+            "text": "Enabled with DETECT_ONLY"
+          },
+          {
+            "id": "c",
+            "text": "Disabled with PASS_THROUGH as the default mode"
+          },
+          {
+            "id": "d",
+            "text": "Enabled only for output"
+          }
+        ],
+        "correctOptionIds": [
+          "c"
+        ],
+        "explanation": "Applications must explicitly enable detection and choose a reviewed mode and direction.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-pii/src/main/java/ai/fabric/config/PIIDetectionProperties.java"
+        ]
+      },
+      {
+        "id": "core-06-q6",
+        "type": "multiple-choice",
+        "competency": "privacy-failure-semantics",
+        "prompt": "Which privacy statements are accurate for AI Fabric 0.3.3?",
+        "options": [
+          {
+            "id": "a",
+            "text": "A HASH protected-original record is not recoverable encryption"
+          },
+          {
+            "id": "b",
+            "text": "Built-in regex detection proves regulatory compliance"
+          },
+          {
+            "id": "c",
+            "text": "Privacy-critical persistence should reject, quarantine, or use NEVER_PERSIST when redaction cannot be proved"
+          },
+          {
+            "id": "d",
+            "text": "UI masking proves raw data never reached the backend"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "c"
+        ],
+        "explanation": "Hash fallback and detector limitations must be stated precisely; backend leakage tests, not UI appearance, provide proof.",
+        "sourcePaths": [
+          "docs/course/core/06-tenant-security-and-privacy/notebooklm/AI_FABRIC_TENANT_SECURITY_PRIVACY_NOTEBOOKLM_SCRIPT.md"
+        ]
+      }
+    ]
+  },
+  "assistantPrompt": "core/06-tenant-security-and-privacy/assistant-prompt.md",
+  "assistantReviewPrompt": "core/06-tenant-security-and-privacy/assistant-review-prompt.md",
+  "theoryVideoIds": [
+    "tenant-security-and-privacy"
+  ],
+  "relatedStories": [],
+  "relatedDemos": [],
+  "track": "core",
+  "route": "/course/core/tenant-security-and-privacy",
+  "frontMatter": {
+    "id": "core-06",
+    "slug": "tenant-security-and-privacy",
+    "title": "Tenant Security And Privacy",
+    "track": "core",
+    "order": 6,
+    "durationMinutes": 85,
+    "availability": "preview",
+    "courseVersion": "0.3.3-course.1-beta",
+    "frameworkVersion": "0.3.3",
+    "frameworkTag": "ai-fabric-framework-v0.3.3",
+    "courseSourceTag": "unreleased",
+    "starterRef": "planned",
+    "solutionRef": "planned",
+    "requiresOpenAi": false,
+    "requiresDocker": false,
+    "sourcePaths": [
+      "docs/course/core/06-tenant-security-and-privacy/notebooklm/AI_FABRIC_TENANT_SECURITY_PRIVACY_NOTEBOOKLM_SCRIPT.md",
+      "docs/getting-started/10-security-access-policy.md",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/orchestration/OrchestrationContextMetadataKeys.java",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/orchestration/OrchestrationAuthContextResolver.java",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/access/policy/EntityAccessPolicy.java",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/access/AIAccessControlService.java",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/orchestration/pipeline/steps/AccessControlStep.java",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/util/VectorMetadataFilterSupport.java",
+      "ai-infrastructure-module/ai-fabric-pii/src/main/java/ai/fabric/config/PIIDetectionProperties.java",
+      "ai-infrastructure-module/ai-fabric-pii/src/main/java/ai/fabric/intent/orchestration/pipeline/steps/PIIDetectionStep.java",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/orchestration/pipeline/steps/ResponseSanitizationStep.java",
+      "examples/real-apps/tenant-knowledge-portal/src/main/java/com/ai/fabric/realapps/tenantportal/service/TenantKnowledgeService.java",
+      "examples/real-apps/privacy-first-customer-facing-support/src/main/java/com/ai/fabric/realapps/privacyfirst/service/SupportMessageService.java",
+      "examples/real-apps/privacy-first-customer-facing-support/src/test/java/com/ai/fabric/realapps/privacyfirst/service/SupportMessageServiceTest.java"
+    ],
+    "theoryVideoIds": [
+      "tenant-security-and-privacy"
+    ],
+    "assistant": {
+      "mode": "implement",
+      "implementationPrompt": "assistant-prompt.md",
+      "reviewPrompt": "assistant-review-prompt.md",
+      "validationStatus": "planned"
+    },
+    "knowledgeCheck": {
+      "source": "knowledge-check.yml",
+      "required": true,
+      "passingScorePercent": 80
+    }
+  },
+  "markdown": "# Tenant Security And Privacy\n\n## Start Here\n\nAn LLM cannot repair a boundary after forbidden evidence has entered its prompt. In this lesson,\nyou will protect the Support Knowledge Assistant before retrieval, generation, action confirmation,\nstorage, and indexing.\n\nYou will seed two tenants with overlapping support content, derive tenant identity from verified\nserver authentication, apply exact-match metadata filters before vector results are accepted, deny\ncross-tenant actions, and redact representative PII before ordinary persistence or AI processing.\n\n> **Current lesson status: Preview.** The lesson, theory video, assistant prompts, and knowledge\n> check are ready. The standalone starter and immutable checkpoints remain `planned`. The core\n> completion path uses deterministic policies, a local vector provider, and PII tests, so it needs\n> no LLM key. An optional live-provider smoke may be added as extra evidence, not as a substitute.\n\n## The Protected Request Flow\n\nUse this order:\n\n```text\nverified authentication\n  -> canonical subject and tenant context\n  -> request security and access policy\n  -> PII input processing\n  -> tenant-filtered retrieval or action authorization\n  -> generation from allowed evidence only\n  -> response sanitization\n  -> sanitized conversation persistence and client projection\n```\n\nDo not retrieve broadly, generate an answer, and then hide another tenant's citations in React. At\nthat point, the backend and possibly the model provider have already received forbidden evidence.\n\n## Step 1: Write The Security Contract\n\nCreate `security-contract.md` before editing code:\n\n| Boundary | Trusted input | Deny condition | Required proof |\n| --- | --- | --- | --- |\n| request entry | verified principal and claims | missing identity, unknown resource, missing scope | fail-closed access test |\n| evidence indexing | source-owned tenant and visibility | missing tenant metadata | indexing test rejects record |\n| retrieval | canonical tenant and positive visibility flag | filter unsupported or hit metadata mismatches | no forbidden hit before generation |\n| action | current subject, tenant, role, object state | cross-tenant or insufficient role | denied before confirmation |\n| PII intake | configured detector and app policy | redaction cannot be proved | reject or quarantine before save/index |\n| response | sanitizer and explicit result DTO | unsafe nested data remains | API and conversation record contain no raw PII |\n\nThis table separates request access from evidence authorization and action authorization. One policy\ndoes not automatically implement all three.\n\n## Step 2: Add And Configure PII Processing\n\nAdd the privacy module:\n\n```xml\n<dependency>\n  <groupId>io.github.loom-ai-labs</groupId>\n  <artifactId>ai-fabric-pii</artifactId>\n</dependency>\n```\n\nChoose an explicit posture:\n\n```yaml\nai:\n  pii-detection:\n    enabled: true\n    mode: REDACT\n    detection-direction: INPUT_OUTPUT\n    expose-original-payload-in-result: false\n    store-encrypted-original: false\n```\n\nPII detection is disabled by default, and its default mode is `PASS_THROUGH`. Never describe the\napplication as privacy-protected merely because the dependency is present.\n\nThe built-in patterns include card-shaped numbers, email, phone, and US SSN. IBAN detection is\ndisabled by default. These regular-expression safeguards do not find every sensitive value and do\nnot establish regulatory compliance.\n\n## Step 3: Build Canonical Identity From Authentication\n\nAt the HTTP boundary, derive AI Fabric metadata from a verified principal or validated token:\n\n```java\nMap<String, Object> authMetadata = new LinkedHashMap<>();\nauthMetadata.put(OrchestrationContextMetadataKeys.SUBJECT_ID, principal.getName());\nauthMetadata.put(OrchestrationContextMetadataKeys.SUBJECT_TYPE, \"END_USER\");\nauthMetadata.put(OrchestrationContextMetadataKeys.AUTH_MODE, \"BEARER\");\nauthMetadata.put(OrchestrationContextMetadataKeys.TENANT_ID, claims.tenantId());\nauthMetadata.put(OrchestrationContextMetadataKeys.GRANTED_SCOPES, claims.scopes());\n\nOrchestrationContext context = OrchestrationContext.builder()\n    .userId(principal.getName())\n    .sessionId(serverSessionId)\n    .conversationId(request.conversationId())\n    .metadata(authMetadata)\n    .position(\"support\")\n    .build();\n```\n\n`OrchestrationAuthContextResolver` converts those trusted values into\n`AIAccessSubjectContext`. A tenant ID in public JSON or an unverified `X-Tenant-Id` header is not\ncanonical identity.\n\nAnonymous session identity can enter a deliberately public workflow, but it is not an authenticated\nuser. Give it a narrower policy.\n\n## Step 4: Implement A Fail-Closed Entry Policy\n\nRegister an application-owned `EntityAccessPolicy`:\n\n```java\n@Bean\nEntityAccessPolicy supportAccessPolicy() {\n    return (auth, entity) -> {\n        if (auth == null\n            || auth.getSubjectId() == null\n            || auth.getSubjectId().isBlank()\n            || auth.getTenantId() == null\n            || auth.getTenantId().isBlank()) {\n            return false;\n        }\n\n        String resource = Objects.toString(entity.get(\"resourceId\"), \"\");\n        String operation = Objects.toString(entity.get(\"operationType\"), \"\");\n\n        return \"rag:intent\".equals(resource)\n            && \"READ\".equalsIgnoreCase(operation)\n            && auth.getGrantedScopes() != null\n            && auth.getGrantedScopes().contains(\"support:read\");\n    };\n}\n```\n\n`AccessControlStep` currently evaluates the orchestration resource `rag:intent` with operation\n`READ`. If the policy is missing, identity is missing, the hook throws, or the policy returns\nfalse, the request must not proceed as an implicit grant.\n\nThis policy answers whether the subject may enter this AI workflow. It does not automatically add a\ntenant filter to vector search or authorize a ticket mutation.\n\n### Intentional Missing-Policy Failure\n\nTemporarily remove the bean and run the application-context or orchestration test. Record the\nfail-closed result. Restore the policy and prove only known resource, operation, identity, tenant,\nand scope combinations are granted.\n\n## Step 5: Index Tenant And Visibility Metadata\n\nSeed records with overlapping terms so a weak filter is easy to detect:\n\n| ID | Tenant | Visibility | Title |\n| --- | --- | --- | --- |\n| `vpn-a` | `tenant-a` | `internal` | VPN recovery |\n| `vpn-b` | `tenant-b` | `internal` | VPN recovery |\n| `payroll-b` | `tenant-b` | `restricted` | Payroll escalation |\n\nProject source-owned metadata when indexing:\n\n```java\nMap<String, Object> metadata = Map.of(\n    \"tenantId\", document.tenantId(),\n    \"visibility\", document.visibility(),\n    \"visibleToUser\", document.isVisibleToUser(),\n    \"documentId\", document.id(),\n    \"sourceId\", document.sourceId()\n);\n```\n\nUse a positive reviewed flag such as `visibleToUser=true`. AI Fabric's portable metadata subset is\nexact-match oriented; `visibility != restricted` is not the portable contract.\n\nReject or quarantine records that lack tenant metadata. Reindexing old unscoped records into the\nsame tenant-aware space without repair creates a security ambiguity.\n\n## Step 6: Build Retrieval Filters From Trusted Context\n\nConstruct `AISearchRequest.metadata` on the server:\n\n```java\nMap<String, Object> filter = Map.of(\n    \"tenantId\", canonicalAuth.getTenantId(),\n    \"visibleToUser\", true\n);\n\nAISearchRequest searchRequest = AISearchRequest.builder()\n    .query(safeQuery)\n    .entityType(\"support-article\")\n    .limit(5)\n    .threshold(0.0d)\n    .metadata(filter)\n    .build();\n```\n\nValidate the portable filter before sending it:\n\n```java\nVectorMetadataFilterSupport.ValidationResult validation =\n    VectorMetadataFilterSupport.validatePortableEquals(filter);\n\nif (validation.hasRejectedFilters()) {\n    throw new IllegalStateException(\"Required tenant filter is not portable\");\n}\n```\n\nThe selected vector provider must preserve the required filter. If it cannot, stop the request or\nchoose a provider that can. Never retry a required tenant search without metadata constraints.\n\n## Step 7: Verify Hits Before Building Generation Context\n\nTreat provider-side filtering as the primary boundary and perform an application-side verification\nbefore context construction:\n\n```java\nList<Map<String, Object>> allowedHits = response.getResults().stream()\n    .filter(hit -> canonicalAuth.getTenantId().equals(metadataText(hit, \"tenantId\")))\n    .filter(hit -> Boolean.TRUE.equals(metadataValue(hit, \"visibleToUser\")))\n    .toList();\n\nif (allowedHits.size() != response.getResults().size()) {\n    throw new EvidenceBoundaryException(\"Vector results crossed the required tenant boundary\");\n}\n```\n\nThe exact helper shape is application-specific. The invariant is not: a mismatched hit must never\nreach prompt context, citations, chat working-set metadata, logs returned to the client, or a hidden\nUI field.\n\nAdd direct API tests that search the shared term `VPN` as each tenant. Assert the other tenant's\nIDs and content are absent from the complete backend response.\n\n## Step 8: Authorize Actions Before Confirmation\n\nRequest access, retrieval scope, and action authorization answer different questions:\n\n```text\nMay this caller enter the workflow?\nWhich evidence may this caller see?\nMay this caller perform this operation on this target now?\n```\n\nFor a governed `escalate_support_ticket` action:\n\n1. Keep current tenant and user out of model-visible `@Param` values.\n2. Use `@ActionAllowed` as an early action gate.\n3. Load the target through the current tenant in the domain service.\n4. Recheck role, object ownership, and state inside the transaction.\n5. Create pending confirmation only after authorization succeeds.\n\nConfirmation records user approval; it does not grant permission. Test that a forged Tenant B\nticket number submitted by Tenant A is denied before pending state or mutation exists.\n\n## Step 9: Redact Before Storage And Indexing\n\n`PIIDetectionStep` protects the ordinary orchestration path before intent extraction, embedding,\nretrieval, or generation. Application intake endpoints outside that pipeline must call\n`PIIDetectionService` themselves before persistence:\n\n```java\nPIIDetectionResult result = piiDetectionService.detectAndProcess(rawMessage);\n\nString safeMessage = requireProvenProcessedText(rawMessage, result);\nSupportMessage saved = repository.save(\n    SupportMessage.fromSafeContent(customerId, safeMessage, result.getDetections())\n);\ncapabilityService.processEntityForAI(saved, \"support-message\");\n```\n\n`requireProvenProcessedText` must mask detected spans or reject/quarantine the record when safe\nprocessing cannot be proved. In privacy-critical paths, do not return raw input when the detector is\nnull, throws, or reports PII without usable positions and masked values.\n\nUse this test input:\n\n```text\nMy email is alex@example.com and my SSN is 123-45-6789.\n```\n\nAssert that raw email and SSN are absent from the saved entity, vector content, embedding query,\nordinary logs, API response, and chat turns.\n\n## Step 10: Handle Protected Originals Precisely\n\nKeep `expose-original-payload-in-result=false`. If a reviewed auditing requirement needs protected\noriginal storage, enable it deliberately and supply a strong runtime secret:\n\n```yaml\nai:\n  pii-detection:\n    store-encrypted-original: true\n    encryption-secret: ${AI_PII_ENCRYPTION_SECRET}\n```\n\nWith a usable secret, the current service uses AES-GCM protected content. Without one, it records a\nsalted `HASH:` marker. A hash marker is not encrypted and cannot recover the original.\n\nEncryption does not authorize access. Key rotation, retention, deletion, audit, and recovery remain\napplication and operational responsibilities. Do not commit the secret.\n\nFull payment-card data, CVV, passwords, and API keys belong in specialized secure-capture flows,\nnot ordinary chat or action parameters.\n\n## Step 11: Sanitize Output Before Conversation Recording\n\nThe late response path is:\n\n```text\ngenerated, RAG, or action result\n  -> ResponseSanitizationStep\n  -> sanitized message, nested data, suggestions, and action/RAG result\n  -> ConversationRecordingStep\n  -> client and backend chat memory\n```\n\nAdd a test where an action result or generated response contains the sample email. Assert that the\nAPI response and stored assistant turn contain only the configured masked value.\n\nThe current conversation recorder attempts a second PII pass over the query, but preserves the\noriginal query if that helper throws. A privacy-critical application therefore needs an explicit\nfail-closed persistence boundary or `NEVER_PERSIST`; do not claim the generic recorder alone\nguarantees fail-closed storage during detector failure.\n\n## Step 12: Run The Boundary Regression Matrix\n\nKeep these tests deterministic and keyless:\n\n| Scenario | Required backend result |\n| --- | --- |\n| policy bean missing | startup/request fails; no implicit grant |\n| canonical identity missing | access denied |\n| policy hook throws | denied and hook failure visible |\n| Tenant A searches `VPN` | only Tenant A allowed evidence |\n| restricted record matches strongly | absent before generation and citations |\n| required filter is unsupported | request fails; no unfiltered retry |\n| Tenant A targets Tenant B action | denied before confirmation and mutation |\n| email, phone, or SSN enters intake | provider/index/storage receive masked content |\n| PII appears in output | response and chat recording are sanitized |\n| transient sensitive request | no chat, log, or index persistence |\n\nCapture arguments sent to the vector, embedding, generation, repository, and action services. This\nproves what crossed each boundary without relying on model prose.\n\n## Step 13: Add Optional Packaged And Live Proof\n\nStart the packaged application with the same local profile used by the tests and call both tenant\npaths through HTTP. Verify health, provider posture, and the complete response payload.\n\nIf you also run a hosted LLM, repeat an allowed and denied tenant query. A successful live answer is\nadditional integration evidence. It does not replace deterministic proof that forbidden material\nwas absent before provider invocation.\n\nProvider failure must remain visible. Do not replace a failed generation call with a deterministic\nanswer labeled as live AI.\n\n## Planned Commands\n\n```bash\n./mvnw -pl ai-infrastructure-module/ai-fabric-pii -am test\n./mvnw -pl examples/real-apps/privacy-first-customer-facing-support -am test\n./mvnw -pl examples/real-apps/tenant-knowledge-portal -am test\n./mvnw clean verify\n```\n\n## Common Mistakes\n\n| Mistake | Consequence | Correct approach |\n| --- | --- | --- |\n| Trusting a tenant header or request field | Caller proposes its own security scope | Derive canonical tenant from verified auth |\n| Treating `EntityAccessPolicy` as vector row policy | Entry access is mistaken for evidence filtering | Build required metadata filters separately |\n| Using `visibility != restricted` | Filter cannot use the portable equality contract | Index and require `visibleToUser=true` |\n| Retrying without filters | Cross-tenant evidence can enter context | Fail or choose a capable provider |\n| Hiding denied rows in the UI | Forbidden data already left the backend | Exclude before generation and response |\n| Treating confirmation as authorization | Approval can execute an unauthorized target | Authorize before pending confirmation |\n| Adding the PII dependency without configuration | Detection remains disabled or pass-through | Enable and choose a reviewed mode |\n| Returning raw text when redaction fails | Storage and index receive sensitive values | Reject, quarantine, or use `NEVER_PERSIST` |\n| Calling a hash encrypted | Recovery and audit assumptions become false | Label `HASH:` records accurately |\n| Claiming compliance from regexes | Product guarantees exceed implementation proof | State and test the exact safeguard |\n\n## Troubleshooting\n\n| Symptom | Inspect |\n| --- | --- |\n| Pipeline reports `AccessControl` failure | canonical identity, policy bean, resource/operation allowlist, and scopes |\n| Tenant filter appears empty | auth metadata construction and server-derived tenant |\n| Cross-tenant result appears | indexed metadata, request metadata filter, provider capability, and hit verification |\n| Restricted content is retrieved | positive visibility field and exact-match filter |\n| Action reaches confirmation for wrong tenant | action gate, context-owned tenant, and domain lookup |\n| Raw PII reaches repository or index | intake service boundary and detector failure behavior |\n| Input is masked but output leaks | response sanitization configuration and nested payload tests |\n| Chat contains a transient value | `NEVER_PERSIST` metadata and conversation recording |\n| Protected original begins with `HASH:` | missing/unusable encryption secret; this is not recoverable encryption |\n| UI looks safe but API includes denied IDs | backend evidence projection and direct API test |\n\n## Done When\n\nYou are done with this preview lesson when:\n\n- subject, tenant, scopes, and session come from verified server context;\n- missing identity, missing policy, denial, and policy exceptions fail closed;\n- every indexed support record carries trusted tenant and positive visibility metadata;\n- required exact-match filters execute before context construction;\n- cross-tenant and restricted evidence is absent from the complete backend result;\n- unauthorized actions stop before confirmation and mutation;\n- matched PII is absent from ordinary provider, index, response, and memory paths;\n- protected-original and transient-request behavior is described and tested accurately;\n- security proof is deterministic and does not depend on an LLM refusal or UI masking;\n- you score at least 80 percent on the knowledge check.\n\n## Next Lesson\n\nCORE-07 turns the complete vertical slice into a release gate with deterministic, packaged-runtime,\nand explicitly keyed live-provider evidence.",
+  "assistant": {
+    "mode": "implement",
+    "validationStatus": "planned",
+    "implementationPrompt": "# CORE-06 Coding-Assistant Implementation Prompt\n\nStatus: Planned. Do not use this prompt as a validated implementation handoff until the published\nstarter checkpoint replaces `planned`.\n\n```text\nYou are implementing AI Fabric course lesson CORE-06: Tenant Security And Privacy.\n\nUse AI Fabric 0.3.3 / ai-fabric-framework-v0.3.3, Java 21, and Spring Boot 4.1.x. Work only from the\npublished CORE-06 starter checkpoint when available. Do not copy a solution checkpoint.\n\nRead first:\n- docs/course/core/06-tenant-security-and-privacy/lesson.md\n- docs/getting-started/10-security-access-policy.md\n- current OrchestrationContextMetadataKeys, OrchestrationAuthContextResolver, EntityAccessPolicy,\n  AIAccessControlService, AccessControlStep, VectorMetadataFilterSupport, PIIDetectionProperties,\n  PIIDetectionStep, and ResponseSanitizationStep APIs\n- the starter's authentication, indexing, retrieval, action, chat-session, and persistence paths\n\nGoal:\nDerive canonical identity from verified authentication, fail closed at request entry, restrict\nevidence by trusted tenant and positive visibility metadata before generation, authorize action\ntargets before confirmation, and keep matched PII out of ordinary provider, index, response, and\nconversation paths.\n\nBefore editing:\n1. Verify the starter ref, worktree, auth model, local vector provider, tests, and provider posture.\n2. Draw the current data flow from HTTP input to retrieval/action, persistence, generation, response, and chat.\n3. Identify every place tenant or user scope currently comes from request data.\n4. Inspect current access and PII APIs; do not invent automatic tenant isolation or compliance guarantees.\n5. Produce a threat/boundary table and a concise implementation and test plan.\n\nRequired behavior:\n1. Add ai-fabric-pii with explicit REDACT and INPUT_OUTPUT configuration.\n2. Build canonical subject, tenant, session, and scopes from verified server authentication.\n3. Register a narrow EntityAccessPolicy that denies missing identity, unknown operations/resources,\n   missing scope, and exceptions.\n4. Add trusted tenant, source, and positive visibility metadata during indexing.\n5. Build exact-match AISearchRequest metadata filters from canonical context.\n6. Stop when required filters are unsupported; never retry without them.\n7. Verify returned hit metadata before prompt context, citations, or chat working-set construction.\n8. Authorize action role, tenant, object, and state before pending confirmation.\n9. Process PII before application persistence, indexing, embedding, retrieval, or generation.\n10. Sanitize nested output before client response and conversation recording.\n11. Reject, quarantine, or use NEVER_PERSIST when privacy-critical redaction cannot be proved.\n12. Keep protected-original encryption/hash semantics and secrets explicit.\n\nTesting:\n- missing policy, missing identity, denied policy, and throwing policy tests;\n- canonical-auth construction test that ignores untrusted tenant request data;\n- index metadata completeness test;\n- portable exact-match filter validation test;\n- Tenant A/Tenant B overlapping-term retrieval tests;\n- provider-filter unsupported test with no unfiltered retry;\n- returned-hit defense-in-depth mismatch test;\n- cross-tenant action denial before pending confirmation and mutation;\n- REDACT and DETECT_ONLY safe-downstream tests for email, phone, SSN, and product-specific patterns;\n- repository, vector, embedding, provider, API, log-capture, and chat assertions with no raw PII;\n- output/nested-action-result sanitization test;\n- detector failure and NEVER_PERSIST tests;\n- packaged local HTTP smoke;\n- clean ./mvnw clean verify.\n\nDo not:\n- trust tenant, owner, user, role, or scope from public JSON or unverified headers;\n- claim EntityAccessPolicy automatically filters vectors or authorizes every action;\n- use inequality filters as the portable metadata contract;\n- widen a required filtered search;\n- filter forbidden evidence only in the UI or after generation;\n- treat confirmation as authorization;\n- expose full card data, CVV, passwords, or API keys through chat/actions;\n- return raw content when privacy-critical processing fails;\n- call a HASH record encrypted or claim regex detection proves compliance;\n- hide provider failures with deterministic output;\n- use -DskipTests, commit secrets, or discard unrelated changes;\n- commit, push, or deploy.\n\nStop and report when the starter checkpoint is missing, verified identity cannot be established,\nthe selected provider cannot preserve required filters, a PII boundary cannot fail closed, pinned\nAPIs contradict the lesson, or requested live credentials are unavailable.\n\nFinish with changed files, exact command outcomes, canonical identity proof, access decisions,\nindexed metadata, retrieval filters, complete allowed/denied responses, action pending/mutation\ncounts, PII values used and every inspected sink, encryption/hash posture, packaged smoke status,\nunexecuted checks, and the final protected data flow.\n```\n\n",
+    "reviewPrompt": "# CORE-06 Independent Review Prompt\n\nReview a developer's CORE-06 implementation against AI Fabric Framework 0.3.3, the current CORE-06\ncourse source, and pinned access, vector-filter, PII, response-sanitization, action, and chat APIs.\n\nUse a findings-first review. Order findings by severity and cite changed files/tests plus the course\nor pinned source. Trace one allowed and one denied request from verified authentication through\nretrieval or action, response projection, and conversation persistence.\n\nCheck for these failure classes:\n\n- tenant, owner, role, or scope trusted from request JSON or an unverified header;\n- missing or optimistic-default `EntityAccessPolicy`;\n- entry policy incorrectly presented as automatic row-level vector or action authorization;\n- indexed evidence missing trusted tenant or positive visibility metadata;\n- inequality, unsupported, or silently widened required metadata filters;\n- forbidden hit reaching prompt context, citations, logs, chat working set, or backend response;\n- frontend masking presented as evidence isolation;\n- cross-tenant or unauthorized action reaching pending confirmation;\n- confirmation treated as an authorization grant;\n- PII dependency present but detection disabled or left in `PASS_THROUGH`;\n- raw PII entering persistence, vector content, embedding query, generation request, response, logs, or chat;\n- detector failure returning raw content in a privacy-critical path;\n- `HASH:` protected-original data described as encrypted;\n- regex detection presented as complete or compliant;\n- payment secrets accepted through ordinary chat/action parameters;\n- deterministic success hiding provider or policy failure;\n- negative tests asserting only UI labels or generated refusal prose.\n\nThen report:\n\n1. findings with severity;\n2. missing proof or unexecuted checks;\n3. whether canonical identity is server-derived;\n4. whether entry, retrieval, and action policies are distinct and fail closed;\n5. whether forbidden evidence is absent before generation;\n6. whether unauthorized writes stop before confirmation;\n7. whether every ordinary sensitive-data sink is proved redacted;\n8. whether protected-original and transient behavior is described accurately;\n9. the smallest corrections required to pass CORE-06.\n\nThe lesson passes only when backend tests prove that forbidden evidence and matched sensitive values\ndo not cross their allowed boundaries, independently of model behavior and frontend presentation.\n"
+  },
+  "sourcePath": "docs/course/core/06-tenant-security-and-privacy/lesson.md",
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/main/docs/course/core/06-tenant-security-and-privacy/lesson.md"
+}

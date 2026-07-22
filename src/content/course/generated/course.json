@@ -149,8 +149,14 @@
           "title": "Tenant Security And Privacy",
           "description": "Apply identity, tenant, access, and PII policy before evidence or execution.",
           "durationMinutes": 85,
-          "availability": "planned",
-          "theoryVideoIds": [],
+          "availability": "preview",
+          "source": "core/06-tenant-security-and-privacy/lesson.md",
+          "knowledgeCheck": "core/06-tenant-security-and-privacy/knowledge-check.yml",
+          "assistantPrompt": "core/06-tenant-security-and-privacy/assistant-prompt.md",
+          "assistantReviewPrompt": "core/06-tenant-security-and-privacy/assistant-review-prompt.md",
+          "theoryVideoIds": [
+            "tenant-security-and-privacy"
+          ],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/core/tenant-security-and-privacy"
@@ -338,6 +344,6 @@
       ]
     }
   ],
-  "sourceCommit": "60511b00854d2dfb33094c51bde7007b0a00f4bd",
-  "generatedAt": "2026-07-22T00:48:25.383Z"
+  "sourceCommit": "c90db3a147e807654c1642a6d8c13289bb5ed577",
+  "generatedAt": "2026-07-22T00:59:28.110Z"
 }
