@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { courseCatalog, courseLessons, getRenderedLesson, previewLessons } from "../lib/courseCatalog";
+import { courseCatalog, courseLessons, getRenderedLesson, previewLessons, publishedLessons } from "../lib/courseCatalog";
 
 describe("generated course catalog", () => {
   it("pins the UI to the supported framework release", () => {
@@ -9,6 +9,10 @@ describe("generated course catalog", () => {
     );
     expect(courseCatalog.frameworkVersion).toBe("0.3.3");
     expect(courseCatalog.frameworkTag).toBe("ai-fabric-framework-v0.3.3");
+    expect(courseCatalog.courseSourceTag).toBe("ai-fabric-course-v0.3.3.1");
+    expect(courseCatalog.learnerRepository).toBe(
+      "https://github.com/Loom-AI-Labs/ai-fabric-course-support-assistant",
+    );
     expect(courseCatalog.sourceCommit).toMatch(/^[a-f0-9]{40}$/);
   });
 
@@ -18,8 +22,9 @@ describe("generated course catalog", () => {
     expect(new Set(courseLessons.map((lesson) => lesson.route)).size).toBe(courseLessons.length);
   });
 
-  it("renders the Quickstart and available Core preview lessons", () => {
-    expect(previewLessons.map((lesson) => lesson.id)).toEqual([
+  it("publishes the Quickstart and complete Core checkpoint path", () => {
+    expect(previewLessons).toEqual([]);
+    expect(publishedLessons.map((lesson) => lesson.id)).toEqual([
       "qs-01",
       "core-01",
       "core-02",
@@ -29,6 +34,21 @@ describe("generated course catalog", () => {
       "core-06",
       "core-07",
     ]);
+    expect([
+      ["qs-01", "course-0.3.3-00-starter", "course-0.3.3-01-first-search"],
+      ["core-01", "course-0.3.3-00-starter", "course-0.3.3-00-starter"],
+      ["core-02", "course-0.3.3-00-starter", "course-0.3.3-01-first-search"],
+      ["core-03", "course-0.3.3-01-first-search", "course-0.3.3-02-rag"],
+      ["core-04", "course-0.3.3-02-rag", "course-0.3.3-03-actions"],
+      ["core-05", "course-0.3.3-03-actions", "course-0.3.3-04-memory"],
+      ["core-06", "course-0.3.3-04-memory", "course-0.3.3-05-security"],
+      ["core-07", "course-0.3.3-05-security", "course-0.3.3-06-tested-solution"],
+    ]).toEqual(publishedLessons.map((summary) => {
+      const rendered = getRenderedLesson(summary.id);
+      return [summary.id, rendered?.frontMatter.starterRef, rendered?.frontMatter.solutionRef];
+    }));
+    expect(publishedLessons.every((summary) => getRenderedLesson(summary.id)?.assistant.validationStatus === "passed"))
+      .toBe(true);
     expect(getRenderedLesson("qs-01")?.video).toBeUndefined();
     expect(getRenderedLesson("core-01")?.theoryVideoIds).toEqual([
       "what-is-ai-fabric",

@@ -35,9 +35,17 @@ const PromptBlock = ({ title, prompt }: { title: string; prompt: string }) => {
   );
 };
 
-export const CoursePathWorkspace = ({ lesson }: { lesson: RenderedCourseLesson }) => {
+export const CoursePathWorkspace = ({
+  lesson,
+  learnerRepository,
+}: {
+  lesson: RenderedCourseLesson;
+  learnerRepository: string;
+}) => {
   const analysisLesson = lesson.assistant.mode === "analyze";
   const verificationLesson = lesson.assistant.mode === "verify";
+  const assistantValidated = lesson.assistant.validationStatus === "passed";
+  const starterUrl = `${learnerRepository}/tree/${lesson.frontMatter.starterRef}`;
   const workspaceTitle = analysisLesson
     ? "Produce the architecture contract"
     : verificationLesson
@@ -80,19 +88,27 @@ export const CoursePathWorkspace = ({ lesson }: { lesson: RenderedCourseLesson }
         <CourseMarkdown markdown={prepareLessonMarkdown(lesson.markdown)} />
       </TabsContent>
       <TabsContent value="assistant" className="mt-7 space-y-8">
-        <div className="border-l-4 border-amber-400 bg-amber-50 px-5 py-4">
+        <div className={`border-l-4 px-5 py-4 ${assistantValidated ? "border-emerald-500 bg-emerald-50" : "border-amber-400 bg-amber-50"}`}>
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="outline" className="bg-white">Mode: {lesson.assistant.mode}</Badge>
             <Badge variant="outline" className="bg-white">Validation: {lesson.assistant.validationStatus}</Badge>
             <Badge variant="outline" className="bg-white">Starter: {lesson.frontMatter.starterRef}</Badge>
           </div>
           <p className="mt-3 text-sm leading-6 text-slate-700">
-            {analysisLesson
-              ? "This prompt produces the same architecture artifacts as the manual path. It remains marked planned until its output receives an independent framework-source review. Copying it does not change progress."
-              : verificationLesson
-                ? "This prompt audits the same release evidence as the manual path. It remains marked planned until the standalone checkpoint is published and verified from a clean environment. Copying it does not change progress."
-                : "This prompt is visible for review but remains marked planned until the standalone starter is published and the complete path passes from a clean checkout. Copying it does not change progress."}
+            {assistantValidated
+              ? analysisLesson
+                ? "This prompt has been validated against the published application shape and produces the same architecture artifacts as the manual path. You remain responsible for reviewing and explaining its output."
+                : verificationLesson
+                  ? "This prompt has been validated against the published release-gate checkpoint. It audits the same commands, evidence, and decision criteria as the manual path."
+                  : "This prompt has been validated from the declared starter against the same behavioral contract as the manual path. Review every change and run the tests before accepting it."
+              : "This assistant path is available for review but has not completed independent checkpoint validation."}
           </p>
+          <Button variant="link" size="sm" className="mt-2 h-auto p-0" asChild>
+            <a href={starterUrl} target="_blank" rel="noopener noreferrer">
+              Open declared starter
+              <ExternalLink className="h-3.5 w-3.5" />
+            </a>
+          </Button>
         </div>
         <PromptBlock
           title={verificationLesson ? "Verification prompt" : "Implementation prompt"}

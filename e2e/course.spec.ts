@@ -3,10 +3,20 @@ import { expect, test } from "@playwright/test";
 test("course hub opens the reviewed quickstart", async ({ page }) => {
   await page.goto("/course");
   await expect(page.getByRole("heading", { name: /Build AI-Enabled Applications/ })).toBeVisible();
-  await expect(page.getByText("QS-01: First Useful Result")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Quickstart + Core path" })).toBeVisible();
+  await expect(page.getByText("8 published lessons")).toBeVisible();
   await page.getByRole("link", { name: "Start Quickstart" }).click();
   await expect(page).toHaveURL(/\/course\/quickstart$/);
   await expect(page.getByRole("heading", { name: "First Useful Result" })).toBeVisible();
+  await expect(page.getByText("Executable learner checkpoint")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Starter checkpoint" })).toHaveAttribute(
+    "href",
+    /course-0\.3\.3-00-starter$/,
+  );
+  await expect(page.getByRole("link", { name: "Solution checkpoint" })).toHaveAttribute(
+    "href",
+    /course-0\.3\.3-01-first-search$/,
+  );
   await expect(page.getByText(/AI Fabric adds application-level AI capabilities to Spring Boot/)).toBeVisible();
   await expect(page.getByRole("link", { name: "Theory" })).toHaveCount(0);
   await expect(page.getByText("Recording not published yet")).toHaveCount(0);

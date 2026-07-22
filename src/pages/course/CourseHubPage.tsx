@@ -31,7 +31,7 @@ import {
   courseCatalog,
   courseDurationMinutes,
   courseTracks,
-  previewLessons,
+  publishedLessons,
   requiredLessons,
 } from "./lib/courseCatalog";
 import { calculateCourseProgress } from "./lib/completion";
@@ -105,16 +105,17 @@ const CourseHubPage = () => {
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-xs font-bold uppercase text-emerald-700">Available now</p>
-                <h2 className="mt-1 text-lg font-bold text-slate-950">QS-01: First Useful Result</h2>
+                <h2 className="mt-1 text-lg font-bold text-slate-950">Quickstart + Core path</h2>
               </div>
               <BookOpenCheck className="h-7 w-7 text-emerald-600" />
             </div>
             <p className="mt-3 text-sm leading-6 text-slate-600">
-              Trace a local semantic-search flow, inspect ownership, and pass the first knowledge check.
+              Build one support assistant through semantic search, RAG, governed actions, memory,
+              tenant security, privacy, and release proof.
             </p>
             <div className="mt-4 flex items-center gap-4 text-xs text-slate-500">
-              <span className="flex items-center gap-1.5"><Clock3 className="h-3.5 w-3.5" />75 minutes</span>
-              <span>No cloud key</span>
+              <span className="flex items-center gap-1.5"><Clock3 className="h-3.5 w-3.5" />{formatDuration(availableDurationMinutes)}</span>
+              <span>{publishedLessons.length} published lessons</span>
             </div>
           </div>
         </section>
@@ -160,7 +161,7 @@ const CourseHubPage = () => {
               </p>
             </div>
             <div className="flex gap-7 text-sm">
-              <span><strong className="block text-xl text-slate-950">{previewLessons.length}</strong>preview lesson</span>
+              <span><strong className="block text-xl text-slate-950">{publishedLessons.length}</strong>published lessons</span>
               <span><strong className="block text-xl text-slate-950">{courseTracks.length}</strong>tracks</span>
               <span><strong className="block text-xl text-slate-950">{formatDuration(courseDurationMinutes)}</strong>planned</span>
             </div>
@@ -229,8 +230,8 @@ const CourseHubPage = () => {
             </div>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
               Lesson content is generated from the framework repository and pinned to AI Fabric
-              {` ${courseCatalog.frameworkVersion}`}. Preview, planned, and published states remain visible;
-              missing required media or starter checkpoints are never presented as complete.
+              {` ${courseCatalog.frameworkVersion}`}. Published lessons resolve to immutable learner
+              checkpoints; planned tracks stay visibly unavailable until their evidence exists.
             </p>
             <div className="mt-4 flex flex-wrap gap-4 font-mono text-xs text-slate-500">
               <span>source {courseCatalog.sourceCommit.slice(0, 12)}</span>

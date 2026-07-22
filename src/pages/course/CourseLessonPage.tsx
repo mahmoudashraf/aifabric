@@ -6,6 +6,7 @@ import {
   ExternalLink,
   FileCheck2,
   FlaskConical,
+  GitBranch,
   LockKeyhole,
   PlayCircle,
 } from "lucide-react";
@@ -45,6 +46,11 @@ const CourseLessonPage = () => {
   const theoryRequired = hasTheory(lesson);
   const lessonIndex = courseLessons.findIndex((candidate) => candidate.id === lesson.id);
   const nextLesson = lessonIndex >= 0 ? courseLessons[lessonIndex + 1] : null;
+  const published = lesson.availability === "published";
+  const theoryCompleted = Boolean(lessonProgress?.videoCompletedAt);
+  const starterUrl = `${courseCatalog.learnerRepository}/tree/${lesson.frontMatter.starterRef}`;
+  const solutionUrl = `${courseCatalog.learnerRepository}/tree/${lesson.frontMatter.solutionRef}`;
+  const sameCheckpoint = lesson.frontMatter.starterRef === lesson.frontMatter.solutionRef;
   const previewDescription = lesson.id === "qs-01"
     ? "The practical lesson source, assistant prompts, and knowledge check are available for review. This Quickstart intentionally has no theory-video gate. The executable starter and immutable solution refs still need publication, so this preview cannot yet count as complete."
     : "The complete lesson, assigned theory recordings, assistant analysis prompts, and knowledge check are available for review. Progress can be practiced and saved, but completion remains disabled until the course publishes an immutable checkpoint.";
@@ -72,14 +78,46 @@ const CourseLessonPage = () => {
           </h1>
           <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600">{lesson.description}</p>
 
-          <div className="mt-7 border-l-4 border-amber-400 bg-amber-50 px-5 py-4">
+          <div className={`mt-7 border-l-4 px-5 py-4 ${published ? "border-emerald-500 bg-emerald-50" : "border-amber-400 bg-amber-50"}`}>
             <div className="flex items-start gap-3">
-              <FlaskConical className="mt-0.5 h-5 w-5 shrink-0 text-amber-700" />
+              {published
+                ? <GitBranch className="mt-0.5 h-5 w-5 shrink-0 text-emerald-700" />
+                : <FlaskConical className="mt-0.5 h-5 w-5 shrink-0 text-amber-700" />}
               <div>
-                <p className="font-bold text-slate-950">What is ready in this preview</p>
-                <p className="mt-1 text-sm leading-6 text-slate-700">
-                  {previewDescription}
+                <p className="font-bold text-slate-950">
+                  {published ? "Executable learner checkpoint" : "What is ready in this preview"}
                 </p>
+                <p className="mt-1 text-sm leading-6 text-slate-700">
+                  {published
+                    ? sameCheckpoint
+                      ? `This analysis lesson uses ${lesson.frontMatter.starterRef} as its concrete application reference and does not require a code change.`
+                      : `Begin at ${lesson.frontMatter.starterRef}. Use ${lesson.frontMatter.solutionRef} only after completing the lab to review your result.`
+                    : previewDescription}
+                </p>
+                {published && (
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <Button variant="outline" size="sm" className="bg-white" asChild>
+                      <a href={courseCatalog.learnerRepository} target="_blank" rel="noopener noreferrer">
+                        Learner repository
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </a>
+                    </Button>
+                    <Button variant="outline" size="sm" className="bg-white" asChild>
+                      <a href={starterUrl} target="_blank" rel="noopener noreferrer">
+                        {sameCheckpoint ? "Reference checkpoint" : "Starter checkpoint"}
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </a>
+                    </Button>
+                    {!sameCheckpoint && (
+                      <Button variant="outline" size="sm" className="bg-white" asChild>
+                        <a href={solutionUrl} target="_blank" rel="noopener noreferrer">
+                          Solution checkpoint
+                          <ExternalLink className="h-3.5 w-3.5" />
+                        </a>
+                      </Button>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -122,22 +160,30 @@ const CourseLessonPage = () => {
           />
         )}
 
-        <CoursePathWorkspace lesson={lesson} />
+        <CoursePathWorkspace lesson={lesson} learnerRepository={courseCatalog.learnerRepository} />
         <CourseKnowledgeCheck lesson={lesson} progress={lessonProgress} />
 
         <section className="border-t border-border pt-9" aria-labelledby="completion-heading">
           <div className="flex items-center gap-3">
-            <LockKeyhole className="h-5 w-5 text-amber-600" />
-            <h2 id="completion-heading" className="text-xl font-bold tracking-normal text-slate-950">Publication-aware completion</h2>
+            {published
+              ? <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+              : <LockKeyhole className="h-5 w-5 text-amber-600" />}
+            <h2 id="completion-heading" className="text-xl font-bold tracking-normal text-slate-950">
+              {published ? "Complete this lesson" : "Publication-aware completion"}
+            </h2>
           </div>
           <div className="mt-5 divide-y divide-border border-y border-border bg-white">
             {theoryRequired && (
               <div className="flex items-center justify-between gap-4 px-4 py-4">
                 <span className="flex items-center gap-3 text-sm font-medium text-slate-800">
-                  <LockKeyhole className="h-4 w-4 text-amber-600" />
+                  {published
+                    ? <CheckCircle2 className={`h-4 w-4 ${theoryCompleted ? "text-emerald-600" : "text-slate-300"}`} />
+                    : <LockKeyhole className="h-4 w-4 text-amber-600" />}
                   Watch the assigned theory recording{lesson.theoryVideoIds.length > 1 ? "s" : ""}
                 </span>
-                <span className="text-xs font-semibold text-amber-700">Blocked until publication</span>
+                <span className={`text-xs font-semibold ${published ? "text-slate-600" : "text-amber-700"}`}>
+                  {published ? theoryCompleted ? "Watched" : "Not watched" : "Blocked until publication"}
+                </span>
               </div>
             )}
             <div className="flex items-center justify-between gap-4 px-4 py-4">

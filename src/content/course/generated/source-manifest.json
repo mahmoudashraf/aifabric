@@ -4,9 +4,9 @@
   "courseVersion": "0.3.3-course.1-beta",
   "frameworkVersion": "0.3.3",
   "frameworkTag": "ai-fabric-framework-v0.3.3",
-  "courseSourceTag": "unreleased",
-  "sourceCommit": "04664fff51d5c0963bcc793feb0dff35e8e2dc33",
-  "generatedAt": "2026-07-22T01:17:22.164Z",
+  "courseSourceTag": "ai-fabric-course-v0.3.3.1",
+  "sourceCommit": "acf89c1431a8763adb55981bc96bc826ba777b5d",
+  "generatedAt": "2026-07-22T13:54:59.339Z",
   "files": [
     {
       "sourcePath": ".github/scripts/run-vector-container-contracts.sh",
@@ -210,11 +210,11 @@
     },
     {
       "sourcePath": "docs/course/core/01-ai-fabric-mental-model/assistant-prompt.md",
-      "sha256": "3f4bb33448b9aba367924d440b626b73a3e56f584b8d7e8695de1a090df20b3e"
+      "sha256": "b783d56de0eb35a9ee5807f9d42f04998fe16ed52e7d923763883aa75ac9b108"
     },
     {
       "sourcePath": "docs/course/core/01-ai-fabric-mental-model/assistant-review-prompt.md",
-      "sha256": "d45ddc3aedfc77318a0240dfea1fa63fee36e32f0e96637e8a3fa3eaa757e484"
+      "sha256": "5b68fe10c98d4b255798038eecc21a7d0dada70997d618356f7cf51f26ee8d32"
     },
     {
       "sourcePath": "docs/course/core/01-ai-fabric-mental-model/knowledge-check.yml",
@@ -222,7 +222,7 @@
     },
     {
       "sourcePath": "docs/course/core/01-ai-fabric-mental-model/lesson.md",
-      "sha256": "a78ae535f0e80c8039c7ce7e0b7a1a4b6763ec89dda6dac49467abc305f30c79"
+      "sha256": "789b004eb94fb777e6ba27fb67b65b94e7e7935dcd4185b47de42d313e97c501"
     },
     {
       "sourcePath": "docs/course/core/01-ai-fabric-mental-model/notebooklm/AI_FABRIC_ARCHITECTURE_MODULE_MAP_NOTEBOOKLM_SCRIPT.md",
@@ -242,11 +242,11 @@
     },
     {
       "sourcePath": "docs/course/core/02-model-and-index-data/assistant-prompt.md",
-      "sha256": "039201c230035b065229d455e73325d1e1f258a67b47e5a939075ace3385324e"
+      "sha256": "641610c580b3f4feb5e9b4ca7235872aebc30990c5d80ae8a4b7dc02db0a8b2b"
     },
     {
       "sourcePath": "docs/course/core/02-model-and-index-data/assistant-review-prompt.md",
-      "sha256": "41348b6d2f9b04c85225ebb9e6d5ed7b66d31b14a1b04e5670c8a976be76d0ee"
+      "sha256": "837ad8a1ddadda8c56c72587af03b2c545e1dc5624edb968cecdca4895c32426"
     },
     {
       "sourcePath": "docs/course/core/02-model-and-index-data/knowledge-check.yml",
@@ -254,7 +254,7 @@
     },
     {
       "sourcePath": "docs/course/core/02-model-and-index-data/lesson.md",
-      "sha256": "f88301382a5911249d6c7f09162531f864cc0a317dccf8dad2e6cd7d15b0a21c"
+      "sha256": "ebc19be543e1e3a5b6abceb07a7f9b281318a5c043527faa2571ffcc0972e0ff"
     },
     {
       "sourcePath": "docs/course/core/02-model-and-index-data/notebooklm/AI_FABRIC_SEARCHABLE_EVIDENCE_NOTEBOOKLM_SCRIPT.md",
@@ -262,11 +262,11 @@
     },
     {
       "sourcePath": "docs/course/core/03-evidence-grounded-rag/assistant-prompt.md",
-      "sha256": "95766561227499c6c3b7abf3d94312935e7fb46ff8f818bb33a0e18a6193714a"
+      "sha256": "60955c0916abf982ed86bf9c90991ba7140ce1827ef5362ec9b996d2d75277a8"
     },
     {
       "sourcePath": "docs/course/core/03-evidence-grounded-rag/assistant-review-prompt.md",
-      "sha256": "91b42b4cc235d8f96914c13d606bbc6eda37eaa691fbb6d56ec9c33f8444dfd2"
+      "sha256": "a07453d3d97a9b6e9b009ef44923bd18c2edf28a7158c98c2b01878955b3952d"
     },
     {
       "sourcePath": "docs/course/core/03-evidence-grounded-rag/knowledge-check.yml",
@@ -274,7 +274,7 @@
     },
     {
       "sourcePath": "docs/course/core/03-evidence-grounded-rag/lesson.md",
-      "sha256": "3f083a63f714be5804c2d5d731edfdbff631ba31bb7bb29f9c04dbf6fc89a391"
+      "sha256": "43c6a29fe52f198eca98daf02e0dd52bd0081f5e01eb4f3447e1e9f08d109587"
     },
     {
       "sourcePath": "docs/course/core/03-evidence-grounded-rag/notebooklm/AI_FABRIC_EVIDENCE_GROUNDED_RAG_NOTEBOOKLM_SCRIPT.md",
@@ -282,11 +282,11 @@
     },
     {
       "sourcePath": "docs/course/core/04-governed-actions/assistant-prompt.md",
-      "sha256": "59da4a0a148a90084e8e8bf19c08654d931b2905a6d92753cdccd3f2f174ed3e"
+      "sha256": "08f5f32236cd2c546deb970d688af6dec15de9bbec5bae854d6bbb1d41aab485"
     },
     {
       "sourcePath": "docs/course/core/04-governed-actions/assistant-review-prompt.md",
-      "sha256": "1dccf0d24db14a1f47817380414692d184800950ca37f95777e53add9f464a75"
+      "sha256": "e542fb9270d4dbf22393099205e20b693e157bf5be9cebf67820a92c38e4ff95"
     },
     {
       "sourcePath": "docs/course/core/04-governed-actions/knowledge-check.yml",
@@ -294,7 +294,7 @@
     },
     {
       "sourcePath": "docs/course/core/04-governed-actions/lesson.md",
-      "sha256": "58bdef69f7f9db4094d10e9c0c992846e79cfbe34b37b9b4cc086de23a0fabea"
+      "sha256": "93e2e67782c7588945e304feea71aa15ca372ee904e01910c6337745c25a657b"
     },
     {
       "sourcePath": "docs/course/core/04-governed-actions/notebooklm/AI_FABRIC_GOVERNED_ACTIONS_CONFIRMATION_NOTEBOOKLM_SCRIPT.md",
@@ -302,11 +302,11 @@
     },
     {
       "sourcePath": "docs/course/core/05-backend-conversation-memory/assistant-prompt.md",
-      "sha256": "92294d074445382d1181362ee00a8a24ef6c2d69b1041ae271431f5f58deb595"
+      "sha256": "9f0e675709e40fc74c2e98c3d9dae209c05458721d24d456a9e6d116727eddbf"
     },
     {
       "sourcePath": "docs/course/core/05-backend-conversation-memory/assistant-review-prompt.md",
-      "sha256": "97725f91bb28e27942e5e2995b2ae156f964518f809e9c3a864f48a4f0c67b2f"
+      "sha256": "002f8509165f55478ff08cad4d56db4baf1f5f4d71185aeb9cccfef4415b6e8b"
     },
     {
       "sourcePath": "docs/course/core/05-backend-conversation-memory/knowledge-check.yml",
@@ -314,7 +314,7 @@
     },
     {
       "sourcePath": "docs/course/core/05-backend-conversation-memory/lesson.md",
-      "sha256": "b3b86ec6b0ff5d312011a9d79b8510a09d6f50a9ea12363ea2f8de4f23ccf3d0"
+      "sha256": "1641438099694fac57f0178d0ad155ebfe224394184abfd8b870484478a2c6c3"
     },
     {
       "sourcePath": "docs/course/core/05-backend-conversation-memory/notebooklm/AI_FABRIC_BACKEND_CONVERSATION_MEMORY_NOTEBOOKLM_SCRIPT.md",
@@ -322,11 +322,11 @@
     },
     {
       "sourcePath": "docs/course/core/06-tenant-security-and-privacy/assistant-prompt.md",
-      "sha256": "6c877b29640f892ee82176da10596c42aba89d897f0e329cfdec1c52b13e2b52"
+      "sha256": "aef024d4249410413b76804389b5277353ffbd895cebca35be861d761368e4c1"
     },
     {
       "sourcePath": "docs/course/core/06-tenant-security-and-privacy/assistant-review-prompt.md",
-      "sha256": "a3a4007ae084608b700297578e3a1a4f683300347e82244cfe624d88af06a1af"
+      "sha256": "2312352bc39f9c50565a81266d5bcf717f5406366bc558f839d661ff14d1aa36"
     },
     {
       "sourcePath": "docs/course/core/06-tenant-security-and-privacy/knowledge-check.yml",
@@ -334,7 +334,7 @@
     },
     {
       "sourcePath": "docs/course/core/06-tenant-security-and-privacy/lesson.md",
-      "sha256": "178e9d8c68ad7f47e4f781510fe83316ec86e67b28cc6bf67bd37c20251ded32"
+      "sha256": "78f819fb7ac064b40134b67c5314bcda8305ab33a6f867bdc99edab14881437a"
     },
     {
       "sourcePath": "docs/course/core/06-tenant-security-and-privacy/notebooklm/AI_FABRIC_TENANT_SECURITY_PRIVACY_NOTEBOOKLM_SCRIPT.md",
@@ -342,11 +342,11 @@
     },
     {
       "sourcePath": "docs/course/core/07-test-and-ship/assistant-prompt.md",
-      "sha256": "ebd7cbcb82a128754aff55b7962b14f72c28aa2a0d554eef6356650a82c88f9b"
+      "sha256": "e276f03fd7e0b5e329a93ec2d8eb78379ee1ea5b4eb6fe5d96707e750f9ac6f2"
     },
     {
       "sourcePath": "docs/course/core/07-test-and-ship/assistant-review-prompt.md",
-      "sha256": "165ebf5d6cd307b638bfcca736fa0abffcba3097bfe1f6e3896d3ab746a196bd"
+      "sha256": "2cbb2ea82aea4a983cd73820de2e93a0cab5a4344f7bed08413fb00e5ac97197"
     },
     {
       "sourcePath": "docs/course/core/07-test-and-ship/knowledge-check.yml",
@@ -354,7 +354,7 @@
     },
     {
       "sourcePath": "docs/course/core/07-test-and-ship/lesson.md",
-      "sha256": "b1e0e267e05509a37ebe73d7ec61d4451d2af411d38d47b6a2adbf8eb5f50283"
+      "sha256": "7f979552d628525937da54418ed26766e5efe6b00f45853bbb60eeed2baa69f1"
     },
     {
       "sourcePath": "docs/course/core/07-test-and-ship/notebooklm/AI_FABRIC_TESTING_SHIPPING_WORKFLOWS_NOTEBOOKLM_SCRIPT.md",
@@ -362,15 +362,15 @@
     },
     {
       "sourcePath": "docs/course/course.yml",
-      "sha256": "706fb99175bb88cf0f4c09eb607e5307ccd66fb6381fe5de37d79a81bab7600a"
+      "sha256": "6dac93eb5ef73b93ef3bd695b7e8fa359e6af9e3a3b3b8ffe06dd0a942a9014e"
     },
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/assistant-prompt.md",
-      "sha256": "e5030b4b0773900e15c9f15a4a47b27cb708b838acdc4a50e657102c89b5dfd5"
+      "sha256": "b1b168fac0e5f3fb1613ab794f5edc4ec3fad43a9e144214d47c5341b7a3bff0"
     },
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/assistant-review-prompt.md",
-      "sha256": "25f52897513a4093c4d2f8a89699aea2cc9008faf571c3dd6b35135be968d1fc"
+      "sha256": "837dcb52fd2bc5ed4699f6cdeddc0cb05382dd06681531763ff870e8572f7caa"
     },
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/knowledge-check.yml",
@@ -378,7 +378,7 @@
     },
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/lesson.md",
-      "sha256": "fc1e39d23f29877414e8cdc22b01aa1705f3ff678d91b73ad20543ea09f0e58a"
+      "sha256": "5217737b3715a1be19de197c09b42a2ce7f6044e8d3279a10e615298f313c7ac"
     },
     {
       "sourcePath": "docs/Framework-Dev-Guides/testing-verification/CI_PIPELINE_GUIDE.md",
