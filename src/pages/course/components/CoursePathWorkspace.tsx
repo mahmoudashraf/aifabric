@@ -37,18 +37,31 @@ const PromptBlock = ({ title, prompt }: { title: string; prompt: string }) => {
 
 export const CoursePathWorkspace = ({ lesson }: { lesson: RenderedCourseLesson }) => {
   const analysisLesson = lesson.assistant.mode === "analyze";
+  const verificationLesson = lesson.assistant.mode === "verify";
+  const workspaceTitle = analysisLesson
+    ? "Produce the architecture contract"
+    : verificationLesson
+      ? "Run the release gate"
+      : "Build the same behavior contract";
+  const manualTabLabel = analysisLesson
+    ? "Analyze manually"
+    : verificationLesson
+      ? "Verify manually"
+      : "Build manually";
 
   return (
     <section id="lesson-workspace" className="scroll-mt-32 py-9" aria-labelledby="workspace-heading">
       <div className="mb-5">
       <p className="text-xs font-bold uppercase text-blue-700">Choose your path</p>
       <h2 id="workspace-heading" className="mt-2 text-2xl font-bold tracking-normal text-slate-950">
-        {analysisLesson ? "Produce the architecture contract" : "Build the same behavior contract"}
+        {workspaceTitle}
       </h2>
       <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
         {analysisLesson
           ? "Manual and assistant paths use the same pinned sources, required artifacts, failure case, and review criteria."
-          : "Manual and assistant paths share the same source version, expected evidence, failure case, and tests."}
+          : verificationLesson
+            ? "Manual and assistant paths use the same release matrix, commands, retained evidence, and decision criteria."
+            : "Manual and assistant paths share the same source version, expected evidence, failure case, and tests."}
       </p>
       </div>
 
@@ -56,7 +69,7 @@ export const CoursePathWorkspace = ({ lesson }: { lesson: RenderedCourseLesson }
       <TabsList className="grid h-11 w-full max-w-md grid-cols-2">
         <TabsTrigger value="manual" className="gap-2">
           <TerminalSquare className="h-4 w-4" />
-          {analysisLesson ? "Analyze manually" : "Build manually"}
+          {manualTabLabel}
         </TabsTrigger>
         <TabsTrigger value="assistant" className="gap-2">
           <Code2 className="h-4 w-4" />
@@ -76,10 +89,15 @@ export const CoursePathWorkspace = ({ lesson }: { lesson: RenderedCourseLesson }
           <p className="mt-3 text-sm leading-6 text-slate-700">
             {analysisLesson
               ? "This prompt produces the same architecture artifacts as the manual path. It remains marked planned until its output receives an independent framework-source review. Copying it does not change progress."
-              : "This prompt is visible for review but remains marked planned until the standalone starter is published and the complete path passes from a clean checkout. Copying it does not change progress."}
+              : verificationLesson
+                ? "This prompt audits the same release evidence as the manual path. It remains marked planned until the standalone checkpoint is published and verified from a clean environment. Copying it does not change progress."
+                : "This prompt is visible for review but remains marked planned until the standalone starter is published and the complete path passes from a clean checkout. Copying it does not change progress."}
           </p>
         </div>
-        <PromptBlock title="Implementation prompt" prompt={lesson.assistant.implementationPrompt} />
+        <PromptBlock
+          title={verificationLesson ? "Verification prompt" : "Implementation prompt"}
+          prompt={lesson.assistant.implementationPrompt}
+        />
         <PromptBlock title="Independent review prompt" prompt={lesson.assistant.reviewPrompt} />
         <Button variant="outline" asChild>
           <a href={lesson.sourceUrl} target="_blank" rel="noopener noreferrer">

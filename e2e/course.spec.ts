@@ -129,6 +129,28 @@ test("Core 06 presents the tenant-security and privacy boundary lab", async ({ p
   await expect(page.getByRole("heading", { name: "Check your understanding" })).toBeVisible();
 });
 
+test("Core 07 presents the complete vertical-slice release gate", async ({ page }) => {
+  await page.goto("/course/core/test-and-ship", { waitUntil: "domcontentloaded" });
+
+  await expect(
+    page.getByRole("heading", { name: "Test And Ship The Vertical Slice", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByLabel("Assigned theory videos").getByRole("button")).toHaveCount(1);
+  await expect(
+    page.getByTitle("Testing and shipping AI workflows lesson video in English"),
+  ).toHaveAttribute("src", /W_mlsCxAePs/);
+  await expect(page.getByRole("heading", { name: "Make The Release Decision" })).toBeVisible();
+  await expect(page.getByRole("tab", { name: "Verify manually" })).toBeVisible();
+
+  await page.getByRole("tab", { name: "Use an assistant" }).click();
+  await expect(page.getByRole("heading", { name: "Verification prompt" })).toBeVisible();
+  await expect(
+    page.locator("pre").filter({ hasText: "# CORE-07 Coding-Assistant Verification Prompt" }),
+  ).toBeVisible();
+  await page.getByRole("tab", { name: "Verify manually" }).click();
+  await expect(page.getByRole("heading", { name: "Check your understanding" })).toBeVisible();
+});
+
 test("knowledge check grades locally without requiring sign-in", async ({ page }) => {
   await page.goto("/course/quickstart#knowledge-check");
   await page.getByLabel(/Projecting approved content/).check();
@@ -195,4 +217,13 @@ test("course pages do not overflow the viewport", async ({ page }, testInfo) => 
     () => document.documentElement.scrollWidth - window.innerWidth,
   );
   expect(securityLessonOverflow).toBeLessThanOrEqual(1);
+
+  await page.goto("/course/core/test-and-ship", { waitUntil: "domcontentloaded" });
+  await expect(
+    page.getByRole("heading", { name: "Test And Ship The Vertical Slice", exact: true }),
+  ).toBeVisible();
+  const shippingLessonOverflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - window.innerWidth,
+  );
+  expect(shippingLessonOverflow).toBeLessThanOrEqual(1);
 });

@@ -167,8 +167,14 @@
           "title": "Test And Ship The Vertical Slice",
           "description": "Separate deterministic, packaged-runtime, and live-provider release evidence.",
           "durationMinutes": 70,
-          "availability": "planned",
-          "theoryVideoIds": [],
+          "availability": "preview",
+          "source": "core/07-test-and-ship/lesson.md",
+          "knowledgeCheck": "core/07-test-and-ship/knowledge-check.yml",
+          "assistantPrompt": "core/07-test-and-ship/assistant-prompt.md",
+          "assistantReviewPrompt": "core/07-test-and-ship/assistant-review-prompt.md",
+          "theoryVideoIds": [
+            "testing-and-shipping"
+          ],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/core/test-and-ship"
@@ -344,6 +350,6 @@
       ]
     }
   ],
-  "sourceCommit": "c90db3a147e807654c1642a6d8c13289bb5ed577",
-  "generatedAt": "2026-07-22T00:59:28.110Z"
+  "sourceCommit": "d133548f5824191e4f59a11cccc48ef247fb8a9a",
+  "generatedAt": "2026-07-22T01:13:43.190Z"
 }

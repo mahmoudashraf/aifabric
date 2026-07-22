@@ -5,9 +5,45 @@
   "frameworkVersion": "0.3.3",
   "frameworkTag": "ai-fabric-framework-v0.3.3",
   "courseSourceTag": "unreleased",
-  "sourceCommit": "c90db3a147e807654c1642a6d8c13289bb5ed577",
-  "generatedAt": "2026-07-22T00:59:28.110Z",
+  "sourceCommit": "d133548f5824191e4f59a11cccc48ef247fb8a9a",
+  "generatedAt": "2026-07-22T01:13:43.190Z",
   "files": [
+    {
+      "sourcePath": ".github/scripts/run-vector-container-contracts.sh",
+      "sha256": "efd5074a9dc5c74588dc05a33491b6dcbdef94b4180844a0fecf0d1963b37915"
+    },
+    {
+      "sourcePath": ".github/scripts/smoke-boot-realapps.sh",
+      "sha256": "a3e7bce6ac54957a2f822603b3792a64b3f7c72fc8d1cdb133e47b86cbfd3997"
+    },
+    {
+      "sourcePath": ".github/scripts/smoke-p1-realapp-scenarios.sh",
+      "sha256": "d819330a41c736ae22638051dc994f2bb4f8462691edc3d354358172b21ca40b"
+    },
+    {
+      "sourcePath": ".github/scripts/validate-framework-release-guards.sh",
+      "sha256": "2c49d0012853db39aa672415a8c806ad4c0b8b17cadfab5889e3d9f060550eae"
+    },
+    {
+      "sourcePath": ".github/scripts/validate-no-production-stubs.sh",
+      "sha256": "86cdaf56b1cea5c41d0fbd27ede51216095dc99b87b2194ff4a75353be6d8039"
+    },
+    {
+      "sourcePath": ".github/scripts/validate-workflow-test-policy.sh",
+      "sha256": "b774b1dae75fffa1c1d534973dfe3715dfd18bb8afe4c26a8a7dd8aca171f1bd"
+    },
+    {
+      "sourcePath": ".github/workflows/framework-verify.yml",
+      "sha256": "4d1a696f45babfa9245c85f9d75788d782e302955c826ee288e7be11a9cadf88"
+    },
+    {
+      "sourcePath": ".github/workflows/integration-tests-manual.yml",
+      "sha256": "71a5656b092658d4518f5b52baadfe49c7c2c9b3aa5bfb34be108adf02500b76"
+    },
+    {
+      "sourcePath": ".github/workflows/provider-suite-keys-only.yml",
+      "sha256": "18245f6267482d0ceec1aa0401fdaef952ac23f098a6feb68d5678e0e34cf2d5"
+    },
     {
       "sourcePath": "ai-infrastructure-module/ai-fabric-chat-session/src/main/java/ai/fabric/chat/config/ChatSessionBaseConfiguration.java",
       "sha256": "1a08e434950d8557a0fb078ecabd429f047041e56e2987c9edf85b23356a539c"
@@ -305,8 +341,28 @@
       "sha256": "9c404fb8c2b46e32458a7e9f84c37205687cb0d843e01d233bf13f14162c6f41"
     },
     {
+      "sourcePath": "docs/course/core/07-test-and-ship/assistant-prompt.md",
+      "sha256": "ebd7cbcb82a128754aff55b7962b14f72c28aa2a0d554eef6356650a82c88f9b"
+    },
+    {
+      "sourcePath": "docs/course/core/07-test-and-ship/assistant-review-prompt.md",
+      "sha256": "165ebf5d6cd307b638bfcca736fa0abffcba3097bfe1f6e3896d3ab746a196bd"
+    },
+    {
+      "sourcePath": "docs/course/core/07-test-and-ship/knowledge-check.yml",
+      "sha256": "730f11542b8c1f9178645042376c728f05a6ee11b8824b40000a5967a9a3be91"
+    },
+    {
+      "sourcePath": "docs/course/core/07-test-and-ship/lesson.md",
+      "sha256": "b1e0e267e05509a37ebe73d7ec61d4451d2af411d38d47b6a2adbf8eb5f50283"
+    },
+    {
+      "sourcePath": "docs/course/core/07-test-and-ship/notebooklm/AI_FABRIC_TESTING_SHIPPING_WORKFLOWS_NOTEBOOKLM_SCRIPT.md",
+      "sha256": "6687fd2abaaf0b87b602bd283b5de14a90710072f6b12e999d5b13f17da1e1b2"
+    },
+    {
       "sourcePath": "docs/course/course.yml",
-      "sha256": "29f6b05647ddd2ce95d1dd783eb7a9331bb4101def311563acfe900c61e722d1"
+      "sha256": "706fb99175bb88cf0f4c09eb607e5307ccd66fb6381fe5de37d79a81bab7600a"
     },
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/assistant-prompt.md",
@@ -323,6 +379,10 @@
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/lesson.md",
       "sha256": "fc1e39d23f29877414e8cdc22b01aa1705f3ff678d91b73ad20543ea09f0e58a"
+    },
+    {
+      "sourcePath": "docs/Framework-Dev-Guides/testing-verification/CI_PIPELINE_GUIDE.md",
+      "sha256": "0804475e2dea7f1eed4d4a78e731e39bd7d7e0b111ca4711ee9a8dd84a938b37"
     },
     {
       "sourcePath": "docs/getting-started/01-choose-your-path.md",
@@ -359,6 +419,10 @@
     {
       "sourcePath": "docs/getting-started/10-security-access-policy.md",
       "sha256": "5cb554dd5dd5bfcc49f61206f212ad6d7b1c77e44789581adc80bdddb0b23f62"
+    },
+    {
+      "sourcePath": "docs/getting-started/11-testing-and-verification.md",
+      "sha256": "6f4863ea9d027c1d7dd770c4155ee120f580ca68a2ba1a97ae0d098459d35d0c"
     },
     {
       "sourcePath": "docs/getting-started/13-production-checklist.md",
@@ -407,6 +471,10 @@
     {
       "sourcePath": "examples/real-apps/smart-faq-assistant/src/test/java/com/ai/fabric/realapps/faq/service/FaqQualityServiceTest.java",
       "sha256": "9c1e8474426d783e51595b85bced2534b3f92f59d8ea1d9375f9f7a6a63075a4"
+    },
+    {
+      "sourcePath": "examples/real-apps/smoke-support/src/main/java/com/ai/fabric/examples/smoke/health/DemoDeploymentInfoService.java",
+      "sha256": "eba57903a3fba3ceac71403aa3f9184ea8943a414587b6e87e06e3dafbc1bc1d"
     },
     {
       "sourcePath": "examples/real-apps/tenant-knowledge-portal/src/main/java/com/ai/fabric/realapps/tenantportal/service/TenantKnowledgeService.java",

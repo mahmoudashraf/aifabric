@@ -1,0 +1,276 @@
+{
+  "id": "core-07",
+  "slug": "test-and-ship",
+  "title": "Test And Ship The Vertical Slice",
+  "description": "Separate deterministic, packaged-runtime, and live-provider release evidence.",
+  "durationMinutes": 70,
+  "availability": "preview",
+  "source": "core/07-test-and-ship/lesson.md",
+  "knowledgeCheck": {
+    "schemaVersion": 1,
+    "lessonId": "core-07",
+    "passingScorePercent": 80,
+    "questions": [
+      {
+        "id": "core-07-q1",
+        "type": "multiple-choice",
+        "competency": "evidence-classes",
+        "prompt": "Which evidence classes prove different release concerns?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Deterministic no-key tests"
+          },
+          {
+            "id": "b",
+            "text": "Packaged-runtime and HTTP scenario tests"
+          },
+          {
+            "id": "c",
+            "text": "Container vector contracts"
+          },
+          {
+            "id": "d",
+            "text": "Keyed hosted-provider tests"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "explanation": "Each class proves a distinct boundary; none should be relabeled as another.",
+        "sourcePaths": [
+          "docs/course/core/07-test-and-ship/notebooklm/AI_FABRIC_TESTING_SHIPPING_WORKFLOWS_NOTEBOOKLM_SCRIPT.md"
+        ]
+      },
+      {
+        "id": "core-07-q2",
+        "type": "single-choice",
+        "competency": "packaged-proof",
+        "prompt": "What does a Spring Started marker from a packaged jar prove?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Every business endpoint passed"
+          },
+          {
+            "id": "b",
+            "text": "The packaged artifact and selected profile reached application startup"
+          },
+          {
+            "id": "c",
+            "text": "OpenAI generated a correct answer"
+          },
+          {
+            "id": "d",
+            "text": "Tenant security and PII behavior passed"
+          }
+        ],
+        "correctOptionIds": [
+          "b"
+        ],
+        "explanation": "Startup is packaging/wiring proof; representative HTTP scenarios are a separate gate.",
+        "sourcePaths": [
+          ".github/scripts/smoke-boot-realapps.sh"
+        ]
+      },
+      {
+        "id": "core-07-q3",
+        "type": "single-choice",
+        "competency": "live-provider-scope",
+        "prompt": "How does the full RealAPI provider matrix run in the current framework repository?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Automatically for every pull request with all providers"
+          },
+          {
+            "id": "b",
+            "text": "Only inside unit tests with fake credentials"
+          },
+          {
+            "id": "c",
+            "text": "Through explicit manually triggered workflows with available credentials and services"
+          },
+          {
+            "id": "d",
+            "text": "It is replaced entirely by Docker"
+          }
+        ],
+        "correctOptionIds": [
+          "c"
+        ],
+        "explanation": "Hosted provider matrices are manual because they require secrets, services, quota, cost, and longer execution.",
+        "sourcePaths": [
+          ".github/workflows/integration-tests-manual.yml",
+          ".github/workflows/provider-suite-keys-only.yml"
+        ]
+      },
+      {
+        "id": "core-07-q4",
+        "type": "multiple-choice",
+        "competency": "failure-visibility",
+        "prompt": "A live provider is selected but unavailable. Which results are acceptable?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Expose a provider or configuration failure"
+          },
+          {
+            "id": "b",
+            "text": "Preserve zero domain mutations"
+          },
+          {
+            "id": "c",
+            "text": "Return a canned answer labeled as live AI"
+          },
+          {
+            "id": "d",
+            "text": "Report the effective provider posture honestly"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b",
+          "d"
+        ],
+        "explanation": "A live-path failure must stay visible and non-mutating; hidden deterministic success is misleading.",
+        "sourcePaths": [
+          "docs/course/core/07-test-and-ship/notebooklm/AI_FABRIC_TESTING_SHIPPING_WORKFLOWS_NOTEBOOKLM_SCRIPT.md"
+        ]
+      },
+      {
+        "id": "core-07-q5",
+        "type": "multiple-choice",
+        "competency": "deployment-proof",
+        "prompt": "Which checks are needed when frontend and backend deploy separately?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Backend health and source commit"
+          },
+          {
+            "id": "b",
+            "text": "The actual hashed JavaScript asset referenced by public HTML"
+          },
+          {
+            "id": "c",
+            "text": "A public end-to-end interaction and its network response"
+          },
+          {
+            "id": "d",
+            "text": "Only the deployment dashboard's green status"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b",
+          "c"
+        ],
+        "explanation": "Backend identity, served frontend identity, and behavior are separate pieces of evidence.",
+        "sourcePaths": [
+          "docs/course/core/07-test-and-ship/notebooklm/AI_FABRIC_TESTING_SHIPPING_WORKFLOWS_NOTEBOOKLM_SCRIPT.md",
+          "examples/real-apps/smoke-support/src/main/java/com/ai/fabric/examples/smoke/health/DemoDeploymentInfoService.java"
+        ]
+      },
+      {
+        "id": "core-07-q6",
+        "type": "single-choice",
+        "competency": "skipped-evidence",
+        "prompt": "A required hosted-provider matrix row did not run because its secret was absent. How should release evidence classify it?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Passed because the workflow stayed green"
+          },
+          {
+            "id": "b",
+            "text": "Not run or skipped with the reason and release decision recorded"
+          },
+          {
+            "id": "c",
+            "text": "Equivalent to the local deterministic profile"
+          },
+          {
+            "id": "d",
+            "text": "Proven by a different provider row"
+          }
+        ],
+        "correctOptionIds": [
+          "b"
+        ],
+        "explanation": "Conditional absence is not provider proof; counts and skip/not-run reasons must remain visible.",
+        "sourcePaths": [
+          "docs/Framework-Dev-Guides/testing-verification/CI_PIPELINE_GUIDE.md"
+        ]
+      }
+    ]
+  },
+  "assistantPrompt": "core/07-test-and-ship/assistant-prompt.md",
+  "assistantReviewPrompt": "core/07-test-and-ship/assistant-review-prompt.md",
+  "theoryVideoIds": [
+    "testing-and-shipping"
+  ],
+  "relatedStories": [],
+  "relatedDemos": [],
+  "track": "core",
+  "route": "/course/core/test-and-ship",
+  "frontMatter": {
+    "id": "core-07",
+    "slug": "test-and-ship",
+    "title": "Test And Ship The Vertical Slice",
+    "track": "core",
+    "order": 7,
+    "durationMinutes": 70,
+    "availability": "preview",
+    "courseVersion": "0.3.3-course.1-beta",
+    "frameworkVersion": "0.3.3",
+    "frameworkTag": "ai-fabric-framework-v0.3.3",
+    "courseSourceTag": "unreleased",
+    "starterRef": "planned",
+    "solutionRef": "planned",
+    "requiresOpenAi": false,
+    "requiresDocker": false,
+    "sourcePaths": [
+      "docs/course/core/07-test-and-ship/notebooklm/AI_FABRIC_TESTING_SHIPPING_WORKFLOWS_NOTEBOOKLM_SCRIPT.md",
+      "docs/getting-started/11-testing-and-verification.md",
+      "docs/getting-started/13-production-checklist.md",
+      "docs/Framework-Dev-Guides/testing-verification/CI_PIPELINE_GUIDE.md",
+      ".github/workflows/framework-verify.yml",
+      ".github/workflows/integration-tests-manual.yml",
+      ".github/workflows/provider-suite-keys-only.yml",
+      ".github/scripts/validate-framework-release-guards.sh",
+      ".github/scripts/validate-workflow-test-policy.sh",
+      ".github/scripts/validate-no-production-stubs.sh",
+      ".github/scripts/smoke-boot-realapps.sh",
+      ".github/scripts/smoke-p1-realapp-scenarios.sh",
+      ".github/scripts/run-vector-container-contracts.sh",
+      "examples/real-apps/smoke-support/src/main/java/com/ai/fabric/examples/smoke/health/DemoDeploymentInfoService.java"
+    ],
+    "theoryVideoIds": [
+      "testing-and-shipping"
+    ],
+    "assistant": {
+      "mode": "verify",
+      "implementationPrompt": "assistant-prompt.md",
+      "reviewPrompt": "assistant-review-prompt.md",
+      "validationStatus": "planned"
+    },
+    "knowledgeCheck": {
+      "source": "knowledge-check.yml",
+      "required": true,
+      "passingScorePercent": 80
+    }
+  },
+  "markdown": "# Test And Ship The Vertical Slice\n\n## Start Here\n\nYou have built the complete Support Knowledge Assistant:\n\n- indexed support evidence with stable metadata;\n- evidence-grounded RAG with explicit no-evidence behavior;\n- typed actions with authorization and confirmation;\n- backend-owned conversation memory;\n- tenant-scoped retrieval and PII-safe boundaries.\n\nNow turn those capabilities into release evidence. A successful chat screenshot is not a release\ngate. You will prove deterministic behavior, start the packaged application, exercise HTTP\nscenarios, make provider posture explicit, expose build identity, and record what did and did not\nrun.\n\n> **Current lesson status: Preview.** The lesson, theory video, verification-assistant prompts, and\n> knowledge check are ready. The standalone starter and immutable checkpoints remain `planned`.\n> The required completion path is keyless. Docker and hosted-provider runs are additional evidence\n> when those dependencies are part of your release claim.\n\n## The Evidence Classes\n\nKeep each result labeled:\n\n| Evidence class | What it proves | What it does not prove |\n| --- | --- | --- |\n| deterministic tests | domain, schema, state, policy, PII, local retrieval | packaged startup or hosted providers |\n| packaged runtime | built jar, profile, auto-configuration, HTTP wiring | live LLM quality |\n| container contracts | real selected vector-engine behavior | hosted LLM, embedding, or Pinecone |\n| keyed RealAPI | selected hosted credentials, model, network, parsing | untested providers or deterministic denial paths |\n| deployment identity | backend artifact and served frontend revision | application correctness by itself |\n\nDo not merge these into a single green label called \"AI tests.\"\n\n## Step 1: Build A Requirement-To-Proof Matrix\n\nCreate `release-evidence.md` and map every Core capability:\n\n| Capability | Success proof | Failure proof | Forbidden side effect |\n| --- | --- | --- | --- |\n| indexing | create/update/search/delete expected IDs | empty/stale index | stale evidence returned |\n| RAG | allowed source IDs and grounded answer contract | no evidence/provider failure visible | unsupported facts generated |\n| actions | registered schema and one confirmed mutation | clarify/deny/reject/expire/duplicate | mutation before valid confirmation |\n| memory | same-conversation follow-up | new conversation/cross-owner denial | state leaks between owners |\n| tenant | only allowed hit metadata enters context | unsupported filter/cross-tenant hit | forbidden evidence reaches provider |\n| privacy | masked input, output, index, and chat | detector failure is explicit | raw PII persists |\n\nEvery row needs an executable test or an explicitly recorded gap. A heading in documentation is not\ntest evidence.\n\n## Step 2: Separate Test Profiles\n\nDefine clear runtime profiles:\n\n```text\ntest/local\n  deterministic embedding\n  local vector provider\n  controlled generation or structured-intent doubles\n  H2 or test database\n  no cloud credentials\n\nsmoke\n  packaged application\n  controlled local providers\n  representative HTTP scenarios\n  no cloud credentials\n\nopenai\n  real OpenAI generation/embedding as configured\n  no canned-success fallback\n  credentials supplied only at runtime\n```\n\nThe UI and health endpoint must identify the effective posture. A deterministic profile is useful\nwhen it is labeled deterministic. It is not a failed imitation of a live profile.\n\n## Step 3: Lock Domain And Registration Contracts\n\nKeep the fastest tests below the model:\n\n```text\nTicketServiceTest\n  authorized and denied escalation\n  transaction and status transition\n\nActionRegistryTest\n  exact name, description, access mode, confirmation flag\n  required/optional parameters\n  no userId, tenantId, conversationId, or sessionId parameters\n\nOrchestrationStateTest\n  clarification before pending state\n  denial before confirmation\n  rejection and duplicate approval do not mutate\n  confirmed action executes once\n```\n\nUse controlled structured intent in deterministic orchestration tests. Assert result type, action,\npending state, handler calls, and database counts rather than exact generated prose.\n\n## Step 4: Lock Retrieval, RAG, Memory, And Security\n\nBuild one known evidence fixture for both tenants. The keyless suite must prove:\n\n1. Index create, update, filtered search, delete, and clear.\n2. Expected evidence IDs for known queries.\n3. Explicit no-evidence result when the index is empty.\n4. Bounded RAG context and visible citation IDs.\n5. Same-conversation history without browser replay.\n6. New-conversation and cross-owner isolation.\n7. Required tenant filters and post-provider hit verification.\n8. PII redaction before ordinary persistence, index, provider input, response, and chat storage.\n\nCapture provider arguments where necessary. A generated refusal does not prove that forbidden\nevidence or raw PII was absent from the provider request.\n\n## Step 5: Make Failure States First-Class\n\nAdd this intentional failure matrix:\n\n| Failure | Expected result |\n| --- | --- |\n| vector index empty | explicit no-evidence result |\n| generation provider unavailable | visible provider/configuration error |\n| malformed structured output | parse/contract failure, no action |\n| action parameter missing | clarification, no pending complete action |\n| action unauthorized | denied before confirmation |\n| pending action rejected/expired/already consumed | no mutation |\n| conversation ID changed | prior target and pending state unavailable |\n| access policy missing/throws | fail closed |\n| required metadata filter unsupported | stop, no unfiltered retry |\n| PII processing cannot be proved | reject, quarantine, or `NEVER_PERSIST` |\n\nDo not make these tests pass by adding message keyword rules or deterministic success responses to a\nprofile labeled live.\n\n## Step 6: Run The Clean Application Build\n\nFrom the standalone course project:\n\n```bash\nmvn -B -V --no-transfer-progress clean verify\n```\n\nDo not use `-DskipTests` or `-Dmaven.test.skip`. Save the Surefire/Failsafe reports, not only the\nlast terminal line.\n\nFor framework maintainers validating the source repository, the automatic `Framework Build`\nworkflow separately runs release guards, the Java 21 framework reactor, integration-suite test\ncompilation, a minimal consumer compile, the real-app reactor, packaged boots, deterministic HTTP\nscenarios, and container vector contracts. A framework build is valuable upstream proof; it does\nnot replace your application's own test gate.\n\n## Step 7: Start The Packaged Artifact\n\nPackage and launch the jar, not the IDE classpath:\n\n```bash\nmvn -B -V --no-transfer-progress package\njava -jar target/support-knowledge-assistant-*.jar \\\n  --spring.profiles.active=smoke \\\n  --server.port=18081\n```\n\nWait for a health endpoint and call it. Then execute representative HTTP scenarios:\n\n```text\nseed/index known articles\nsearch and inspect allowed evidence\nask a grounded question\nrequest escalation\nreject once\nrequest again and confirm\ncontinue with a short follow-up\nattempt cross-tenant retrieval/action\nsubmit representative PII\n```\n\nAssert HTTP status, structured result type, evidence IDs, pending transitions, mutation counts, and\nsanitized fields. A Spring `Started` marker proves startup wiring only; the scenario calls prove\napplication behavior.\n\nStop the process in test cleanup and retain its logs without secrets or raw PII.\n\n## Step 8: Understand The Upstream Docker Gate\n\nWhen your release depends on a managed vector adapter, run that adapter's real-engine contract.\nAI Fabric's source CI uses:\n\n```bash\n.github/scripts/run-vector-container-contracts.sh\n```\n\nThe current contract runs Qdrant REST, Qdrant gRPC, Weaviate, and Milvus through Docker and\nTestcontainers. It covers shared lifecycle behavior such as storage, search, metadata filtering,\nscan/admin operations, counts, deletion, and clearing where supported.\n\nDocker does not reproduce hosted OpenAI, Cohere, Anthropic, Gemini, or Pinecone. Do not label vector\ncontainer results as hosted-provider proof.\n\nThe Core application can complete with the local provider. Run Docker only when the provider under\nrelease requires that evidence.\n\n## Step 9: Run A Keyed Provider Smoke Deliberately\n\nWhen an OpenAI path is part of the release claim, supply secrets at runtime:\n\n```bash\nOPENAI_ENABLED=true \\\nOPENAI_API_KEY=<set-locally> \\\nOPENAI_MODEL=gpt-4o-mini \\\nOPENAI_EMBEDDING_MODEL=text-embedding-3-small \\\nOPENAI_EMBEDDING_DIMENSIONS=512 \\\nmvn -B -V --no-transfer-progress spring-boot:run \\\n  -Dspring-boot.run.profiles=openai\n```\n\nRun at least:\n\n1. grounded question with expected allowed evidence;\n2. short follow-up using the same backend conversation;\n3. action request, confirmation, and result projection;\n4. no-evidence request;\n5. provider-unavailable or invalid-model failure in a non-production test environment.\n\nRecord provider, model, profile, source commit, tests considered, successes, failures, skips, and\nthe exact command shape without the key.\n\nAI Fabric's full RealAPI integration and provider-matrix workflows are manually triggered because\nthey need credentials, hosted resources, quota, and time. A conditional row that did not run is not\na pass.\n\n## Step 10: Prove Live Failure Visibility\n\nIn a protected test profile, select an unavailable provider or invalid model while generation is\nenabled.\n\nExpected proof:\n\n```text\nprovider/configuration error is visible\nresponse is not labeled successful live AI\nno canned answer replaces the provider result\nno write action executes\nhealth reports the configured/effective posture honestly\n```\n\nFallback can be an explicit product feature only when provider transition, policy, user-visible\nposture, and tests are designed for it. A hidden fallback that keeps a demo green is a release\nfailure.\n\n## Step 11: Embed Build Identity\n\nExpose a safe health payload:\n\n```json\n{\n  \"status\": \"UP\",\n  \"service\": \"support-knowledge-assistant\",\n  \"version\": \"1.0.0\",\n  \"aiFabricVersion\": \"0.3.3\",\n  \"commit\": \"candidate-source-sha\",\n  \"branch\": \"main\",\n  \"builtAt\": \"build timestamp\",\n  \"provider\": {\n    \"generation\": \"openai\",\n    \"embedding\": \"openai\",\n    \"vector\": \"lucene\",\n    \"mode\": \"live\"\n  }\n}\n```\n\nDerive build values from the source revision being built. Do not manually pin a commit environment\nvalue that can survive later deployments. Never include credentials.\n\nHealth proves artifact identity and configured posture. It does not prove the index is populated,\nactions work, tenant policy is correct, or provider responses are high quality.\n\n## Step 12: Verify Frontend And Backend Independently\n\nIf you deploy a UI:\n\n1. Fetch public HTML.\n2. Identify the hashed JavaScript asset it references.\n3. Fetch that asset and verify the expected route, endpoint, or release marker.\n4. Call backend health directly and compare its source commit.\n5. Run the public browser scenario and inspect the network response.\n\nA current backend commit does not prove the browser received the current bundle. A current bundle\ndoes not prove the backend action or provider behavior.\n\nUse Playwright for visible workflows and viewport checks. Keep direct HTTP assertions for backend\nsecurity and privacy boundaries.\n\n## Step 13: Assemble The Release Evidence\n\nStore or link:\n\n```text\nrelease-evidence/\n  deterministic-test-summary.md\n  surefire-and-failsafe-reports/\n  packaged-smoke-summary.md\n  vector-contract-summary.md\n  keyed-provider-scorecard.md\n  deployed-health.json\n  served-ui-asset.txt\n  skipped-not-run-and-exceptions.md\n```\n\nEvery skipped live test needs a reason such as missing secret, unavailable hosted index, cost\ndecision, disabled row, or unsupported environment. Record required exceptions explicitly with an\nowner and release decision.\n\nDo not commit API keys, raw PII, private prompts, or confidential application data into evidence.\n\n## Step 14: Make The Release Decision\n\nComplete this gate:\n\n```text\n[ ] deterministic vertical-slice and denial tests pass\n[ ] clean application build passes with no test-skipping flags\n[ ] packaged jar starts under the intended local/smoke profile\n[ ] representative HTTP scenarios pass\n[ ] required vector-engine contracts pass, when applicable\n[ ] required keyed provider rows actually ran and passed, or an exception is recorded\n[ ] provider failures remain visible\n[ ] backend commit and provider posture match the candidate\n[ ] served frontend asset matches the candidate, when applicable\n[ ] reports, counts, skips, and exceptions are retained\n```\n\nRelease only from the evidence you actually have. Do not turn optional proof into an unspoken claim.\n\n## AI Fabric Repository Reference Commands\n\nThese commands are for framework maintainers working from the AI Fabric source repository, not for\na Maven Central application consumer:\n\n```bash\n.github/scripts/validate-framework-release-guards.sh\n\nmvn -B -V --no-transfer-progress \\\n  -f ai-infrastructure-module/pom.xml \\\n  -Dai.vector-db.lucene.cleanup-on-close=true \\\n  -pl '!integration-Testing/testcontainers-support,!integration-Testing/integration-tests,!integration-Testing/relationship-query-integration-tests,!integration-Testing/chat-session-integration-tests,!integration-Testing/behavior-integration-tests' \\\n  install\n\nmvn -B -V --no-transfer-progress \\\n  -f examples/real-apps/pom.xml \\\n  install\n\n.github/scripts/smoke-boot-realapps.sh\n.github/scripts/smoke-p1-realapp-scenarios.sh\n```\n\nThe automatic workflow also runs vector container contracts in a separate job. Full hosted RealAPI\nsuites remain manual.\n\n## Common Mistakes\n\n| Mistake | Consequence | Correct approach |\n| --- | --- | --- |\n| Treating one chat as release proof | Failure and boundary paths remain unknown | Use a requirement-to-proof matrix |\n| Using only mocks | Packaged wiring and providers remain unproved | Add packaged and selected real-provider evidence |\n| Calling jar startup an endpoint smoke | Business scenarios were never exercised | Run direct HTTP assertions |\n| Saying Docker proves OpenAI or Pinecone | Evidence class is mislabeled | Name the exact engine and contract |\n| Letting live failures return canned success | Broken provider path appears healthy | Assert explicit provider failure |\n| Treating skipped RealAPI rows as green | Claimed provider path did not run | Record considered/pass/fail/skip counts |\n| Trusting health as complete readiness | Data, policy, and workflow can still be broken | Test each capability separately |\n| Matching only backend commit | Frontend can remain stale | Inspect the served hashed asset |\n| Printing secrets in evidence | Release process creates a security incident | Mask and omit secret values |\n| Running with `-DskipTests` | Release bypasses its primary evidence | Run normal tests and preserve reports |\n\n## Troubleshooting\n\n| Symptom | Inspect |\n| --- | --- |\n| Clean build fails but IDE works | stale local artifacts, dependency management, Java version, and clean checkout |\n| Module tests pass but jar fails | runtime dependencies, auto-configuration, profile, and packaging |\n| Jar starts but scenario fails | endpoint contract, seed/readiness, provider posture, and database state |\n| Deterministic test is flaky | hidden clock/randomness, shared state, nondeterministic provider, and exact prose assertions |\n| Vector container contract fails | Docker, image version, payload indexes, dimensions, and provider capability |\n| RealAPI reports zero tests | profile, runner selection, conditional assumptions, and credentials |\n| Provider error becomes success | fallback path, exception mapping, and UI status label |\n| Health commit is old | build args/source metadata and deployment source revision |\n| Backend is current but UI acts old | public HTML, hashed asset, CDN/browser cache, and API base URL |\n| Green job omitted a provider | matrix resolution, missing secrets, disabled row, and recorded skip reason |\n\n## Done When\n\nYou have completed the Core track when:\n\n- every Core capability has success, failure, and forbidden-side-effect proof;\n- the deterministic suite passes from a clean application checkout;\n- the packaged jar starts and representative HTTP scenarios pass;\n- selected provider evidence is labeled by its actual class;\n- a failed live provider remains a visible failure;\n- build identity and provider posture are exposed without secrets;\n- deployed frontend and backend identity are verified independently when both exist;\n- reports include counts, skips, not-run rows, and release exceptions;\n- you score at least 80 percent on the knowledge check.\n\n## Continue From Here\n\nThe Production track adds provider profiles, indexing/backfill operations, RAG evaluation, managed\nvector readiness, and deployment workflows. The Core vertical slice is now complete enough to\nevaluate, test, and explain without pretending that one successful model response proves the\nsystem.",
+  "assistant": {
+    "mode": "verify",
+    "validationStatus": "planned",
+    "implementationPrompt": "# CORE-07 Coding-Assistant Verification Prompt\n\nStatus: Planned. Do not use this prompt as a validated verification handoff until the published\nstarter checkpoint replaces `planned`.\n\n```text\nYou are verifying AI Fabric course lesson CORE-07: Test And Ship The Vertical Slice.\n\nUse AI Fabric 0.3.3 / ai-fabric-framework-v0.3.3, Java 21, and Spring Boot 4.1.x. Work only from the\npublished CORE-07 starter checkpoint when available. Do not copy a solution checkpoint.\n\nRead first:\n- docs/course/core/07-test-and-ship/lesson.md\n- docs/getting-started/11-testing-and-verification.md\n- docs/getting-started/13-production-checklist.md\n- the application's complete CORE-01 through CORE-06 implementation and tests\n- current health/build-metadata code, runtime profiles, Dockerfile, CI, and deployment configuration\n\nGoal:\nTurn every capability and failure claim into labeled deterministic, packaged-runtime, selected\nprovider, and deployment evidence without skipping tests, leaking secrets, or hiding provider\nfailures.\n\nBefore editing or running:\n1. Verify the starter ref, worktree, Java/Maven versions, profiles, artifact name, and expected providers.\n2. Inventory every Core capability, success path, failure path, and forbidden side effect.\n3. Classify existing tests as deterministic, packaged, container, keyed, or deployed proof.\n4. Identify missing evidence, unavailable dependencies, credentials, and deployment access.\n5. Give a concise verification plan and name which checks can run now.\n\nRequired behavior:\n1. Create a requirement-to-proof matrix for indexing, RAG, actions, memory, tenant security, and PII.\n2. Keep local/smoke and live-provider profiles explicit and user-visible.\n3. Add deterministic tests for every state transition, denial, no-evidence path, and forbidden side effect.\n4. Run a clean Maven verify with no test-skipping flags and retain reports.\n5. package the jar, start it under the smoke profile, and exercise representative HTTP scenarios.\n6. Run required real vector-engine contracts when a managed vector provider is part of the claim.\n7. Run keyed provider smoke only with runtime credentials and label exactly what ran.\n8. Prove an unavailable live provider remains an explicit failure with no mutation or canned success.\n9. Expose application version, AI Fabric version, source commit, branch, build time, and provider posture without secrets.\n10. Verify served frontend asset and backend health independently when both deploy.\n11. Record test counts, failures, skips, not-run rows, exceptions, commands, and artifact links.\n12. Make the release recommendation only from available evidence.\n\nTesting and evidence:\n- domain, registry, orchestration, retrieval/RAG, memory, tenant, and PII reports;\n- packaged jar startup log and direct HTTP scenario results;\n- Docker/vector report when applicable;\n- keyed provider scorecard with provider/model/profile and considered/pass/fail/skip counts;\n- explicit live-provider failure result;\n- deployed backend health JSON and source commit;\n- public HTML and referenced JavaScript asset identity when applicable;\n- clean working tree and secret scan;\n- final release matrix with PASS, FAIL, SKIPPED, or NOT RUN per row.\n\nDo not:\n- use -DskipTests or -Dmaven.test.skip;\n- call deterministic doubles live provider tests;\n- call jar startup complete endpoint coverage;\n- claim Docker proves hosted LLM, embedding, or Pinecone behavior;\n- hide unavailable providers behind canned or local success;\n- treat skipped/not-run provider rows as passes;\n- infer release readiness from health or one UI interaction;\n- print or commit keys, raw PII, private prompts, or confidential fixtures;\n- discard unrelated changes;\n- commit, push, deploy, or trigger paid/manual provider workflows without explicit authorization.\n\nStop and report when the starter checkpoint is missing, a required deterministic test fails, the jar\ncannot start, release-required provider proof cannot run, pinned APIs contradict the lesson, or a\nsecret-safe execution path is unavailable. Continue with every independent check that remains safe.\n\nFinish with findings first, changed files, exact commands and exit codes, test/report counts,\npackaged scenarios, provider rows and posture, failure visibility, deployment identity, skipped/not\nrun reasons, residual risks, and a release decision of READY, NOT READY, or READY WITH EXPLICIT\nEXCEPTION.\n```\n\n",
+    "reviewPrompt": "# CORE-07 Independent Release-Gate Review Prompt\n\nReview a developer's CORE-07 evidence against AI Fabric Framework 0.3.3, the current CORE-07 course\nsource, the application implementation, and the exact artifacts being proposed for release.\n\nUse a findings-first review. Order findings by severity and cite tests, reports, commands,\nworkflows, health output, served assets, and source revisions. Do not infer a pass from absent\nevidence.\n\nCheck for these failure classes:\n\n- one successful chat or screenshot presented as release readiness;\n- unit or controlled-provider tests mislabeled as packaged or live-provider proof;\n- test-skipping flags in normal build, CI, or release commands;\n- application tests run against stale locally installed framework artifacts;\n- packaged startup presented as endpoint/scenario coverage;\n- HTTP scenarios asserting only status 200 or exact model prose;\n- missing no-evidence, denial, rejection, expiry, duplicate, cross-owner, tenant, or PII paths;\n- Docker contracts mislabeled as OpenAI, hosted embedding, or Pinecone proof;\n- required RealAPI rows skipped, conditionally absent, or zero-test but reported green;\n- provider, model, profile, test counts, or skip reasons missing from evidence;\n- live provider failure replaced by canned/local success;\n- health containing secrets or manually stale build metadata;\n- backend commit used as proof of frontend asset identity, or the reverse;\n- current frontend/backend identity treated as proof of data readiness or workflow correctness;\n- secrets, raw PII, private prompts, or confidential fixtures in logs or artifacts;\n- release recommendation exceeding the evidence that actually ran.\n\nThen report:\n\n1. findings with severity;\n2. a capability-by-evidence matrix;\n3. exact successful, failed, skipped, and not-run commands or workflow rows;\n4. whether packaged startup and HTTP scenarios are both proved;\n5. whether provider posture and failure visibility are honest;\n6. whether backend and frontend deployment identity are independently proved;\n7. missing artifacts, counts, or skip reasons;\n8. residual risks and explicit exceptions;\n9. the smallest corrections required for a READY decision.\n\nReturn one decision: READY, NOT READY, or READY WITH EXPLICIT EXCEPTION. The Core track passes only\nwhen the decision is reproducible from retained evidence and no deterministic, provider, security,\nprivacy, packaging, or deployment claim is silently substituted for another.\n"
+  },
+  "sourcePath": "docs/course/core/07-test-and-ship/lesson.md",
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/main/docs/course/core/07-test-and-ship/lesson.md"
+}

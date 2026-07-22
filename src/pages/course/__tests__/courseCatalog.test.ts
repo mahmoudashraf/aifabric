@@ -27,6 +27,7 @@ describe("generated course catalog", () => {
       "core-04",
       "core-05",
       "core-06",
+      "core-07",
     ]);
     expect(getRenderedLesson("qs-01")?.video).toBeUndefined();
     expect(getRenderedLesson("core-01")?.theoryVideoIds).toEqual([
@@ -126,5 +127,18 @@ describe("generated course catalog", () => {
     expect(lesson?.markdown).not.toMatch(/\bthe learner\b/i);
     expect(lesson?.knowledgeCheck.questions).toHaveLength(6);
     expect(lesson?.assistant.mode).toBe("implement");
+  });
+
+  it("publishes Core 07 as a layered release-gate lesson", () => {
+    const lesson = getRenderedLesson("core-07");
+
+    expect(lesson?.route).toBe("/course/core/test-and-ship");
+    expect(lesson?.theoryVideoIds).toEqual(["testing-and-shipping"]);
+    expect(lesson?.markdown).toContain("## Step 1: Build A Requirement-To-Proof Matrix");
+    expect(lesson?.markdown).toContain("## Step 10: Prove Live Failure Visibility");
+    expect(lesson?.markdown).toContain("## Step 14: Make The Release Decision");
+    expect(lesson?.markdown).not.toMatch(/\bthe learner\b/i);
+    expect(lesson?.knowledgeCheck.questions).toHaveLength(6);
+    expect(lesson?.assistant.mode).toBe("verify");
   });
 });
