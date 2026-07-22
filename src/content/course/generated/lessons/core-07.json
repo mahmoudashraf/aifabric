@@ -233,6 +233,7 @@
     "solutionRef": "course-0.3.3-06-tested-solution",
     "requiresOpenAi": false,
     "requiresDocker": false,
+    "optionalProviderExercises": [],
     "sourcePaths": [
       "docs/course/core/07-test-and-ship/notebooklm/AI_FABRIC_TESTING_SHIPPING_WORKFLOWS_NOTEBOOKLM_SCRIPT.md",
       "docs/getting-started/11-testing-and-verification.md",

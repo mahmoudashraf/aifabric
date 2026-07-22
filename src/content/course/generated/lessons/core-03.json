@@ -229,6 +229,7 @@
     "solutionRef": "course-0.3.3-02-rag",
     "requiresOpenAi": true,
     "requiresDocker": false,
+    "optionalProviderExercises": [],
     "sourcePaths": [
       "docs/course/core/03-evidence-grounded-rag/notebooklm/AI_FABRIC_EVIDENCE_GROUNDED_RAG_NOTEBOOKLM_SCRIPT.md",
       "docs/getting-started/04-first-rag-chat.md",

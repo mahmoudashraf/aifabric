@@ -97,6 +97,7 @@ export const lessonFrontMatterSchema = z.object({
   solutionRef: z.string().min(1),
   requiresOpenAi: z.boolean(),
   requiresDocker: z.boolean(),
+  optionalProviderExercises: z.array(z.enum(["openai", "qdrant-cloud"])).default([]),
   sourcePaths: z.array(z.string().min(1)).min(1),
   theoryVideoIds: z.array(z.string().min(1)).default([]),
   assistant: z.object({

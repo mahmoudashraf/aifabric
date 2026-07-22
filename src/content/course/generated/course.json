@@ -184,39 +184,80 @@
     {
       "id": "production",
       "title": "Production Track",
-      "description": "Operate providers, indexing, RAG quality, managed vectors, and release workflows.",
+      "description": "Configure providers, orchestration policy, prompts, data lifecycle, RAG quality, managed vectors, and release operations.",
       "required": true,
       "lessons": [
         {
           "id": "prod-01",
-          "slug": "provider-profiles",
-          "title": "OpenAI And Local ONNX Provider Profiles",
-          "description": "Make local and live provider posture explicit without hidden fallback.",
+          "slug": "provider-routing",
+          "title": "Provider Routing And Purpose-Specific Models",
+          "description": "Route orchestration and answer generation deliberately while keeping local embeddings and provider failures visible.",
+          "durationMinutes": 80,
+          "availability": "preview",
+          "source": "production/01-provider-routing/lesson.md",
+          "knowledgeCheck": "production/01-provider-routing/knowledge-check.yml",
+          "assistantPrompt": "production/01-provider-routing/assistant-prompt.md",
+          "assistantReviewPrompt": "production/01-provider-routing/assistant-review-prompt.md",
+          "notebookSourceManifest": "production/01-provider-routing/notebooklm/source-manifest.yml",
+          "theoryVideoIds": [],
+          "relatedStories": [],
+          "relatedDemos": [],
+          "route": "/course/production/provider-routing"
+        },
+        {
+          "id": "prod-02",
+          "slug": "modes-positions",
+          "title": "Modes, Positions, And Orchestration Policy",
+          "description": "Map application positions to server-owned capability bundles without trusting arbitrary client mode names.",
           "durationMinutes": 75,
           "availability": "planned",
           "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
-          "route": "/course/production/provider-profiles"
+          "route": "/course/production/modes-positions"
         },
         {
-          "id": "prod-02",
-          "slug": "indexing-and-backfill",
-          "title": "Indexing, Backfill, And Vector Lifecycle",
-          "description": "Keep source data, embeddings, and vector storage synchronized through change.",
-          "durationMinutes": 90,
+          "id": "prod-03",
+          "slug": "prompt-overlays",
+          "title": "Prompt Management And Application Overlays",
+          "description": "Extend curated prompt bundles with narrow application-owned overlays and regression proof.",
+          "durationMinutes": 80,
           "availability": "planned",
           "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
-          "route": "/course/production/indexing-and-backfill"
+          "route": "/course/production/prompt-overlays"
         },
         {
-          "id": "prod-03",
+          "id": "prod-04",
+          "slug": "migration-backfill",
+          "title": "Backfill Existing Application Data",
+          "description": "Migrate existing source records into semantic evidence with bounded, resumable, idempotent jobs.",
+          "durationMinutes": 95,
+          "availability": "planned",
+          "theoryVideoIds": [],
+          "relatedStories": [],
+          "relatedDemos": [],
+          "route": "/course/production/migration-backfill"
+        },
+        {
+          "id": "prod-05",
+          "slug": "live-data-sync",
+          "title": "Keep Application Data Synchronized",
+          "description": "Apply trusted create, update, and delete changes without leaving stale vector evidence.",
+          "durationMinutes": 85,
+          "availability": "planned",
+          "theoryVideoIds": [],
+          "relatedStories": [],
+          "relatedDemos": [],
+          "route": "/course/production/live-data-sync"
+        },
+        {
+          "id": "prod-06",
           "slug": "rag-quality",
           "title": "RAG Quality And Prompt Regression",
-          "description": "Test expected evidence, no-source behavior, and application prompt overlays.",
-          "durationMinutes": 70,
+          "description": "Gate expected evidence, no-source behavior, tenant boundaries, and prompt changes deterministically.",
+          "durationMinutes": 75,
           "availability": "planned",
           "theoryVideoIds": [],
           "relatedStories": [],
@@ -224,28 +265,28 @@
           "route": "/course/production/rag-quality"
         },
         {
-          "id": "prod-04",
-          "slug": "managed-vector-provider",
-          "title": "Move From Lucene To A Managed Vector Provider",
-          "description": "Preserve the retrieval contract while making Qdrant operations and failures visible.",
-          "durationMinutes": 85,
+          "id": "prod-07",
+          "slug": "qdrant",
+          "title": "Move To A Managed Vector Provider",
+          "description": "Preserve the retrieval contract while proving Qdrant lifecycle, filtering, readiness, and failure behavior.",
+          "durationMinutes": 90,
           "availability": "planned",
           "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
-          "route": "/course/production/managed-vector-provider"
+          "route": "/course/production/qdrant"
         },
         {
-          "id": "prod-05",
-          "slug": "operations-and-release",
+          "id": "prod-08",
+          "slug": "production-ready",
           "title": "Operations And Release Readiness",
-          "description": "Package, identify, isolate, clean, and verify the deployed application.",
-          "durationMinutes": 60,
+          "description": "Package, identify, restart, clean, and verify the deployed application with separate keyless and keyed evidence.",
+          "durationMinutes": 70,
           "availability": "planned",
           "theoryVideoIds": [],
           "relatedStories": [],
           "relatedDemos": [],
-          "route": "/course/production/operations-and-release"
+          "route": "/course/production/production-ready"
         }
       ]
     },
@@ -350,6 +391,6 @@
       ]
     }
   ],
-  "sourceCommit": "acf89c1431a8763adb55981bc96bc826ba777b5d",
-  "generatedAt": "2026-07-22T13:54:59.339Z"
+  "sourceCommit": "c329145f92e932718e788ad86d408a800b384d46",
+  "generatedAt": "2026-07-22T16:18:35.784Z"
 }

@@ -229,6 +229,7 @@
     "solutionRef": "course-0.3.3-01-first-search",
     "requiresOpenAi": false,
     "requiresDocker": false,
+    "optionalProviderExercises": [],
     "sourcePaths": [
       "docs/course/core/02-model-and-index-data/notebooklm/AI_FABRIC_SEARCHABLE_EVIDENCE_NOTEBOOKLM_SCRIPT.md",
       "docs/getting-started/03-first-semantic-search.md",

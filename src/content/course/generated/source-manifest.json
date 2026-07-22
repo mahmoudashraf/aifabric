@@ -5,8 +5,8 @@
   "frameworkVersion": "0.3.3",
   "frameworkTag": "ai-fabric-framework-v0.3.3",
   "courseSourceTag": "ai-fabric-course-v0.3.3.1",
-  "sourceCommit": "acf89c1431a8763adb55981bc96bc826ba777b5d",
-  "generatedAt": "2026-07-22T13:54:59.339Z",
+  "sourceCommit": "c329145f92e932718e788ad86d408a800b384d46",
+  "generatedAt": "2026-07-22T16:18:35.784Z",
   "files": [
     {
       "sourcePath": ".github/scripts/run-vector-container-contracts.sh",
@@ -109,8 +109,20 @@
       "sha256": "7f44b5fd278f1702e0a11a92e5c96a89913e32bfee65c9feb373357946b4c1e5"
     },
     {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/config/AIProviderConfig.java",
+      "sha256": "dca5935b588081894ad7fa2482ef2135e2e2a9dfb49ce869794cdea7b86cf3c2"
+    },
+    {
       "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/config/OrchestrationProperties.java",
       "sha256": "150a0386135fe72741b8bff740dcbbac342f82b67ad73d04570c3a59e21c0e20"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/core/AICoreService.java",
+      "sha256": "9b971f27144e54daa81f70010293e3460fa759b37a8761944bee625912039a6d"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/core/LlmPurpose.java",
+      "sha256": "64259c66de8f3882959f561752b13ecba1e02974cb3025b61f7c0248db5abfdb"
     },
     {
       "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/dto/RAGRequest.java",
@@ -169,6 +181,10 @@
       "sha256": "5755c5c7812eca48fa51529e7c79cfb1df37e9da43c4c55aa7fd829bca0ac22c"
     },
     {
+      "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/provider/AIProviderManager.java",
+      "sha256": "82a8363a972dd6177b562eaddffd8996086dd618abb1c0c6ba7deb38b8cf2264"
+    },
+    {
       "sourcePath": "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/service/AICapabilityService.java",
       "sha256": "d99795a2e5a79bee889a8b967454834fc6c71a50a997564dbfb344886f8eeafa"
     },
@@ -203,6 +219,10 @@
     {
       "sourcePath": "ai-infrastructure-module/ai-fabric-rag/src/main/java/ai/fabric/rag/service/RAGService.java",
       "sha256": "d0cb77159b0fde0203bffecb9bc02b083980f0ae8c6fed3eba3b700513bc314e"
+    },
+    {
+      "sourcePath": "ai-infrastructure-module/providers/ai-fabric-provider-spring-ai/src/main/java/ai/fabric/provider/springai/SpringAiModelResolver.java",
+      "sha256": "9004ddc44a4be3610ac69c6cf4b5f9093369195860c3eed80e3ccac72baff340"
     },
     {
       "sourcePath": "docs/architecture/AI_FABRIC_PUBLIC_ARCHITECTURE.md",
@@ -362,7 +382,31 @@
     },
     {
       "sourcePath": "docs/course/course.yml",
-      "sha256": "6dac93eb5ef73b93ef3bd695b7e8fa359e6af9e3a3b3b8ffe06dd0a942a9014e"
+      "sha256": "58d5a278292add1764ef8a6af33d6cbca7426876807913fad12abf139889c07a"
+    },
+    {
+      "sourcePath": "docs/course/production/01-provider-routing/assistant-prompt.md",
+      "sha256": "2f9cf6b15866e686381966cfb3762693a1cd57eaded55985b0ac75c3f2ae7128"
+    },
+    {
+      "sourcePath": "docs/course/production/01-provider-routing/assistant-review-prompt.md",
+      "sha256": "c72b1ff418d729bbf71fd8c98af2ade77709ab0e1dc2ae531c6bd0cf84629bdf"
+    },
+    {
+      "sourcePath": "docs/course/production/01-provider-routing/knowledge-check.yml",
+      "sha256": "8c1753ca9f74c8b2299f004901fbf06e3e00c88b37865e4825c3287ae107a9aa"
+    },
+    {
+      "sourcePath": "docs/course/production/01-provider-routing/lesson.md",
+      "sha256": "b5fa398aa2f0a1faa0428a836a8e7675d61f9be7f0ba28ed3e14de120ceba4d7"
+    },
+    {
+      "sourcePath": "docs/course/production/01-provider-routing/notebooklm/AI_FABRIC_PROVIDER_ARCHITECTURE_PURPOSE_ROUTING_NOTEBOOKLM_SCRIPT.md",
+      "sha256": "6fd123262a8590c37b24bc2ad8dfbead6687deba5e2caf7163b0e5178afc8e49"
+    },
+    {
+      "sourcePath": "docs/course/production/01-provider-routing/notebooklm/source-manifest.yml",
+      "sha256": "64dd173400755e2773b11a92d00f0c15929e5ce5cae869fae5590dcd3112775c"
     },
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/assistant-prompt.md",
@@ -379,6 +423,10 @@
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/lesson.md",
       "sha256": "5217737b3715a1be19de197c09b42a2ce7f6044e8d3279a10e615298f313c7ac"
+    },
+    {
+      "sourcePath": "docs/Framework-Dev-Guides/runtime-integration/SPRING_AI_PROVIDER_INTEGRATION_GUIDE.md",
+      "sha256": "361dc051fc26d0cd12184710e0171468e5b83d5b3dd75e2cbbf3994983e9064a"
     },
     {
       "sourcePath": "docs/Framework-Dev-Guides/testing-verification/CI_PIPELINE_GUIDE.md",
@@ -407,6 +455,10 @@
     {
       "sourcePath": "docs/getting-started/06-chat-session-memory.md",
       "sha256": "90f370238bdf6d08c551dba7a986883ac060aa2be029d2466339cf250e6b6f8e"
+    },
+    {
+      "sourcePath": "docs/getting-started/07-real-provider-openai.md",
+      "sha256": "333882011da984f4cdb771a94aed8d798dbd80865d970ee49b1467b6e54e8368"
     },
     {
       "sourcePath": "docs/getting-started/08-local-onnx-embeddings.md",

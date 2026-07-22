@@ -230,6 +230,7 @@
     "solutionRef": "course-0.3.3-05-security",
     "requiresOpenAi": false,
     "requiresDocker": false,
+    "optionalProviderExercises": [],
     "sourcePaths": [
       "docs/course/core/06-tenant-security-and-privacy/notebooklm/AI_FABRIC_TENANT_SECURITY_PRIVACY_NOTEBOOKLM_SCRIPT.md",
       "docs/getting-started/10-security-access-policy.md",

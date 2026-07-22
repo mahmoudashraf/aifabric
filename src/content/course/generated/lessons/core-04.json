@@ -228,6 +228,7 @@
     "solutionRef": "course-0.3.3-03-actions",
     "requiresOpenAi": true,
     "requiresDocker": false,
+    "optionalProviderExercises": [],
     "sourcePaths": [
       "docs/course/core/04-governed-actions/notebooklm/AI_FABRIC_GOVERNED_ACTIONS_CONFIRMATION_NOTEBOOKLM_SCRIPT.md",
       "docs/getting-started/05-first-governed-action.md",

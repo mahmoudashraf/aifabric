@@ -96,6 +96,7 @@ export interface RenderedCourseLesson extends CourseLessonSummary {
     courseSourceTag: string;
     requiresOpenAi: boolean;
     requiresDocker: boolean;
+    optionalProviderExercises: Array<"openai" | "qdrant-cloud">;
     starterRef: string;
     solutionRef: string;
     sourcePaths: string[];

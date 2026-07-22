@@ -6,6 +6,7 @@ import core04Data from "@/content/course/generated/lessons/core-04.json";
 import core05Data from "@/content/course/generated/lessons/core-05.json";
 import core06Data from "@/content/course/generated/lessons/core-06.json";
 import core07Data from "@/content/course/generated/lessons/core-07.json";
+import prod01Data from "@/content/course/generated/lessons/prod-01.json";
 import quickstartData from "@/content/course/generated/lessons/qs-01.json";
 
 import type {
@@ -26,6 +27,7 @@ const renderedLessons: Record<string, RenderedCourseLesson> = {
   "core-05": core05Data as RenderedCourseLesson,
   "core-06": core06Data as RenderedCourseLesson,
   "core-07": core07Data as RenderedCourseLesson,
+  "prod-01": prod01Data as RenderedCourseLesson,
 };
 
 export const courseTracks = courseCatalog.tracks;

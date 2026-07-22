@@ -229,6 +229,7 @@
     "solutionRef": "course-0.3.3-04-memory",
     "requiresOpenAi": true,
     "requiresDocker": false,
+    "optionalProviderExercises": [],
     "sourcePaths": [
       "docs/course/core/05-backend-conversation-memory/notebooklm/AI_FABRIC_BACKEND_CONVERSATION_MEMORY_NOTEBOOKLM_SCRIPT.md",
       "docs/getting-started/06-chat-session-memory.md",

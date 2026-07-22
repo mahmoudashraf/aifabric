@@ -48,6 +48,7 @@ const renderedLesson = (video: RenderedCourseLesson["video"]): RenderedCourseLes
     courseSourceTag: "course-1",
     requiresOpenAi: false,
     requiresDocker: false,
+    optionalProviderExercises: [],
     starterRef: "starter",
     solutionRef: "solution",
     sourcePaths: ["source.md"],

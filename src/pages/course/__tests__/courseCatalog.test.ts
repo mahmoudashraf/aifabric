@@ -17,13 +17,13 @@ describe("generated course catalog", () => {
   });
 
   it("has unique IDs and routes across the complete catalog", () => {
-    expect(courseLessons).toHaveLength(20);
+    expect(courseLessons).toHaveLength(23);
     expect(new Set(courseLessons.map((lesson) => lesson.id)).size).toBe(courseLessons.length);
     expect(new Set(courseLessons.map((lesson) => lesson.route)).size).toBe(courseLessons.length);
   });
 
-  it("publishes the Quickstart and complete Core checkpoint path", () => {
-    expect(previewLessons).toEqual([]);
+  it("publishes the Quickstart and Core path while previewing the verified first Production checkpoint", () => {
+    expect(previewLessons.map((lesson) => lesson.id)).toEqual(["prod-01"]);
     expect(publishedLessons.map((lesson) => lesson.id)).toEqual([
       "qs-01",
       "core-01",
@@ -56,6 +56,34 @@ describe("generated course catalog", () => {
       "request-lifecycle",
       "configuration-and-extension-model",
     ]);
+  });
+
+  it("previews PROD-01 with an immutable checkpoint, keyless path, and script-ready theory", () => {
+    const production = courseCatalog.tracks.find((track) => track.id === "production");
+    const lesson = getRenderedLesson("prod-01");
+
+    expect(production?.lessons.map((candidate) => candidate.id)).toEqual([
+      "prod-01",
+      "prod-02",
+      "prod-03",
+      "prod-04",
+      "prod-05",
+      "prod-06",
+      "prod-07",
+      "prod-08",
+    ]);
+    expect(lesson?.route).toBe("/course/production/provider-routing");
+    expect(lesson?.frontMatter.starterRef).toBe("course-0.3.3-06-tested-solution");
+    expect(lesson?.frontMatter.solutionRef).toBe("course-0.3.3-p01-provider-routing");
+    expect(lesson?.frontMatter.requiresOpenAi).toBe(false);
+    expect(lesson?.frontMatter.optionalProviderExercises).toEqual(["openai"]);
+    expect(lesson?.video?.status).toBe("script-ready");
+    expect(lesson?.video?.publicUrl).toBeNull();
+    expect(lesson?.sourceUrl).toContain("/blob/main/docs/course/production/01-provider-routing/lesson.md");
+    expect(lesson?.markdown).toContain("## Step 4: Add The Purpose-Routing Contract");
+    expect(lesson?.markdown).toContain("## Step 8: Optional Real OpenAI Exercise");
+    expect(lesson?.knowledgeCheck.questions).toHaveLength(7);
+    expect(lesson?.assistant.validationStatus).toBe("passed");
   });
 
   it("keeps QS-01 action-first and hands architecture teaching to the Core track", () => {

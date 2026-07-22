@@ -165,6 +165,40 @@ test("Core 07 presents the complete vertical-slice release gate", async ({ page 
   await expect(page.getByRole("heading", { name: "Check your understanding" })).toBeVisible();
 });
 
+test("PROD-01 presents verified provider routing with an honest script-ready video state", async ({ page }) => {
+  await page.goto("/course/production/provider-routing", { waitUntil: "domcontentloaded" });
+
+  await expect(
+    page.getByRole("heading", { name: "Provider Routing And Purpose-Specific Models", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByText("Preview lesson", { exact: true })).toBeVisible();
+  await expect(page.getByText("No external key required", { exact: true })).toBeVisible();
+  await expect(page.getByText("Optional OpenAI exercise", { exact: true })).toBeVisible();
+  await expect(page.getByText(/course-0\.3\.3-p01-provider-routing is verified/)).toBeVisible();
+  await expect(page.getByRole("link", { name: "Starter checkpoint" })).toHaveAttribute(
+    "href",
+    /course-0\.3\.3-06-tested-solution$/,
+  );
+  await expect(page.getByRole("link", { name: "Solution checkpoint" })).toHaveAttribute(
+    "href",
+    /course-0\.3\.3-p01-provider-routing$/,
+  );
+  await expect(page.getByText("Recording not published yet", { exact: true })).toBeVisible();
+  await expect(page.getByText("Script ready", { exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Canonical source" })).toHaveAttribute(
+    "href",
+    /\/blob\/main\/docs\/course\/production\/01-provider-routing\/lesson\.md$/,
+  );
+
+  await page.getByRole("tab", { name: "Use an assistant" }).click();
+  await expect(
+    page.locator("pre").filter({ hasText: "# Coding Assistant Prompt: Implement PROD-01 Provider Routing" }),
+  ).toBeVisible();
+  await page.getByRole("tab", { name: "Build manually" }).click();
+  await expect(page.getByRole("heading", { name: "Add The Purpose-Routing Contract" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Check your understanding" })).toBeVisible();
+});
+
 test("knowledge check grades locally without requiring sign-in", async ({ page }) => {
   await page.goto("/course/quickstart#knowledge-check");
   await page.getByLabel(/Projecting approved content/).check();
@@ -240,4 +274,13 @@ test("course pages do not overflow the viewport", async ({ page }, testInfo) => 
     () => document.documentElement.scrollWidth - window.innerWidth,
   );
   expect(shippingLessonOverflow).toBeLessThanOrEqual(1);
+
+  await page.goto("/course/production/provider-routing", { waitUntil: "domcontentloaded" });
+  await expect(
+    page.getByRole("heading", { name: "Provider Routing And Purpose-Specific Models", exact: true }),
+  ).toBeVisible();
+  const providerLessonOverflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - window.innerWidth,
+  );
+  expect(providerLessonOverflow).toBeLessThanOrEqual(1);
 });

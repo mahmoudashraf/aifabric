@@ -265,7 +265,7 @@ const syncLesson = async (
     },
     video,
     sourcePath: relativeFromFramework(lessonPath),
-    sourceUrl: `https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/${course.courseSourceTag === "unreleased" ? "main" : course.courseSourceTag}/${relativeFromFramework(lessonPath)}`,
+    sourceUrl: `https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/${frontMatter.availability === "preview" || course.courseSourceTag === "unreleased" ? "main" : course.courseSourceTag}/${relativeFromFramework(lessonPath)}`,
   };
 };
 

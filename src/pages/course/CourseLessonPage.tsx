@@ -7,6 +7,7 @@ import {
   FileCheck2,
   FlaskConical,
   GitBranch,
+  KeyRound,
   LockKeyhole,
   PlayCircle,
 } from "lucide-react";
@@ -51,9 +52,15 @@ const CourseLessonPage = () => {
   const starterUrl = `${courseCatalog.learnerRepository}/tree/${lesson.frontMatter.starterRef}`;
   const solutionUrl = `${courseCatalog.learnerRepository}/tree/${lesson.frontMatter.solutionRef}`;
   const sameCheckpoint = lesson.frontMatter.starterRef === lesson.frontMatter.solutionRef;
+  const hasCheckpointLinks = lesson.frontMatter.starterRef !== "planned"
+    && lesson.frontMatter.solutionRef !== "planned";
+  const optionalProviderLabels = lesson.frontMatter.optionalProviderExercises.map((provider) =>
+    provider === "openai" ? "Optional OpenAI exercise" : "Optional Qdrant Cloud exercise");
   const previewDescription = lesson.id === "qs-01"
     ? "The practical lesson source, assistant prompts, and knowledge check are available for review. This Quickstart intentionally has no theory-video gate. The executable starter and immutable solution refs still need publication, so this preview cannot yet count as complete."
-    : "The complete lesson, assigned theory recordings, assistant analysis prompts, and knowledge check are available for review. Progress can be practiced and saved, but completion remains disabled until the course publishes an immutable checkpoint.";
+    : hasCheckpointLinks && lesson.video?.status === "script-ready"
+      ? `The executable checkpoint ${lesson.frontMatter.solutionRef} is verified, and the complete lesson, theory script, assistant paths, and knowledge check are ready. Completion remains disabled until the theory recording is reviewed and published.`
+      : "The complete lesson, assigned theory recordings, assistant analysis prompts, and knowledge check are available for review. Progress can be practiced and saved, but completion remains disabled until the course publishes an immutable checkpoint.";
 
   return (
     <CourseLayout>
@@ -72,6 +79,17 @@ const CourseLessonPage = () => {
             </Badge>
             <Badge variant="outline">AI Fabric {lesson.frontMatter.frameworkVersion}</Badge>
             <Badge variant="outline"><Clock3 className="mr-1 h-3.5 w-3.5" />{lesson.durationMinutes} minutes</Badge>
+            <Badge className={lesson.frontMatter.requiresOpenAi
+              ? "border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-50"
+              : "border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-50"}>
+              <KeyRound className="mr-1 h-3.5 w-3.5" />
+              {lesson.frontMatter.requiresOpenAi ? "OpenAI key required" : "No external key required"}
+            </Badge>
+            {optionalProviderLabels.map((label) => (
+              <Badge key={label} className="border-violet-200 bg-violet-50 text-violet-700 hover:bg-violet-50">
+                {label}
+              </Badge>
+            ))}
           </div>
           <h1 className="mt-5 text-3xl font-extrabold leading-tight tracking-normal text-slate-950 sm:text-4xl">
             {lesson.title}
@@ -94,7 +112,7 @@ const CourseLessonPage = () => {
                       : `Begin at ${lesson.frontMatter.starterRef}. Use ${lesson.frontMatter.solutionRef} only after completing the lab to review your result.`
                     : previewDescription}
                 </p>
-                {published && (
+                {hasCheckpointLinks && (
                   <div className="mt-4 flex flex-wrap gap-2">
                     <Button variant="outline" size="sm" className="bg-white" asChild>
                       <a href={courseCatalog.learnerRepository} target="_blank" rel="noopener noreferrer">

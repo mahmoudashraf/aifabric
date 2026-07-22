@@ -1,0 +1,297 @@
+{
+  "id": "prod-01",
+  "slug": "provider-routing",
+  "title": "Provider Routing And Purpose-Specific Models",
+  "description": "Route orchestration and answer generation deliberately while keeping local embeddings and provider failures visible.",
+  "durationMinutes": 80,
+  "availability": "preview",
+  "source": "production/01-provider-routing/lesson.md",
+  "knowledgeCheck": {
+    "schemaVersion": 1,
+    "lessonId": "prod-01",
+    "passingScorePercent": 80,
+    "questions": [
+      {
+        "id": "prod-01-q1",
+        "type": "multiple-choice",
+        "competency": "provider-role-separation",
+        "prompt": "Which components can be selected independently in this lesson?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The orchestration LLM provider and model"
+          },
+          {
+            "id": "b",
+            "text": "The answer-generation LLM provider and model"
+          },
+          {
+            "id": "c",
+            "text": "The embedding provider"
+          },
+          {
+            "id": "d",
+            "text": "The vector database provider"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "explanation": "AI Fabric separates both LLM purposes from embeddings and vector storage so each concern can be configured and verified deliberately.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/config/AIProviderConfig.java",
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/core/LlmPurpose.java"
+        ]
+      },
+      {
+        "id": "prod-01-q2",
+        "type": "single-choice",
+        "competency": "purpose-routing",
+        "prompt": "Which LlmPurpose should evidence-grounded user-facing answer generation use?",
+        "options": [
+          {
+            "id": "a",
+            "text": "ORCHESTRATION"
+          },
+          {
+            "id": "b",
+            "text": "GENERATION"
+          },
+          {
+            "id": "c",
+            "text": "EMBEDDINGS"
+          },
+          {
+            "id": "d",
+            "text": "The browser chooses the purpose"
+          }
+        ],
+        "correctOptionIds": [
+          "b"
+        ],
+        "explanation": "GENERATION resolves the answer-generation provider/model; ORCHESTRATION is for intent, classification, planning, and related control work.",
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/core/LlmPurpose.java",
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/core/AICoreService.java"
+        ]
+      },
+      {
+        "id": "prod-01-q3",
+        "type": "single-choice",
+        "competency": "keyless-evidence",
+        "prompt": "What does the required keyless purpose-routing test prove?",
+        "options": [
+          {
+            "id": "a",
+            "text": "A real OpenAI credential and network call work"
+          },
+          {
+            "id": "b",
+            "text": "AI Fabric selects the configured purpose provider/model and does not hide a failed route with fallback"
+          },
+          {
+            "id": "c",
+            "text": "Every hosted provider is compatible"
+          },
+          {
+            "id": "d",
+            "text": "Generated prose quality is stable"
+          }
+        ],
+        "correctOptionIds": [
+          "b"
+        ],
+        "explanation": "Recording providers prove deterministic routing and failure policy; a separately labelled keyed test is required for hosted-provider compatibility.",
+        "sourcePaths": [
+          "docs/course/production/01-provider-routing/notebooklm/AI_FABRIC_PROVIDER_ARCHITECTURE_PURPOSE_ROUTING_NOTEBOOKLM_SCRIPT.md"
+        ]
+      },
+      {
+        "id": "prod-01-q4",
+        "type": "multiple-choice",
+        "competency": "secret-safety",
+        "prompt": "Which facts are safe and useful in provider health diagnostics?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Effective provider name"
+          },
+          {
+            "id": "b",
+            "text": "Effective model name"
+          },
+          {
+            "id": "c",
+            "text": "API key value"
+          },
+          {
+            "id": "d",
+            "text": "Fallback enabled or disabled"
+          },
+          {
+            "id": "e",
+            "text": "Full user prompt and provider response"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b",
+          "d"
+        ],
+        "explanation": "Operational posture is useful; credentials and user/provider content must not be projected through health.",
+        "sourcePaths": [
+          "docs/getting-started/07-real-provider-openai.md",
+          "docs/course/production/01-provider-routing/notebooklm/AI_FABRIC_PROVIDER_ARCHITECTURE_PURPOSE_ROUTING_NOTEBOOKLM_SCRIPT.md"
+        ]
+      },
+      {
+        "id": "prod-01-q5",
+        "type": "single-choice",
+        "competency": "local-profile-truth",
+        "prompt": "The local profile has ONNX/Lucene enabled and LLM generation disabled. What should health report for orchestration and generation?",
+        "options": [
+          {
+            "id": "a",
+            "text": "openai, because OpenAI is the global default"
+          },
+          {
+            "id": "b",
+            "text": "course-test, because tests use a recording provider"
+          },
+          {
+            "id": "c",
+            "text": "disabled, because no runtime LLM generation route is active"
+          },
+          {
+            "id": "d",
+            "text": "unknown, even though the application knows generation is disabled"
+          }
+        ],
+        "correctOptionIds": [
+          "c"
+        ],
+        "explanation": "Health describes active runtime posture, not a default that was never called or a test-only fixture absent from runtime.",
+        "sourcePaths": [
+          "docs/course/production/01-provider-routing/notebooklm/AI_FABRIC_PROVIDER_ARCHITECTURE_PURPOSE_ROUTING_NOTEBOOKLM_SCRIPT.md"
+        ]
+      },
+      {
+        "id": "prod-01-q6",
+        "type": "answer-reveal",
+        "competency": "failure-visibility",
+        "prompt": "Why must an invalid OpenAI key not produce a deterministic local answer labeled as success?",
+        "modelAnswer": "It would hide that the selected live provider path is broken, mislabel the evidence class, and make operators or users believe OpenAI served a request that never reached it. With fallback disabled, the provider or startup failure must remain explicit and no write action may execute.",
+        "sourcePaths": [
+          "docs/getting-started/07-real-provider-openai.md",
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/provider/AIProviderManager.java"
+        ]
+      },
+      {
+        "id": "prod-01-q7",
+        "type": "implementation-defense",
+        "competency": "test-design",
+        "prompt": "Defend a test design that proves purpose routing without a paid key or text-matching application logic.",
+        "modelAnswer": "Register explicitly named recording AIProvider implementations for orchestration and generation, configure distinct provider/model values, call AICoreService with LlmPurpose.ORCHESTRATION and LlmPurpose.GENERATION, and assert the provider and request model captured by each. Inject structured fixture responses only at the provider boundary, keep fallback false, and add a deliberate provider failure asserting one call and no alternate provider. Run the real Spring context and full packaged local smoke separately.",
+        "reviewCriteria": [
+          "Uses provider-boundary recording fixtures rather than application keyword branches",
+          "Configures and asserts distinct provider and model identities",
+          "Calls the real AI Fabric purpose-aware service path",
+          "Proves failure visibility and no fallback",
+          "Does not claim that the keyless test proves OpenAI"
+        ],
+        "sourcePaths": [
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/core/AICoreService.java",
+          "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/provider/AIProviderManager.java"
+        ]
+      }
+    ]
+  },
+  "assistantPrompt": "production/01-provider-routing/assistant-prompt.md",
+  "assistantReviewPrompt": "production/01-provider-routing/assistant-review-prompt.md",
+  "notebookSourceManifest": "production/01-provider-routing/notebooklm/source-manifest.yml",
+  "theoryVideoIds": [],
+  "relatedStories": [],
+  "relatedDemos": [],
+  "track": "production",
+  "route": "/course/production/provider-routing",
+  "frontMatter": {
+    "id": "prod-01",
+    "slug": "provider-routing",
+    "title": "Provider Routing And Purpose-Specific Models",
+    "track": "production",
+    "order": 1,
+    "durationMinutes": 80,
+    "availability": "preview",
+    "courseVersion": "0.3.3-course.1-beta",
+    "frameworkVersion": "0.3.3",
+    "frameworkTag": "ai-fabric-framework-v0.3.3",
+    "courseSourceTag": "ai-fabric-course-v0.3.3.1",
+    "starterRef": "course-0.3.3-06-tested-solution",
+    "solutionRef": "course-0.3.3-p01-provider-routing",
+    "requiresOpenAi": false,
+    "requiresDocker": false,
+    "optionalProviderExercises": [
+      "openai"
+    ],
+    "sourcePaths": [
+      "docs/course/production/01-provider-routing/notebooklm/AI_FABRIC_PROVIDER_ARCHITECTURE_PURPOSE_ROUTING_NOTEBOOKLM_SCRIPT.md",
+      "docs/getting-started/07-real-provider-openai.md",
+      "docs/getting-started/08-local-onnx-embeddings.md",
+      "docs/Framework-Dev-Guides/runtime-integration/SPRING_AI_PROVIDER_INTEGRATION_GUIDE.md",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/core/LlmPurpose.java",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/config/AIProviderConfig.java",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/core/AICoreService.java",
+      "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/provider/AIProviderManager.java",
+      "ai-infrastructure-module/providers/ai-fabric-provider-spring-ai/src/main/java/ai/fabric/provider/springai/SpringAiModelResolver.java"
+    ],
+    "theoryVideoIds": [],
+    "assistant": {
+      "mode": "implement",
+      "implementationPrompt": "assistant-prompt.md",
+      "reviewPrompt": "assistant-review-prompt.md",
+      "validationStatus": "passed"
+    },
+    "knowledgeCheck": {
+      "source": "knowledge-check.yml",
+      "required": true,
+      "passingScorePercent": 80
+    },
+    "video": {
+      "status": "script-ready",
+      "generator": "NotebookLM",
+      "purpose": "pre-lesson-theory",
+      "placement": "before-lab",
+      "targetDurationMinutes": 10,
+      "title": "Provider Architecture And Purpose-Specific Models",
+      "publicUrl": null,
+      "transcript": "notebooklm/AI_FABRIC_PROVIDER_ARCHITECTURE_PURPOSE_ROUTING_NOTEBOOKLM_SCRIPT.md",
+      "sourceManifest": "notebooklm/source-manifest.yml"
+    }
+  },
+  "markdown": "# Provider Routing And Purpose-Specific Models\n\n## Start Here\n\nYour Core application can retrieve approved evidence, generate grounded answers, discover governed\nactions, remember conversations, enforce tenant boundaries, and prove those behaviors through a\npackaged smoke. This lesson changes one production concern: which model handles each kind of work.\n\nYou will keep embeddings local with ONNX, keep vectors local with Lucene, and configure two LLM\npurposes independently:\n\n- `ORCHESTRATION` for intent extraction, classification, planning, and action selection;\n- `GENERATION` for evidence-grounded answers and other user-facing narrative.\n\nThe required lab is keyless. Two explicitly test-only recording providers prove the selected\nprovider and model for each purpose. The optional OpenAI section uses the same application\nconfiguration with a real key supplied at runtime.\n\n> **Preview lab with a verified checkpoint.** Start from\n> [`course-0.3.3-06-tested-solution`](https://github.com/Loom-AI-Labs/ai-fabric-course-support-assistant/tree/course-0.3.3-06-tested-solution)\n> and compare your result with\n> [`course-0.3.3-p01-provider-routing`](https://github.com/Loom-AI-Labs/ai-fabric-course-support-assistant/tree/course-0.3.3-p01-provider-routing).\n> The code checkpoint is tested and immutable. The lesson remains preview until its theory recording\n> is reviewed and published.\n\n## What You Will Prove\n\nBy the end, you will be able to show that:\n\n1. orchestration and answer generation can resolve different provider/model settings;\n2. ONNX embedding configuration is independent from either LLM purpose;\n3. local retrieval remains available without a cloud key;\n4. provider diagnostics report effective purpose routes without exposing credentials;\n5. `enable-fallback=false` prevents a failed generation route from switching to another provider;\n6. a real OpenAI exercise is optional for you and separately identified from deterministic proof.\n\n## The Provider Map\n\nKeep these roles separate:\n\n```text\nnew support message\n  |\n  +-> ORCHESTRATION LLM\n  |     intent, action selection, parameters, confirmation interpretation\n  |\n  +-> ONNX embedding provider\n  |     query and application-evidence vectors\n  |\n  +-> Lucene vector provider\n  |     store, filter, and retrieve semantic evidence\n  |\n  +-> GENERATION LLM\n        answer from the approved evidence context\n```\n\n`LlmPurpose` selects an LLM configuration. It does not replace the embedding provider, vector\nprovider, mode policy, action authorization, or application database.\n\n## Key Posture\n\n| Path | External key | What it proves |\n| --- | --- | --- |\n| deterministic `test` profile | none | purpose-to-provider/model routing and no fallback |\n| packaged `local` profile | none | real ONNX, Lucene, application wiring, HTTP behavior |\n| optional `openai` profile | `OPENAI_API_KEY` | current credential, network, model, provider, and response compatibility |\n\nNever describe the first two rows as live OpenAI evidence. Never make the third row pass by returning\na deterministic answer after OpenAI failed.\n\n## Prerequisites\n\n- Java 21\n- Maven 3.9+ or the included wrapper\n- `curl` and `jq` for the packaged smoke\n- Docker is not required\n- OpenAI is optional\n\nStart from a clean checkpoint:\n\n```bash\ngit clone https://github.com/Loom-AI-Labs/ai-fabric-course-support-assistant.git\ncd ai-fabric-course-support-assistant\ngit switch --detach course-0.3.3-06-tested-solution\ngit switch -c lesson/prod-01-provider-routing\n./mvnw --batch-mode --no-transfer-progress clean verify\n```\n\nExpected baseline:\n\n```text\nBUILD SUCCESS\nTests run: 40, Failures: 0, Errors: 0, Skipped: 0\n```\n\n## Step 1: Configure Purpose-Specific OpenAI Settings\n\nEdit `src/main/resources/application-openai.yml`. Keep the cloud profile explicit and keep the\nembedding/vector path local:\n\n```yaml\nai:\n  providers:\n    llm-provider: ${AI_LLM_PROVIDER:openai}\n    embedding-provider: ${AI_EMBEDDING_PROVIDER:onnx}\n    enable-fallback: false\n    orchestration:\n      llm-provider: ${AI_ORCHESTRATION_PROVIDER:openai}\n      model: ${AI_ORCHESTRATION_MODEL:${OPENAI_MODEL:gpt-4o-mini}}\n      temperature: 0.1\n      max-tokens: ${AI_ORCHESTRATION_MAX_TOKENS:400}\n    generation:\n      llm-provider: ${AI_GENERATION_PROVIDER:openai}\n      model: ${AI_GENERATION_MODEL:${OPENAI_MODEL:gpt-4o-mini}}\n      temperature: 0.3\n      max-tokens: ${AI_GENERATION_MAX_TOKENS:600}\n    openai:\n      enabled: ${OPENAI_ENABLED:true}\n      api-key: ${OPENAI_API_KEY:}\n      base-url: ${OPENAI_BASE_URL:https://api.openai.com/v1}\n      model: ${OPENAI_MODEL:gpt-4o-mini}\n      timeout: ${OPENAI_TIMEOUT_SECONDS:30}\n    onnx:\n      model-path: ${AI_FABRIC_ONNX_MODEL_PATH:./models/embeddings/all-MiniLM-L6-v2.onnx}\n      tokenizer-path: ${AI_FABRIC_ONNX_TOKENIZER_PATH:./models/embeddings/tokenizer.json}\n  vector-db:\n    type: lucene\n```\n\nWhy both a global provider and purpose blocks? The global value remains the default for calls that\nuse `LlmPurpose.DEFAULT`. The purpose blocks override only orchestration or generation. A blank field\ninside a purpose block falls back to the corresponding provider default; it does not invent a new\nprovider implementation.\n\nDo not put a real key in this file. `${OPENAI_API_KEY:}` is a reference with an empty default, not a\ncredential.\n\n## Step 2: Make The Test Routes Unambiguous\n\nEdit `src/test/resources/application-test.yml`:\n\n```yaml\nai:\n  providers:\n    llm-provider: course-generation-test\n    embedding-provider: course-test\n    enable-fallback: false\n    orchestration:\n      llm-provider: course-orchestration-test\n      model: course-test-orchestration\n      temperature: 0.0\n      max-tokens: 200\n    generation:\n      llm-provider: course-generation-test\n      model: course-test-generation\n      temperature: 0.2\n      max-tokens: 600\n```\n\nThese names must remain visibly test-only. A fixture called `openai` would make deterministic test\nevidence look like a provider call that never happened.\n\n## Step 3: Record Provider And Model Selection\n\nRefactor `CourseTestAIConfiguration` so the test context has:\n\n```text\nCourseTestGenerationProvider\n  shared recording/control fixture\n\nCoursePurposeProvider(\"course-orchestration-test\")\n  delegates to the fixture\n\nCoursePurposeProvider(\"course-generation-test\")\n  delegates to the fixture\n```\n\nThe fixture records at least:\n\n- selected provider name;\n- request model;\n- prompt/messages needed by existing tests;\n- call count;\n- a deliberate `failNext` switch.\n\nDo not branch on support-message words to choose a response. Tests may inject a structured response,\nbut the application must still exercise AI Fabric's real provider manager, orchestration pipeline,\naction registry, session store, and security boundaries.\n\n## Step 4: Add The Purpose-Routing Contract\n\nCreate `PurposeRoutingIntegrationTest`. Call `AICoreService` twice with a request that leaves model\nunset:\n\n```java\naiCoreService.generateContent(request, LlmPurpose.ORCHESTRATION);\nassertThat(recordingProvider.lastProvider()).isEqualTo(\"course-orchestration-test\");\nassertThat(recordingProvider.lastModel()).isEqualTo(\"course-test-orchestration\");\n\naiCoreService.generateContent(request, LlmPurpose.GENERATION);\nassertThat(recordingProvider.lastProvider()).isEqualTo(\"course-generation-test\");\nassertThat(recordingProvider.lastModel()).isEqualTo(\"course-test-generation\");\n```\n\nThen fail the generation provider deliberately:\n\n```java\nrecordingProvider.failNext();\n\nassertThatThrownBy(() ->\n    aiCoreService.generateContent(request, LlmPurpose.GENERATION))\n    .hasMessageContaining(\"Failed to generate AI content\");\n\nassertThat(recordingProvider.lastProvider()).isEqualTo(\"course-generation-test\");\nassertThat(recordingProvider.generationCalls()).isOne();\n```\n\nOne call proves that disabled fallback did not try the orchestration provider after generation\nfailed.\n\n## Step 5: Report Effective Provider Posture\n\nInject `AIProviderConfig` into `CourseDeploymentInfoService` and resolve:\n\n```java\nAIProviderConfig.GenerationDefaults orchestration =\n    providerConfig.resolveOrchestrationLlmDefaults();\nAIProviderConfig.GenerationDefaults generation =\n    providerConfig.resolveGenerationLlmDefaults();\n```\n\nExpose safe fields in `/api/demo/health`:\n\n```json\n{\n  \"provider\": {\n    \"mode\": \"live-openai\",\n    \"generationEnabled\": true,\n    \"orchestration\": \"openai\",\n    \"orchestrationModel\": \"gpt-4o-mini\",\n    \"generation\": \"openai\",\n    \"generationModel\": \"gpt-4o-mini\",\n    \"embedding\": \"onnx\",\n    \"vector\": \"lucene\",\n    \"fallbackEnabled\": false\n  }\n}\n```\n\nThe payload must not include API keys, bearer tokens, full prompts, user messages, or provider\nresponse bodies. Provider/model names are operational posture; secrets and user content are not.\n\nWhen generation is disabled in the `local` profile, report both LLM purpose routes as `disabled`.\nDo not report configured OpenAI defaults as active runtime calls.\n\n## Step 6: Run The Keyless Gate\n\nRun every test normally:\n\n```bash\n./mvnw --batch-mode --no-transfer-progress clean verify\n```\n\nExpected result at the solution checkpoint:\n\n```text\nTests run: 42, Failures: 0, Errors: 0, Skipped: 0\nBUILD SUCCESS\n```\n\nInspect the targeted test if you need a shorter feedback loop:\n\n```bash\n./mvnw --batch-mode --no-transfer-progress \\\n  -Dtest=PurposeRoutingIntegrationTest,CourseDeploymentInfoServiceTest test\n```\n\nThat focused command is a development aid. The full `clean verify` remains the completion gate.\n\n## Step 7: Run The Packaged Local Application\n\nDownload the real ONNX model, then execute the already-tested JAR:\n\n```bash\n./scripts/download-onnx-model.sh\nCOURSE_SMOKE_USE_EXISTING_JAR=true ./scripts/smoke-packaged.sh\njq . target/course-release-evidence/packaged-smoke-summary.json\n```\n\nExpected summary fields include:\n\n```json\n{\n  \"status\": \"PASS\",\n  \"checkpoint\": \"course-0.3.3-p01-provider-routing\",\n  \"profile\": \"local\",\n  \"deployment\": {\n    \"provider\": {\n      \"generationEnabled\": false,\n      \"orchestration\": \"disabled\",\n      \"generation\": \"disabled\",\n      \"embedding\": \"onnx\",\n      \"vector\": \"lucene\",\n      \"fallbackEnabled\": false\n    }\n  }\n}\n```\n\nThe smoke proves the packaged application, ONNX, Lucene, HTTP wiring, tenant/security behavior, and\nprovider posture. It does not prove OpenAI.\n\n## Step 8: Optional Real OpenAI Exercise\n\nThis section is optional for learner completion. Run it only after the keyless gate passes.\n\nSet secrets in your terminal process:\n\n```bash\nexport OPENAI_ENABLED=true\nexport OPENAI_API_KEY=\"<set locally; never commit>\"\nexport OPENAI_MODEL=\"gpt-4o-mini\"\nexport AI_ORCHESTRATION_MODEL=\"gpt-4o-mini\"\nexport AI_GENERATION_MODEL=\"gpt-4o-mini\"\n./mvnw spring-boot:run -Dspring-boot.run.profiles=openai\n```\n\nOther safe places for the same variables:\n\n| Environment | Where to set them |\n| --- | --- |\n| IDE | private run-configuration environment fields |\n| Docker | `docker run -e OPENAI_API_KEY ...`, supplied by the caller |\n| GitHub Actions | `${{ secrets.OPENAI_API_KEY }}` in a separately named keyed job |\n| deployment | encrypted secret/environment UI on the deployment platform |\n\nDo not paste a key into the course website, an HTTP request file, a committed `.env`, a screenshot,\nor a support discussion.\n\nIn another terminal:\n\n```bash\nexport COURSE_TOKEN=course-alex-local-token\n\ncurl -s http://localhost:8080/api/demo/health | jq .provider\ncurl -s -X POST http://localhost:8080/api/demo/reset\ncurl -s -X POST http://localhost:8080/api/demo/seed\ncurl -s -X POST http://localhost:8080/api/demo/index\n\ncurl -s -X POST http://localhost:8080/api/assistant/query \\\n  -H \"Authorization: Bearer $COURSE_TOKEN\" \\\n  -H 'Content-Type: application/json' \\\n  -d '{\"message\":\"What should I do if failed sign-ins locked me out?\"}' | jq .\n\ncurl -s -X POST http://localhost:8080/api/assistant/orchestrate \\\n  -H \"Authorization: Bearer $COURSE_TOKEN\" \\\n  -H 'Content-Type: application/json' \\\n  -d '{\"message\":\"Why is ticket T-1001 unresolved?\",\"conversationId\":\"course-provider-routing\"}' | jq .\n```\n\nThe grounded query exercises `GENERATION`. The orchestration request exercises `ORCHESTRATION`.\nThe health payload identifies the configured provider/model posture, while application logs and\nresponses remain free of the key.\n\n## Intentional Live Failure\n\nUse a separate test shell or local run configuration. Do not replace a deployment secret merely to\nperform this exercise.\n\n```bash\nOPENAI_ENABLED=true \\\nOPENAI_API_KEY=invalid-course-check \\\nAI_ORCHESTRATION_MODEL=gpt-4o-mini \\\nAI_GENERATION_MODEL=gpt-4o-mini \\\n./mvnw spring-boot:run -Dspring-boot.run.profiles=openai\n```\n\nAfter seed/index, call `/api/assistant/query`. Expected behavior:\n\n```text\nprovider/authentication failure is visible\nno deterministic answer is returned\nno write action executes\nno other LLM provider is tried\nthe key value is absent from response and logs\n```\n\nStartup failure is also acceptable when provider validation rejects the missing/invalid\nconfiguration before a request. A successful local-looking answer is not acceptable.\n\n## Files Changed In The Solution\n\n```text\nsrc/main/resources/application-openai.yml\nsrc/test/resources/application-test.yml\nsrc/main/java/.../demo/CourseDeploymentInfoService.java\nsrc/main/java/.../demo/CourseReadinessService.java\nsrc/test/java/.../assistant/PurposeRoutingIntegrationTest.java\nsrc/test/java/.../testsupport/CourseTestAIConfiguration.java\nsrc/test/java/.../demo/CourseDeploymentInfoServiceTest.java\nsrc/test/java/.../web/CourseApiTest.java\nscripts/smoke-packaged.sh\nrequests/07-provider-routing.http\nREADME.md\n```\n\n## Ownership And Security Boundaries\n\n- The application chooses which purpose a call represents; untrusted request text does not select a\n  provider, endpoint, or API key.\n- AI Fabric resolves provider/model defaults and calls the configured provider.\n- Spring AI supplies supported provider clients underneath the AI Fabric adapter.\n- ONNX produces embeddings; it does not generate support answers.\n- Lucene stores derived semantic evidence; it is not the support database.\n- Health exposes effective posture, not credentials or request content.\n- Prompt wording does not authorize an action or change tenant identity.\n\n## Reset And Cleanup\n\nStop the application, clear runtime variables, and remove local generated evidence when needed:\n\n```bash\nunset OPENAI_ENABLED OPENAI_API_KEY OPENAI_MODEL\nunset AI_ORCHESTRATION_PROVIDER AI_ORCHESTRATION_MODEL AI_ORCHESTRATION_MAX_TOKENS\nunset AI_GENERATION_PROVIDER AI_GENERATION_MODEL AI_GENERATION_MAX_TOKENS\nrm -rf data/lucene-knowledge-384 target/course-release-evidence\n```\n\nTo restart the lesson from its immutable starter:\n\n```bash\n./scripts/reset-course.sh course-0.3.3-06-tested-solution\n```\n\nThe reset script refuses to run with a dirty worktree. Commit useful work or move experiments before\nresetting.\n\n## Troubleshooting\n\n| Symptom | Check | Expected correction |\n| --- | --- | --- |\n| Both test calls use one provider | `application-test.yml` purpose provider names | Configure distinct recording providers |\n| Correct provider, wrong model | Request sets a model explicitly | Leave model unset when testing configured defaults |\n| Health says OpenAI in local mode | health uses configured defaults despite generation disabled | Report LLM purposes as `disabled` in local runtime |\n| OpenAI profile has no provider bean | `OPENAI_ENABLED`, key, dependency, profile | Enable only the intended profile and supply the secret privately |\n| Invalid key returns a useful answer | fallback or app-side canned response exists | Disable fallback and remove disguised success behavior |\n| ONNX cannot load | model/tokenizer paths | Run the download script or set both local paths |\n| Key appears in output | logging/config projection | stop, rotate the key, remove the leak, and add a regression test |\n\n## Done When\n\n- [ ] `application-openai.yml` has separate orchestration and generation blocks.\n- [ ] ONNX remains the embedding provider and Lucene remains the local vector provider.\n- [ ] no secret exists in source, HTTP files, logs, reports, or health JSON.\n- [ ] `PurposeRoutingIntegrationTest` proves both provider/model routes.\n- [ ] a failed generation call makes one provider call and remains visible.\n- [ ] health reports orchestration, generation, embedding, vector, and fallback posture.\n- [ ] `./mvnw --batch-mode --no-transfer-progress clean verify` passes all 42 tests.\n- [ ] the packaged local smoke passes and reports checkpoint `course-0.3.3-p01-provider-routing`.\n- [ ] any OpenAI run is recorded separately as optional keyed evidence.\n\n## Next Lesson\n\n`PROD-02` will use the same application to separate an application position from an AI Fabric mode,\nthen prove that only server-allowlisted orchestration policy can enable retrieval or actions.",
+  "assistant": {
+    "mode": "implement",
+    "validationStatus": "passed",
+    "implementationPrompt": "# Coding Assistant Prompt: Implement PROD-01 Provider Routing\n\nImplement AI Fabric course lesson `PROD-01` in the standalone learner repository.\n\n## Repository And Refs\n\n- Repository: `https://github.com/Loom-AI-Labs/ai-fabric-course-support-assistant`\n- Start from immutable tag: `course-0.3.3-06-tested-solution`\n- Expected solution behavior: `course-0.3.3-p01-provider-routing`\n- Framework contract: AI Fabric `0.3.3`, Java 21, Spring Boot 4.1.x\n\nDo not edit or depend on a local AI Fabric source checkout. Use the Maven Central artifacts already\ndeclared by the learner application.\n\n## Objective\n\nAdd explicit purpose-specific LLM configuration and proof while preserving every Core capability:\n\n1. configure `ai.providers.orchestration` and `ai.providers.generation` separately in the OpenAI\n   profile;\n2. keep ONNX embeddings and Lucene vectors local;\n3. keep `ai.providers.enable-fallback=false`;\n4. create distinct, explicitly test-only recording providers for orchestration and generation;\n5. test provider/model selection through `AICoreService` and `LlmPurpose`;\n6. test that a failed generation provider is not replaced by the orchestration provider;\n7. expose safe purpose provider/model posture through `/api/demo/health`;\n8. update packaged smoke assertions, request examples, README, and checkpoint identity.\n\n## Required Configuration\n\nUse environment references, never literal secrets:\n\n```yaml\norchestration:\n  llm-provider: ${AI_ORCHESTRATION_PROVIDER:openai}\n  model: ${AI_ORCHESTRATION_MODEL:${OPENAI_MODEL:gpt-4o-mini}}\ngeneration:\n  llm-provider: ${AI_GENERATION_PROVIDER:openai}\n  model: ${AI_GENERATION_MODEL:${OPENAI_MODEL:gpt-4o-mini}}\nopenai:\n  enabled: ${OPENAI_ENABLED:true}\n  api-key: ${OPENAI_API_KEY:}\n```\n\nKeep embedding provider `onnx`, vector type `lucene`, and fallback false.\n\n## Test Design\n\n- Keep the response controller/recording fixture separate from the two `AIProvider` adapters.\n- Name providers so no report can mistake them for OpenAI.\n- Capture provider name, request model, prompt/messages, and call count.\n- Do not route by matching user text.\n- Do not add a runtime canned provider.\n- Existing RAG/action/memory/security tests must continue to exercise real framework wiring.\n- Add `PurposeRoutingIntegrationTest` with one success path per purpose and one no-fallback failure.\n- Add/adjust health tests so API keys, tokens, and prompt content are absent.\n\n## Safe Health Contract\n\nPreserve existing fields and add:\n\n```text\nprovider.orchestration\nprovider.orchestrationModel\nprovider.generation\nprovider.generationModel\n```\n\nWhen LLM generation is disabled, report those four values as `disabled`. Do not report configured\ndefaults as if a runtime call occurred.\n\n## Verification\n\nRun tests normally:\n\n```bash\n./mvnw --batch-mode --no-transfer-progress clean verify\n./scripts/download-onnx-model.sh\nCOURSE_SMOKE_USE_EXISTING_JAR=true ./scripts/smoke-packaged.sh\njq . target/course-release-evidence/packaged-smoke-summary.json\n```\n\nExpected mandatory evidence:\n\n- 42 tests pass with no skips or external keys;\n- packaged smoke status is `PASS`;\n- checkpoint is `course-0.3.3-p01-provider-routing`;\n- local health says LLM purposes disabled, embeddings `onnx`, vectors `lucene`, fallback false;\n- no credential is present in source, logs, reports, or response payloads.\n\nDo not run an OpenAI call unless `OPENAI_API_KEY` is already supplied through a private environment.\nIf it is absent, report that optional gate as `SKIPPED: credential not supplied`; do not invent a\npass.\n\n## Scope Guard\n\nDo not change framework code, business authorization, tenant semantics, prompt policy, action\nschemas, or conversation ownership. Do not add provider fallback. Do not commit a key or a generated\nlocal model/index artifact.\n\nFinish with a concise change summary, exact test/smoke results, and a separate statement for any\noptional live-provider gate.\n\n",
+    "reviewPrompt": "# Coding Assistant Review Prompt: Audit PROD-01 Provider Routing\n\nReview a completed `PROD-01` implementation in\n`Loom-AI-Labs/ai-fabric-course-support-assistant` from a findings-first, production release stance.\n\n## Contract To Review\n\n- Framework `0.3.3`, Java 21, Spring Boot 4.1.x\n- Starter `course-0.3.3-06-tested-solution`\n- Target checkpoint `course-0.3.3-p01-provider-routing`\n- Required completion is keyless\n- Optional OpenAI evidence must be separately labelled\n\n## Review Priorities\n\n1. **Purpose correctness**\n   - orchestration calls use `LlmPurpose.ORCHESTRATION`;\n   - user-facing grounded generation uses `LlmPurpose.GENERATION`;\n   - configured provider and model defaults reach the provider request.\n2. **Failure visibility**\n   - fallback is false;\n   - generation failure does not call the orchestration provider;\n   - no canned answer turns a failed live route into success.\n3. **Credential safety**\n   - no API key in YAML, source, request files, reports, logs, tests, or generated website content;\n   - health exposes only safe provider/model/posture facts.\n4. **Profile truthfulness**\n   - local uses ONNX/Lucene and reports LLM purposes disabled;\n   - test fixtures have unmistakably test-only names;\n   - OpenAI claims require an actually executed keyed check.\n5. **Regression coverage**\n   - all Core RAG, actions, memory, tenant, PII, and packaged smoke behavior remains intact;\n   - tests do not use application keyword routing to imitate model intelligence.\n\n## Required Commands\n\n```bash\ngit diff course-0.3.3-06-tested-solution...HEAD --check\n./mvnw --batch-mode --no-transfer-progress clean verify\n./scripts/download-onnx-model.sh\nCOURSE_SMOKE_USE_EXISTING_JAR=true ./scripts/smoke-packaged.sh\njq . target/course-release-evidence/packaged-smoke-summary.json\n```\n\nAlso scan tracked content for likely credentials and inspect `/api/demo/health` field names. Do not\nprint any secret found; identify only the file and remediation.\n\n## Output Format\n\nReport findings first, ordered by severity, with file/line references. Then provide:\n\n- open questions or assumptions;\n- deterministic test count and result;\n- packaged smoke result and checkpoint;\n- optional OpenAI status as `PASS`, `FAIL`, or `SKIPPED` with reason;\n- a short change summary only after findings.\n\nIf there are no findings, say so directly and name any residual unexecuted live-provider risk.\n\n"
+  },
+  "video": {
+    "status": "script-ready",
+    "generator": "NotebookLM",
+    "purpose": "pre-lesson-theory",
+    "placement": "before-lab",
+    "targetDurationMinutes": 10,
+    "title": "Provider Architecture And Purpose-Specific Models",
+    "publicUrl": null,
+    "transcript": "# NotebookLM Production Script\n\n## Provider Architecture And Purpose-Specific Models In AI Fabric\n\n### Production instructions\n\nCreate a focused technical explanation for Java and Spring Boot developers. The target duration is\nabout ten minutes. AI Fabric must remain the subject throughout the recording.\n\nUse this file as the only NotebookLM source. Do not add general provider documentation or unrelated\nAI sources. Do not introduce APIs, properties, providers, or behavior not stated here.\n\nThe recording should:\n\n- use clean Spring Boot architecture diagrams and short configuration excerpts;\n- distinguish application-owned decisions from framework and provider responsibilities;\n- pronounce `LlmPurpose` as “L-L-M purpose”;\n- show `ORCHESTRATION`, `GENERATION`, `EMBEDDINGS`, and `DEFAULT` exactly as code identifiers;\n- label recording providers as deterministic test fixtures, never live AI;\n- label OpenAI as an optional live-provider exercise;\n- avoid provider marketing, benchmark claims, and promises about cost or quality;\n- never display an API key, complete user prompt, or sensitive provider response.\n\n### Learning promise\n\nAfter this explanation, a developer should understand why an AI Fabric application may use one\nmodel for orchestration, another for answer generation, ONNX for embeddings, and Lucene or another\nprovider for vector storage. The developer should also understand how AI Fabric routes a call,\nwhere Spring AI fits, what diagnostics may safely expose, and why a failed live provider must remain\nvisible.\n\n## Opening: One AI Feature, Several Different Jobs\n\nStart with the continuing Support Knowledge Assistant.\n\nA customer writes:\n\n> I am locked out after too many sign-in attempts. What should I do?\n\nIt is tempting to describe the whole request as one LLM call. That description hides the real\narchitecture.\n\nThe application may need to:\n\n1. classify the request and decide whether it is informational or actionable;\n2. embed the question so semantic evidence can be retrieved;\n3. search approved support articles under tenant and visibility filters;\n4. generate an answer constrained by the retrieved evidence;\n5. preserve conversation and diagnostic state.\n\nThese jobs have different contracts. They can have different latency, consistency, cost, privacy,\nand failure requirements. AI Fabric models those differences instead of forcing one provider choice\nonto every operation.\n\nOn screen, show:\n\n```text\nSupport request\n  -> orchestration decision\n  -> query embedding\n  -> vector retrieval\n  -> grounded answer generation\n  -> governed application response\n```\n\nSay clearly:\n\n> Provider architecture is not only a list of vendor names. It is a map from a specific application\n> purpose to a configured implementation, model, endpoint, and failure policy.\n\n## The Four Provider Concerns\n\n### Orchestration LLM\n\nThe orchestration model supports control-oriented language work such as:\n\n- intent extraction;\n- request classification;\n- action selection;\n- typed parameter extraction;\n- confirmation interpretation;\n- planning where the selected mode permits it.\n\nOrchestration output is often structured and consumed by backend code. Lower temperature and a\nbounded token budget are usually sensible defaults, but the application still validates the\nresult. The model does not authorize the action, choose tenant identity, or bypass confirmation.\n\n### Generation LLM\n\nThe generation model produces user-facing content such as:\n\n- an evidence-grounded RAG answer;\n- a summary;\n- an explanation of an application-owned state;\n- a narrative action result where the application permits generation.\n\nGeneration may need a different model or sampling configuration from orchestration. Its response is\nstill bounded by retrieved evidence, typed output, public projection, and application policy.\n\n### Embedding provider\n\nThe embedding provider converts text into vectors for semantic similarity. It does not write a\nnatural-language support answer.\n\nIn the course application, ONNX runs locally for embeddings. A cloud LLM key is not required for\nthe mandatory embedding and retrieval path.\n\n### Vector provider\n\nThe vector provider stores and searches derived semantic evidence. The course begins with Lucene.\nAI Fabric also has provider modules for other vector engines, but selecting a vector store is a\nseparate decision from selecting an LLM or embedding provider.\n\nThe application database remains the source of truth for support articles. Vectors are derived and\nrebuildable evidence, not the business record.\n\n## `LlmPurpose`: The Routing Contract\n\nShow the current enum:\n\n```java\npublic enum LlmPurpose {\n    ORCHESTRATION,\n    GENERATION,\n    EMBEDDINGS,\n    DEFAULT\n}\n```\n\nExplain each value:\n\n- `ORCHESTRATION` resolves the orchestration LLM configuration.\n- `GENERATION` resolves the generation LLM configuration.\n- `DEFAULT` resolves the global LLM defaults for a call without a purpose override.\n- `EMBEDDINGS` exists in the shared purpose vocabulary, while embedding requests use the embedding\n  provider contract and embedding-specific configuration.\n\nThe important application call shape is:\n\n```java\naiCoreService.generateContent(request, LlmPurpose.ORCHESTRATION);\n```\n\nor:\n\n```java\naiCoreService.generateContent(request, LlmPurpose.GENERATION);\n```\n\nThe purpose is supplied by trusted backend code according to the operation being performed. The\nbrowser does not send a provider name or arbitrary purpose that AI Fabric trusts.\n\n## Configuration Precedence\n\nShow this simplified configuration:\n\n```yaml\nai:\n  providers:\n    llm-provider: openai\n    embedding-provider: onnx\n    enable-fallback: false\n    orchestration:\n      llm-provider: openai\n      model: gpt-4o-mini\n      temperature: 0.1\n    generation:\n      llm-provider: openai\n      model: gpt-4o-mini\n      temperature: 0.3\n```\n\nExplain the resolution order precisely:\n\n1. AI Fabric receives the trusted `LlmPurpose` at its Java API.\n2. For `ORCHESTRATION`, it resolves `ai.providers.orchestration`.\n3. For `GENERATION`, it resolves `ai.providers.generation`.\n4. A missing provider or model inside that purpose uses the corresponding global provider defaults.\n5. A request field explicitly supplied by trusted application code can override a resolved request\n   default.\n6. Connection overrides such as endpoint profile or base URL can be applied for that purpose when\n   configured.\n\nDo not claim that a purpose block creates a provider client by itself. The matching provider module,\nconfiguration, and available runtime bean must exist.\n\n## Request Flow Through AI Fabric And Spring AI\n\nDescribe this component diagram:\n\n```text\nApplication service\n  | AIGenerationRequest + LlmPurpose\n  v\nAICoreService\n  | resolves purpose provider/model/defaults\n  v\nAIProviderManager\n  | selects the named available AIProvider\n  v\nSpring AI provider adapter\n  | resolves/caches the model client for effective connection settings\n  v\nSpring AI ChatModel\n  |\n  v\nHosted or compatible model endpoint\n```\n\n`AICoreService` applies the purpose-specific provider, model, maximum tokens, temperature, timeout,\nand supported connection overrides.\n\n`AIProviderManager` selects the configured provider and enforces the configured fallback posture.\n\nFor supported LLM providers, AI Fabric's Spring AI adapter uses Spring AI model clients underneath\nthe AI Fabric application contract. `SpringAiModelResolver` can resolve and cache model clients for\neffective connection settings. This allows AI Fabric to retain application-level concepts such as\npurpose, governance, transient-input policy, diagnostics, and orchestration while avoiding duplicate\nprovider client implementations for ordinary LLM calls.\n\nThe application should call AI Fabric, not call a provider SDK and then attempt to reconstruct AI\nFabric policy around the result.\n\n## Why Purpose-Specific Models Matter\n\nUse a comparison table:\n\n| Concern | Orchestration | Generation |\n| --- | --- | --- |\n| Primary output | structured decision | user-facing content |\n| Typical priority | consistency and schema adherence | grounded usefulness and presentation |\n| Typical temperature | lower | application-dependent |\n| Typical token budget | bounded decision payload | enough for approved answer contract |\n| Failure effect | no trusted intent/action decision | no generated answer |\n\nThe table is a design aid, not a promise that one model is universally best. Teams must test their\nselected models against their own structured contracts, evidence boundaries, latency budgets, and\nrelease gates.\n\nOne provider may serve both purposes with different models or settings. Two providers may serve the\ntwo purposes. The same architecture supports either choice.\n\n## Keyless Proof Versus Live-Provider Proof\n\nExplain the course's two evidence classes.\n\n### Required deterministic proof\n\nThe test profile registers two unmistakably test-only providers:\n\n```text\ncourse-orchestration-test -> course-test-orchestration\ncourse-generation-test    -> course-test-generation\n```\n\nA recording fixture captures which provider and model received each request. The test calls the real\n`AICoreService` with each `LlmPurpose` and asserts the captured route.\n\nThis proves:\n\n- configuration binding;\n- purpose default resolution;\n- provider-manager selection;\n- request model propagation;\n- no-fallback behavior when a selected provider fails.\n\nIt does not prove:\n\n- an OpenAI key is valid;\n- the public network is available;\n- a hosted model currently accepts the request;\n- generated wording meets application quality expectations.\n\n### Optional live OpenAI proof\n\nThe OpenAI profile receives its key only from a private runtime environment:\n\n```bash\nOPENAI_ENABLED=true\nOPENAI_API_KEY=<private secret>\nAI_ORCHESTRATION_MODEL=gpt-4o-mini\nAI_GENERATION_MODEL=gpt-4o-mini\n```\n\nThat exercise proves the selected credential, endpoint, model, network, current provider response,\nand adapter compatibility for the requests actually executed.\n\nA skipped live check is `SKIPPED`, not `PASS`.\n\n## Diagnostics Without Secret Leakage\n\nThe course health endpoint reports:\n\n```json\n{\n  \"provider\": {\n    \"mode\": \"live-openai\",\n    \"generationEnabled\": true,\n    \"orchestration\": \"openai\",\n    \"orchestrationModel\": \"gpt-4o-mini\",\n    \"generation\": \"openai\",\n    \"generationModel\": \"gpt-4o-mini\",\n    \"embedding\": \"onnx\",\n    \"vector\": \"lucene\",\n    \"fallbackEnabled\": false\n  }\n}\n```\n\nThese values help an operator understand what the running artifact intends to use.\n\nHealth must not expose:\n\n- API keys or token fragments;\n- user bearer tokens;\n- raw prompts or chat history;\n- action parameters containing sensitive data;\n- provider response content;\n- transient file URLs.\n\nWhen the local profile disables generation, health reports orchestration and generation as\n`disabled`. Reporting the OpenAI default there would imply a runtime capability that is not active.\n\n## Failure Path: Invalid Credential With No Hidden Success\n\nWalk through the failure:\n\n```text\nopenai profile selected\n  -> OPENAI_API_KEY is invalid\n  -> GENERATION request reaches selected OpenAI provider\n  -> provider returns authentication failure\n  -> fallback is disabled\n  -> application returns explicit generation/provider failure\n  -> no canned answer and no write action\n```\n\nThe failure may also be detected during startup if configuration validation rejects the missing or\ninvalid setup before requests are accepted.\n\nBoth outcomes are honest. The unacceptable outcome is:\n\n```text\nOpenAI fails\n  -> an unrelated local/test provider returns a useful answer\n  -> response is shown as live AI success\n```\n\nThat hides the broken release path and falsifies the evidence.\n\n## Incorrect Architecture To Avoid\n\nShow this design with a red rejection marker:\n\n```text\nBrowser request includes provider=openai and model=anything\n  -> controller trusts those values\n  -> application calls provider SDK directly\n  -> on failure, hardcoded text is returned\n  -> UI labels the response successful AI\n```\n\nExplain why it fails:\n\n1. an untrusted client controls cost and endpoint selection;\n2. application policy and provider integration are split across ad hoc code;\n3. purpose-specific defaults and diagnostics are bypassed;\n4. fallback hides operational failure;\n5. tests cannot state which contract was actually exercised.\n\nReplace it with:\n\n```text\ntrusted application operation\n  -> fixed LlmPurpose\n  -> externalized allowlisted configuration\n  -> AI Fabric provider manager\n  -> Spring AI-backed provider adapter\n  -> explicit result or explicit failure\n```\n\n## Application Ownership Boundaries\n\nReinforce these boundaries:\n\n- The application owns authenticated identity, tenant context, business authorization, and the\n  decision that an operation is orchestration or generation.\n- AI Fabric owns purpose-aware provider resolution, orchestration contracts, governance hooks, and\n  provider-neutral application APIs.\n- Spring AI supplies supported model client integration beneath the AI Fabric adapter.\n- The provider supplies model inference and usage information available from that call.\n- ONNX supplies local embeddings in this course.\n- Lucene supplies local vector lifecycle and search in this course.\n- The application database remains the source of truth for support records.\n\nNo prompt can replace these ownership boundaries.\n\n## Final Recap\n\nEnd with five statements:\n\n1. An AI workflow contains different provider jobs, not one universal model call.\n2. `LlmPurpose` lets trusted backend code route orchestration and generation independently.\n3. Embeddings and vector storage remain separate from both LLM purposes.\n4. Deterministic recording providers prove routing; only an executed keyed check proves a live\n   hosted-provider path.\n5. Provider failure must stay visible, and diagnostics must explain posture without exposing secrets\n   or user content.\n\nBridge directly into the lab:\n\n> Next, configure the Support Knowledge Assistant with separate purpose routes, prove them with\n> recording providers, expose safe runtime posture, and run the optional OpenAI path only after the\n> keyless release gate is green.\n\n",
+    "sourceManifest": "notebooklm/source-manifest.yml",
+    "notebookStatus": "script-ready",
+    "reviewedAt": null,
+    "reviewedBy": null
+  },
+  "sourcePath": "docs/course/production/01-provider-routing/lesson.md",
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/main/docs/course/production/01-provider-routing/lesson.md"
+}
