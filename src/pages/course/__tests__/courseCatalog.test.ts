@@ -102,6 +102,10 @@ describe("generated course catalog", () => {
       expect(rendered?.frontMatter.requiresOpenAi).toBe(false);
       expect(rendered?.assistant.validationStatus).toBe("passed");
       expect(rendered?.knowledgeCheck.questions.length).toBeGreaterThanOrEqual(5);
+      expect(rendered?.frontMatter.video?.transcript).toMatch(
+        /^notebooklm\/AI_FABRIC_.+_NOTEBOOKLM_SCRIPT\.md$/,
+      );
+      expect(rendered?.video?.transcript).toMatch(/^# NotebookLM (?:Video|Production) Script/);
     }
 
     const releaseLesson = getRenderedLesson("prod-08");
