@@ -18,6 +18,10 @@ describe("course video catalog", () => {
     "backend-conversation-memory": "O1wf-w1Hg0k",
     "tenant-security-and-privacy": "mhO8CrOqpt0",
     "testing-and-shipping": "W_mlsCxAePs",
+    "provider-architecture-purpose-routing": "2lRTNp63NNI",
+    "modes-positions-orchestration-policy": "G0WvJ1PQj0s",
+    "state-storage-map": "epjF29WfEUM",
+    "live-data-sync": "wZ5e0MPSXRI",
   };
 
   it("maps every published English theory video exactly once", () => {
@@ -62,5 +66,17 @@ describe("course video catalog", () => {
       language: "ar",
       fallback: false,
     });
+  });
+
+  it("catalogs the published Production recordings with their measured durations", () => {
+    expect(courseTheoryVideos
+      .filter((video) => video.courseContext.startsWith("Production"))
+      .map((video) => ({ id: video.id, duration: video.sources.en.durationLabel })))
+      .toEqual([
+        { id: "provider-architecture-purpose-routing", duration: "6 min 55 sec" },
+        { id: "modes-positions-orchestration-policy", duration: "8 min 7 sec" },
+        { id: "state-storage-map", duration: "8 min 2 sec" },
+        { id: "live-data-sync", duration: "7 min 39 sec" },
+      ]);
   });
 });

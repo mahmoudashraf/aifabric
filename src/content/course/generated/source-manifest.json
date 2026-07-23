@@ -5,8 +5,8 @@
   "frameworkVersion": "0.3.3",
   "frameworkTag": "ai-fabric-framework-v0.3.3",
   "courseSourceTag": "ai-fabric-course-v0.3.3.1",
-  "sourceCommit": "f8aa8839af8567fbcaad40527e0c8e4442fe350a",
-  "generatedAt": "2026-07-22T23:17:37.399Z",
+  "sourceCommit": "0031d1ec75b8ac97514ae0e9e2df7b48c119e9a8",
+  "generatedAt": "2026-07-23T01:04:57.198Z",
   "files": [
     {
       "sourcePath": ".github/scripts/run-vector-container-contracts.sh",
@@ -462,7 +462,7 @@
     },
     {
       "sourcePath": "docs/course/course.yml",
-      "sha256": "590df6d72809ee7c0e4137216cb09ac5fa94a0634ba7d1c5ae716119c2bbee66"
+      "sha256": "cafe9ee7e704619c67d218544f80b08e8a92b253dc205a2f9a3dabd2bb0849f4"
     },
     {
       "sourcePath": "docs/course/production/01-provider-routing/assistant-prompt.md",
@@ -478,7 +478,7 @@
     },
     {
       "sourcePath": "docs/course/production/01-provider-routing/lesson.md",
-      "sha256": "b5fa398aa2f0a1faa0428a836a8e7675d61f9be7f0ba28ed3e14de120ceba4d7"
+      "sha256": "c3f2a5c2b8b674dac7b713de5c6d69d20d52190f981a00198bd6ba241a1afc00"
     },
     {
       "sourcePath": "docs/course/production/01-provider-routing/notebooklm/AI_FABRIC_PROVIDER_ARCHITECTURE_PURPOSE_ROUTING_NOTEBOOKLM_SCRIPT.md",
@@ -486,7 +486,7 @@
     },
     {
       "sourcePath": "docs/course/production/01-provider-routing/notebooklm/source-manifest.yml",
-      "sha256": "64dd173400755e2773b11a92d00f0c15929e5ce5cae869fae5590dcd3112775c"
+      "sha256": "c3e7884b874bb622cfcd2e41db9d87f154eeb0b416d3877fe0be92f444fca39e"
     },
     {
       "sourcePath": "docs/course/production/02-modes-positions/assistant-prompt.md",
@@ -502,7 +502,7 @@
     },
     {
       "sourcePath": "docs/course/production/02-modes-positions/lesson.md",
-      "sha256": "7089243ada877f2a5e5b7d262664a01d86a7b13f739ee00cd6c40e915d75dcca"
+      "sha256": "523d0b2c37dcbaded4149cb6ac61626c66f248b784c71d20a0a813ba8bf475a8"
     },
     {
       "sourcePath": "docs/course/production/02-modes-positions/notebooklm/AI_FABRIC_MODES_POSITIONS_ORCHESTRATION_POLICY_NOTEBOOKLM_SCRIPT.md",
@@ -510,7 +510,7 @@
     },
     {
       "sourcePath": "docs/course/production/02-modes-positions/notebooklm/source-manifest.yml",
-      "sha256": "5db0678b326df03455dd50bac5b7c98e74c84e1a5b48c965124b233dcbd9d854"
+      "sha256": "3054a184f599f0bdbd048ae730aca1535b395523e445d891166f35d648347830"
     },
     {
       "sourcePath": "docs/course/production/03-prompt-overlays/assistant-prompt.md",
@@ -550,7 +550,7 @@
     },
     {
       "sourcePath": "docs/course/production/04-migration-backfill/lesson.md",
-      "sha256": "53ac4ea6f6101a0d5158eb751bd03919065999c6f60f72f79dd58d7a5af6cb83"
+      "sha256": "373b856a335ab5ea8ff1689aa6dc08734b35ab57e7597331077e06b876851865"
     },
     {
       "sourcePath": "docs/course/production/04-migration-backfill/notebooklm/AI_FABRIC_STATE_STORAGE_MAP_NOTEBOOKLM_SCRIPT.md",
@@ -558,7 +558,7 @@
     },
     {
       "sourcePath": "docs/course/production/04-migration-backfill/notebooklm/source-manifest.yml",
-      "sha256": "cecb25454e18d4d158a301171b128a5c7af0a0bb7e49f404a0a56ddea5bc7f46"
+      "sha256": "248ab5296862f7064b0ef33fc7701b2f58d07b3b83de1c6a860be8ec943113de"
     },
     {
       "sourcePath": "docs/course/production/05-live-data-sync/assistant-prompt.md",
@@ -574,7 +574,7 @@
     },
     {
       "sourcePath": "docs/course/production/05-live-data-sync/lesson.md",
-      "sha256": "664ccfd2cfb118a58900c39aa9b94a8e9b00c756b462b4ce126c4c1390609207"
+      "sha256": "d6ce060dfd085b6a746d4dc9b2f00be57b33799ecfcd0266140cbcd5c837938c"
     },
     {
       "sourcePath": "docs/course/production/05-live-data-sync/notebooklm/AI_FABRIC_MIGRATION_BACKFILL_LIVE_SYNC_NOTEBOOKLM_SCRIPT.md",
@@ -582,7 +582,7 @@
     },
     {
       "sourcePath": "docs/course/production/05-live-data-sync/notebooklm/source-manifest.yml",
-      "sha256": "e7ef0809f1d3a8e47493fe35dced1b7ee2af3685bb093eb9fd6aca411e19d888"
+      "sha256": "58c41e664d3d2ca861ee529fd13813b39ff48064ec026c0262c34101bbd49747"
     },
     {
       "sourcePath": "docs/course/production/06-rag-quality/assistant-prompt.md",

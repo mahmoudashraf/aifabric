@@ -62,4 +62,20 @@ describe("CourseTheoryVideo", () => {
     );
     expect(screen.getByText(/the arabic recording for this topic is not available yet/i)).toBeInTheDocument();
   });
+
+  it("renders the published provider-routing recording inside PROD-01", () => {
+    const lesson = getRenderedLesson("prod-01");
+    if (!lesson) throw new Error("PROD-01 generated lesson is missing");
+
+    render(
+      <CourseTheoryVideo
+        lesson={lesson}
+        saving={false}
+        onMarkWatched={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByTitle("Provider architecture and purpose routing lesson video in English"))
+      .toHaveAttribute("src", expect.stringContaining("2lRTNp63NNI"));
+  });
 });

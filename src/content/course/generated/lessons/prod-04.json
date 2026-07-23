@@ -157,7 +157,9 @@
   "assistantPrompt": "production/04-migration-backfill/assistant-prompt.md",
   "assistantReviewPrompt": "production/04-migration-backfill/assistant-review-prompt.md",
   "notebookSourceManifest": "production/04-migration-backfill/notebooklm/source-manifest.yml",
-  "theoryVideoIds": [],
+  "theoryVideoIds": [
+    "state-storage-map"
+  ],
   "relatedStories": [],
   "relatedDemos": [],
   "track": "production",
@@ -186,7 +188,9 @@
       "ai-infrastructure-module/ai-fabric-indexing/src/main/java/ai/fabric/indexing/queue/IndexingQueueService.java",
       "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/annotation/AICapable.java"
     ],
-    "theoryVideoIds": [],
+    "theoryVideoIds": [
+      "state-storage-map"
+    ],
     "assistant": {
       "mode": "implement",
       "implementationPrompt": "assistant-prompt.md",
@@ -199,13 +203,13 @@
       "passingScorePercent": 80
     },
     "video": {
-      "status": "script-ready",
+      "status": "published",
       "generator": "NotebookLM",
       "purpose": "pre-lesson-theory",
       "placement": "before-lab",
       "targetDurationMinutes": 11,
       "title": "State And Storage In An AI Fabric Application",
-      "publicUrl": null,
+      "publicUrl": "https://www.youtube.com/watch?v=epjF29WfEUM",
       "transcript": "notebooklm/AI_FABRIC_STATE_STORAGE_MAP_NOTEBOOKLM_SCRIPT.md",
       "sourceManifest": "notebooklm/source-manifest.yml"
     }
@@ -218,16 +222,16 @@
     "reviewPrompt": "# Independent Review Prompt: PROD-04 Migration Backfill\n\nReview `course-0.3.3-p03-prompt-overlays..course-0.3.3-p04-migration-backfill`.\n\nLead with findings. Verify explicit source-repository registration, stable IDs, bounded job control,\nserver-owned admin scope, private-field exclusion before queue persistence, legal state transitions,\nfiltered migration semantics, queue/dead-letter visibility, tenant-safe retrieval, and idempotent\nrerun proof. Reject any claim that `COMPLETED` alone means retrievable or that AI Fabric 0.3.3\nprovides an exact skipped count. Require clean tests and packaged ONNX/Lucene evidence.\n"
   },
   "video": {
-    "status": "script-ready",
+    "status": "published",
     "generator": "NotebookLM",
     "purpose": "pre-lesson-theory",
     "placement": "before-lab",
     "targetDurationMinutes": 11,
     "title": "State And Storage In An AI Fabric Application",
-    "publicUrl": null,
+    "publicUrl": "https://www.youtube.com/watch?v=epjF29WfEUM",
     "transcript": "# NotebookLM Video Script: State And Storage In An AI Fabric Application\n\n## Production Instruction\n\nProduce an eleven-minute technical video for Java and Spring Boot developers. Use this script as the\ncomplete source. Keep the Support Knowledge Assistant example central and distinguish durable\nbusiness state, durable AI workflow state, derived evidence, and ephemeral runtime state.\n\n## Opening\n\nAdding AI Fabric to a Spring Boot app does not create one new universal AI database. A production AI\nworkflow crosses stores with different owners and recovery rules. Confusing them creates stale\nanswers, leaked evidence, lost confirmations, and misleading readiness checks.\n\nThe central rule is simple: the application database remains business truth. AI Fabric adds\nspecialized state around it.\n\n## The Storage Map\n\nDescribe this diagram:\n\n```text\nApplication database\n  knowledge articles, users, tickets, raw business events\n       |\n       +--> migration job --> indexing queue --> vector provider\n       |                                          derived evidence\n       |\n       +--> application actions mutate business truth\n\nAI workflow state\n  chat sessions and turns\n  pending confirmations and action drafts\n  behavior insights\n  optional registered actions\n\nRuntime state\n  caches, model clients, diagnostics snapshots\n```\n\nThe application database owns article text, tenant ownership, publication status, and internal\nnotes. The vector provider owns a derived semantic projection with stable entity IDs and retrieval\nmetadata. It must be possible to rebuild vectors from source truth.\n\n## Initial Backfill\n\nWhen AI Fabric is introduced to an existing system, rows already exist. A migration job scans them\nin bounded batches and records progress. It creates durable indexing work. The indexing worker then\nprojects allowed content, generates embeddings, and updates the vector provider.\n\nThere are therefore three different completion questions: has the source scan completed, has the\nqueue drained without dead letters, and are the expected vectors retrievable? A production readiness\nAPI should answer all three.\n\n## Continuous Synchronization\n\nBackfill is not live synchronization. After initial migration, trusted create, update, and delete\nevents keep derived evidence aligned with source truth. An update reuses the stable entity ID. A\ndelete removes the corresponding vector. Failed synchronization remains visible and retryable.\n\nThe next lesson implements that boundary directly.\n\n## Conversation And Action State\n\nChat sessions and turns are durable application conversations, not vector evidence. Pending actions\nand drafts preserve confirmation context. Production systems should use a durable implementation\nwhen a confirmation must survive restart. The browser sends only the new user message; the backend\nloads authorized history.\n\nAction execution still belongs to the application transaction. AI Fabric may discover, validate,\nand gate an action, but the domain database records the actual business mutation.\n\n## Behavior And Registry State\n\nRaw behavior events remain in the application or event platform and are supplied through\n`ExternalEventProvider`. AI Fabric can store derived behavior insights. The optional action registry\nstores approved action definitions; it does not replace domain authorization or execution code.\n\n## Ephemeral State\n\nCaches, model clients, and diagnostics snapshots may be rebuilt after restart. Correctness cannot\ndepend on an ephemeral cache. A model cache may improve connection reuse; it cannot become a hidden\nsession store or authorization source.\n\n## Incorrect Architecture\n\nAn incorrect design writes business updates only to vectors. A user then changes an article in the\nsource database, but search still returns the old vector. Another design calls a migration job\ncomplete as soon as rows are scanned while the indexing worker is stopped. Both make derived state\nlook authoritative or ready when it is not.\n\n## Visible Failure\n\nIf indexing fails, keep the source row, migration progress, queue failure, and missing vector\nobservable. Do not return a canned AI answer or silently write a different store. Operators need to\nknow which stage failed and whether retry is safe.\n\n## Lab Bridge\n\nIn PROD-04, you will bind an existing repository, run a bounded admin migration, inspect source,\njob, queue, and vector state separately, and prove an idempotent rerun. PROD-05 then applies trusted\ncreate, update, and delete synchronization to keep that evidence current.\n",
     "sourceManifest": "notebooklm/source-manifest.yml",
-    "notebookStatus": "script-ready",
+    "notebookStatus": "published",
     "reviewedAt": null,
     "reviewedBy": null
   },

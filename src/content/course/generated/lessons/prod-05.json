@@ -156,7 +156,9 @@
   "assistantPrompt": "production/05-live-data-sync/assistant-prompt.md",
   "assistantReviewPrompt": "production/05-live-data-sync/assistant-review-prompt.md",
   "notebookSourceManifest": "production/05-live-data-sync/notebooklm/source-manifest.yml",
-  "theoryVideoIds": [],
+  "theoryVideoIds": [
+    "live-data-sync"
+  ],
   "relatedStories": [],
   "relatedDemos": [],
   "track": "production",
@@ -185,7 +187,9 @@
       "ai-infrastructure-module/ai-fabric-data-sync/src/main/java/ai/fabric/datasync/dto/DataSyncVerifiedAuthContext.java",
       "ai-infrastructure-module/ai-fabric-data-sync/src/main/java/ai/fabric/datasync/normalize/DataSyncEntityNormalizer.java"
     ],
-    "theoryVideoIds": [],
+    "theoryVideoIds": [
+      "live-data-sync"
+    ],
     "assistant": {
       "mode": "implement",
       "implementationPrompt": "assistant-prompt.md",
@@ -198,13 +202,13 @@
       "passingScorePercent": 80
     },
     "video": {
-      "status": "script-ready",
+      "status": "published",
       "generator": "NotebookLM",
       "purpose": "pre-lesson-theory",
       "placement": "before-lab",
       "targetDurationMinutes": 11,
       "title": "From Existing Data To Continuous AI Evidence",
-      "publicUrl": null,
+      "publicUrl": "https://www.youtube.com/watch?v=wZ5e0MPSXRI",
       "transcript": "notebooklm/AI_FABRIC_MIGRATION_BACKFILL_LIVE_SYNC_NOTEBOOKLM_SCRIPT.md",
       "sourceManifest": "notebooklm/source-manifest.yml"
     }
@@ -217,16 +221,16 @@
     "reviewPrompt": "# Independent Review Prompt: PROD-05 Live Data Sync\n\nReview `course-0.3.3-p04-migration-backfill..course-0.3.3-p05-live-data-sync`.\n\nLead with findings. Verify the public boundary derives identity, tenant, scope, vector space, and\nprojection from trusted backend state; internal bypass is false; the low-level endpoint is not\npublic; private fields are absent; IDs remain stable; source rollback and external-store limits are\ndescribed honestly; stale update/delete evidence is tested; and batch denial, limits, and partial\nfailure have no hidden success. Require clean tests and packaged ONNX/Lucene proof.\n"
   },
   "video": {
-    "status": "script-ready",
+    "status": "published",
     "generator": "NotebookLM",
     "purpose": "pre-lesson-theory",
     "placement": "before-lab",
     "targetDurationMinutes": 11,
     "title": "From Existing Data To Continuous AI Evidence",
-    "publicUrl": null,
+    "publicUrl": "https://www.youtube.com/watch?v=wZ5e0MPSXRI",
     "transcript": "# NotebookLM Video Script: From Existing Data To Continuous AI Evidence\n\n## Production Instruction\n\nProduce an eleven-minute technical video for Java and Spring Boot developers. Use only this script.\nShow one continuing Support Knowledge Assistant and make source ownership, stable identity, security,\nand recovery visible.\n\n## Opening\n\nAdding semantic search to an existing application has two time horizons. First, historical rows must\nbe backfilled. Then every trusted create, update, and delete must keep derived AI evidence aligned\nwith current application truth. Solving only the first horizon creates a demo that becomes stale the\nmoment a real user changes data.\n\nAI Fabric separates migration from live Data Sync.\n\n## Initial Backfill Flow\n\nDescribe this diagram:\n\n```text\nexisting application rows\n       |\n       v\nmigration job -- bounded scan, filters, pause/resume\n       |\n       v\ndurable indexing queue -- retry and failure state\n       |\n       v\nembedding provider -> vector provider\n```\n\nMigration establishes initial derived evidence. Job completion means scanning and enqueueing\nfinished. Queue drain and expected retrievable vectors prove readiness.\n\n## Live Synchronization Flow\n\n```text\nauthenticated domain request\n       |\napplication verifies user, tenant, source ownership, allowed dataset\n       |\napplication transaction changes source row\n       |\nData Sync normalizes allowed fields, checks access, embeds, upserts/deletes stable ID\n       |\nsafe result and correlation trace\n```\n\nThe browser supplies article content and intent to create, update, or delete. It does not supply a\ntrusted tenant, auth context, arbitrary vector space, or provider route. The backend derives those\nvalues from verified identity and persisted source state.\n\n## Stable Identity\n\nUse the source article ID as the whole-record logical ID. A source version and content fingerprint\nprovide retry evidence. Updating article `article-live-sync` upserts that same logical ID, replacing\nold text. Deleting it addresses the same ID. Chunk IDs are useful for document chunks but would\nintentionally create distinct effective IDs, so omit them for this whole-record example.\n\n## Access And Bypass\n\nAI Fabric Data Sync requires verified auth context and delegates to `EntityAccessPolicy`. The\nframework includes an opt-in platform/system bypass, but it remains disabled unless a trusted\nbackend verifies and injects the exact system identity and scope. A frontend cannot prove trust by\nsending system-shaped JSON.\n\nThe Support Knowledge Assistant exposes domain-specific endpoints and denies the raw Data Sync DTO\nroute. Its policy permits only `vectorSpace:knowledge-article` and exact upsert/delete scopes.\n\n## Normalization And Privacy\n\nThe application projects approved article fields. Internal notes never enter Data Sync. The\nnormalizer uses configured searchable and metadata fields, bounds content and field lengths, and\nfails closed on invalid or oversized input. Embedding and vector failures remain explicit.\n\n## Consistency And Recovery\n\nThrowing on an upsert failure can roll back the local database transaction, but a relational\ndatabase and external vector provider do not share one atomic transaction. A response may be lost\nafter a vector write, or a source commit may fail afterward. Stable IDs, correlation traces,\nidempotent retries, and reconciliation remain necessary.\n\nA reconciliation endpoint reloads source rows, builds bounded operations, and reports every result.\nOne failed operation does not become a generic success. An oversized batch is rejected before side\neffects.\n\n## Incorrect Architecture\n\nAn incorrect design publishes the raw Data Sync controller and lets the browser submit tenant and\nauth-context fields. Another uses a random vector ID for every update. The first permits identity\nforgery; the second leaves stale versions retrievable and makes delete unreliable.\n\n## Visible Failure\n\nWhen one row exceeds normalization limits, the batch reports one success and one\n`INVALID_REQUEST`. Source rows remain unchanged. Operators can identify the failed stable ID,\ncorrect it, and retry it. No fallback invents evidence and no success card hides the failure.\n\n## Lab Bridge\n\nIn PROD-05, you will implement that trusted boundary, prove stable create/update/delete behavior,\ndeny raw access, and exercise reconciliation failures with local ONNX and Lucene. PROD-06 then turns\nthe resulting evidence behavior into a deterministic RAG quality gate.\n",
     "sourceManifest": "notebooklm/source-manifest.yml",
-    "notebookStatus": "script-ready",
+    "notebookStatus": "published",
     "reviewedAt": null,
     "reviewedBy": null
   },

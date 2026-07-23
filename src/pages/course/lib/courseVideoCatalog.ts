@@ -125,6 +125,42 @@ export const courseTheoryVideos: CourseTheoryVideoEntry[] = [
       en: { videoId: "W_mlsCxAePs", durationLabel: "8 min 42 sec" },
     },
   },
+  {
+    id: "provider-architecture-purpose-routing",
+    title: "Provider architecture and purpose routing",
+    description: "Route orchestration, generation, embeddings, and vector work through explicit provider purposes.",
+    courseContext: "Production 01 theory",
+    sources: {
+      en: { videoId: "2lRTNp63NNI", durationLabel: "6 min 55 sec" },
+    },
+  },
+  {
+    id: "modes-positions-orchestration-policy",
+    title: "Modes, positions, and orchestration policy",
+    description: "Separate application positions from server-owned capability modes and authorization boundaries.",
+    courseContext: "Production 02 theory",
+    sources: {
+      en: { videoId: "G0WvJ1PQj0s", durationLabel: "8 min 7 sec" },
+    },
+  },
+  {
+    id: "state-storage-map",
+    title: "State and storage in an AI Fabric application",
+    description: "Map business truth, derived vector evidence, durable workflow state, and ephemeral runtime state.",
+    courseContext: "Production 04 theory",
+    sources: {
+      en: { videoId: "epjF29WfEUM", durationLabel: "8 min 2 sec" },
+    },
+  },
+  {
+    id: "live-data-sync",
+    title: "Keep AI evidence synchronized",
+    description: "Move from initial migration to trusted create, update, and delete synchronization without stale evidence.",
+    courseContext: "Production 05 theory",
+    sources: {
+      en: { videoId: "wZ5e0MPSXRI", durationLabel: "7 min 39 sec" },
+    },
+  },
 ];
 
 export const resolveCourseVideoSource = (

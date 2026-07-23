@@ -86,8 +86,9 @@ describe("generated course catalog", () => {
     expect(lesson?.frontMatter.solutionRef).toBe("course-0.3.3-p01-provider-routing");
     expect(lesson?.frontMatter.requiresOpenAi).toBe(false);
     expect(lesson?.frontMatter.optionalProviderExercises).toEqual(["openai"]);
-    expect(lesson?.video?.status).toBe("script-ready");
-    expect(lesson?.video?.publicUrl).toBeNull();
+    expect(lesson?.theoryVideoIds).toEqual(["provider-architecture-purpose-routing"]);
+    expect(lesson?.video?.status).toBe("published");
+    expect(lesson?.video?.publicUrl).toBe("https://www.youtube.com/watch?v=2lRTNp63NNI");
     expect(lesson?.sourceUrl).toContain("/blob/main/docs/course/production/01-provider-routing/lesson.md");
     expect(lesson?.markdown).toContain("## Step 4: Add The Purpose-Routing Contract");
     expect(lesson?.markdown).toContain("## Step 8: Optional Real OpenAI Exercise");
@@ -114,6 +115,14 @@ describe("generated course catalog", () => {
     expect(releaseLesson?.frontMatter.optionalProviderExercises).toEqual(["openai"]);
     expect(releaseLesson?.markdown).toContain("## Step 7: Restart And Prove Durability");
     expect(releaseLesson?.markdown).toContain("## Step 9: Prove Missing Required Credentials Fail");
+
+    expect(getRenderedLesson("prod-02")?.theoryVideoIds).toEqual(["modes-positions-orchestration-policy"]);
+    expect(getRenderedLesson("prod-04")?.theoryVideoIds).toEqual(["state-storage-map"]);
+    expect(getRenderedLesson("prod-05")?.theoryVideoIds).toEqual(["live-data-sync"]);
+    expect(getRenderedLesson("prod-03")?.theoryVideoIds).toEqual([]);
+    expect(getRenderedLesson("prod-06")?.theoryVideoIds).toEqual([]);
+    expect(getRenderedLesson("prod-07")?.theoryVideoIds).toEqual([]);
+    expect(getRenderedLesson("prod-08")?.theoryVideoIds).toEqual([]);
   });
 
   it("keeps QS-01 action-first and hands architecture teaching to the Core track", () => {

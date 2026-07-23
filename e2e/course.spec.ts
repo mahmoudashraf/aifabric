@@ -165,7 +165,7 @@ test("Core 07 presents the complete vertical-slice release gate", async ({ page 
   await expect(page.getByRole("heading", { name: "Check your understanding" })).toBeVisible();
 });
 
-test("PROD-01 presents verified provider routing with an honest script-ready video state", async ({ page }) => {
+test("PROD-01 presents verified provider routing with its published theory recording", async ({ page }) => {
   await page.goto("/course/production/provider-routing", { waitUntil: "domcontentloaded" });
 
   await expect(
@@ -174,7 +174,8 @@ test("PROD-01 presents verified provider routing with an honest script-ready vid
   await expect(page.getByText("Preview lesson", { exact: true })).toBeVisible();
   await expect(page.getByText("No external key required", { exact: true })).toBeVisible();
   await expect(page.getByText("Optional OpenAI exercise", { exact: true })).toBeVisible();
-  await expect(page.getByText(/course-0\.3\.3-p01-provider-routing is verified/)).toBeVisible();
+  await expect(page.getByText("What is ready in this preview", { exact: true })).toBeVisible();
+  await expect(page.getByText(/complete lesson, assigned theory recordings/)).toBeVisible();
   await expect(page.getByRole("link", { name: "Starter checkpoint" })).toHaveAttribute(
     "href",
     /course-0\.3\.3-06-tested-solution$/,
@@ -183,8 +184,9 @@ test("PROD-01 presents verified provider routing with an honest script-ready vid
     "href",
     /course-0\.3\.3-p01-provider-routing$/,
   );
-  await expect(page.getByText("Recording not published yet", { exact: true })).toBeVisible();
-  await expect(page.getByText("Script ready", { exact: true })).toBeVisible();
+  await expect(
+    page.getByTitle("Provider architecture and purpose routing lesson video in English"),
+  ).toHaveAttribute("src", /2lRTNp63NNI/);
   await expect(page.getByRole("link", { name: "Canonical source" })).toHaveAttribute(
     "href",
     /\/blob\/main\/docs\/course\/production\/01-provider-routing\/lesson\.md$/,

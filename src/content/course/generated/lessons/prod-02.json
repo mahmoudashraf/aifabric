@@ -152,7 +152,9 @@
   "assistantPrompt": "production/02-modes-positions/assistant-prompt.md",
   "assistantReviewPrompt": "production/02-modes-positions/assistant-review-prompt.md",
   "notebookSourceManifest": "production/02-modes-positions/notebooklm/source-manifest.yml",
-  "theoryVideoIds": [],
+  "theoryVideoIds": [
+    "modes-positions-orchestration-policy"
+  ],
   "relatedStories": [],
   "relatedDemos": [],
   "track": "production",
@@ -183,7 +185,9 @@
       "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/intent/orchestration/pipeline/steps/OrchestrationPolicyResolutionStep.java",
       "examples/real-apps/chat-capabilities-demo/src/main/java/com/ai/fabric/realapps/chat/web/CommerceModeResolver.java"
     ],
-    "theoryVideoIds": [],
+    "theoryVideoIds": [
+      "modes-positions-orchestration-policy"
+    ],
     "assistant": {
       "mode": "implement",
       "implementationPrompt": "assistant-prompt.md",
@@ -196,13 +200,13 @@
       "passingScorePercent": 80
     },
     "video": {
-      "status": "script-ready",
+      "status": "published",
       "generator": "NotebookLM",
       "purpose": "pre-lesson-theory",
       "placement": "before-lab",
       "targetDurationMinutes": 10,
       "title": "Modes, Positions, And Orchestration Policy",
-      "publicUrl": null,
+      "publicUrl": "https://www.youtube.com/watch?v=G0WvJ1PQj0s",
       "transcript": "notebooklm/AI_FABRIC_MODES_POSITIONS_ORCHESTRATION_POLICY_NOTEBOOKLM_SCRIPT.md",
       "sourceManifest": "notebooklm/source-manifest.yml"
     }
@@ -215,16 +219,16 @@
     "reviewPrompt": "# Independent Review Prompt: PROD-02 Modes And Positions\n\nReview the diff from `course-0.3.3-p01-provider-routing` to\n`course-0.3.3-p02-modes-positions` findings-first.\n\nVerify:\n\n- no-hint Core action behavior is preserved;\n- positions are mapped only in application code;\n- explicit mode is still validated by Core strict routing;\n- unknown modes and positions fail visibly;\n- `actions-enabled`, not prompt wording, blocks writes;\n- HTTP input cannot supply trusted identity, tenant, history, or pending work;\n- policy metadata proves the effective mode, position, and capabilities;\n- tests use provider-boundary structured fixtures rather than application text matching;\n- `clean verify` and packaged ONNX/Lucene smoke pass.\n\nList correctness or security findings before summary. Do not approve based only on compilation.\n"
   },
   "video": {
-    "status": "script-ready",
+    "status": "published",
     "generator": "NotebookLM",
     "purpose": "pre-lesson-theory",
     "placement": "before-lab",
     "targetDurationMinutes": 10,
     "title": "Modes, Positions, And Orchestration Policy",
-    "publicUrl": null,
+    "publicUrl": "https://www.youtube.com/watch?v=G0WvJ1PQj0s",
     "transcript": "# NotebookLM Video Script: Modes, Positions, And Orchestration Policy\n\n## Production Instruction\n\nCreate a focused ten-minute technical explanation for Java and Spring Boot developers. AI Fabric is\nthe subject. Use only this script. Do not present a generic chatbot tutorial.\n\n## Opening\n\nA production AI endpoint should not expose the same capabilities everywhere. A knowledge page may\nretrieve approved support articles but must never create a ticket. A ticket workspace may retrieve\nthe same evidence and offer a governed write, but only after server authorization and confirmation.\n\nAI Fabric models that distinction with positions, modes, and orchestration policy. They are related,\nbut they are not interchangeable.\n\n## Position\n\nA position is application context. In the Support Knowledge Assistant, `knowledge` means the user is\nreading help content and `ticket` means the user is working in a support-resolution surface. These\nnames belong to the application. Another app might use `catalog`, `checkout`, or `account`.\n\nAn application position is not an authorization claim. A browser saying `ticket` cannot grant itself\npermission to write.\n\n## Mode\n\nA mode is a server-defined AI Fabric capability bundle. In this lesson, `support_assistant` enables\nretrieval and disables actions. `support_resolver` enables retrieval and governed actions. Modes can\nalso constrain vector spaces, document budgets, context size, suggestions, deep retrieval, and\nplanner behavior.\n\nThe server allowlists modes in `ai.orchestration.modes`. With strict mode routing enabled, an unknown\nmode fails visibly. It does not quietly become a default.\n\n## The Ownership Boundary\n\nDescribe this diagram on screen:\n\n```text\nbrowser position or approved mode\n          |\n          v\napplication position resolver\n          |\n          v\nOrchestrationContext\n          |\n          v\nAI Fabric policy resolution\n          |\n          +-- retrieval gate and budgets\n          +-- action gate\n          +-- suggestions and planning policy\n          |\n          v\nidentity + tenant + action authorization + confirmation\n```\n\nThe application maps its own position vocabulary. AI Fabric Core stays application-neutral and\nenforces the selected server mode. Security controls remain separate.\n\n## Precedence\n\nIf a request explicitly asks for an approved mode, the application preserves it and Core validates\nit. If no mode is supplied, a known position may map to a mode. If neither is supplied, the server\ndefault applies. Unknown positions fail at the application boundary when strict position routing is\nenabled.\n\nThis precedence makes diagnostics understandable. Policy metadata can report the effective mode,\nposition, source, action gate, retrieval gate, and RAG budgets.\n\n## Concrete Flow\n\nConsider the message, \"Create a ticket about missing recovery emails.\"\n\nAt position `knowledge`, the test provider emits a structured action intent. AI Fabric still returns\n`CLARIFICATION_REQUIRED` with reason `ACTIONS_DISABLED_BY_POLICY`. The model cannot override the\nmode.\n\nAt position `ticket`, the application maps to `support_resolver`. AI Fabric discovers the typed\naction, resolves trusted account context, and returns `CONFIRMATION_REQUIRED`. The action still has\nnot executed. Confirmation and authorization remain mandatory.\n\n## Incorrect Architecture\n\nAn incorrect design accepts arbitrary mode names from JavaScript and maps names like `admin` to more\npowerful behavior. A second incorrect design puts \"never execute actions\" in a prompt while leaving\nactions enabled. Both assign authority to untrusted or probabilistic inputs.\n\nThe correct design uses a small allowlisted application map, strict Core mode routing, deterministic\ncapability flags, authenticated context, and action-level policy.\n\n## Visible Failure\n\nIf the browser sends `untrusted_admin`, Core returns an unsupported-mode error. If it sends an unknown\nposition without a mode, the application returns HTTP 400. Neither failure is hidden by fallback.\n\n## Lab Bridge\n\nIn PROD-02 you will configure both modes, implement `SupportModeResolver`, extend the request with\nbounded optional routing fields, and prove every branch through the real orchestration pipeline.\nYou will finish by rerunning all earlier action and memory tests so new policy does not erase existing\nframework behavior.\n",
     "sourceManifest": "notebooklm/source-manifest.yml",
-    "notebookStatus": "script-ready",
+    "notebookStatus": "published",
     "reviewedAt": null,
     "reviewedBy": null
   },
