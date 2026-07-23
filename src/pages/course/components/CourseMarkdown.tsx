@@ -5,6 +5,8 @@ import ReactMarkdown from "react-markdown";
 import { Highlight, themes } from "prism-react-renderer";
 import remarkGfm from "remark-gfm";
 
+import { resolveMarkdownHref } from "../lib/markdown";
+
 const nodeText = (children: ReactNode): string => {
   if (typeof children === "string" || typeof children === "number") return String(children);
   if (Array.isArray(children)) return children.map(nodeText).join("");
@@ -64,7 +66,7 @@ const CodeBlock = ({ children, className }: { children: string; className?: stri
 
 const isExternal = (href?: string) => Boolean(href && /^(https?:)?\/\//.test(href));
 
-export const CourseMarkdown = ({ markdown }: { markdown: string }) => (
+export const CourseMarkdown = ({ markdown, sourceUrl }: { markdown: string; sourceUrl?: string }) => (
   <div className="max-w-none">
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
@@ -115,16 +117,17 @@ export const CourseMarkdown = ({ markdown }: { markdown: string }) => (
         th: ({ children }) => <th className="border-b border-border px-4 py-3 text-left font-semibold text-slate-900">{children}</th>,
         td: ({ children }) => <td className="border-b border-border px-4 py-3 align-top leading-6 text-slate-600">{children}</td>,
         a: ({ href, children }) => {
-          if (href?.startsWith("/")) return <Link to={href} className="font-medium text-blue-700 hover:underline">{children}</Link>;
+          const resolvedHref = resolveMarkdownHref(href, sourceUrl);
+          if (resolvedHref?.startsWith("/")) return <Link to={resolvedHref} className="font-medium text-blue-700 hover:underline">{children}</Link>;
           return (
             <a
-              href={href}
-              target={isExternal(href) ? "_blank" : undefined}
-              rel={isExternal(href) ? "noopener noreferrer" : undefined}
+              href={resolvedHref}
+              target={isExternal(resolvedHref) ? "_blank" : undefined}
+              rel={isExternal(resolvedHref) ? "noopener noreferrer" : undefined}
               className="inline-flex items-center gap-1 font-medium text-blue-700 hover:underline"
             >
               {children}
-              {isExternal(href) && <ExternalLink className="h-3.5 w-3.5" />}
+              {isExternal(resolvedHref) && <ExternalLink className="h-3.5 w-3.5" />}
             </a>
           );
         },

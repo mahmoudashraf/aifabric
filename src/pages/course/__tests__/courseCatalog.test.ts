@@ -7,9 +7,10 @@ describe("generated course catalog", () => {
     expect(courseCatalog.title).toBe(
       "Build AI-Enabled Applications with Java and Spring Boot",
     );
+    expect(courseCatalog.courseVersion).toBe("0.3.3-course.2-beta");
     expect(courseCatalog.frameworkVersion).toBe("0.3.3");
     expect(courseCatalog.frameworkTag).toBe("ai-fabric-framework-v0.3.3");
-    expect(courseCatalog.courseSourceTag).toBe("ai-fabric-course-v0.3.3.1");
+    expect(courseCatalog.courseSourceTag).toBe("ai-fabric-course-v0.3.3.2");
     expect(courseCatalog.learnerRepository).toBe(
       "https://github.com/Loom-AI-Labs/ai-fabric-course-support-assistant",
     );
@@ -178,6 +179,8 @@ describe("generated course catalog", () => {
     expect(lesson?.theoryVideoIds).toEqual(["evidence-grounded-rag"]);
     expect(lesson?.markdown).toContain("## Step 3: Retrieve Documents And Context");
     expect(lesson?.markdown).toContain("## Step 4: Stop On Retrieval Failure Or No Evidence");
+    expect(lesson?.markdown).toContain("### Optional Chat UI Checkpoint");
+    expect(lesson?.markdown).toContain("AI_FABRIC_CHAT_UI_LAB.md");
     expect(lesson?.markdown).toContain("## Step 8: Reproduce The Empty-Index Failure");
     expect(lesson?.markdown).not.toMatch(/\bthe learner\b/i);
     expect(lesson?.knowledgeCheck.questions).toHaveLength(6);

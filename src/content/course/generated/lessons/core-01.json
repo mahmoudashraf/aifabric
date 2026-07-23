@@ -193,10 +193,10 @@
     "order": 1,
     "durationMinutes": 70,
     "availability": "published",
-    "courseVersion": "0.3.3-course.1-beta",
+    "courseVersion": "0.3.3-course.2-beta",
     "frameworkVersion": "0.3.3",
     "frameworkTag": "ai-fabric-framework-v0.3.3",
-    "courseSourceTag": "ai-fabric-course-v0.3.3.1",
+    "courseSourceTag": "ai-fabric-course-v0.3.3.2",
     "starterRef": "course-0.3.3-00-starter",
     "solutionRef": "course-0.3.3-00-starter",
     "requiresOpenAi": false,
@@ -240,5 +240,5 @@
     "reviewPrompt": "# CORE-01 Independent Review Prompt\n\nStatus: Published for independently reviewing the CORE-01 architecture artifacts.\n\nReview a developer's CORE-01 architecture document against AI Fabric Framework 0.3.3 and the current\nCORE-01 course source.\n\nUse a findings-first review. Do not rewrite the document until you have identified concrete issues.\nOrder findings by severity and cite the submitted section plus the reviewed course or pinned Java\nsource that supports each finding.\n\nCheck for these failure classes:\n\n- application repositories, transactions, identity, or authorization assigned to an LLM;\n- browser keyword matching presented as AI Fabric intelligence;\n- `position` metadata treated as an orchestration mode;\n- direct model-to-repository writes;\n- missing confirmation or backend pending-action state;\n- tenant scope accepted from an untrusted client;\n- RAG claimed without identifiable retrieved evidence;\n- provider failure hidden by a canned or deterministic success response;\n- modules included without a stated capability;\n- LLM, embedding, and vector providers treated as one interchangeable responsibility.\n\nThen report:\n\n1. findings with severity;\n2. missing proof or unanswered questions;\n3. whether the ownership map is acceptable;\n4. whether the minimum-module decision is justified;\n5. whether retrieval and action flows preserve application ownership;\n6. the smallest corrections required to pass CORE-01.\n\nDo not claim the lesson passes merely because the document uses AI terminology. It passes only when\nthe owners, boundaries, request flow, and failure behavior are explicit and consistent with the\nreviewed course sources and pinned Java APIs.\n"
   },
   "sourcePath": "docs/course/core/01-ai-fabric-mental-model/lesson.md",
-  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/ai-fabric-course-v0.3.3.1/docs/course/core/01-ai-fabric-mental-model/lesson.md"
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/ai-fabric-course-v0.3.3.2/docs/course/core/01-ai-fabric-mental-model/lesson.md"
 }

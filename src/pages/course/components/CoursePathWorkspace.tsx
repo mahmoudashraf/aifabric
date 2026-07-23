@@ -85,7 +85,7 @@ export const CoursePathWorkspace = ({
         </TabsTrigger>
       </TabsList>
       <TabsContent value="manual" className="mt-7">
-        <CourseMarkdown markdown={prepareLessonMarkdown(lesson.markdown)} />
+        <CourseMarkdown markdown={prepareLessonMarkdown(lesson.markdown)} sourceUrl={lesson.sourceUrl} />
       </TabsContent>
       <TabsContent value="assistant" className="mt-7 space-y-8">
         <div className={`border-l-4 px-5 py-4 ${assistantValidated ? "border-emerald-500 bg-emerald-50" : "border-amber-400 bg-amber-50"}`}>

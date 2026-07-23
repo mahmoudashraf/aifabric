@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "frameworkRepository": "https://github.com/Loom-AI-Labs/ai-fabric-framework",
-  "courseVersion": "0.3.3-course.1-beta",
+  "courseVersion": "0.3.3-course.2-beta",
   "frameworkVersion": "0.3.3",
   "frameworkTag": "ai-fabric-framework-v0.3.3",
-  "courseSourceTag": "ai-fabric-course-v0.3.3.1",
-  "sourceCommit": "13ee2280f8ac93e5257c9f281480331f3ef30fe7",
-  "generatedAt": "2026-07-23T01:27:21.469Z",
+  "courseSourceTag": "ai-fabric-course-v0.3.3.2",
+  "sourceCommit": "c2edd124fe801154907b92f854549e372d04d7aa",
+  "generatedAt": "2026-07-23T03:07:26.002Z",
   "files": [
     {
       "sourcePath": ".github/scripts/run-vector-container-contracts.sh",
@@ -306,7 +306,7 @@
     },
     {
       "sourcePath": "docs/architecture/AI_FABRIC_PUBLIC_ARCHITECTURE.md",
-      "sha256": "73fbc21a5275e5ab6c01cd8f06d289b6b0ee4ab308dca18fec71e32692cc0f6e"
+      "sha256": "94dc154d17434dd1674582ea1d41e7244de5959a49b92e25dc9aa3baed02fbee"
     },
     {
       "sourcePath": "docs/course/core/01-ai-fabric-mental-model/assistant-prompt.md",
@@ -322,7 +322,7 @@
     },
     {
       "sourcePath": "docs/course/core/01-ai-fabric-mental-model/lesson.md",
-      "sha256": "789b004eb94fb777e6ba27fb67b65b94e7e7935dcd4185b47de42d313e97c501"
+      "sha256": "541cda53d46b7ddaeba6d2afeb4b5d9f845fd819053705569b4af19b5307d540"
     },
     {
       "sourcePath": "docs/course/core/01-ai-fabric-mental-model/notebooklm/AI_FABRIC_ARCHITECTURE_MODULE_MAP_NOTEBOOKLM_SCRIPT.md",
@@ -354,7 +354,7 @@
     },
     {
       "sourcePath": "docs/course/core/02-model-and-index-data/lesson.md",
-      "sha256": "ebc19be543e1e3a5b6abceb07a7f9b281318a5c043527faa2571ffcc0972e0ff"
+      "sha256": "bfa63041a5383b3c956c617a450609b0c52c66be252cc7001dda76a20e3571dc"
     },
     {
       "sourcePath": "docs/course/core/02-model-and-index-data/notebooklm/AI_FABRIC_SEARCHABLE_EVIDENCE_NOTEBOOKLM_SCRIPT.md",
@@ -374,7 +374,7 @@
     },
     {
       "sourcePath": "docs/course/core/03-evidence-grounded-rag/lesson.md",
-      "sha256": "43c6a29fe52f198eca98daf02e0dd52bd0081f5e01eb4f3447e1e9f08d109587"
+      "sha256": "c44325b2164fd85f023fedc3304dae126047d3fd013746db42190388fbf0e5c9"
     },
     {
       "sourcePath": "docs/course/core/03-evidence-grounded-rag/notebooklm/AI_FABRIC_EVIDENCE_GROUNDED_RAG_NOTEBOOKLM_SCRIPT.md",
@@ -394,7 +394,7 @@
     },
     {
       "sourcePath": "docs/course/core/04-governed-actions/lesson.md",
-      "sha256": "93e2e67782c7588945e304feea71aa15ca372ee904e01910c6337745c25a657b"
+      "sha256": "b6ffb09b7759c97f4722be9b7bed4a670e7a13a99e0fe46bb8d78a1715e4e0f6"
     },
     {
       "sourcePath": "docs/course/core/04-governed-actions/notebooklm/AI_FABRIC_GOVERNED_ACTIONS_CONFIRMATION_NOTEBOOKLM_SCRIPT.md",
@@ -414,7 +414,7 @@
     },
     {
       "sourcePath": "docs/course/core/05-backend-conversation-memory/lesson.md",
-      "sha256": "1641438099694fac57f0178d0ad155ebfe224394184abfd8b870484478a2c6c3"
+      "sha256": "2d22d86bf90262cb3f9604d0841a4b8369e72f999ad7e86f28a1e59879272a7a"
     },
     {
       "sourcePath": "docs/course/core/05-backend-conversation-memory/notebooklm/AI_FABRIC_BACKEND_CONVERSATION_MEMORY_NOTEBOOKLM_SCRIPT.md",
@@ -434,7 +434,7 @@
     },
     {
       "sourcePath": "docs/course/core/06-tenant-security-and-privacy/lesson.md",
-      "sha256": "78f819fb7ac064b40134b67c5314bcda8305ab33a6f867bdc99edab14881437a"
+      "sha256": "1951eec581159ae5fd92986a735bc16f82b88973f7f8bd560c374cfdd00c1473"
     },
     {
       "sourcePath": "docs/course/core/06-tenant-security-and-privacy/notebooklm/AI_FABRIC_TENANT_SECURITY_PRIVACY_NOTEBOOKLM_SCRIPT.md",
@@ -454,7 +454,7 @@
     },
     {
       "sourcePath": "docs/course/core/07-test-and-ship/lesson.md",
-      "sha256": "7f979552d628525937da54418ed26766e5efe6b00f45853bbb60eeed2baa69f1"
+      "sha256": "df29262c977d09b5ae5c8a272b41534c2736956704ab1ac155b3ce42ee406378"
     },
     {
       "sourcePath": "docs/course/core/07-test-and-ship/notebooklm/AI_FABRIC_TESTING_SHIPPING_WORKFLOWS_NOTEBOOKLM_SCRIPT.md",
@@ -462,7 +462,11 @@
     },
     {
       "sourcePath": "docs/course/course.yml",
-      "sha256": "8b500529a5045403bc3089d145080799b96cff6412104fb0e8a86d7f9c75a178"
+      "sha256": "551eceb858e809ce2230385df2053abdcc88c1fb2905f8459c65ecf4194bb74c"
+    },
+    {
+      "sourcePath": "docs/course/labs/AI_FABRIC_CHAT_UI_LAB.md",
+      "sha256": "76f960cd396167a7427047391da6a1d91e9f34050e1e9792aeb303e1b4cb068c"
     },
     {
       "sourcePath": "docs/course/production/01-provider-routing/assistant-prompt.md",
@@ -478,7 +482,7 @@
     },
     {
       "sourcePath": "docs/course/production/01-provider-routing/lesson.md",
-      "sha256": "c3f2a5c2b8b674dac7b713de5c6d69d20d52190f981a00198bd6ba241a1afc00"
+      "sha256": "a2ab1099abc42865b35d96e5c102d47b4ac5b2d5c41c56191864805fbd621088"
     },
     {
       "sourcePath": "docs/course/production/01-provider-routing/notebooklm/AI_FABRIC_PROVIDER_ARCHITECTURE_PURPOSE_ROUTING_NOTEBOOKLM_SCRIPT.md",
@@ -486,7 +490,7 @@
     },
     {
       "sourcePath": "docs/course/production/01-provider-routing/notebooklm/source-manifest.yml",
-      "sha256": "c3e7884b874bb622cfcd2e41db9d87f154eeb0b416d3877fe0be92f444fca39e"
+      "sha256": "04b43c69edd2900644f9ef0710ae59a921a27417ad40fcdfdb486aff81f00d16"
     },
     {
       "sourcePath": "docs/course/production/02-modes-positions/assistant-prompt.md",
@@ -502,7 +506,7 @@
     },
     {
       "sourcePath": "docs/course/production/02-modes-positions/lesson.md",
-      "sha256": "523d0b2c37dcbaded4149cb6ac61626c66f248b784c71d20a0a813ba8bf475a8"
+      "sha256": "d9ac632fcc80b551d326ab2c832fbff284051d1a1ce539cd6402c86d4cdf3477"
     },
     {
       "sourcePath": "docs/course/production/02-modes-positions/notebooklm/AI_FABRIC_MODES_POSITIONS_ORCHESTRATION_POLICY_NOTEBOOKLM_SCRIPT.md",
@@ -510,7 +514,7 @@
     },
     {
       "sourcePath": "docs/course/production/02-modes-positions/notebooklm/source-manifest.yml",
-      "sha256": "3054a184f599f0bdbd048ae730aca1535b395523e445d891166f35d648347830"
+      "sha256": "8b96b20477d8c0dc27621206d8395799a93a9aa8628fb06e98f7d5980c38b6e6"
     },
     {
       "sourcePath": "docs/course/production/03-prompt-overlays/assistant-prompt.md",
@@ -526,7 +530,7 @@
     },
     {
       "sourcePath": "docs/course/production/03-prompt-overlays/lesson.md",
-      "sha256": "1488e3f2269651db94197eb380279a18dfaf00a2dd1f43d7bb0f67ad46985bb0"
+      "sha256": "4cf559eac4bd4a5700cc0754a876939431ff1aff8886561ca1d1b48e6302f90f"
     },
     {
       "sourcePath": "docs/course/production/03-prompt-overlays/notebooklm/AI_FABRIC_PROMPT_BUNDLES_CURATED_OVERLAYS_NOTEBOOKLM_SCRIPT.md",
@@ -534,7 +538,7 @@
     },
     {
       "sourcePath": "docs/course/production/03-prompt-overlays/notebooklm/source-manifest.yml",
-      "sha256": "ca224f8e4fce10d94de8cdfc9429255ca9390811a314a1994d9fd5be7a2c667f"
+      "sha256": "20ef10066d849a3928005a4b1e15ed11c24eea086bf0aa43191ca4e1573afe17"
     },
     {
       "sourcePath": "docs/course/production/04-migration-backfill/assistant-prompt.md",
@@ -550,7 +554,7 @@
     },
     {
       "sourcePath": "docs/course/production/04-migration-backfill/lesson.md",
-      "sha256": "373b856a335ab5ea8ff1689aa6dc08734b35ab57e7597331077e06b876851865"
+      "sha256": "0b06a579ff0314280082a3dcf5790896a8422f00276398f1f04f97fb39e3ab80"
     },
     {
       "sourcePath": "docs/course/production/04-migration-backfill/notebooklm/AI_FABRIC_STATE_STORAGE_MAP_NOTEBOOKLM_SCRIPT.md",
@@ -558,7 +562,7 @@
     },
     {
       "sourcePath": "docs/course/production/04-migration-backfill/notebooklm/source-manifest.yml",
-      "sha256": "248ab5296862f7064b0ef33fc7701b2f58d07b3b83de1c6a860be8ec943113de"
+      "sha256": "1d81c1a87fd5417baa2d773b551d6ffd3ebf4d3c2de65ef2a18210e87c4e9ecd"
     },
     {
       "sourcePath": "docs/course/production/05-live-data-sync/assistant-prompt.md",
@@ -574,7 +578,7 @@
     },
     {
       "sourcePath": "docs/course/production/05-live-data-sync/lesson.md",
-      "sha256": "d6ce060dfd085b6a746d4dc9b2f00be57b33799ecfcd0266140cbcd5c837938c"
+      "sha256": "b15aeb28fcd91cbcb36a297205c88dcdf83e4d907e295c8f07bc94027eea37e2"
     },
     {
       "sourcePath": "docs/course/production/05-live-data-sync/notebooklm/AI_FABRIC_MIGRATION_BACKFILL_LIVE_SYNC_NOTEBOOKLM_SCRIPT.md",
@@ -582,7 +586,7 @@
     },
     {
       "sourcePath": "docs/course/production/05-live-data-sync/notebooklm/source-manifest.yml",
-      "sha256": "58c41e664d3d2ca861ee529fd13813b39ff48064ec026c0262c34101bbd49747"
+      "sha256": "dcf2c655d799e3865394ed7d95023bdf2418629e0310d09e2c08c0b2b9640082"
     },
     {
       "sourcePath": "docs/course/production/06-rag-quality/assistant-prompt.md",
@@ -598,7 +602,7 @@
     },
     {
       "sourcePath": "docs/course/production/06-rag-quality/lesson.md",
-      "sha256": "06dbe3066b14e383f8b6a720da58901f5cced008082e3e747deeb30d0d5f6230"
+      "sha256": "93999e4ed8251bd4b567ca95ac662e639c9fb75409302ec9998ace5fa94928a6"
     },
     {
       "sourcePath": "docs/course/production/06-rag-quality/notebooklm/AI_FABRIC_RAG_QUALITY_PROMPT_REGRESSION_NOTEBOOKLM_SCRIPT.md",
@@ -606,7 +610,7 @@
     },
     {
       "sourcePath": "docs/course/production/06-rag-quality/notebooklm/source-manifest.yml",
-      "sha256": "1b0c205d76c7f91e153672787edc0892e56f7edfc98342f2ea5d16582306f31d"
+      "sha256": "82f40358cb7640d7feef301c0d3bf99252715a789bf4620567398f2479c8413d"
     },
     {
       "sourcePath": "docs/course/production/07-qdrant/assistant-prompt.md",
@@ -622,7 +626,7 @@
     },
     {
       "sourcePath": "docs/course/production/07-qdrant/lesson.md",
-      "sha256": "8fe11d8e7fd52ebd3c4d749f4a3df6bc0171ad016f76870a5227ba6224ca557c"
+      "sha256": "a9f2f296aeed59f7891d816ea20141c186e07e0ec39f71bca0005c43b4df298e"
     },
     {
       "sourcePath": "docs/course/production/07-qdrant/notebooklm/AI_FABRIC_MANAGED_VECTOR_PROVIDER_QDRANT_NOTEBOOKLM_SCRIPT.md",
@@ -630,7 +634,7 @@
     },
     {
       "sourcePath": "docs/course/production/07-qdrant/notebooklm/source-manifest.yml",
-      "sha256": "bf1c858c645461a28cbda84d1bb87b3a7d30a2933630a19276e6fd588bcb85a9"
+      "sha256": "c5bfb7497d9c82746a23e878b0b79215c31b8b94d25c5cc912a68e91c0b4a0c6"
     },
     {
       "sourcePath": "docs/course/production/08-production-ready/assistant-prompt.md",
@@ -646,7 +650,7 @@
     },
     {
       "sourcePath": "docs/course/production/08-production-ready/lesson.md",
-      "sha256": "7b1eba941c2e44bf1a4eae63f9a10c9f46d9a0f621f57f5f47bdf4a4d5a7b6f1"
+      "sha256": "9827fbbb55549b9c18c0c6adbefab2eaf666db23c1939f370b7719f755ff081b"
     },
     {
       "sourcePath": "docs/course/production/08-production-ready/notebooklm/AI_FABRIC_OPERATIONS_RELEASE_READINESS_NOTEBOOKLM_SCRIPT.md",
@@ -654,7 +658,7 @@
     },
     {
       "sourcePath": "docs/course/production/08-production-ready/notebooklm/source-manifest.yml",
-      "sha256": "1cabbc54313591ef92485b337177c4f779b88e358ec00efb4e232386e87b9ec8"
+      "sha256": "b9530ce8c9f1868d83626d85e78ad4d008231fdd42a6b76194ba7592c987e25a"
     },
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/assistant-prompt.md",
@@ -670,7 +674,7 @@
     },
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/lesson.md",
-      "sha256": "5217737b3715a1be19de197c09b42a2ce7f6044e8d3279a10e615298f313c7ac"
+      "sha256": "31b3805328437828da7e2eed514ea18ad915ca9528560a529717690800623cd9"
     },
     {
       "sourcePath": "docs/Framework-Dev-Guides/runtime-integration/SPRING_AI_PROVIDER_INTEGRATION_GUIDE.md",

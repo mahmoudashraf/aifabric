@@ -221,10 +221,10 @@
     "order": 2,
     "durationMinutes": 60,
     "availability": "published",
-    "courseVersion": "0.3.3-course.1-beta",
+    "courseVersion": "0.3.3-course.2-beta",
     "frameworkVersion": "0.3.3",
     "frameworkTag": "ai-fabric-framework-v0.3.3",
-    "courseSourceTag": "ai-fabric-course-v0.3.3.1",
+    "courseSourceTag": "ai-fabric-course-v0.3.3.2",
     "starterRef": "course-0.3.3-00-starter",
     "solutionRef": "course-0.3.3-01-first-search",
     "requiresOpenAi": false,
@@ -265,5 +265,5 @@
     "reviewPrompt": "# CORE-02 Independent Review Prompt\n\nStatus: Published for independently reviewing the CORE-02 checkpoint behavior.\n\nReview a developer's CORE-02 implementation against AI Fabric Framework 0.3.3, the current CORE-02\ncourse source, and the pinned Java APIs.\n\nUse a findings-first review. Order findings by severity and cite the changed file or test plus the\ncourse or pinned framework source that supports each finding. Do not accept method-call verification\nas vector-lifecycle proof.\n\nCheck for these failure classes:\n\n- the full domain entity, internal notes, or sensitive data entering the AI projection;\n- unstable entity IDs producing duplicate or stale vectors;\n- missing tenant, category, or publication metadata;\n- a database commit or indexing invocation presented as completed indexing;\n- search-before-index returning canned evidence or an invented answer;\n- updates that leave old content retrievable;\n- deletes that remove only the database row;\n- fixed similarity-score assertions with no provider/corpus justification;\n- embedding model or dimension changes using an incompatible existing index;\n- provider failures swallowed while readiness still reports success;\n- client-provided tenant metadata treated as trusted scope.\n\nThen report:\n\n1. findings with severity;\n2. missing proof or unexecuted checks;\n3. whether the projection is an explicit allowlist;\n4. whether identity and required metadata survive retrieval;\n5. whether create, update, search, and delete are proven against vector state;\n6. whether the intentional metadata failure fails for the correct reason;\n7. the smallest corrections required to pass CORE-02.\n\nThe lesson passes only when stored and retrieved evidence, not logs or controller status, proves the\ncomplete lifecycle.\n"
   },
   "sourcePath": "docs/course/core/02-model-and-index-data/lesson.md",
-  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/ai-fabric-course-v0.3.3.1/docs/course/core/02-model-and-index-data/lesson.md"
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/ai-fabric-course-v0.3.3.2/docs/course/core/02-model-and-index-data/lesson.md"
 }

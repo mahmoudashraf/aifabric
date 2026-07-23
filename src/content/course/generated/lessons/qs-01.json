@@ -115,10 +115,10 @@
     "order": 1,
     "durationMinutes": 75,
     "availability": "published",
-    "courseVersion": "0.3.3-course.1-beta",
+    "courseVersion": "0.3.3-course.2-beta",
     "frameworkVersion": "0.3.3",
     "frameworkTag": "ai-fabric-framework-v0.3.3",
-    "courseSourceTag": "ai-fabric-course-v0.3.3.1",
+    "courseSourceTag": "ai-fabric-course-v0.3.3.2",
     "starterRef": "course-0.3.3-00-starter",
     "solutionRef": "course-0.3.3-01-first-search",
     "requiresOpenAi": false,
@@ -151,5 +151,5 @@
     "reviewPrompt": "# QS-01 Independent Review Prompt\n\nStatus: Published for independently reviewing the QS-01 checkpoint behavior.\n\n```text\nReview the QS-01 implementation as potentially incomplete or unsafe.\n\nUse AI Fabric 0.3.3 / ai-fabric-framework-v0.3.3, Java 21, Spring Boot 4.1.x, the QS-01 lesson, and\ncurrent framework source/docs as evidence.\n\n1. Inspect the actual diff and repository; do not trust the implementation report.\n2. Verify the app owns support article lifecycle and approved metadata.\n3. Verify AI Fabric APIs and dependencies exist in the pinned release.\n4. Verify local ONNX and Lucene are the effective providers and no cloud call occurs.\n5. Run the declared tests without -DskipTests.\n6. Reproduce search before indexing and prove no canned answer hides missing evidence.\n7. Index, repeat the paraphrased query, and verify the expected ID and metadata.\n8. Identify unrelated changes, hidden fallbacks, weak tests, or unverified claims.\n\nReport findings first, ordered by severity with file/line references. Then list commands and results,\nunverified checks, and a concise request/data-flow assessment. Do not edit unless explicitly asked.\n```\n"
   },
   "sourcePath": "docs/course/quickstart/01-first-useful-result/lesson.md",
-  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/ai-fabric-course-v0.3.3.1/docs/course/quickstart/01-first-useful-result/lesson.md"
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/ai-fabric-course-v0.3.3.2/docs/course/quickstart/01-first-useful-result/lesson.md"
 }
