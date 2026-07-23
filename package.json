@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
+    "@loom-ai-labs/ai-fabric-chat-ui": "github:Loom-AI-Labs/ai-fabric-chat-ui#6a0bb91",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
     "@radix-ui/react-aspect-ratio": "^1.1.7",

@@ -11,6 +11,7 @@ import {
   Layers,
   Lock,
   MessageSquare,
+  RefreshCw,
   Search,
   Shield,
   ShieldCheck,
@@ -55,6 +56,33 @@ const demos = [
     },
     accent: "border-blue-200 bg-blue-50 text-blue-700",
     link: AI_SHOPPING_EXPERIENCE_ROUTE,
+  },
+  {
+    id: "ai-fabric-live-data-sync",
+    title: "AI Fabric Live Data Sync",
+    description:
+      "Annotation-driven database-to-vector synchronization with editable products, policies, and support guides.",
+    icon: RefreshCw,
+    features: [
+      { icon: Database, label: "JPA Source Rows" },
+      { icon: RefreshCw, label: "Live Vector Sync" },
+      { icon: Search, label: "Evidence RAG" },
+      { icon: Bot, label: "Reusable Chat UI" },
+    ],
+    stats: [
+      { value: "3", label: "Entity types" },
+      { value: "Live", label: "Backend" },
+      { value: "0.3.3", label: "AI Fabric" },
+    ],
+    aboutLink: "/demos/ai-fabric-live-data-sync/about",
+    livePreview: {
+      eyebrow: "Annotated entity sync",
+      prompt: "Edit a product fact, ask the AI, delete a policy, then prove stale evidence is gone.",
+      proof: "Database and vector revisions stay aligned through create, update, and delete annotations.",
+      runtime: "OpenAI + AI Fabric indexing + Lucene + reusable Chat UI",
+    },
+    accent: "border-violet-200 bg-violet-50 text-violet-700",
+    link: "/demos/ai-fabric-live-data-sync",
   },
   {
     id: "ai-fabric-account-resolver",
@@ -180,14 +208,14 @@ const Demos = () => {
           >
             <Badge variant="secondary" className="mb-4">
               <Sparkles className="mr-1 h-3 w-3" />
-              Five deployed AI-enabled apps
+              Six AI-enabled demo apps
             </Badge>
             <h1 className="mb-4 text-4xl font-bold tracking-normal md:text-5xl">
               Live AI-enabled applications backed by Spring Boot
             </h1>
             <p className="mx-auto max-w-3xl text-lg leading-8 text-muted-foreground">
               Each deployed backend uses the AI Fabric enablement framework to add a different capability: RAG,
-              governed actions, memory, behavior analysis, tenant isolation, or PII protection.
+              live entity sync, governed actions, memory, behavior analysis, tenant isolation, or PII protection.
             </p>
           </motion.div>
         </section>
@@ -207,7 +235,7 @@ const Demos = () => {
             </div>
             <Badge variant="outline" className="w-fit gap-1 border-emerald-200 bg-emerald-50 text-emerald-700">
               <Database className="h-3.5 w-3.5" />
-              5 live backends
+              Backend-backed demos
             </Badge>
           </div>
 

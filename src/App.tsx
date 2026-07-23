@@ -17,6 +17,7 @@ import BootcampRoutes from "./pages/bootcamps/BootcampRoutes";
 import AIFabricAccountResolver from "./pages/demos/AIFabricAccountResolver";
 import AIFabricAgenticUI from "./pages/demos/AIFabricAgenticUI";
 import AIFabricBehaviorSignals from "./pages/demos/AIFabricBehaviorSignals";
+import AIFabricLiveDataSync from "./pages/demos/AIFabricLiveDataSync";
 import AIFabricPrivacyShield from "./pages/demos/AIFabricPrivacyShield";
 import AIFabricTenantGuard from "./pages/demos/AIFabricTenantGuard";
 import DemoAboutPage from "./pages/demos/DemoAboutPage";
@@ -417,6 +418,20 @@ const App = () => (
                     <AIFabricPrivacyShield />
                   </DemoVideoIntro>
                 }
+              />
+              <Route
+                path="/demos/ai-fabric-live-data-sync/about"
+                element={
+                  <DemoAboutPage
+                    architecture={demoBackendArchitectures.liveDataSync}
+                    demoLabel="AI Fabric Live Data Sync"
+                    demoPath="/demos/ai-fabric-live-data-sync"
+                  />
+                }
+              />
+              <Route
+                path="/demos/ai-fabric-live-data-sync"
+                element={<AIFabricLiveDataSync />}
               />
               <Route
                 path="/demos/ai-fabric-tenant-guard/about"
