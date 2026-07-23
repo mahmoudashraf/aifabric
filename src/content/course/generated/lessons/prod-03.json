@@ -152,7 +152,9 @@
   "assistantPrompt": "production/03-prompt-overlays/assistant-prompt.md",
   "assistantReviewPrompt": "production/03-prompt-overlays/assistant-review-prompt.md",
   "notebookSourceManifest": "production/03-prompt-overlays/notebooklm/source-manifest.yml",
-  "theoryVideoIds": [],
+  "theoryVideoIds": [
+    "prompt-bundles-curated-overlays"
+  ],
   "relatedStories": [],
   "relatedDemos": [],
   "track": "production",
@@ -183,7 +185,9 @@
       "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/prompt/ClasspathPromptTemplateStore.java",
       "ai-infrastructure-module/curated/ai-fabric-curated-support/src/main/resources/prompts/rag/generation/v1-support/answer.md"
     ],
-    "theoryVideoIds": [],
+    "theoryVideoIds": [
+      "prompt-bundles-curated-overlays"
+    ],
     "assistant": {
       "mode": "implement",
       "implementationPrompt": "assistant-prompt.md",
@@ -196,13 +200,13 @@
       "passingScorePercent": 80
     },
     "video": {
-      "status": "script-ready",
+      "status": "published",
       "generator": "NotebookLM",
       "purpose": "pre-lesson-theory",
       "placement": "before-lab",
       "targetDurationMinutes": 10,
       "title": "Prompt Bundles, Curated Packs, And Application Overlays",
-      "publicUrl": null,
+      "publicUrl": "https://www.youtube.com/watch?v=bvKibVVbPcA",
       "transcript": "notebooklm/AI_FABRIC_PROMPT_BUNDLES_CURATED_OVERLAYS_NOTEBOOKLM_SCRIPT.md",
       "sourceManifest": "notebooklm/source-manifest.yml"
     }
@@ -215,16 +219,16 @@
     "reviewPrompt": "# Independent Review Prompt: PROD-03 Prompt Overlays\n\nReview `course-0.3.3-p02-modes-positions..course-0.3.3-p03-prompt-overlays`.\n\nLead with findings. Verify ordered overlay resolution, complete-template semantics, required\nplaceholders, narrow application ownership, curated/base fallback, packaged resources, safe version-\nonly diagnostics, and deterministic regression tests. Confirm authorization remains in modes,\ntrusted context, action policy, validation, and confirmation. Require full and packaged gates.\n"
   },
   "video": {
-    "status": "script-ready",
+    "status": "published",
     "generator": "NotebookLM",
     "purpose": "pre-lesson-theory",
     "placement": "before-lab",
     "targetDurationMinutes": 10,
     "title": "Prompt Bundles, Curated Packs, And Application Overlays",
-    "publicUrl": null,
+    "publicUrl": "https://www.youtube.com/watch?v=bvKibVVbPcA",
     "transcript": "# NotebookLM Video Script: Prompt Bundles, Curated Packs, And Application Overlays\n\n## Production Instruction\n\nProduce a ten-minute technical video for Java developers. Explain AI Fabric prompt architecture from\nthis script only. Keep the application example central.\n\n## Opening\n\nPrompts in a production framework need two properties that are often in tension. Framework defaults\nmust improve centrally, while an application must own its domain language and special follow-up\nbehavior. Copying every prompt into every Spring Boot app destroys the first property. Editing prompts\ninside a dependency destroys the second.\n\nAI Fabric uses versioned classpath prompt bundles and ordered overlays.\n\n## The Resource Key\n\nEvery prompt has a family, version, and name and is stored as:\n\n```text\nprompts/<family>/<version>/<name>.md\n```\n\nFor the Support Knowledge Assistant, resolution tries `v1-course-support`, then `v1-support`, then\nthe framework base `v1`. The first existing complete template wins.\n\nEmphasize that this is whole-template selection, not a Markdown patch. The application should add\nonly keys whose complete behavior it genuinely owns.\n\n## Curated Packs\n\nThe curated support module supplies coherent support defaults: support-safe intent handling and\nevidence-grounded answer behavior. The application overlay adds only its delta, including recent-\nturn follow-up rules and a stricter answer projection. An untouched action-selection template still\ncomes from `v1`.\n\nDescribe this diagram:\n\n```text\napplication JAR: v1-course-support\n             |\ncurated support JAR: v1-support\n             |\nframework core JAR: v1\n             |\nPromptTemplateResolver -> one resolved template\n```\n\n## Prompt Versus Policy\n\nPrompt rules guide probabilistic output. They may tell a model to use recent conversation, avoid\noutside facts, or emit structured JSON. They cannot authorize a write, grant tenant access, validate\nparameters, or consume confirmation. Those controls remain in modes, authenticated context, access\npolicy, typed action schemas, and execution services.\n\n## Regression Proof\n\nDo not assert exact generated prose. Assert deterministic properties: candidate order, resolved\nversion, required placeholders, critical safety rules, fallback for untouched keys, classpath\npackaging, and absence of prompt bodies from public diagnostics.\n\nAn optional real-provider run can reveal model behavior changes, but it is observation rather than\nthe release contract.\n\n## Incorrect Architecture\n\nOne incorrect design copies every framework prompt and edits one line. The app is then stranded on\nold defaults. Another places security solely in prompt prose. A third exposes full prompts through a\nhealth endpoint. All three confuse ownership or disclose unnecessary internals.\n\n## Visible Failure\n\nIf an expected application template is renamed, resolution falls back to the curated support\nversion. The app still starts, but the regression test fails because the effective contract changed.\nIf no candidate exists, resolution fails clearly rather than inventing a template.\n\n## Lab Bridge\n\nIn PROD-03 you will add the application answer template, test overlay-first and base-fallback\nresolution, prove the resource is in the packaged JAR, and expose only safe version diagnostics.\nThe following lesson then applies the same ownership discipline to application data and vector\nevidence during migration.\n",
     "sourceManifest": "notebooklm/source-manifest.yml",
-    "notebookStatus": "script-ready",
+    "notebookStatus": "published",
     "reviewedAt": null,
     "reviewedBy": null
   },

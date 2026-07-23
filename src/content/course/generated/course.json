@@ -237,7 +237,9 @@
           "assistantPrompt": "production/03-prompt-overlays/assistant-prompt.md",
           "assistantReviewPrompt": "production/03-prompt-overlays/assistant-review-prompt.md",
           "notebookSourceManifest": "production/03-prompt-overlays/notebooklm/source-manifest.yml",
-          "theoryVideoIds": [],
+          "theoryVideoIds": [
+            "prompt-bundles-curated-overlays"
+          ],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/production/prompt-overlays"
@@ -292,7 +294,9 @@
           "assistantPrompt": "production/06-rag-quality/assistant-prompt.md",
           "assistantReviewPrompt": "production/06-rag-quality/assistant-review-prompt.md",
           "notebookSourceManifest": "production/06-rag-quality/notebooklm/source-manifest.yml",
-          "theoryVideoIds": [],
+          "theoryVideoIds": [
+            "rag-quality-prompt-regression"
+          ],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/production/rag-quality"
@@ -309,7 +313,9 @@
           "assistantPrompt": "production/07-qdrant/assistant-prompt.md",
           "assistantReviewPrompt": "production/07-qdrant/assistant-review-prompt.md",
           "notebookSourceManifest": "production/07-qdrant/notebooklm/source-manifest.yml",
-          "theoryVideoIds": [],
+          "theoryVideoIds": [
+            "managed-vector-provider-qdrant"
+          ],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/production/qdrant"
@@ -326,7 +332,9 @@
           "assistantPrompt": "production/08-production-ready/assistant-prompt.md",
           "assistantReviewPrompt": "production/08-production-ready/assistant-review-prompt.md",
           "notebookSourceManifest": "production/08-production-ready/notebooklm/source-manifest.yml",
-          "theoryVideoIds": [],
+          "theoryVideoIds": [
+            "operations-release-readiness"
+          ],
           "relatedStories": [],
           "relatedDemos": [],
           "route": "/course/production/production-ready"
@@ -434,6 +442,6 @@
       ]
     }
   ],
-  "sourceCommit": "0031d1ec75b8ac97514ae0e9e2df7b48c119e9a8",
-  "generatedAt": "2026-07-23T01:04:57.198Z"
+  "sourceCommit": "13ee2280f8ac93e5257c9f281480331f3ef30fe7",
+  "generatedAt": "2026-07-23T01:27:21.469Z"
 }

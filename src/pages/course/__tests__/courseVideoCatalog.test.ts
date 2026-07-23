@@ -20,8 +20,12 @@ describe("course video catalog", () => {
     "testing-and-shipping": "W_mlsCxAePs",
     "provider-architecture-purpose-routing": "2lRTNp63NNI",
     "modes-positions-orchestration-policy": "G0WvJ1PQj0s",
+    "prompt-bundles-curated-overlays": "bvKibVVbPcA",
     "state-storage-map": "epjF29WfEUM",
     "live-data-sync": "wZ5e0MPSXRI",
+    "rag-quality-prompt-regression": "bSyMDQORJOY",
+    "managed-vector-provider-qdrant": "TCgEbDsUzic",
+    "operations-release-readiness": "MrvMGlUN0fs",
   };
 
   it("maps every published English theory video exactly once", () => {
@@ -75,8 +79,12 @@ describe("course video catalog", () => {
       .toEqual([
         { id: "provider-architecture-purpose-routing", duration: "6 min 55 sec" },
         { id: "modes-positions-orchestration-policy", duration: "8 min 7 sec" },
+        { id: "prompt-bundles-curated-overlays", duration: "7 min 22 sec" },
         { id: "state-storage-map", duration: "8 min 2 sec" },
         { id: "live-data-sync", duration: "7 min 39 sec" },
+        { id: "rag-quality-prompt-regression", duration: "9 min 46 sec" },
+        { id: "managed-vector-provider-qdrant", duration: "10 min 2 sec" },
+        { id: "operations-release-readiness", duration: "7 min 49 sec" },
       ]);
   });
 });

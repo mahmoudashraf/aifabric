@@ -117,12 +117,19 @@ describe("generated course catalog", () => {
     expect(releaseLesson?.markdown).toContain("## Step 9: Prove Missing Required Credentials Fail");
 
     expect(getRenderedLesson("prod-02")?.theoryVideoIds).toEqual(["modes-positions-orchestration-policy"]);
+    expect(getRenderedLesson("prod-03")?.theoryVideoIds).toEqual(["prompt-bundles-curated-overlays"]);
     expect(getRenderedLesson("prod-04")?.theoryVideoIds).toEqual(["state-storage-map"]);
     expect(getRenderedLesson("prod-05")?.theoryVideoIds).toEqual(["live-data-sync"]);
-    expect(getRenderedLesson("prod-03")?.theoryVideoIds).toEqual([]);
-    expect(getRenderedLesson("prod-06")?.theoryVideoIds).toEqual([]);
-    expect(getRenderedLesson("prod-07")?.theoryVideoIds).toEqual([]);
-    expect(getRenderedLesson("prod-08")?.theoryVideoIds).toEqual([]);
+    expect(getRenderedLesson("prod-06")?.theoryVideoIds).toEqual(["rag-quality-prompt-regression"]);
+    expect(getRenderedLesson("prod-07")?.theoryVideoIds).toEqual(["managed-vector-provider-qdrant"]);
+    expect(getRenderedLesson("prod-08")?.theoryVideoIds).toEqual(["operations-release-readiness"]);
+
+    for (const summary of production?.lessons ?? []) {
+      const rendered = getRenderedLesson(summary.id);
+      expect(rendered?.theoryVideoIds).toHaveLength(1);
+      expect(rendered?.video?.status).toBe("published");
+      expect(rendered?.video?.publicUrl).toMatch(/^https:\/\/www\.youtube\.com\/watch\?v=[A-Za-z0-9_-]{11}$/);
+    }
   });
 
   it("keeps QS-01 action-first and hands architecture teaching to the Core track", () => {

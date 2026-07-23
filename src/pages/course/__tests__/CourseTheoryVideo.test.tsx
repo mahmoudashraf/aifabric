@@ -63,9 +63,18 @@ describe("CourseTheoryVideo", () => {
     expect(screen.getByText(/the arabic recording for this topic is not available yet/i)).toBeInTheDocument();
   });
 
-  it("renders the published provider-routing recording inside PROD-01", () => {
-    const lesson = getRenderedLesson("prod-01");
-    if (!lesson) throw new Error("PROD-01 generated lesson is missing");
+  it.each([
+    ["prod-01", "Provider architecture and purpose routing", "2lRTNp63NNI"],
+    ["prod-02", "Modes, positions, and orchestration policy", "G0WvJ1PQj0s"],
+    ["prod-03", "Prompt bundles, curated packs, and application overlays", "bvKibVVbPcA"],
+    ["prod-04", "State and storage in an AI Fabric application", "epjF29WfEUM"],
+    ["prod-05", "Keep AI evidence synchronized", "wZ5e0MPSXRI"],
+    ["prod-06", "RAG quality and prompt regression", "bSyMDQORJOY"],
+    ["prod-07", "Managed vector providers and Qdrant lifecycle", "TCgEbDsUzic"],
+    ["prod-08", "Operations and release readiness", "MrvMGlUN0fs"],
+  ])("renders the published recording assigned to %s", (lessonId, videoTitle, videoId) => {
+    const lesson = getRenderedLesson(lessonId);
+    if (!lesson) throw new Error(`${lessonId} generated lesson is missing`);
 
     render(
       <CourseTheoryVideo
@@ -75,7 +84,7 @@ describe("CourseTheoryVideo", () => {
       />,
     );
 
-    expect(screen.getByTitle("Provider architecture and purpose routing lesson video in English"))
-      .toHaveAttribute("src", expect.stringContaining("2lRTNp63NNI"));
+    expect(screen.getByTitle(`${videoTitle} lesson video in English`))
+      .toHaveAttribute("src", expect.stringContaining(videoId));
   });
 });

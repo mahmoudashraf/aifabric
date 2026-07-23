@@ -172,7 +172,9 @@
   "assistantPrompt": "production/08-production-ready/assistant-prompt.md",
   "assistantReviewPrompt": "production/08-production-ready/assistant-review-prompt.md",
   "notebookSourceManifest": "production/08-production-ready/notebooklm/source-manifest.yml",
-  "theoryVideoIds": [],
+  "theoryVideoIds": [
+    "operations-release-readiness"
+  ],
   "relatedStories": [],
   "relatedDemos": [],
   "track": "production",
@@ -202,7 +204,9 @@
       "ai-infrastructure-module/ai-fabric-migration/src/main/java/ai/fabric/migration/repository/MigrationJobRepository.java",
       "ai-infrastructure-module/ai-fabric-indexing/src/main/java/ai/fabric/repository/IndexingQueueRepository.java"
     ],
-    "theoryVideoIds": [],
+    "theoryVideoIds": [
+      "operations-release-readiness"
+    ],
     "assistant": {
       "mode": "implement",
       "implementationPrompt": "assistant-prompt.md",
@@ -215,13 +219,13 @@
       "passingScorePercent": 80
     },
     "video": {
-      "status": "script-ready",
+      "status": "published",
       "generator": "NotebookLM",
       "purpose": "pre-lesson-theory",
       "placement": "before-lab",
       "targetDurationMinutes": 10,
       "title": "Proving The Exact Release Artifact",
-      "publicUrl": null,
+      "publicUrl": "https://www.youtube.com/watch?v=MrvMGlUN0fs",
       "transcript": "notebooklm/AI_FABRIC_OPERATIONS_RELEASE_READINESS_NOTEBOOKLM_SCRIPT.md",
       "sourceManifest": "notebooklm/source-manifest.yml"
     }
@@ -234,16 +238,16 @@
     "reviewPrompt": "# Independent Review Prompt: PROD-08\n\nReview the PROD-08 checkpoint findings-first.\n\nVerify:\n\n- all previous course behavior still passes;\n- the Docker build runs tests and the runtime image is non-root;\n- image revision, API commit, and checked-out commit match;\n- `.git` and credentials are absent from the image and reports;\n- database, vector, session, indexing, migration, and provider readiness are independent;\n- disabled optional generation is not misreported as a failure or a live-provider pass;\n- the application database, Qdrant evidence, backend chat, migration, and indexing state survive an\n  application-only restart without reseeding;\n- the quality scorecard passes after restart;\n- release-probe text states that no model ran;\n- cleanup requires admin scope and explicit enablement;\n- retention removes only eligible operational rows/sessions and preserves source rows/vectors;\n- selected OpenAI without a key fails startup with the validator error and no fallback;\n- optional keyed evidence is `PASS`, `FAIL`, or `NOT_RUN` in a separate artifact;\n- scripts clean up containers, networks, volumes, and images on failure;\n- CI retains exact-commit reports.\n\nRun the clean Java suite, packaged Lucene smoke, Docker Qdrant smoke, and release-container smoke.\nCite file/line and JSON evidence for every finding. Do not approve from Actuator health alone.\n"
   },
   "video": {
-    "status": "script-ready",
+    "status": "published",
     "generator": "NotebookLM",
     "purpose": "pre-lesson-theory",
     "placement": "before-lab",
     "targetDurationMinutes": 10,
     "title": "Proving The Exact Release Artifact",
-    "publicUrl": null,
+    "publicUrl": "https://www.youtube.com/watch?v=MrvMGlUN0fs",
     "transcript": "# NotebookLM Video Script: Operations And Release Readiness\n\n## Production Instruction\n\nProduce a ten-minute technical video for Java and Spring Boot developers. Use only this script.\nKeep AI Fabric and the Support Knowledge Assistant central. Explain exact-artifact identity,\nindependent dependency readiness, durable state ownership, restart proof, bounded retention,\ncredential validation, and separate keyless versus live-provider evidence.\n\n## Opening\n\nPassing unit tests is not the same as proving a release. A Spring Boot process can start with the\nwrong commit, an unreachable vector provider, volatile conversation memory, stalled indexing work,\nor an accidentally disabled generation provider.\n\nA production-ready AI Fabric application needs evidence about the exact artifact being deployed,\nthe dependencies it actually selected, the state that survives restart, the data cleanup is allowed\nto remove, and the credentials required by enabled providers.\n\n## Release Evidence Flow\n\nDescribe this diagram:\n\n```text\nexact Git commit\n       |\n       v\ncontainer build -> tests run normally -> source metadata embedded\n       |\n       v\nnon-root runtime artifact\n       |\n       v\nprocess health + independent application readiness\n       |\n       v\nseed, migrate, index, store conversation probe\n       |\n       v\nrestart the same artifact\n       |\n       v\nverify source, vectors, sessions, jobs, and revision\n       |\n       v\nbounded cleanup and failure probes\n       |\n       v\nmachine-readable release evidence\n```\n\nEvery step must describe what was actually exercised. A skipped live-provider test is `NOT_RUN`,\nnot a pass.\n\n## Exact Artifact Identity\n\nThe container build receives the source commit, source branch, and build time explicitly. The build\ndoes not copy `.git` into the image. The OCI image revision and the application's safe health output\nreport the same commit.\n\nThe Docker build runs the normal test suite. It does not use `-DskipTests`. A multi-stage build\nplaces only the packaged JAR and required runtime model assets in the final image, which runs as a\ndedicated non-root user.\n\nDeployment evidence must compare the expected Git commit, image revision, and runtime health\ncommit. A mutable branch name alone is not deployment identity.\n\n## Health And Readiness Are Different\n\nActuator health answers whether the process is alive. Application readiness should report each\nrequired dependency independently:\n\n```text\nbuild identity\napplication database\nvector provider\nchat-session storage\nindexing queue\nmigration jobs\ngeneration provider\n```\n\nOne failing dependency must not erase diagnostics for the others. Readiness can expose safe counts,\nprovider names, transport, storage implementation, and source revision. It must not expose API\nkeys, passwords, raw prompts, PII, or full provider exceptions.\n\nAn optional disabled generation provider is not the same as a failed required provider. In the\nkeyless release profile, generation is explicitly disabled and reported as optional. If OpenAI is\nselected and generation is enabled, its credential and model configuration become required.\n\n## State Ownership Map\n\nClassify state before writing restart or cleanup tests:\n\n```text\napplication source rows       durable and application-owned\nvector evidence               durable provider state, derived and rebuildable\nchat sessions and turns       durable AI workflow state\npending actions or drafts     durable workflow state with expiry rules\nmigration jobs                durable operational state\nindexing queue entries        durable retry and failure state\nprompt resources              versioned application artifacts\ncaches and diagnostics        ephemeral and rebuildable\nprovider credentials          external secret-store state\n```\n\nThis classification determines what restart must preserve and what retention may delete.\n\n## Restart Proof\n\nBefore restart, seed application data, migrate and index evidence, and store a backend-owned chat\nturn. Record readiness and counts. Stop and restart the same container configuration while retaining\ndatabase and Qdrant volumes.\n\nAfter restart, prove:\n\n- runtime commit and image revision are unchanged;\n- source rows are still present;\n- expected vectors are still retrievable;\n- the conversation and its turn remain;\n- migration and indexing state are readable;\n- the quality scorecard still passes.\n\nRestart proof should exercise actual persisted state, not reseed everything before checking.\n\n## Bounded Retention\n\nRetention is not a general reset button. It may delete expired course chat sessions and completed\nmigration or indexing records older than configured cutoffs. It must preserve application source\nrows. Routine operational cleanup in this checkpoint also preserves reusable vector evidence;\nreindex and vector replacement are separate procedures.\n\nThe cleanup response reports before, removed, and after counts for each eligible category, plus\nproof that source and vector counts remain unchanged. Maintenance endpoints stay behind an\napplication-owned admin boundary and can be disabled by configuration.\n\n## Provider Credential Validation\n\nAI Fabric validates selected provider configuration during startup. When generation is disabled,\nLLM validation is skipped deliberately. When OpenAI is selected for enabled generation, missing API\nkey, base URL, or required model configuration makes startup fail.\n\nThis fail-fast behavior prevents a deployment from looking healthy until the first user request.\nThe public result should show a safe validation failure, while secrets remain outside logs and\nevidence artifacts.\n\n## Keyless And Keyed Evidence\n\nThe required release gate uses local ONNX embeddings, Docker Qdrant, and the application database.\nIt proves the full persistence and operational contract without a hosted-provider key.\n\nAn optional OpenAI smoke is a separate command and a separately named evidence file. When no key is\nprovided, it records `NOT_RUN` and the reason. It must not reuse a keyless success result or hide a\nprovider failure behind deterministic output.\n\n## Visible Failure\n\nRelease probes should include at least these failures:\n\n- selected OpenAI generation with no credential fails startup;\n- unreachable vector storage reports a vector dependency failure;\n- retention cannot remove source-of-truth records;\n- runtime commit mismatch fails deployment proof;\n- a disabled optional provider remains clearly labelled disabled rather than tested.\n\nNo fallback should make these cases look successful.\n\n## Incorrect Architecture\n\nAn incorrect release process runs unit tests on one commit, builds a container from another, checks\nonly `/actuator/health`, and calls the deployment ready. Another cleanup job deletes all vectors and\nsource rows together because they are treated as one cache. A third process marks OpenAI passed when\nno key was supplied.\n\nThe correct process ties evidence to the exact artifact, separates component readiness, respects\nstate ownership, and names every unexecuted optional gate honestly.\n\n## Lab Bridge\n\nIn PROD-08, you will build a source-labelled non-root image, expose independent operations\nreadiness, run Docker Qdrant and durable application storage, create a non-LLM persistence probe,\nrestart the stack, verify retained state, run bounded cleanup, and prove selected OpenAI generation\nfails without its required credential. The resulting JSON summary records the checkpoint and exact\ncommit.\n\n## Closing\n\nRelease readiness is evidence, not optimism. AI Fabric applications become operable when artifact\nidentity, provider posture, durable workflow state, cleanup ownership, and failure behavior are all\nvisible and testable before users depend on them.\n",
     "sourceManifest": "notebooklm/source-manifest.yml",
-    "notebookStatus": "script-ready",
+    "notebookStatus": "published",
     "reviewedAt": null,
     "reviewedBy": null
   },

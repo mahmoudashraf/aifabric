@@ -156,7 +156,9 @@
   "assistantPrompt": "production/06-rag-quality/assistant-prompt.md",
   "assistantReviewPrompt": "production/06-rag-quality/assistant-review-prompt.md",
   "notebookSourceManifest": "production/06-rag-quality/notebooklm/source-manifest.yml",
-  "theoryVideoIds": [],
+  "theoryVideoIds": [
+    "rag-quality-prompt-regression"
+  ],
   "relatedStories": [],
   "relatedDemos": [],
   "track": "production",
@@ -185,7 +187,9 @@
       "ai-infrastructure-module/ai-fabric-rag/src/main/java/ai/fabric/rag/evaluation/springai/SpringAiRagEvaluationService.java",
       "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/prompt/PromptTemplateResolver.java"
     ],
-    "theoryVideoIds": [],
+    "theoryVideoIds": [
+      "rag-quality-prompt-regression"
+    ],
     "assistant": {
       "mode": "implement",
       "implementationPrompt": "assistant-prompt.md",
@@ -198,13 +202,13 @@
       "passingScorePercent": 80
     },
     "video": {
-      "status": "script-ready",
+      "status": "published",
       "generator": "NotebookLM",
       "purpose": "pre-lesson-theory",
       "placement": "before-lab",
       "targetDurationMinutes": 10,
       "title": "Measuring RAG Quality Before Generation",
-      "publicUrl": null,
+      "publicUrl": "https://www.youtube.com/watch?v=bSyMDQORJOY",
       "transcript": "notebooklm/AI_FABRIC_RAG_QUALITY_PROMPT_REGRESSION_NOTEBOOKLM_SCRIPT.md",
       "sourceManifest": "notebooklm/source-manifest.yml"
     }
@@ -217,16 +221,16 @@
     "reviewPrompt": "# Independent Review Prompt: PROD-06\n\nReview the PROD-06 checkpoint findings-first.\n\nVerify:\n\n- golden cases use the real application retrieval path;\n- the request cannot select or forge a tenant;\n- both tenants have positive and forbidden-ID proof;\n- empty-index and missing-expected-source cases are distinct;\n- freshness checks can catch both missing new content and returned old content;\n- scorecard HTTP success is not mistaken for `passed=true`;\n- prompt tests check resolution and slots without freezing answer prose or exposing prompt bodies;\n- retrieval/provider failures return no canned answer;\n- keyless tests and packaged ONNX/Lucene smoke are blocking;\n- optional OpenAI evidence is separate and honestly labelled;\n- no secret, raw internal note, tenant metadata, or provider detail leaks publicly.\n\nRun `./mvnw --batch-mode --no-transfer-progress clean verify`, then the packaged smoke. Report file\nand line references for every issue. Do not approve based only on unit tests or fluent model output.\n"
   },
   "video": {
-    "status": "script-ready",
+    "status": "published",
     "generator": "NotebookLM",
     "purpose": "pre-lesson-theory",
     "placement": "before-lab",
     "targetDurationMinutes": 10,
     "title": "Measuring RAG Quality Before Generation",
-    "publicUrl": null,
+    "publicUrl": "https://www.youtube.com/watch?v=bSyMDQORJOY",
     "transcript": "# NotebookLM Video Script: RAG Quality And Prompt Regression\n\n## Production Instruction\n\nProduce a ten-minute technical video for Java and Spring Boot developers. Use only this script.\nKeep AI Fabric and the continuing Support Knowledge Assistant central. Explain the architecture\nbefore the lab, distinguish deterministic release gates from optional model evaluation, and never\npresent fluent model prose as proof of retrieval quality.\n\n## Opening\n\nA RAG response can sound convincing while using the wrong document, stale content, another\ntenant's evidence, or no evidence at all. That is why production RAG quality cannot begin with the\nquestion, \"Did the answer sound good?\"\n\nIn AI Fabric, the release-blocking contract starts earlier. The application defines which evidence\nshould be retrievable, which evidence must never appear, which current source fragments must be\npresent, and which stale fragments must be absent. Model-generated wording and model-based\nevaluation are useful observations only after that deterministic contract passes.\n\n## The Quality Pipeline\n\nDescribe this diagram:\n\n```text\napplication source rows\n       |\n       v\nAI Fabric projection and vector evidence\n       |\n       v\nverified identity -> tenant and access filters\n       |\n       v\nretrieved evidence IDs, scores, content, and metadata\n       |\n       v\ndeterministic quality decision\n       |\n       +----> optional answer generation\n       |\n       +----> optional Spring AI relevancy or fact-check evaluation\n```\n\nThe deterministic decision is the required gate. Optional LLM generation and evaluator calls do\nnot repair missing, stale, forbidden, or cross-tenant evidence.\n\n## Golden Questions Are Application Contracts\n\nThe Support Knowledge Assistant owns a catalog of realistic questions. A case can declare:\n\n- a stable case identifier;\n- the authenticated tenant under which retrieval runs;\n- expected evidence IDs;\n- forbidden evidence IDs;\n- required fragments proving the latest source content;\n- forbidden fragments identifying stale content;\n- whether no evidence is the expected result.\n\nDo not store one expected answer paragraph and compare generated text character by character.\nDifferent models and prompt revisions can express the same grounded answer differently. Stable\nevidence identity and current source content are stronger release contracts.\n\n## Evaluate Retrieval Before Generation\n\nFor each golden case, run the same evidence service used by the application. Capture observed IDs\nand content, then calculate structured failures such as:\n\n```text\nEXPECTED_EVIDENCE_MISSING\nFORBIDDEN_EVIDENCE_RETURNED\nREQUIRED_CONTENT_MISSING\nSTALE_CONTENT_RETURNED\nUNEXPECTED_EVIDENCE_RETURNED\n```\n\nA failed quality case should still return a usable diagnostic result. It should not become a vague\nserver error, and it should not invoke an LLM to explain away the failure.\n\n## Empty Index Versus Insufficient Context\n\nThese states are different.\n\nAn empty index can be expected before migration or after an intentional reset. A quality case that\nexplicitly expects no evidence should pass only when retrieval returns none.\n\nInsufficient context occurs when the index is healthy but the expected source is absent. For\nexample, asking about an audit-retention policy when no approved audit-retention article exists\nmust produce a failed quality result. A general model answer about common retention practices would\nhide the missing application evidence and must not count as success.\n\n## Stale Evidence Detection\n\nSuppose the billing article changes from \"replace a payment method\" to \"download an invoice.\"\nData Sync updates the source projection under the same stable ID. The quality case then requires the\nnew phrase and forbids the old phrase.\n\nIf the new phrase is missing, synchronization did not reach the vector provider. If the old phrase\nis still returned, stale derived evidence remains. Both failures are actionable and independent of\nthe quality of generated prose.\n\n## Tenant And Access Safety\n\nRun equivalent questions for two tenants whose articles have distinct stable IDs. The authenticated\nprincipal determines tenant scope. The request does not submit a trusted tenant field.\n\nA passing case proves the expected tenant document is present and every cross-tenant or restricted\nID is absent. Similarity score alone never authorizes evidence. Retrieval filters and application\npost-hit access checks remain enforcement boundaries.\n\n## Prompt Regression Without Freezing Prose\n\nPrompt resources also need deterministic checks. AI Fabric's prompt resolver combines a base\nversion with ordered overlays. Tests should prove:\n\n- the intended bundle and overlay resolve;\n- omitted prompt keys inherit from the base bundle;\n- required template slots such as `{{query}}` and `{{context}}` remain;\n- diagnostics identify prompt versions without returning full prompt bodies;\n- prompt changes do not replace tenant, action, privacy, or confirmation controls.\n\nPrompts guide model interpretation. They are not authorization policy.\n\n## Optional Spring AI Evaluation\n\nAI Fabric exposes a Spring AI evaluation facade for relevancy and optional fact checking. The\nfacade converts bounded AI Fabric RAG documents into Spring AI evaluation requests. It limits the\nnumber and size of documents, removes sensitive metadata keys such as credentials, tokens, URLs,\npaths, prompts, and embeddings, and fails when no RAG documents are available.\n\nThis evaluator is valuable for model-specific observations, but it is optional. Its result should\nbe retained separately from deterministic evidence tests because it can vary by evaluator model,\nprovider availability, prompt, and cost.\n\n## Visible Failure\n\nIf retrieval fails, generation is skipped and the application returns a safe retrieval failure. If\ngeneration fails or produces invalid citations, the application returns a visible generation\nfailure. It does not substitute canned advice. In a keyless runtime where generation is disabled,\ncalling the generation endpoint should report that state rather than pretend an LLM answered.\n\n## Incorrect Architecture\n\nAn incorrect release test asks five questions, reads the generated answers, and lets a developer\ndecide that they look reasonable. This misses tenant leakage, stale vectors, accidental prompt\nfallback, and provider failures. Another incorrect design lets an LLM evaluator pass a case even\nwhen the expected evidence ID is absent.\n\nThe correct design gates deterministic retrieval and prompt contracts first, then records optional\nmodel observations separately.\n\n## Lab Bridge\n\nIn PROD-06, you will implement golden evidence cases for both support tenants, test empty-index and\ninsufficient-context behavior, detect stale synchronized content, verify prompt resolution, and run\nthe full suite with real local ONNX embeddings and Lucene. An optional OpenAI exercise comes only\nafter the keyless gate passes and writes separately named evidence.\n\n## Closing\n\nProduction RAG quality is not confidence in a paragraph. It is evidence identity, freshness,\naccess safety, prompt structure, and visible failure. AI Fabric gives the application a stable place\nto enforce and test those contracts while keeping model-based evaluation useful but honest.\n",
     "sourceManifest": "notebooklm/source-manifest.yml",
-    "notebookStatus": "script-ready",
+    "notebookStatus": "published",
     "reviewedAt": null,
     "reviewedBy": null
   },

@@ -144,6 +144,15 @@ export const courseTheoryVideos: CourseTheoryVideoEntry[] = [
     },
   },
   {
+    id: "prompt-bundles-curated-overlays",
+    title: "Prompt bundles, curated packs, and application overlays",
+    description: "Compose versioned prompt bundles, curated packs, and narrow application-owned overlays with regression proof.",
+    courseContext: "Production 03 theory",
+    sources: {
+      en: { videoId: "bvKibVVbPcA", durationLabel: "7 min 22 sec" },
+    },
+  },
+  {
     id: "state-storage-map",
     title: "State and storage in an AI Fabric application",
     description: "Map business truth, derived vector evidence, durable workflow state, and ephemeral runtime state.",
@@ -159,6 +168,33 @@ export const courseTheoryVideos: CourseTheoryVideoEntry[] = [
     courseContext: "Production 05 theory",
     sources: {
       en: { videoId: "wZ5e0MPSXRI", durationLabel: "7 min 39 sec" },
+    },
+  },
+  {
+    id: "rag-quality-prompt-regression",
+    title: "RAG quality and prompt regression",
+    description: "Measure retrieval evidence and prompt behavior with deterministic quality gates before live model evaluation.",
+    courseContext: "Production 06 theory",
+    sources: {
+      en: { videoId: "bSyMDQORJOY", durationLabel: "9 min 46 sec" },
+    },
+  },
+  {
+    id: "managed-vector-provider-qdrant",
+    title: "Managed vector providers and Qdrant lifecycle",
+    description: "Move to Qdrant while preserving metadata filtering, lifecycle behavior, readiness, and visible failures.",
+    courseContext: "Production 07 theory",
+    sources: {
+      en: { videoId: "TCgEbDsUzic", durationLabel: "10 min 2 sec" },
+    },
+  },
+  {
+    id: "operations-release-readiness",
+    title: "Operations and release readiness",
+    description: "Prove the exact application artifact through dependency readiness, restart durability, cleanup, and keyed gates.",
+    courseContext: "Production 08 theory",
+    sources: {
+      en: { videoId: "MrvMGlUN0fs", durationLabel: "7 min 49 sec" },
     },
   },
 ];

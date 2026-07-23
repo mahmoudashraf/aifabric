@@ -210,7 +210,8 @@ test("PROD-08 presents the exact-commit production release gate", async ({ page 
   await expect(page.getByText("Preview lesson", { exact: true })).toBeVisible();
   await expect(page.getByText("No external key required", { exact: true })).toBeVisible();
   await expect(page.getByText("Optional OpenAI exercise", { exact: true })).toBeVisible();
-  await expect(page.getByText(/course-0\.3\.3-p08-production-ready is verified/)).toBeVisible();
+  await expect(page.getByText("What is ready in this preview", { exact: true })).toBeVisible();
+  await expect(page.getByText(/complete lesson, assigned theory recordings/)).toBeVisible();
   await expect(page.getByRole("link", { name: "Starter checkpoint" })).toHaveAttribute(
     "href",
     /course-0\.3\.3-p07-qdrant$/,
@@ -219,6 +220,9 @@ test("PROD-08 presents the exact-commit production release gate", async ({ page 
     "href",
     /course-0\.3\.3-p08-production-ready$/,
   );
+  await expect(
+    page.getByTitle("Operations and release readiness lesson video in English"),
+  ).toHaveAttribute("src", /MrvMGlUN0fs/);
   await expect(page.getByRole("link", { name: "Canonical source" })).toHaveAttribute(
     "href",
     /\/blob\/main\/docs\/course\/production\/08-production-ready\/lesson\.md$/,

@@ -5,8 +5,8 @@
   "frameworkVersion": "0.3.3",
   "frameworkTag": "ai-fabric-framework-v0.3.3",
   "courseSourceTag": "ai-fabric-course-v0.3.3.1",
-  "sourceCommit": "0031d1ec75b8ac97514ae0e9e2df7b48c119e9a8",
-  "generatedAt": "2026-07-23T01:04:57.198Z",
+  "sourceCommit": "13ee2280f8ac93e5257c9f281480331f3ef30fe7",
+  "generatedAt": "2026-07-23T01:27:21.469Z",
   "files": [
     {
       "sourcePath": ".github/scripts/run-vector-container-contracts.sh",
@@ -462,7 +462,7 @@
     },
     {
       "sourcePath": "docs/course/course.yml",
-      "sha256": "cafe9ee7e704619c67d218544f80b08e8a92b253dc205a2f9a3dabd2bb0849f4"
+      "sha256": "8b500529a5045403bc3089d145080799b96cff6412104fb0e8a86d7f9c75a178"
     },
     {
       "sourcePath": "docs/course/production/01-provider-routing/assistant-prompt.md",
@@ -526,7 +526,7 @@
     },
     {
       "sourcePath": "docs/course/production/03-prompt-overlays/lesson.md",
-      "sha256": "8983a493fc1d6bc7fd1ad482c7e4fe2e379730e6b66b5c8c640f19a0563f42a1"
+      "sha256": "1488e3f2269651db94197eb380279a18dfaf00a2dd1f43d7bb0f67ad46985bb0"
     },
     {
       "sourcePath": "docs/course/production/03-prompt-overlays/notebooklm/AI_FABRIC_PROMPT_BUNDLES_CURATED_OVERLAYS_NOTEBOOKLM_SCRIPT.md",
@@ -534,7 +534,7 @@
     },
     {
       "sourcePath": "docs/course/production/03-prompt-overlays/notebooklm/source-manifest.yml",
-      "sha256": "70a2b92d992c996e2514fa1fce4eb096676fc714f0491a3a4465527c5c989433"
+      "sha256": "ca224f8e4fce10d94de8cdfc9429255ca9390811a314a1994d9fd5be7a2c667f"
     },
     {
       "sourcePath": "docs/course/production/04-migration-backfill/assistant-prompt.md",
@@ -598,7 +598,7 @@
     },
     {
       "sourcePath": "docs/course/production/06-rag-quality/lesson.md",
-      "sha256": "0e607d68a7820afa3c42157c3b14e1c8aaf5b4a67ee7f4a6fedb7ec0f55364bf"
+      "sha256": "06dbe3066b14e383f8b6a720da58901f5cced008082e3e747deeb30d0d5f6230"
     },
     {
       "sourcePath": "docs/course/production/06-rag-quality/notebooklm/AI_FABRIC_RAG_QUALITY_PROMPT_REGRESSION_NOTEBOOKLM_SCRIPT.md",
@@ -606,7 +606,7 @@
     },
     {
       "sourcePath": "docs/course/production/06-rag-quality/notebooklm/source-manifest.yml",
-      "sha256": "0e513665d845ec51aa461d9cf8400c2bbc713d969c844ca59a8a9685cba90ccc"
+      "sha256": "1b0c205d76c7f91e153672787edc0892e56f7edfc98342f2ea5d16582306f31d"
     },
     {
       "sourcePath": "docs/course/production/07-qdrant/assistant-prompt.md",
@@ -622,7 +622,7 @@
     },
     {
       "sourcePath": "docs/course/production/07-qdrant/lesson.md",
-      "sha256": "bfe934494bf0a0c0a9d758b977cf26db552a0c29641fb43e9ccb5e74aef604a5"
+      "sha256": "8fe11d8e7fd52ebd3c4d749f4a3df6bc0171ad016f76870a5227ba6224ca557c"
     },
     {
       "sourcePath": "docs/course/production/07-qdrant/notebooklm/AI_FABRIC_MANAGED_VECTOR_PROVIDER_QDRANT_NOTEBOOKLM_SCRIPT.md",
@@ -630,7 +630,7 @@
     },
     {
       "sourcePath": "docs/course/production/07-qdrant/notebooklm/source-manifest.yml",
-      "sha256": "2661f6ed7e36988e6a4b0ce3f0c7e4470826a885274c0caa85e10d9775de3209"
+      "sha256": "bf1c858c645461a28cbda84d1bb87b3a7d30a2933630a19276e6fd588bcb85a9"
     },
     {
       "sourcePath": "docs/course/production/08-production-ready/assistant-prompt.md",
@@ -646,7 +646,7 @@
     },
     {
       "sourcePath": "docs/course/production/08-production-ready/lesson.md",
-      "sha256": "c00e4282e4b271ac366b82ff05363d050d554f7ce0fce742ed28b497574d99a9"
+      "sha256": "7b1eba941c2e44bf1a4eae63f9a10c9f46d9a0f621f57f5f47bdf4a4d5a7b6f1"
     },
     {
       "sourcePath": "docs/course/production/08-production-ready/notebooklm/AI_FABRIC_OPERATIONS_RELEASE_READINESS_NOTEBOOKLM_SCRIPT.md",
@@ -654,7 +654,7 @@
     },
     {
       "sourcePath": "docs/course/production/08-production-ready/notebooklm/source-manifest.yml",
-      "sha256": "b8dc8414589f673a96df84a88cfa06447571faaa0109dc143c276a8d6a54e69d"
+      "sha256": "1cabbc54313591ef92485b337177c4f779b88e358ec00efb4e232386e87b9ec8"
     },
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/assistant-prompt.md",
