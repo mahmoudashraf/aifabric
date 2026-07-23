@@ -39,7 +39,7 @@ export interface DemoDeveloperDetails {
 export const demoBackendArchitectures = {
   liveDataSync: {
     title: "AI Fabric Live Data Sync backend",
-    status: "Ready-to-deploy backend-backed demo",
+    status: "Live backend-backed demo",
     tone: "live",
     backendApp: "examples/real-apps/ai-fabric-live-data-sync",
     publicBackend: "https://ai-fabric-live-data-sync.46.224.145.148.sslip.io",
