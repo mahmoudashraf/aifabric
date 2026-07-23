@@ -230,12 +230,12 @@ const Consultation = () => {
             </div>
 
             <h1 className="mt-6 max-w-5xl text-4xl font-black leading-tight tracking-normal text-slate-950 md:text-6xl md:leading-[1.04]">
-              Bring one public Java workflow. Explore where AI Fabric may fit.
+              Bring one public Java workflow. Explore how AI Fabric can enable it.
             </h1>
             <p className="mt-5 max-w-3xl text-base leading-8 text-slate-600 md:text-xl md:leading-9">
-              A free session with the AI Fabric open-source maintainer for developers evaluating the framework. We can walk
-              through relevant retrieval, action, memory, privacy, or provider concepts and identify documentation,
-              demos, and experiments worth exploring.
+              A free session with the AI Fabric open-source maintainer for developers evaluating AI enablement in their
+              applications. We can walk through relevant retrieval, action, memory, privacy, or provider concepts and
+              identify documentation, demos, and experiments worth exploring.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">

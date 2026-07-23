@@ -180,14 +180,14 @@ const Demos = () => {
           >
             <Badge variant="secondary" className="mb-4">
               <Sparkles className="mr-1 h-3 w-3" />
-              Five deployed AI Fabric apps
+              Five deployed AI-enabled apps
             </Badge>
             <h1 className="mb-4 text-4xl font-bold tracking-normal md:text-5xl">
-              Real demos backed by real Spring Boot apps
+              Live AI-enabled applications backed by Spring Boot
             </h1>
             <p className="mx-auto max-w-3xl text-lg leading-8 text-muted-foreground">
-              Each demo uses a deployed backend from the framework repository and shows a different AI Fabric
-              capability: RAG, actions, memory, behavior analysis, tenant isolation, or PII protection.
+              Each deployed backend uses the AI Fabric enablement framework to add a different capability: RAG,
+              governed actions, memory, behavior analysis, tenant isolation, or PII protection.
             </p>
           </motion.div>
         </section>

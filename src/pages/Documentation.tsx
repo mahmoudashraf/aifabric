@@ -28,7 +28,7 @@ const primarySections = [
   },
   {
     title: "Getting Started",
-    description: "Install AI Fabric 0.3.3, choose the smallest useful module set, and build a first AI workflow.",
+    description: "Install AI Fabric 0.3.3, choose the smallest useful module set, and add your first AI-enabled application capability.",
     href: "/docs/getting-started",
     icon: Sparkles,
     tone: "border-blue-200 bg-blue-50 text-blue-700",

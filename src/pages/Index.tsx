@@ -334,11 +334,11 @@ function WebinarHomeSection() {
           </div>
 
           <h2 className="mt-5 text-3xl font-black leading-tight tracking-normal md:text-5xl">
-            Learn AI Fabric from a real Spring Boot workflow.
+            Learn how AI Fabric enables a real Spring Boot application.
           </h2>
           <p className="mt-5 max-w-2xl text-base leading-8 text-slate-300">
-            The next live session walks through how AI Fabric turns normal Java services into production-oriented AI
-            workflows with retrieval, actions, confirmations, memory, privacy, and release gates.
+            The next live session shows how AI Fabric adds retrieval, governed actions, confirmations, memory,
+            privacy, and release gates to an existing Java application.
           </p>
 
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
@@ -437,12 +437,13 @@ const Index = () => {
                 </Badge>
               </div>
 
-              <h1 className="mt-5 text-4xl font-black leading-[1.02] tracking-normal text-slate-950 sm:text-5xl md:mt-6 md:text-7xl md:leading-[0.98]">
-                Build production-oriented AI workflows in Spring Boot.
+              <h1 className="mt-5 text-4xl font-black leading-[1.02] tracking-normal text-slate-950 sm:text-5xl md:mt-6 md:text-6xl md:leading-[1.02]">
+                Build AI-enabled applications in Spring Boot with AI Fabric.
               </h1>
               <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-slate-600 md:mt-6 md:text-xl md:leading-8">
-                AI Fabric gives Java teams the building blocks behind real AI applications: RAG, governed actions,
-                confirmations, behavior analysis, tenant-safe retrieval, chat memory, and provider-backed orchestration.
+                AI Fabric is an AI enablement framework for Java teams. Add RAG, governed actions, confirmations,
+                behavior analysis, tenant-safe retrieval, chat memory, and provider-backed orchestration to existing
+                applications while your Spring Boot code remains in control.
               </p>
 
               <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row md:mt-8">
@@ -541,7 +542,7 @@ const Index = () => {
                 </h2>
               </div>
               <p className="max-w-2xl text-base leading-7 text-slate-600">
-                Each demo has a deployed Spring Boot backend that uses AI Fabric modules for a different production pattern.
+                Each demo has a deployed Spring Boot backend that uses AI Fabric to enable a different application capability.
               </p>
             </div>
 
@@ -565,14 +566,14 @@ const Index = () => {
               <div>
                 <Badge className="border-white/20 bg-white/10 text-white" variant="outline">
                   <Bot className="mr-1 h-3.5 w-3.5" />
-                  Framework capabilities
+                  AI enablement capabilities
                 </Badge>
                 <h2 className="mt-5 text-3xl font-black tracking-normal md:text-5xl">
-                  The useful middle layer between your app and AI providers.
+                  The application enablement layer between your Java code and AI providers.
                 </h2>
                 <p className="mt-5 text-base leading-8 text-slate-300">
-                  AI Fabric is not another chatbot skin. It is the app-side framework for grounding, routing,
-                  protecting, and executing AI workflows inside Java systems.
+                  AI Fabric is not another chatbot skin. It is the application-side AI enablement framework for
+                  grounding, routing, protecting, and executing AI capabilities inside Java systems.
                 </p>
               </div>
 
@@ -632,7 +633,7 @@ const Index = () => {
               <div>
                 <Badge className="border-slate-200 bg-slate-50 text-slate-700" variant="outline">
                   <Layers3 className="mr-1 h-3.5 w-3.5" />
-                  Java integration shape
+                  Java enablement model
                 </Badge>
                 <h2 className="mt-5 text-3xl font-black tracking-normal text-slate-950 md:text-5xl">
                   A framework developers can actually adopt.

@@ -1,6 +1,6 @@
 # Architecture
 
-AI Fabric is a Java/Spring Boot framework for adding AI workflows to existing applications without moving business logic out of the app.
+AI Fabric is an AI enablement framework for Java and Spring Boot applications. It adds governed AI capabilities without moving business logic out of the app.
 
 ## Request Flow
 

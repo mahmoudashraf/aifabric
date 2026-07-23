@@ -61,12 +61,11 @@ const Webinars = () => {
               </div>
 
               <h1 className="mt-6 max-w-4xl text-4xl font-black leading-tight tracking-normal text-slate-950 md:text-6xl md:leading-[1.02]">
-                AI Fabric live webinars for Java teams.
+                Live AI enablement sessions for Java teams.
               </h1>
               <p className="mt-5 max-w-3xl text-base leading-8 text-slate-600 md:text-lg">
-                Join practical sessions that show how AI Fabric works inside real Spring Boot applications: RAG,
-                governed actions, chat memory, privacy controls, tenant boundaries, behavior intelligence, and
-                release-ready testing.
+                See how AI Fabric enables real Spring Boot applications with RAG, governed actions, chat memory,
+                privacy controls, tenant boundaries, behavior intelligence, and release-ready testing.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
