@@ -7,10 +7,10 @@ describe("generated course catalog", () => {
     expect(courseCatalog.title).toBe(
       "Build AI-Enabled Applications with Java and Spring Boot",
     );
-    expect(courseCatalog.courseVersion).toBe("0.4.0-course.2-beta");
+    expect(courseCatalog.courseVersion).toBe("0.4.0-course.3-beta");
     expect(courseCatalog.frameworkVersion).toBe("0.4.0");
     expect(courseCatalog.frameworkTag).toBe("ai-fabric-framework-v0.4.0");
-    expect(courseCatalog.courseSourceTag).toBe("unreleased");
+    expect(courseCatalog.courseSourceTag).toBe("ai-fabric-course-v0.4.0.3");
     expect(courseCatalog.learnerRepository).toBe(
       "https://github.com/Loom-AI-Labs/ai-fabric-course-support-assistant",
     );
