@@ -431,7 +431,11 @@ const App = () => (
               />
               <Route
                 path="/demos/ai-fabric-live-data-sync"
-                element={<AIFabricLiveDataSync />}
+                element={
+                  <DemoVideoIntro config={demoVideoCatalog.liveDataSync}>
+                    <AIFabricLiveDataSync />
+                  </DemoVideoIntro>
+                }
               />
               <Route
                 path="/demos/ai-fabric-tenant-guard/about"

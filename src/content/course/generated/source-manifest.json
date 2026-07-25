@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
   "frameworkRepository": "https://github.com/Loom-AI-Labs/ai-fabric-framework",
-  "courseVersion": "0.4.0-course.3-beta",
+  "courseVersion": "0.4.0-course.4-beta",
   "frameworkVersion": "0.4.0",
   "frameworkTag": "ai-fabric-framework-v0.4.0",
-  "courseSourceTag": "ai-fabric-course-v0.4.0.3",
-  "sourceCommit": "7392ca23d4de97d972cf9609cd9a17303eb83ffd",
-  "generatedAt": "2026-07-25T12:57:43.668Z",
+  "courseSourceTag": "ai-fabric-course-v0.4.0.4",
+  "sourceCommit": "c31dc147cbdc1cf72359cb4a90bc3a127b2e8fbb",
+  "generatedAt": "2026-07-25T16:55:33.849Z",
   "files": [
     {
       "sourcePath": ".github/scripts/run-vector-container-contracts.sh",
@@ -317,6 +317,102 @@
       "sha256": "94dc154d17434dd1674582ea1d41e7244de5959a49b92e25dc9aa3baed02fbee"
     },
     {
+      "sourcePath": "docs/course/case-studies/01-ai-shopping-experience/assistant-prompt.md",
+      "sha256": "f61ae9a64bd05a1296d4be6700536ba2f6d7b66eee6546b689496736428e7c10"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/01-ai-shopping-experience/assistant-review-prompt.md",
+      "sha256": "3579297fc252a2cc7a0ce63ca9271d4fa4ae9979e08fc4de3ba9605ca89a3ec6"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/01-ai-shopping-experience/knowledge-check.yml",
+      "sha256": "9261795dd0d49e5bb9bbe8cc5eb3738fc061611edac93cbaa704361e382bddf1"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/01-ai-shopping-experience/lesson.md",
+      "sha256": "40a475cdb0f2883566563cbe6bb34c6724cfcc8616a752dc708a4e0174f5f771"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/02-account-resolver/assistant-prompt.md",
+      "sha256": "1b80842c4cf5c3eb8eadc195907fe986b56291b0155e72c1cdd201f80107c85f"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/02-account-resolver/assistant-review-prompt.md",
+      "sha256": "aa836ab8103918d66ec265b967be91ced292a323246251c47e139f13473d803b"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/02-account-resolver/knowledge-check.yml",
+      "sha256": "7b5d64900014cea40250e92b879e9af6979780e02688cb18c5903da75555c22f"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/02-account-resolver/lesson.md",
+      "sha256": "9ae7fe4d9bff64e56477e876d538e5cc2b5f794c694c8be438fe8f4e1483bf76"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/03-behavior-signals/assistant-prompt.md",
+      "sha256": "bcebc8e8f9ff29cf6c4dbb2dba7e0298b7792d8c86bd68e9e0d52ccea2e0b83d"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/03-behavior-signals/assistant-review-prompt.md",
+      "sha256": "6d24a3c63c0db3c958bb5703533765f8ab83817931c796504ef200b4e2561071"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/03-behavior-signals/knowledge-check.yml",
+      "sha256": "d42a4309688de704f1fd059474f3e0194f32b464baebf5cfa70c8923b519f27f"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/03-behavior-signals/lesson.md",
+      "sha256": "f43a00fd8adbeaa0881bee06d995d9f7a97400a7354c335a1fff7aa9787c78c7"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/04-tenant-guard/assistant-prompt.md",
+      "sha256": "0bc627988bcd21fffa92183825067c36a8af6847fb6e9889f1d0dbc762a824d5"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/04-tenant-guard/assistant-review-prompt.md",
+      "sha256": "0f8b6bd4cc983d956ead31c2dca8a3deda988c3a28e26656e1e99b93ffb53331"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/04-tenant-guard/knowledge-check.yml",
+      "sha256": "1b5f29565dcc929d62a4f3e4dfd0d18e5500bea0d783cdc594752c62312a00ad"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/04-tenant-guard/lesson.md",
+      "sha256": "0e20da074180a7291105eee0f44cbcf7327aea4896b27fb6e555422e39caef18"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/05-privacy-shield/assistant-prompt.md",
+      "sha256": "0510841348624e6cf028eb452d9a27d831ac3546a72e0060fa8df2bc7f9d885e"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/05-privacy-shield/assistant-review-prompt.md",
+      "sha256": "fcebba90975da98db70f67023969f316846f31b8dc98266f1323090a13a38208"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/05-privacy-shield/knowledge-check.yml",
+      "sha256": "20546958de536449e505d237a5ecd247b88ef0a869230f33934d4338e275f065"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/05-privacy-shield/lesson.md",
+      "sha256": "a8edbf0ffeca3a02fb1846eb47b7b394fa27c04481ec14d8a58b4d959fc752a1"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/06-live-data-sync/assistant-prompt.md",
+      "sha256": "40209bbf4b333afa85d79ac0a066dea446ee294c9d57496e6728b875c23a1a2a"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/06-live-data-sync/assistant-review-prompt.md",
+      "sha256": "91f28609225c529a8230b9b93484d098772a5704b5792a6c12ae89f37931e2e4"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/06-live-data-sync/knowledge-check.yml",
+      "sha256": "0856aad747b3c48095a36d8bbf41c0cd7f6da8587fb359e450a5dc0e4ade22a8"
+    },
+    {
+      "sourcePath": "docs/course/case-studies/06-live-data-sync/lesson.md",
+      "sha256": "9228a701cf0cc668b67e87835d4473df54102186019333b4224660b8e83e492a"
+    },
+    {
       "sourcePath": "docs/course/core/01-ai-fabric-mental-model/assistant-prompt.md",
       "sha256": "74dd8e561c98768a470f1111368f318ceccc3254d4c21973d7a01e80eac2ac62"
     },
@@ -330,7 +426,7 @@
     },
     {
       "sourcePath": "docs/course/core/01-ai-fabric-mental-model/lesson.md",
-      "sha256": "69cf70c19e46db0a96250e57cb3fadd01fec87449b837f25de56ca2cbc162025"
+      "sha256": "6beb99858219c4d4231f63f472c1875258b97af392edc036af0d3c2487343885"
     },
     {
       "sourcePath": "docs/course/core/01-ai-fabric-mental-model/notebooklm/AI_FABRIC_ARCHITECTURE_MODULE_MAP_NOTEBOOKLM_SCRIPT.md",
@@ -362,7 +458,7 @@
     },
     {
       "sourcePath": "docs/course/core/02-model-and-index-data/lesson.md",
-      "sha256": "f1b84486245b5fddd8c142da74ce52cec43202117c16e0cfb5b112c96cc1fa78"
+      "sha256": "4a3379e01e25cada67a76f9c509c9ad49908cc0ea7c790bc3abe1ada9f55434e"
     },
     {
       "sourcePath": "docs/course/core/02-model-and-index-data/notebooklm/AI_FABRIC_SEARCHABLE_EVIDENCE_NOTEBOOKLM_SCRIPT.md",
@@ -382,7 +478,7 @@
     },
     {
       "sourcePath": "docs/course/core/03-evidence-grounded-rag/lesson.md",
-      "sha256": "7e5a1442ae1717e56c7b70615a7337aec4a26e49544abff81b1ea53cfe3828cc"
+      "sha256": "6b970869edbb3d287f4d0bd28ac98fae07fc5f52d77a08046f6fcf0036c63bea"
     },
     {
       "sourcePath": "docs/course/core/03-evidence-grounded-rag/notebooklm/AI_FABRIC_EVIDENCE_GROUNDED_RAG_NOTEBOOKLM_SCRIPT.md",
@@ -402,7 +498,7 @@
     },
     {
       "sourcePath": "docs/course/core/04-governed-actions/lesson.md",
-      "sha256": "bbc98f57de65ca6e1839e726e6733198396e27180a5b6a95d122c44a03720f41"
+      "sha256": "353576a935b65c9a160cf81341cf15ed69bd6dc16f654e5dd1db01df5de968bf"
     },
     {
       "sourcePath": "docs/course/core/04-governed-actions/notebooklm/AI_FABRIC_GOVERNED_ACTIONS_CONFIRMATION_NOTEBOOKLM_SCRIPT.md",
@@ -422,7 +518,7 @@
     },
     {
       "sourcePath": "docs/course/core/05-backend-conversation-memory/lesson.md",
-      "sha256": "a33ebd1668ec07ecaed8beea2a9d888d1be3cd398d53c37408fdbb1a25c21205"
+      "sha256": "42d67c017addcb4b53a8b63de678b90b2b2d808d20bc512f47becdd2c871fd0e"
     },
     {
       "sourcePath": "docs/course/core/05-backend-conversation-memory/notebooklm/AI_FABRIC_BACKEND_CONVERSATION_MEMORY_NOTEBOOKLM_SCRIPT.md",
@@ -442,7 +538,7 @@
     },
     {
       "sourcePath": "docs/course/core/06-tenant-security-and-privacy/lesson.md",
-      "sha256": "039c18f240823c290be5a014dbfb145937c1835791c9d95394f6e7afba506ea8"
+      "sha256": "855bc5529284b83d42f437a95b4a5e0bfb7609afdf2cbf0c956ef046f23ec29f"
     },
     {
       "sourcePath": "docs/course/core/06-tenant-security-and-privacy/notebooklm/AI_FABRIC_TENANT_SECURITY_PRIVACY_NOTEBOOKLM_SCRIPT.md",
@@ -462,7 +558,7 @@
     },
     {
       "sourcePath": "docs/course/core/07-test-and-ship/lesson.md",
-      "sha256": "834e837b8bf71e7f264ff7521ba217ba37521f5379ac01b1e26daa0f95322ee1"
+      "sha256": "dd0c319129a26e82a9dd14abfa5d4ee4d87aac7d530732a3a4c74ad6230125fc"
     },
     {
       "sourcePath": "docs/course/core/07-test-and-ship/notebooklm/AI_FABRIC_TESTING_SHIPPING_WORKFLOWS_NOTEBOOKLM_SCRIPT.md",
@@ -470,7 +566,7 @@
     },
     {
       "sourcePath": "docs/course/course.yml",
-      "sha256": "bb84f72a71d161f70b7804f5df2c45e412957c2ecf0b07726a1e841dfb6adc5b"
+      "sha256": "aa04b3d5121e887a223db863c176ced98b18d921b448a172bc6eb937848ba9b7"
     },
     {
       "sourcePath": "docs/course/labs/AI_FABRIC_CHAT_UI_LAB.md",
@@ -490,7 +586,7 @@
     },
     {
       "sourcePath": "docs/course/production/01-provider-routing/lesson.md",
-      "sha256": "4e20116fb7a6c1fa4d949ea5e22a4f33176fcc18c41e986d58d42b4914447fa1"
+      "sha256": "d39468ccabfa9e9ceb9b6ab3f99a2acc9401c320271848c671971ef1dca7ab5a"
     },
     {
       "sourcePath": "docs/course/production/01-provider-routing/notebooklm/AI_FABRIC_PROVIDER_ARCHITECTURE_PURPOSE_ROUTING_NOTEBOOKLM_SCRIPT.md",
@@ -498,7 +594,7 @@
     },
     {
       "sourcePath": "docs/course/production/01-provider-routing/notebooklm/source-manifest.yml",
-      "sha256": "3607c178a36175568141d69cb37ed9d71615be178b446dc9e21b5a9e1a78dc86"
+      "sha256": "a9ac970532afb31e0f0889f4c7b4c99a8e33ffaa80145c70220e1e056c6a68ed"
     },
     {
       "sourcePath": "docs/course/production/02-modes-positions/assistant-prompt.md",
@@ -514,7 +610,7 @@
     },
     {
       "sourcePath": "docs/course/production/02-modes-positions/lesson.md",
-      "sha256": "fae0ccf51ccc63487ea22610a314835b8c7a7cc361a591468c46f5b43ce3d4e3"
+      "sha256": "f13675f49e9f186e9f81705ff8b8946582b5695f78b31dfc02449986918f196a"
     },
     {
       "sourcePath": "docs/course/production/02-modes-positions/notebooklm/AI_FABRIC_MODES_POSITIONS_ORCHESTRATION_POLICY_NOTEBOOKLM_SCRIPT.md",
@@ -522,7 +618,7 @@
     },
     {
       "sourcePath": "docs/course/production/02-modes-positions/notebooklm/source-manifest.yml",
-      "sha256": "1667407dc92776168902adf6c44cd87b884348993859d2ec4363117cf2a51313"
+      "sha256": "11d6f6f3f2f45d174dc9addb510601518fb2663cb5b16f4327e83b38edeb89ec"
     },
     {
       "sourcePath": "docs/course/production/03-prompt-overlays/assistant-prompt.md",
@@ -538,7 +634,7 @@
     },
     {
       "sourcePath": "docs/course/production/03-prompt-overlays/lesson.md",
-      "sha256": "fc72ca516b3125196a90d3234843f6f5a01cb2b0650d59eca5ec89b822df4b1b"
+      "sha256": "32188baefab6116e5bfd848e93e7e53dcd5b6c917a883047c9c190b3e8096fe1"
     },
     {
       "sourcePath": "docs/course/production/03-prompt-overlays/notebooklm/AI_FABRIC_PROMPT_BUNDLES_CURATED_OVERLAYS_NOTEBOOKLM_SCRIPT.md",
@@ -546,7 +642,7 @@
     },
     {
       "sourcePath": "docs/course/production/03-prompt-overlays/notebooklm/source-manifest.yml",
-      "sha256": "2904595059c08d3fc58dabfe0451fd633bf67577dbe95f20b51e4a24d77c2b70"
+      "sha256": "68ba41ab3fb655093edff4dd0d1ea3e43103abea8e3f36af8f40726fb7aae61e"
     },
     {
       "sourcePath": "docs/course/production/04-migration-backfill/assistant-prompt.md",
@@ -562,7 +658,7 @@
     },
     {
       "sourcePath": "docs/course/production/04-migration-backfill/lesson.md",
-      "sha256": "368e598d264cdaee644fff4d416240cec719139ccc8db5cfe2b2dd5b261344bd"
+      "sha256": "aa526f60efe58a3b17d3db444dc8a544ef6e88c3454cb78210845b19b997618b"
     },
     {
       "sourcePath": "docs/course/production/04-migration-backfill/notebooklm/AI_FABRIC_STATE_STORAGE_MAP_NOTEBOOKLM_SCRIPT.md",
@@ -570,7 +666,7 @@
     },
     {
       "sourcePath": "docs/course/production/04-migration-backfill/notebooklm/source-manifest.yml",
-      "sha256": "59af5c1bfa7915c95749d02a8158304a19ad7b983c66fbf619919a25940e7401"
+      "sha256": "d5f867ab56b9104601e232eb73f403af5f6603419d20331b40799c4707dc37ef"
     },
     {
       "sourcePath": "docs/course/production/05-live-data-sync/assistant-prompt.md",
@@ -586,7 +682,7 @@
     },
     {
       "sourcePath": "docs/course/production/05-live-data-sync/lesson.md",
-      "sha256": "9845c84c879408b8eb916598f1626cda1e6cb6d9c05bb04d3281d665776620e4"
+      "sha256": "8ead710c8d33704eb806a3ddc09ec03b27434b0e31d60ca57d625814b0f9005f"
     },
     {
       "sourcePath": "docs/course/production/05-live-data-sync/notebooklm/AI_FABRIC_MIGRATION_BACKFILL_LIVE_SYNC_NOTEBOOKLM_SCRIPT.md",
@@ -594,7 +690,7 @@
     },
     {
       "sourcePath": "docs/course/production/05-live-data-sync/notebooklm/source-manifest.yml",
-      "sha256": "9d7d16469af5344c6cbe32db830b3a39da8b269f234b2e60526d0fb07bfd78ab"
+      "sha256": "71caa56165c59a152f501d88d2d2287ff35cb4057cbb06069203ba6293c152ce"
     },
     {
       "sourcePath": "docs/course/production/06-rag-quality/assistant-prompt.md",
@@ -610,7 +706,7 @@
     },
     {
       "sourcePath": "docs/course/production/06-rag-quality/lesson.md",
-      "sha256": "946e16adbafb412f851043b0b6f345e3688ea8653342a024280ccdaf96fc9633"
+      "sha256": "ac6ae32b052f55522f78dcd06cc545b760fecc77039db2e87f7d7f0f1bb752d8"
     },
     {
       "sourcePath": "docs/course/production/06-rag-quality/notebooklm/AI_FABRIC_RAG_QUALITY_PROMPT_REGRESSION_NOTEBOOKLM_SCRIPT.md",
@@ -618,7 +714,7 @@
     },
     {
       "sourcePath": "docs/course/production/06-rag-quality/notebooklm/source-manifest.yml",
-      "sha256": "f8575a6b43084eef3e5186063b267cd79879b0c70e7a701a45ddc7dddd1831f2"
+      "sha256": "126c041ad4a794a1d270309cc1c6003707d7a4de2bf6e5779f7433c6c2ed6c3d"
     },
     {
       "sourcePath": "docs/course/production/07-qdrant/assistant-prompt.md",
@@ -634,7 +730,7 @@
     },
     {
       "sourcePath": "docs/course/production/07-qdrant/lesson.md",
-      "sha256": "1734267ea65c3d7ac55f6a7d85aaf9d90a1f993059ca26ccb5b0a59505ebc74e"
+      "sha256": "d81a35ce2f3aca332cf51b59a8d94d823ff8672c4377a9e452018bfdbbb03feb"
     },
     {
       "sourcePath": "docs/course/production/07-qdrant/notebooklm/AI_FABRIC_MANAGED_VECTOR_PROVIDER_QDRANT_NOTEBOOKLM_SCRIPT.md",
@@ -642,7 +738,7 @@
     },
     {
       "sourcePath": "docs/course/production/07-qdrant/notebooklm/source-manifest.yml",
-      "sha256": "d5666ada89f943fbad51707aa397a01e8bdc2d36f75ef46ef491328fb4037370"
+      "sha256": "320e4690fba0babf05ab1be35042f881c3d8bd41a0df32ed73b50258b7a50836"
     },
     {
       "sourcePath": "docs/course/production/08-production-ready/assistant-prompt.md",
@@ -658,7 +754,7 @@
     },
     {
       "sourcePath": "docs/course/production/08-production-ready/lesson.md",
-      "sha256": "2fb81191f3b3e4f421d3a4baa52cb55714a846a47a1407375ae2739a80be381d"
+      "sha256": "0e71b7a94c862884847f42c11f1b965ff17343ae404f0c3e060502eca05f4a76"
     },
     {
       "sourcePath": "docs/course/production/08-production-ready/notebooklm/AI_FABRIC_OPERATIONS_RELEASE_READINESS_NOTEBOOKLM_SCRIPT.md",
@@ -666,7 +762,7 @@
     },
     {
       "sourcePath": "docs/course/production/08-production-ready/notebooklm/source-manifest.yml",
-      "sha256": "61bb937280a8a5588529cc87d6b7320387b093966f7f52fe7bad36a048687f81"
+      "sha256": "42b42553b39fb6017e8d7a54d40e863ce51b7bb1e58eb8565d30f918f35811e1"
     },
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/assistant-prompt.md",
@@ -682,7 +778,7 @@
     },
     {
       "sourcePath": "docs/course/quickstart/01-first-useful-result/lesson.md",
-      "sha256": "0ef98049027c31f7d566544897e95ed0f45918ab9e73abaac896a772f20e07ae"
+      "sha256": "41da66cc59252d7e178e15c54f4ede2450deb09aacb2364cb658586cc68f05fb"
     },
     {
       "sourcePath": "docs/Framework-Dev-Guides/runtime-integration/SPRING_AI_PROVIDER_INTEGRATION_GUIDE.md",
@@ -753,20 +849,160 @@
       "sha256": "7c7e2ef034a815278d6de65ce35437531b29d254e03bc2a448027ab2a01baabc"
     },
     {
+      "sourcePath": "examples/real-apps/ai-fabric-account-resolver/README.md",
+      "sha256": "7af6113be2a24f27a7cf3c7f103a39e2fd2e4b368f38767e402a84ea104b0123"
+    },
+    {
+      "sourcePath": "examples/real-apps/ai-fabric-account-resolver/src/main/java/com/subscription/hub/action/handler/GetAccountProfileActionHandler.java",
+      "sha256": "d14f7215d515c5e37270809a4fc0f26d1ad34b1a014d13fc657540f2706ea3b0"
+    },
+    {
+      "sourcePath": "examples/real-apps/ai-fabric-account-resolver/src/main/java/com/subscription/hub/action/handler/UpdateAddressActionHandler.java",
+      "sha256": "099e6b5ce635985834db3390234a5ee4171bb8f01ddfd59571dd7e839f6f70ef"
+    },
+    {
+      "sourcePath": "examples/real-apps/ai-fabric-account-resolver/src/main/java/com/subscription/hub/ai/ResolverAccountOwnedTargetResolutionStep.java",
+      "sha256": "326706dc439d05591e3db8c62eefb519853d216a338e1621213f2dc901009b20"
+    },
+    {
+      "sourcePath": "examples/real-apps/ai-fabric-account-resolver/src/main/java/com/subscription/hub/config/ResolverPolicyRagIndexer.java",
+      "sha256": "8e5fe9d9369441e8e76cf95b962cc933b024f5918f81adf266e0f97aece80047"
+    },
+    {
+      "sourcePath": "examples/real-apps/ai-fabric-account-resolver/src/main/java/com/subscription/hub/controller/NaturalLanguageController.java",
+      "sha256": "5a23b369249c21c4fb5dfc619624a5eb77f2d30fb1f9a739507a8b8b30976d57"
+    },
+    {
       "sourcePath": "examples/real-apps/ai-fabric-account-resolver/src/main/resources/prompts/intent-extraction/multi-step/v1-account-resolver/classify.md",
       "sha256": "93fb9a9548978a25caccf241ba831830200ab37f3e18c9be3feec1e38d950908"
+    },
+    {
+      "sourcePath": "examples/real-apps/ai-fabric-account-resolver/src/test/java/com/subscription/hub/action/handler/AccountResolverActionHandlerTest.java",
+      "sha256": "d613d13523377241893759a37fc36a5f80e25f840512f8b022b036f8485652d9"
+    },
+    {
+      "sourcePath": "examples/real-apps/ai-fabric-account-resolver/src/test/java/com/subscription/hub/controller/NaturalLanguageControllerTest.java",
+      "sha256": "7308a392f82ad9afe7075a15f208a525828f0fa1d6915c632008f35ff7070663"
+    },
+    {
+      "sourcePath": "examples/real-apps/ai-fabric-live-data-sync/README.md",
+      "sha256": "a2ea2b172bc0014f6304cd35fcd7ae7fae412d3f01680bc519cdebd635047e07"
+    },
+    {
+      "sourcePath": "examples/real-apps/ai-fabric-live-data-sync/src/main/java/com/ai/fabric/realapps/livesync/domain/SyncGuide.java",
+      "sha256": "8d0e35cc6fda8d8599b5ef05181c6355ca93fd06dc468c55102b1781f7a1fb2b"
+    },
+    {
+      "sourcePath": "examples/real-apps/ai-fabric-live-data-sync/src/main/java/com/ai/fabric/realapps/livesync/domain/SyncPolicy.java",
+      "sha256": "9b17efc408b2499b0428d67d846127d8bfcc317fede982f01c9a00e887fa90f0"
+    },
+    {
+      "sourcePath": "examples/real-apps/ai-fabric-live-data-sync/src/main/java/com/ai/fabric/realapps/livesync/domain/SyncProduct.java",
+      "sha256": "94d3c05c874bc6f228326eee5685c22f069a180754032f49f5fa5a7958239ae0"
+    },
+    {
+      "sourcePath": "examples/real-apps/ai-fabric-live-data-sync/src/main/java/com/ai/fabric/realapps/livesync/service/DemoStateService.java",
+      "sha256": "fabb6104a927453259ef9b8c2df4926b830c5a13c5d01a76e7208d5b521bf68b"
+    },
+    {
+      "sourcePath": "examples/real-apps/ai-fabric-live-data-sync/src/main/java/com/ai/fabric/realapps/livesync/service/SyncProductService.java",
+      "sha256": "9844efa9ae0f925892b6197cae1c41fec6c420c752d0b87e3834914d688aef95"
+    },
+    {
+      "sourcePath": "examples/real-apps/ai-fabric-live-data-sync/src/test/java/com/ai/fabric/realapps/livesync/AnnotationSyncContractTest.java",
+      "sha256": "7abe84a0fddaa1e438bed9b51c3cf889fe47f3c274c853ad7cff3f0ae704c734"
+    },
+    {
+      "sourcePath": "examples/real-apps/ai-fabric-live-data-sync/src/test/java/com/ai/fabric/realapps/livesync/LiveDataSyncIntegrationTest.java",
+      "sha256": "cacb2973212d774dd4f9d3b40b49541889d24bd527207d4f3d4a4b17afb55b1a"
+    },
+    {
+      "sourcePath": "examples/real-apps/behavior-churn-signals/README.md",
+      "sha256": "b1a3d44a8b60dc672d8c8f20c50623fb6b6e4af36f851ed32e0ae8da1da2fe60"
+    },
+    {
+      "sourcePath": "examples/real-apps/behavior-churn-signals/src/main/java/com/ai/fabric/realapps/behavior/service/AgenticUiComposerService.java",
+      "sha256": "53a141d77d0c46e8cea5fe22ff9197088af7e9413acc0390b777034538e99434"
+    },
+    {
+      "sourcePath": "examples/real-apps/behavior-churn-signals/src/main/java/com/ai/fabric/realapps/behavior/service/BehaviorDemoScenarioService.java",
+      "sha256": "e969bb36de7dd8527e0684f133eaa8d6eda94068aa9dce5dd3e5261fc94204c9"
+    },
+    {
+      "sourcePath": "examples/real-apps/behavior-churn-signals/src/main/java/com/ai/fabric/realapps/behavior/spi/DbExternalEventProvider.java",
+      "sha256": "a50db1ff2465c2d1f8ad662c411154641e33a71ef31e6c3622804755ba11bc9a"
+    },
+    {
+      "sourcePath": "examples/real-apps/behavior-churn-signals/src/test/java/com/ai/fabric/realapps/behavior/service/AgenticUiComposerServiceTest.java",
+      "sha256": "80bb69c0fa6b03d08f6e5cd8179a5d886254c3557314f8c980b4a3fb4d96f4a9"
+    },
+    {
+      "sourcePath": "examples/real-apps/behavior-churn-signals/src/test/java/com/ai/fabric/realapps/behavior/spi/DbExternalEventProviderTest.java",
+      "sha256": "e71a22e1a503718c19dbc11db0f7e13456f13bb9b40132464972a7f323be42f5"
+    },
+    {
+      "sourcePath": "examples/real-apps/chat-capabilities-demo/README.md",
+      "sha256": "4a073d0662c5a228c19a41bfaa08e12cc084fb3801c99beabb90505341f6e0b5"
+    },
+    {
+      "sourcePath": "examples/real-apps/chat-capabilities-demo/src/main/java/com/ai/fabric/realapps/chat/cart/action/AddToCartActionHandler.java",
+      "sha256": "a2585d85c694e32974b43883a920d6194d65bb2ede827f4649f91cab19fb20aa"
+    },
+    {
+      "sourcePath": "examples/real-apps/chat-capabilities-demo/src/main/java/com/ai/fabric/realapps/chat/catalog/domain/Product.java",
+      "sha256": "c9b6d94dfe6994647e6bee3c5d40f8ca75515aa635234313ef8847b3562128f7"
+    },
+    {
+      "sourcePath": "examples/real-apps/chat-capabilities-demo/src/main/java/com/ai/fabric/realapps/chat/catalog/service/ProductService.java",
+      "sha256": "3395f289667602c34c719266972918fb24f19eed40302dc8e5d64c6088004475"
+    },
+    {
+      "sourcePath": "examples/real-apps/chat-capabilities-demo/src/main/java/com/ai/fabric/realapps/chat/demo/service/DemoStageSeedService.java",
+      "sha256": "9721cd378642b3e6e172b9b5e7ea915288709812df78d0033b4a5e19f1c0fb61"
     },
     {
       "sourcePath": "examples/real-apps/chat-capabilities-demo/src/main/java/com/ai/fabric/realapps/chat/support/action/CreateSupportTicketActionHandler.java",
       "sha256": "dcb7b0089f348a8aba6ba96c549130591de81070f9ebd6126b08c4c3e69b78b7"
     },
     {
+      "sourcePath": "examples/real-apps/chat-capabilities-demo/src/main/java/com/ai/fabric/realapps/chat/web/ChatController.java",
+      "sha256": "44978af3035bd0862fee38a7ee19eb4aada48bd011cb43fe010385277ba9e5bf"
+    },
+    {
       "sourcePath": "examples/real-apps/chat-capabilities-demo/src/main/java/com/ai/fabric/realapps/chat/web/CommerceModeResolver.java",
       "sha256": "7aaec2e3178c108216db5a88809853b8f4bdad6122ffd73b2638f2d527ea7310"
     },
     {
+      "sourcePath": "examples/real-apps/chat-capabilities-demo/src/test/java/com/ai/fabric/realapps/chat/demo/service/DemoStageSeedServiceTest.java",
+      "sha256": "b78cb2b425e5f4514e047dbfd25bc6b41d1867de517d9fd640e9cfe3526667cf"
+    },
+    {
+      "sourcePath": "examples/real-apps/chat-capabilities-demo/src/test/java/com/ai/fabric/realapps/chat/web/ChatControllerConversationsTest.java",
+      "sha256": "ec55415777876c771002d84c9682318cb42f8ff1a22eedbeef746552e889f6ff"
+    },
+    {
+      "sourcePath": "examples/real-apps/privacy-first-customer-facing-support/README.md",
+      "sha256": "b4c015486f31f798af52880e6f4790d213ab606d867498e41914ec5d8492e6a9"
+    },
+    {
+      "sourcePath": "examples/real-apps/privacy-first-customer-facing-support/src/main/java/com/ai/fabric/realapps/privacyfirst/domain/SupportMessage.java",
+      "sha256": "801d9b395703ce42cea0d6dc8a9a52d2c4f842e2b4d2b63c7abfb5839d424c12"
+    },
+    {
+      "sourcePath": "examples/real-apps/privacy-first-customer-facing-support/src/main/java/com/ai/fabric/realapps/privacyfirst/service/PrivacyDemoService.java",
+      "sha256": "2672faec937efb4dd8b01e3baa0d87bcfe09e95339cf47f4cb8ab12cea0aa5d1"
+    },
+    {
       "sourcePath": "examples/real-apps/privacy-first-customer-facing-support/src/main/java/com/ai/fabric/realapps/privacyfirst/service/SupportMessageService.java",
       "sha256": "ad0aad2cd59bf807e4949a76877a57d982db80078d960bf9c8f22aa990748353"
+    },
+    {
+      "sourcePath": "examples/real-apps/privacy-first-customer-facing-support/src/test/java/com/ai/fabric/realapps/privacyfirst/service/PrivacyDemoServiceTest.java",
+      "sha256": "4b0a07606fc88294e71fa58e97e3681051e0bd7371a6a197097fd178f98e65f9"
+    },
+    {
+      "sourcePath": "examples/real-apps/privacy-first-customer-facing-support/src/test/java/com/ai/fabric/realapps/privacyfirst/service/SupportMessageProjectionTest.java",
+      "sha256": "32dc33f5a69790fceeb7064a070074cc1585cb61d48673aca159d21d70564ce2"
     },
     {
       "sourcePath": "examples/real-apps/privacy-first-customer-facing-support/src/test/java/com/ai/fabric/realapps/privacyfirst/service/SupportMessageServiceTest.java",
@@ -793,8 +1029,24 @@
       "sha256": "eba57903a3fba3ceac71403aa3f9184ea8943a414587b6e87e06e3dafbc1bc1d"
     },
     {
+      "sourcePath": "examples/real-apps/tenant-knowledge-portal/README.md",
+      "sha256": "12b43519746d0c1c123f8df7c40191039b2f6345bdf51abc640f080cabd7a345"
+    },
+    {
       "sourcePath": "examples/real-apps/tenant-knowledge-portal/src/main/java/com/ai/fabric/realapps/tenantportal/service/TenantKnowledgeService.java",
       "sha256": "410bdca29092eb63e496bd8c1d57f29a9adc68e5ee746518bea4a75d1e39af38"
+    },
+    {
+      "sourcePath": "examples/real-apps/tenant-knowledge-portal/src/main/java/com/ai/fabric/realapps/tenantportal/web/TenantGuardDemoController.java",
+      "sha256": "6724b7a6d6f4c30c03f3d81bcb57607f08efae06ea8d267df8da6b675db6439b"
+    },
+    {
+      "sourcePath": "examples/real-apps/tenant-knowledge-portal/src/test/java/com/ai/fabric/realapps/tenantportal/service/TenantKnowledgeServiceTest.java",
+      "sha256": "6dfe6a3a45b6dc45bb044252d5eeea585552fe92d89e20a2ccc45df040ce66e0"
+    },
+    {
+      "sourcePath": "examples/real-apps/tenant-knowledge-portal/src/test/java/com/ai/fabric/realapps/tenantportal/web/TenantGuardDemoControllerTest.java",
+      "sha256": "4d0a703e33b4a33c997d8001a49d934f85ded707a25b16b098e29e0efa0a31b1"
     }
   ]
 }

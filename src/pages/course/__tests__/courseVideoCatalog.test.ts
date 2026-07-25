@@ -26,6 +26,12 @@ describe("course video catalog", () => {
     "rag-quality-prompt-regression": "bSyMDQORJOY",
     "managed-vector-provider-qdrant": "TCgEbDsUzic",
     "operations-release-readiness": "MrvMGlUN0fs",
+    "case-shopping-walkthrough": "xnLuz-mlKMY",
+    "case-account-resolver-walkthrough": "GJ9H16eMdO0",
+    "case-behavior-signals-walkthrough": "yvvi4YEWSq4",
+    "case-tenant-guard-walkthrough": "NUkfSdQeVnc",
+    "case-privacy-shield-walkthrough": "YfphOu_vmqw",
+    "case-live-data-sync-walkthrough": "GHiET3aZQsI",
   };
 
   it("maps every published English theory video exactly once", () => {
@@ -86,5 +92,16 @@ describe("course video catalog", () => {
         { id: "managed-vector-provider-qdrant", duration: "10 min 2 sec" },
         { id: "operations-release-readiness", duration: "7 min 49 sec" },
       ]);
+  });
+
+  it("maps the six Real-App walkthroughs and keeps the Arabic Shopping recording", () => {
+    const cases = courseTheoryVideos.filter((video) => video.courseContext.startsWith("Real-App"));
+    const shopping = cases.find((video) => video.id === "case-shopping-walkthrough");
+    const liveSync = cases.find((video) => video.id === "case-live-data-sync-walkthrough");
+
+    expect(cases).toHaveLength(6);
+    expect(shopping?.sources.ar?.videoId).toBe("PMRN4xA874Y");
+    expect(liveSync?.sources.en.videoId).toBe("GHiET3aZQsI");
+    expect(resolveCourseVideoSource(liveSync!, "ar").fallback).toBe(true);
   });
 });

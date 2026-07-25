@@ -221,10 +221,10 @@
     "order": 5,
     "durationMinutes": 60,
     "availability": "published",
-    "courseVersion": "0.4.0-course.3-beta",
+    "courseVersion": "0.4.0-course.4-beta",
     "frameworkVersion": "0.4.0",
     "frameworkTag": "ai-fabric-framework-v0.4.0",
-    "courseSourceTag": "ai-fabric-course-v0.4.0.3",
+    "courseSourceTag": "ai-fabric-course-v0.4.0.4",
     "starterRef": "course-0.4.0-03-actions",
     "solutionRef": "course-0.4.0-04-memory",
     "requiresOpenAi": true,
@@ -270,5 +270,5 @@
     "reviewPrompt": "# CORE-05 Independent Review Prompt\n\nStatus: Migrated for independent review of the AI Fabric 0.4 CORE-05 behavior contract. Immutable\ncheckpoint comparison is pending publication.\n\nReview a developer's CORE-05 implementation against AI Fabric Framework 0.4.0, the current CORE-05\ncourse source, and pinned chat-session APIs.\n\nUse a findings-first review. Order findings by severity and cite changed files/tests plus the course\nor pinned source. Trace one conversation from authenticated request through enrichment, intent,\npending confirmation, recording, and the next turn.\n\nCheck for these failure classes:\n\n- browser-carried history, action drafts, or pending action payloads treated as authority;\n- owner, user, or tenant accepted from request JSON instead of authenticated server context;\n- missing or permissive production `ChatSessionAccessControlPolicy`;\n- policy success used to bypass stored-owner equality;\n- a new conversation inheriting another conversation's target or pending action;\n- unbounded prompt history, target reuse, or pending stack;\n- raw sensitive values stored before sanitization;\n- `NEVER_PERSIST` requests enriched or recorded;\n- keyword matching presented as short-follow-up intelligence;\n- a domain prompt overlay replacing action registration, authorization, or confirmation;\n- approval executing more than once or browser replay rebuilding the write;\n- panel-close behavior deleting backend conversation state;\n- provider failure hidden by canned success;\n- deterministic tests asserting model prose instead of structured state.\n\nThen report:\n\n1. findings with severity;\n2. missing proof or unexecuted checks;\n3. whether the request and identity boundary is correct;\n4. whether history and targets are bounded and owner-scoped;\n5. whether same/new conversation behavior is proved;\n6. whether pending confirmation survives and executes exactly once;\n7. whether transient and sensitive requests avoid persistence;\n8. whether the live smoke honestly exercises model interpretation;\n9. the smallest corrections required to pass CORE-05.\n\nThe lesson passes only when the backend, not the browser, owns conversation authority and when\nshort natural-language follow-ups can use authorized bounded context without bypassing application\npolicy, confirmation, privacy, or provider-failure visibility.\n"
   },
   "sourcePath": "docs/course/core/05-backend-conversation-memory/lesson.md",
-  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/ai-fabric-course-v0.4.0.3/docs/course/core/05-backend-conversation-memory/lesson.md"
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/ai-fabric-course-v0.4.0.4/docs/course/core/05-backend-conversation-memory/lesson.md"
 }

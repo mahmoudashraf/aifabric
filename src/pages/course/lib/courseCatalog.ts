@@ -6,6 +6,12 @@ import core04Data from "@/content/course/generated/lessons/core-04.json";
 import core05Data from "@/content/course/generated/lessons/core-05.json";
 import core06Data from "@/content/course/generated/lessons/core-06.json";
 import core07Data from "@/content/course/generated/lessons/core-07.json";
+import case01Data from "@/content/course/generated/lessons/case-01.json";
+import case02Data from "@/content/course/generated/lessons/case-02.json";
+import case03Data from "@/content/course/generated/lessons/case-03.json";
+import case04Data from "@/content/course/generated/lessons/case-04.json";
+import case05Data from "@/content/course/generated/lessons/case-05.json";
+import case06Data from "@/content/course/generated/lessons/case-06.json";
 import prod01Data from "@/content/course/generated/lessons/prod-01.json";
 import prod02Data from "@/content/course/generated/lessons/prod-02.json";
 import prod03Data from "@/content/course/generated/lessons/prod-03.json";
@@ -34,6 +40,12 @@ const renderedLessons: Record<string, RenderedCourseLesson> = {
   "core-05": core05Data as RenderedCourseLesson,
   "core-06": core06Data as RenderedCourseLesson,
   "core-07": core07Data as RenderedCourseLesson,
+  "case-01": case01Data as RenderedCourseLesson,
+  "case-02": case02Data as RenderedCourseLesson,
+  "case-03": case03Data as RenderedCourseLesson,
+  "case-04": case04Data as RenderedCourseLesson,
+  "case-05": case05Data as RenderedCourseLesson,
+  "case-06": case06Data as RenderedCourseLesson,
   "prod-01": prod01Data as RenderedCourseLesson,
   "prod-02": prod02Data as RenderedCourseLesson,
   "prod-03": prod03Data as RenderedCourseLesson,

@@ -220,10 +220,10 @@
     "order": 4,
     "durationMinutes": 85,
     "availability": "published",
-    "courseVersion": "0.4.0-course.3-beta",
+    "courseVersion": "0.4.0-course.4-beta",
     "frameworkVersion": "0.4.0",
     "frameworkTag": "ai-fabric-framework-v0.4.0",
-    "courseSourceTag": "ai-fabric-course-v0.4.0.3",
+    "courseSourceTag": "ai-fabric-course-v0.4.0.4",
     "starterRef": "course-0.4.0-02-rag",
     "solutionRef": "course-0.4.0-03-actions",
     "requiresOpenAi": true,
@@ -267,5 +267,5 @@
     "reviewPrompt": "# CORE-04 Independent Review Prompt\n\nStatus: Migrated for independent review of the AI Fabric 0.4 CORE-04 behavior contract. Immutable\ncheckpoint comparison is pending publication.\n\nReview a developer's CORE-04 implementation against AI Fabric Framework 0.4.0, the current CORE-04\ncourse source, and pinned action APIs.\n\nUse a findings-first review. Order findings by severity and cite changed files/tests plus the course\nor pinned source. Trace the side effect from model proposal to domain transaction.\n\nCheck for these failure classes:\n\n- browser or backend keyword matching presented as action intelligence;\n- an unregistered or model-invented action becoming executable;\n- identity, tenant, account, conversation, or session exposed as `@Param`;\n- incorrect access mode such as the nonexistent `WRITE` enum value;\n- missing required parameter reaching confirmation or execution;\n- `@ActionAllowed` or model output replacing domain-service authorization;\n- write execution before confirmation;\n- rejection mutating state;\n- duplicate confirmation repeating the side effect;\n- pending action trusted from a client-replayed payload;\n- raw JPA entities, nested repository data, prompts, or secrets in `ActionResult`;\n- provider failure hidden by text matching or canned success wording;\n- tests depending on nondeterministic model prose instead of structured orchestration state.\n\nThen report:\n\n1. findings with severity;\n2. missing proof or unexecuted checks;\n3. whether registry metadata and model-visible schemas are correct;\n4. whether trusted context and domain authorization are preserved;\n5. whether clarification and confirmation transitions are complete;\n6. whether execution is exactly once and result projection is safe;\n7. the smallest corrections required to pass CORE-04.\n\nThe lesson passes only when natural language can request a reviewed action but cannot bypass typed\nschema, trusted identity, application authorization, confirmation, or the domain transaction owner.\n"
   },
   "sourcePath": "docs/course/core/04-governed-actions/lesson.md",
-  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/ai-fabric-course-v0.4.0.3/docs/course/core/04-governed-actions/lesson.md"
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/ai-fabric-course-v0.4.0.4/docs/course/core/04-governed-actions/lesson.md"
 }

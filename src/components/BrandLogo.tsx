@@ -24,11 +24,11 @@ const BrandLogo = ({
           markClassName
         )}
       >
-      <img
-        src={AI_FABRIC_LOGO_MARK_SRC}
-        alt={showText ? "" : "AI Fabric"}
-        className="h-full w-full object-cover"
-      />
+        <img
+          src={AI_FABRIC_LOGO_MARK_SRC}
+          alt={showText ? "" : "AI Fabric"}
+          className="h-full w-full scale-[1.18] object-cover"
+        />
       </span>
       {showText && (
         <span className={cn("text-xl font-bold tracking-normal text-foreground", textClassName)}>

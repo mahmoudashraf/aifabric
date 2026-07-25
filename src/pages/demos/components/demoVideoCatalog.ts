@@ -100,4 +100,19 @@ export const demoVideoCatalog = {
       },
     ],
   },
+  liveDataSync: {
+    id: "live-data-sync",
+    demoName: "AI Fabric Live Data Sync",
+    description:
+      "See annotated database entities create, update, and delete synchronized vector evidence, then verify that AI answers reflect the current application data.",
+    videos: [
+      {
+        language: "en",
+        languageLabel: "English",
+        videoId: "GHiET3aZQsI",
+        title: "AI Fabric Live Data Sync walkthrough",
+        durationLabel: "Full demo flow",
+      },
+    ],
+  },
 } satisfies Record<string, DemoVideoIntroConfig>;

@@ -1,0 +1,149 @@
+{
+  "id": "case-03",
+  "slug": "behavior-signals",
+  "title": "AI Fabric Behavior Signals",
+  "description": "Incremental insight generation and allowlisted agentic UI composition.",
+  "durationMinutes": 55,
+  "availability": "published",
+  "source": "case-studies/03-behavior-signals/lesson.md",
+  "knowledgeCheck": {
+    "schemaVersion": 1,
+    "lessonId": "case-03",
+    "passingScorePercent": 80,
+    "questions": [
+      {
+        "id": "case-03-q1",
+        "type": "single-choice",
+        "competency": "incremental-analysis",
+        "prompt": "What should a follow-up behavior analysis receive?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Every historical event relabeled as new"
+          },
+          {
+            "id": "b",
+            "text": "Previous insight plus events recorded since that insight"
+          },
+          {
+            "id": "c",
+            "text": "Only the frontend summary"
+          },
+          {
+            "id": "d",
+            "text": "A fixed churn score"
+          }
+        ],
+        "correctOptionIds": [
+          "b"
+        ],
+        "explanation": "Incremental analysis distinguishes prior understanding from fresh evidence.",
+        "sourcePaths": [
+          "examples/real-apps/behavior-churn-signals/src/main/java/com/ai/fabric/realapps/behavior/spi/DbExternalEventProvider.java"
+        ]
+      },
+      {
+        "id": "case-03-q2",
+        "type": "multiple-choice",
+        "competency": "agentic-ui",
+        "prompt": "What may the agentic UI model return?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Allowlisted component names"
+          },
+          {
+            "id": "b",
+            "text": "Short selection reasons"
+          },
+          {
+            "id": "c",
+            "text": "Arbitrary HTML and JavaScript"
+          },
+          {
+            "id": "d",
+            "text": "Trusted prices and permissions"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b"
+        ],
+        "explanation": "Backend validation owns names and backend state supplies props.",
+        "sourcePaths": [
+          "examples/real-apps/behavior-churn-signals/src/main/java/com/ai/fabric/realapps/behavior/service/AgenticUiComposerService.java"
+        ]
+      },
+      {
+        "id": "case-03-q3",
+        "type": "answer-reveal",
+        "competency": "failure-visibility",
+        "prompt": "How should a selected live LLM failure appear?",
+        "modelAnswer": "As an explicit failed analysis or unavailable-provider result with no deterministic insight mislabeled as live output.",
+        "sourcePaths": [
+          "examples/real-apps/behavior-churn-signals/README.md"
+        ]
+      }
+    ]
+  },
+  "assistantPrompt": "case-studies/03-behavior-signals/assistant-prompt.md",
+  "assistantReviewPrompt": "case-studies/03-behavior-signals/assistant-review-prompt.md",
+  "theoryVideoIds": [
+    "case-behavior-signals-walkthrough"
+  ],
+  "relatedStories": [],
+  "relatedDemos": [],
+  "track": "case-studies",
+  "route": "/course/case-studies/behavior-signals",
+  "frontMatter": {
+    "id": "case-03",
+    "slug": "behavior-signals",
+    "title": "AI Fabric Behavior Signals",
+    "track": "case-studies",
+    "order": 3,
+    "durationMinutes": 55,
+    "availability": "published",
+    "courseVersion": "0.4.0-course.4-beta",
+    "frameworkVersion": "0.4.0",
+    "frameworkTag": "ai-fabric-framework-v0.4.0",
+    "courseSourceTag": "ai-fabric-course-v0.4.0.4",
+    "starterRef": "course-0.4.0-p08-production-ready",
+    "solutionRef": "course-0.4.0-p08-production-ready",
+    "requiresOpenAi": true,
+    "requiresDocker": false,
+    "optionalProviderExercises": [
+      "openai"
+    ],
+    "sourcePaths": [
+      "examples/real-apps/behavior-churn-signals/README.md",
+      "examples/real-apps/behavior-churn-signals/src/main/java/com/ai/fabric/realapps/behavior/spi/DbExternalEventProvider.java",
+      "examples/real-apps/behavior-churn-signals/src/main/java/com/ai/fabric/realapps/behavior/service/BehaviorDemoScenarioService.java",
+      "examples/real-apps/behavior-churn-signals/src/main/java/com/ai/fabric/realapps/behavior/service/AgenticUiComposerService.java",
+      "examples/real-apps/behavior-churn-signals/src/test/java/com/ai/fabric/realapps/behavior/spi/DbExternalEventProviderTest.java",
+      "examples/real-apps/behavior-churn-signals/src/test/java/com/ai/fabric/realapps/behavior/service/AgenticUiComposerServiceTest.java"
+    ],
+    "theoryVideoIds": [
+      "case-behavior-signals-walkthrough"
+    ],
+    "assistant": {
+      "mode": "reproduce",
+      "implementationPrompt": "assistant-prompt.md",
+      "reviewPrompt": "assistant-review-prompt.md",
+      "validationStatus": "passed"
+    },
+    "knowledgeCheck": {
+      "source": "knowledge-check.yml",
+      "required": true,
+      "passingScorePercent": 80
+    }
+  },
+  "markdown": "# Reproduce Behavior Signals And Agentic UI\n\n## Start Here\n\nThis case study uses raw application events to produce a persisted behavior insight. A second\nstructured LLM call selects a short allowlisted list of home-page components; backend code fills\ntheir trusted props.\n\nOpen:\n\n- analytics: `https://ai-fabric.dev/demos/ai-fabric-behavior-signals`\n- user-home preview: `https://ai-fabric.dev/demos/ai-fabric-behavior-signals/agentic-ui`\n- backend health: `https://behavior-churn-signals.46.224.145.148.sslip.io/api/behavior-demo/health`\n\n## Architecture To Recognize\n\n```text\nraw app events -> ExternalEventProvider -> BehaviorAnalysisService -> persisted insight\n                                      previous insight + new events -----^\n\ninsight + allowlisted component catalog -> LLM {name, reason}[]\n                                         -> backend validation\n                                         -> trusted props\n                                         -> rendered user-home modules\n```\n\nThe event store is application-owned. AI Fabric is not a generic analytics warehouse. Follow-up\nanalysis receives the previous insight and only events newer than that analysis, so old history is\nnot mislabeled as new evidence.\n\n## Step 1: Inspect Provider Posture\n\nReset your isolated session and inspect health. The public demo must report a live external provider\nand the model used by each generated insight. If live selection fails, the UI must show the failure;\nit must not silently substitute deterministic output.\n\n## Step 2: Compare Seeded Users\n\nRun user behavior analysis for every seeded persona. Compare:\n\n- churn probability and sentiment;\n- evidence event types;\n- trend and recommended action family;\n- last analyzed timestamp;\n- selected user-home components.\n\nThe recommendation family is model analysis for an internal operator. It is not an automatically\nexecuted customer offer.\n\n## Step 3: Add Negative Raw Events\n\nChoose a healthy user and record realistic raw events such as:\n\n```text\nPAYMENT_FAILED\nFEATURE_ERROR\nNO_LOGIN_14D\nHELP_CENTER_SEARCH\n```\n\nThe record-event command must only persist the event. Run **User behavior analysis** separately.\nExpected: the latest events appear first, the next insight cites the fresh evidence, and risk may\nmove in the negative direction.\n\n## Step 4: Add Recovery Events\n\nChoose the high-risk user and record positive recovery events. Run analysis again. Expected:\n\n- the previous insight remains part of the analysis context;\n- only post-analysis events are labeled new;\n- the updated insight explains the direction of change;\n- the component plan can change from retention/help surfaces toward loyalty, progress, or upgrade\n  surfaces.\n\n## Step 5: Inspect Agentic UI Safely\n\nOpen the user-home preview for the same user and refresh insight. The LLM receives component names,\ndescriptions, and intended uses. It returns only names and reasons. It does not return HTML, CSS,\nReact props, discounts, or arbitrary API calls.\n\n`AgenticUiComposerService` rejects unknown component names. The backend supplies prices, points,\noffer facts, and links from trusted state.\n\n## Intentional Failure\n\nDo not describe a prose sentence such as \"customer wants to cancel\" as a raw app event. A real event\nhas a typed name, timestamp, source, and structured facts. Also verify that recording an event does\nnot automatically run analysis.\n\n## Run Locally\n\n```bash\nmvn -B -V --no-transfer-progress -f examples/real-apps/pom.xml \\\n  -pl behavior-churn-signals -am test\n```\n\nThe no-key profile is deterministic and must be labeled that way. To reproduce live public posture:\n\n```bash\nAI_LLM_PROVIDER=openai \\\nOPENAI_ENABLED=true \\\nOPENAI_API_KEY=\"$OPENAI_API_KEY\" \\\nOPENAI_MODEL=gpt-4o-mini \\\nmvn -f examples/real-apps/behavior-churn-signals/pom.xml spring-boot:run\n```\n\n## Done When\n\n- provider posture and model identity are visible;\n- you compared all seeded users;\n- negative events changed a previously healthy user's analysis;\n- recovery events updated a high-risk user's analysis incrementally;\n- the agentic UI used only allowlisted names and backend-owned props;\n- no LLM failure was hidden by fallback output.\n\n## Next Lesson\n\nCASE-04 applies explicit identity and metadata filters to prevent cross-tenant evidence and actions.",
+  "assistant": {
+    "mode": "reproduce",
+    "validationStatus": "passed",
+    "implementationPrompt": "# CASE-03 Reproduction Prompt\n\nReproduce Behavior Signals using an isolated public session. Verify live provider posture, analyze\nall seeded users, add negative raw events to a healthy user, rerun analysis separately, add recovery\nevents to a high-risk user, and inspect previous-insight plus new-event behavior. Refresh the\nagentic UI and prove the model returned allowlisted names/reasons while the backend supplied props.\nDo not execute or invent customer offers. Treat any hidden LLM failure as FAIL.\n",
+    "reviewPrompt": "# CASE-03 Independent Review Prompt\n\nReview event ordering, previous-insight ownership, incremental event selection, provider posture,\npersisted insight identity, and agentic UI validation. Reject prose masquerading as raw events,\nanalysis triggered implicitly by record-event, arbitrary model-generated UI, or fallback output\npresented as live AI. Cite SPI, composer, service, and tests.\n"
+  },
+  "sourcePath": "docs/course/case-studies/03-behavior-signals/lesson.md",
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/ai-fabric-course-v0.4.0.4/docs/course/case-studies/03-behavior-signals/lesson.md"
+}

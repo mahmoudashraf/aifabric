@@ -225,10 +225,10 @@
     "order": 7,
     "durationMinutes": 70,
     "availability": "published",
-    "courseVersion": "0.4.0-course.3-beta",
+    "courseVersion": "0.4.0-course.4-beta",
     "frameworkVersion": "0.4.0",
     "frameworkTag": "ai-fabric-framework-v0.4.0",
-    "courseSourceTag": "ai-fabric-course-v0.4.0.3",
+    "courseSourceTag": "ai-fabric-course-v0.4.0.4",
     "starterRef": "course-0.4.0-05-security",
     "solutionRef": "course-0.4.0-06-tested-solution",
     "requiresOpenAi": false,
@@ -274,5 +274,5 @@
     "reviewPrompt": "# CORE-07 Independent Release-Gate Review Prompt\n\nStatus: Migrated for independent review of the AI Fabric 0.4 CORE-07 release contract. Immutable\ncheckpoint comparison is pending publication.\n\nReview a developer's CORE-07 evidence against AI Fabric Framework 0.4.0, the current CORE-07 course\nsource, the application implementation, and the exact artifacts being proposed for release.\n\nUse a findings-first review. Order findings by severity and cite tests, reports, commands,\nworkflows, health output, served assets, and source revisions. Do not infer a pass from absent\nevidence.\n\nCheck for these failure classes:\n\n- one successful chat or screenshot presented as release readiness;\n- unit or controlled-provider tests mislabeled as packaged or live-provider proof;\n- test-skipping flags in normal build, CI, or release commands;\n- application tests run against stale locally installed framework artifacts;\n- packaged startup presented as endpoint/scenario coverage;\n- HTTP scenarios asserting only status 200 or exact model prose;\n- missing no-evidence, denial, rejection, expiry, duplicate, cross-owner, tenant, or PII paths;\n- Docker contracts mislabeled as OpenAI, hosted embedding, or Pinecone proof;\n- required RealAPI rows skipped, conditionally absent, or zero-test but reported green;\n- provider, model, profile, test counts, or skip reasons missing from evidence;\n- live provider failure replaced by canned/local success;\n- health containing secrets or manually stale build metadata;\n- backend commit used as proof of frontend asset identity, or the reverse;\n- current frontend/backend identity treated as proof of data readiness or workflow correctness;\n- secrets, raw PII, private prompts, or confidential fixtures in logs or artifacts;\n- release recommendation exceeding the evidence that actually ran.\n\nThen report:\n\n1. findings with severity;\n2. a capability-by-evidence matrix;\n3. exact successful, failed, skipped, and not-run commands or workflow rows;\n4. whether packaged startup and HTTP scenarios are both proved;\n5. whether provider posture and failure visibility are honest;\n6. whether backend and frontend deployment identity are independently proved;\n7. missing artifacts, counts, or skip reasons;\n8. residual risks and explicit exceptions;\n9. the smallest corrections required for a READY decision.\n\nReturn one decision: READY, NOT READY, or READY WITH EXPLICIT EXCEPTION. The Core track passes only\nwhen the decision is reproducible from retained evidence and no deterministic, provider, security,\nprivacy, packaging, or deployment claim is silently substituted for another.\n"
   },
   "sourcePath": "docs/course/core/07-test-and-ship/lesson.md",
-  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/ai-fabric-course-v0.4.0.3/docs/course/core/07-test-and-ship/lesson.md"
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/ai-fabric-course-v0.4.0.4/docs/course/core/07-test-and-ship/lesson.md"
 }

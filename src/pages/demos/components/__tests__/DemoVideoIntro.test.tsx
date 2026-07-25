@@ -63,4 +63,14 @@ describe("DemoVideoIntro", () => {
       expect.stringContaining("PMRN4xA874Y")
     );
   });
+
+  it("offers the Live Data Sync walkthrough before its interactive demo", () => {
+    renderIntro(demoVideoCatalog.liveDataSync);
+
+    expect(screen.getByRole("heading", { name: /see ai fabric live data sync in action/i })).toBeInTheDocument();
+    expect(screen.getByTitle("AI Fabric Live Data Sync walkthrough")).toHaveAttribute(
+      "src",
+      expect.stringContaining("GHiET3aZQsI")
+    );
+  });
 });

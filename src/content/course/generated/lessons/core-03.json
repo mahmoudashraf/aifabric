@@ -221,10 +221,10 @@
     "order": 3,
     "durationMinutes": 75,
     "availability": "published",
-    "courseVersion": "0.4.0-course.3-beta",
+    "courseVersion": "0.4.0-course.4-beta",
     "frameworkVersion": "0.4.0",
     "frameworkTag": "ai-fabric-framework-v0.4.0",
-    "courseSourceTag": "ai-fabric-course-v0.4.0.3",
+    "courseSourceTag": "ai-fabric-course-v0.4.0.4",
     "starterRef": "course-0.4.0-01-first-search",
     "solutionRef": "course-0.4.0-02-rag",
     "requiresOpenAi": true,
@@ -266,5 +266,5 @@
     "reviewPrompt": "# CORE-03 Independent Review Prompt\n\nStatus: Migrated for independent review of the AI Fabric 0.4 CORE-03 behavior contract. Immutable\ncheckpoint comparison is pending publication.\n\nReview a developer's CORE-03 implementation against AI Fabric Framework 0.4.0, the current CORE-03\ncourse source, and pinned RAG and generation APIs.\n\nUse a findings-first review. Order findings by severity and cite changed files/tests plus the course\nor pinned source. Review retrieval, generation, and public projection as separate boundaries.\n\nCheck for these failure classes:\n\n- `RAGService` or `performRAGQuery` incorrectly described as generating an answer;\n- generation invoked after empty or failed retrieval;\n- database rows presented as evidence without vector retrieval;\n- answer returned without stable evidence IDs;\n- model-proposed vector space treated as authorization;\n- unbounded or unapproved context sent to the model;\n- raw embeddings, prompts, secrets, paths, or internal metadata returned publicly;\n- similarity score presented as answer correctness;\n- exact generated wording used as the only quality assertion;\n- retrieval or generation failure hidden behind a canned success response;\n- missing `RAGProvider` or empty index reported as healthy RAG readiness;\n- policy records containing prompt-control instructions instead of user-facing policy text.\n\nThen report:\n\n1. findings with severity;\n2. missing proof or unexecuted checks;\n3. whether retrieval and generation remain independently observable;\n4. whether no-evidence and failure paths prevent generation;\n5. whether every answered response exposes approved evidence identity;\n6. whether the golden test fails when an expected source is absent;\n7. the smallest corrections required to pass CORE-03.\n\nThe lesson passes only when the answer is downstream of approved retrieved evidence and callers can\ninspect that evidence without receiving internal provider or prompt data.\n"
   },
   "sourcePath": "docs/course/core/03-evidence-grounded-rag/lesson.md",
-  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/ai-fabric-course-v0.4.0.3/docs/course/core/03-evidence-grounded-rag/lesson.md"
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/ai-fabric-course-v0.4.0.4/docs/course/core/03-evidence-grounded-rag/lesson.md"
 }

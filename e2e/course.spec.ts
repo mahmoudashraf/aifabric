@@ -4,7 +4,7 @@ test("course hub opens the reviewed quickstart", async ({ page }) => {
   await page.goto("/course");
   await expect(page.getByRole("heading", { name: /Build AI-Enabled Applications/ })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Quickstart + Core path" })).toBeVisible();
-  await expect(page.getByText("8 published lessons")).toBeVisible();
+  await expect(page.getByText("14 published lessons")).toBeVisible();
   await expect(page.getByRole("link", { name: "Browse learner checkpoints" })).toHaveAttribute(
     "href",
     "https://github.com/Loom-AI-Labs/ai-fabric-course-support-assistant",
@@ -15,11 +15,11 @@ test("course hub opens the reviewed quickstart", async ({ page }) => {
   await expect(page.getByText("Executable learner checkpoint")).toBeVisible();
   await expect(page.getByRole("link", { name: "Starter checkpoint" })).toHaveAttribute(
     "href",
-    /course-0\.3\.3-00-starter$/,
+    /course-0\.4\.0-00-starter$/,
   );
   await expect(page.getByRole("link", { name: "Solution checkpoint" })).toHaveAttribute(
     "href",
-    /course-0\.3\.3-01-first-search$/,
+    /course-0\.4\.0-01-first-search$/,
   );
   await expect(page.getByText(/AI Fabric adds application-level AI capabilities to Spring Boot/)).toBeVisible();
   await expect(page.getByRole("link", { name: "Theory" })).toHaveCount(0);
@@ -178,11 +178,11 @@ test("PROD-01 presents verified provider routing with its published theory recor
   await expect(page.getByText(/complete lesson, assigned theory recordings/)).toBeVisible();
   await expect(page.getByRole("link", { name: "Starter checkpoint" })).toHaveAttribute(
     "href",
-    /course-0\.3\.3-06-tested-solution$/,
+    /course-0\.4\.0-06-tested-solution$/,
   );
   await expect(page.getByRole("link", { name: "Solution checkpoint" })).toHaveAttribute(
     "href",
-    /course-0\.3\.3-p01-provider-routing$/,
+    /course-0\.4\.0-p01-provider-routing$/,
   );
   await expect(
     page.getByTitle("Provider architecture and purpose routing lesson video in English"),
@@ -214,11 +214,11 @@ test("PROD-08 presents the exact-commit production release gate", async ({ page 
   await expect(page.getByText(/complete lesson, assigned theory recordings/)).toBeVisible();
   await expect(page.getByRole("link", { name: "Starter checkpoint" })).toHaveAttribute(
     "href",
-    /course-0\.3\.3-p07-qdrant$/,
+    /course-0\.4\.0-p07-qdrant$/,
   );
   await expect(page.getByRole("link", { name: "Solution checkpoint" })).toHaveAttribute(
     "href",
-    /course-0\.3\.3-p08-production-ready$/,
+    /course-0\.4\.0-p08-production-ready$/,
   );
   await expect(
     page.getByTitle("Operations and release readiness lesson video in English"),
@@ -241,6 +241,28 @@ test("PROD-08 presents the exact-commit production release gate", async ({ page 
   await page.getByRole("tab", { name: "Build manually" }).click();
   await expect(page.getByRole("heading", { name: "Classify Runtime State" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Check your understanding" })).toBeVisible();
+});
+
+test("real-app case studies expose their live walkthroughs and reproducible labs", async ({ page }) => {
+  test.setTimeout(180_000);
+
+  const caseStudies = [
+    { slug: "ai-shopping-experience", title: "AI Shopping Experience", videoId: "xnLuz-mlKMY" },
+    { slug: "account-resolver", title: "AI Fabric Account Resolver", videoId: "GJ9H16eMdO0" },
+    { slug: "behavior-signals", title: "AI Fabric Behavior Signals", videoId: "yvvi4YEWSq4" },
+    { slug: "tenant-guard", title: "AI Fabric Tenant Guard", videoId: "NUkfSdQeVnc" },
+    { slug: "privacy-shield", title: "AI Fabric Privacy Shield", videoId: "YfphOu_vmqw" },
+    { slug: "live-data-sync", title: "AI Fabric Live Data Sync", videoId: "GHiET3aZQsI" },
+  ];
+
+  for (const caseStudy of caseStudies) {
+    await page.goto(`/course/case-studies/${caseStudy.slug}`, { waitUntil: "domcontentloaded" });
+    await expect(page.getByRole("heading", { name: caseStudy.title, exact: true })).toBeVisible();
+    await expect(page.getByText("Executable learner checkpoint", { exact: true })).toBeVisible();
+    await expect(page.getByLabel("Assigned theory videos").getByRole("button")).toHaveCount(1);
+    await expect(page.locator(`iframe[src*="${caseStudy.videoId}"]`)).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Check your understanding" })).toBeVisible();
+  }
 });
 
 test("knowledge check grades locally without requiring sign-in", async ({ page }) => {

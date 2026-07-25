@@ -197,6 +197,61 @@ export const courseTheoryVideos: CourseTheoryVideoEntry[] = [
       en: { videoId: "MrvMGlUN0fs", durationLabel: "7 min 49 sec" },
     },
   },
+  {
+    id: "case-shopping-walkthrough",
+    title: "AI Shopping Experience walkthrough",
+    description: "Reproduce staged commerce evidence, product attachments, follow-ups, and confirmation-gated cart actions.",
+    courseContext: "Real-App Case Study 01",
+    sources: {
+      en: { videoId: "xnLuz-mlKMY", durationLabel: "1 min 22 sec" },
+      ar: { videoId: "PMRN4xA874Y", durationLabel: "2 min 9 sec" },
+    },
+  },
+  {
+    id: "case-account-resolver-walkthrough",
+    title: "AI Fabric Account Resolver walkthrough",
+    description: "Trace current-account facts, policy evidence, blocker reasoning, and a governed remedy.",
+    courseContext: "Real-App Case Study 02",
+    sources: {
+      en: { videoId: "GJ9H16eMdO0", durationLabel: "39 sec" },
+    },
+  },
+  {
+    id: "case-behavior-signals-walkthrough",
+    title: "AI Fabric Behavior Signals walkthrough",
+    description: "Follow raw events into incremental insight and allowlisted agentic UI composition.",
+    courseContext: "Real-App Case Study 03",
+    sources: {
+      en: { videoId: "yvvi4YEWSq4", durationLabel: "1 min 9 sec" },
+    },
+  },
+  {
+    id: "case-tenant-guard-walkthrough",
+    title: "AI Fabric Tenant Guard walkthrough",
+    description: "Prove tenant-scoped retrieval, role visibility, governed writes, and scoped deletion.",
+    courseContext: "Real-App Case Study 04",
+    sources: {
+      en: { videoId: "NUkfSdQeVnc", durationLabel: "1 min 21 sec" },
+    },
+  },
+  {
+    id: "case-privacy-shield-walkthrough",
+    title: "AI Fabric Privacy Shield walkthrough",
+    description: "Inspect backend PII processing, redacted indexing, sanitized search, and privacy evidence.",
+    courseContext: "Real-App Case Study 05",
+    sources: {
+      en: { videoId: "YfphOu_vmqw", durationLabel: "38 sec" },
+    },
+  },
+  {
+    id: "case-live-data-sync-walkthrough",
+    title: "AI Fabric Live Data Sync walkthrough",
+    description: "Observe annotation-driven create, update, and delete synchronization across current vector evidence.",
+    courseContext: "Real-App Case Study 06",
+    sources: {
+      en: { videoId: "GHiET3aZQsI", durationLabel: "Full walkthrough" },
+    },
+  },
 ];
 
 export const resolveCourseVideoSource = (

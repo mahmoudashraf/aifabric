@@ -1,0 +1,149 @@
+{
+  "id": "case-04",
+  "slug": "tenant-guard",
+  "title": "AI Fabric Tenant Guard",
+  "description": "Tenant-scoped evidence, role policy, denied retrieval, and governed writes.",
+  "durationMinutes": 55,
+  "availability": "published",
+  "source": "case-studies/04-tenant-guard/lesson.md",
+  "knowledgeCheck": {
+    "schemaVersion": 1,
+    "lessonId": "case-04",
+    "passingScorePercent": 80,
+    "questions": [
+      {
+        "id": "case-04-q1",
+        "type": "multiple-choice",
+        "competency": "retrieval-isolation",
+        "prompt": "Which layers enforce tenant-safe retrieval?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Trusted backend identity and role policy"
+          },
+          {
+            "id": "b",
+            "text": "Provider metadata filtering"
+          },
+          {
+            "id": "c",
+            "text": "Application post-hit verification"
+          },
+          {
+            "id": "d",
+            "text": "Prompt wording alone"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b",
+          "c"
+        ],
+        "explanation": "Prompts can explain policy but cannot enforce evidence access.",
+        "sourcePaths": [
+          "examples/real-apps/tenant-knowledge-portal/src/main/java/com/ai/fabric/realapps/tenantportal/service/TenantKnowledgeService.java"
+        ]
+      },
+      {
+        "id": "case-04-q2",
+        "type": "single-choice",
+        "competency": "cross-tenant-action",
+        "prompt": "What is the correct result for a known cross-tenant action target?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Execute after model confirmation"
+          },
+          {
+            "id": "b",
+            "text": "Deny before mutation"
+          },
+          {
+            "id": "c",
+            "text": "Hide it only in the UI"
+          },
+          {
+            "id": "d",
+            "text": "Change the request tenant"
+          }
+        ],
+        "correctOptionIds": [
+          "b"
+        ],
+        "explanation": "Confirmation cannot override tenant authorization.",
+        "sourcePaths": [
+          "examples/real-apps/tenant-knowledge-portal/src/test/java/com/ai/fabric/realapps/tenantportal/service/TenantKnowledgeServiceTest.java"
+        ]
+      },
+      {
+        "id": "case-04-q3",
+        "type": "answer-reveal",
+        "competency": "deletion",
+        "prompt": "What proves tenant deletion is correctly scoped?",
+        "modelAnswer": "Deleted-tenant source/vector IDs are absent, surviving-tenant IDs remain, and the surviving tenant still retrieves its approved evidence.",
+        "sourcePaths": [
+          "examples/real-apps/tenant-knowledge-portal/src/main/java/com/ai/fabric/realapps/tenantportal/web/TenantGuardDemoController.java"
+        ]
+      }
+    ]
+  },
+  "assistantPrompt": "case-studies/04-tenant-guard/assistant-prompt.md",
+  "assistantReviewPrompt": "case-studies/04-tenant-guard/assistant-review-prompt.md",
+  "theoryVideoIds": [
+    "case-tenant-guard-walkthrough"
+  ],
+  "relatedStories": [],
+  "relatedDemos": [],
+  "track": "case-studies",
+  "route": "/course/case-studies/tenant-guard",
+  "frontMatter": {
+    "id": "case-04",
+    "slug": "tenant-guard",
+    "title": "AI Fabric Tenant Guard",
+    "track": "case-studies",
+    "order": 4,
+    "durationMinutes": 55,
+    "availability": "published",
+    "courseVersion": "0.4.0-course.4-beta",
+    "frameworkVersion": "0.4.0",
+    "frameworkTag": "ai-fabric-framework-v0.4.0",
+    "courseSourceTag": "ai-fabric-course-v0.4.0.4",
+    "starterRef": "course-0.4.0-p08-production-ready",
+    "solutionRef": "course-0.4.0-p08-production-ready",
+    "requiresOpenAi": true,
+    "requiresDocker": false,
+    "optionalProviderExercises": [
+      "openai"
+    ],
+    "sourcePaths": [
+      "examples/real-apps/tenant-knowledge-portal/README.md",
+      "examples/real-apps/tenant-knowledge-portal/src/main/java/com/ai/fabric/realapps/tenantportal/service/TenantKnowledgeService.java",
+      "examples/real-apps/tenant-knowledge-portal/src/main/java/com/ai/fabric/realapps/tenantportal/web/TenantGuardDemoController.java",
+      "examples/real-apps/tenant-knowledge-portal/src/test/java/com/ai/fabric/realapps/tenantportal/service/TenantKnowledgeServiceTest.java",
+      "examples/real-apps/tenant-knowledge-portal/src/test/java/com/ai/fabric/realapps/tenantportal/web/TenantGuardDemoControllerTest.java"
+    ],
+    "theoryVideoIds": [
+      "case-tenant-guard-walkthrough"
+    ],
+    "assistant": {
+      "mode": "reproduce",
+      "implementationPrompt": "assistant-prompt.md",
+      "reviewPrompt": "assistant-review-prompt.md",
+      "validationStatus": "passed"
+    },
+    "knowledgeCheck": {
+      "source": "knowledge-check.yml",
+      "required": true,
+      "passingScorePercent": 80
+    }
+  },
+  "markdown": "# Reproduce Tenant-Safe Retrieval And Writes\n\n## Start Here\n\nTenant Guard proves that identity and access policy constrain retrieval before evidence reaches\ngeneration. It also demonstrates role-aware catalogs, governed writes, and tenant-scoped deletion.\n\nOpen:\n\n- live UI: `https://ai-fabric.dev/demos/ai-fabric-tenant-guard`\n- backend health: `https://ai-fabric-tenant-guard.46.224.145.148.sslip.io/api/demo/health`\n- source: `examples/real-apps/tenant-knowledge-portal`\n\n## Architecture To Recognize\n\n```text\nauthenticated demo principal\n        -> tenant + role policy\n        -> AI Fabric metadata filter\n        -> vector provider search\n        -> application post-hit verification\n        -> approved evidence only\n        -> optional generation\n```\n\nThe provider performs exact tenant/visibility filtering where supported. The application verifies\nreturned hits again and fails closed if the adapter violates the boundary. Prompt wording is not a\ntenant control.\n\n## Step 1: Seed Overlapping Documents\n\nReset your isolated session and seed both demo tenants. Inspect the vector proof. The tenants use\noverlapping document titles so successful isolation cannot be explained by different keywords.\n\n## Step 2: Compare Allowed Retrieval\n\nRun the same natural-language query as a regular user in each tenant. Expected:\n\n- tenant A sees only tenant A IDs;\n- tenant B sees only tenant B IDs;\n- restricted/admin-only evidence is absent for regular users;\n- generation receives only the approved hit set.\n\nInspect the request's effective tenant and role rather than trusting a browser label.\n\n## Step 3: Compare Role Visibility\n\nInspect the catalog as a regular user and then as an admin in the same tenant. The admin may see\nadditional approved evidence, but neither role may cross into another tenant.\n\n## Step 4: Govern A Write\n\nAsk the natural-language endpoint to archive an allowed document. Expected:\n\n1. the LLM may select a typed action draft;\n2. backend target, tenant, role, and policy checks still run;\n3. confirmation is required;\n4. reject changes nothing;\n5. confirm updates only the allowed tenant document.\n\nAttempt the same target from the other tenant. It must be denied before execution.\n\n## Step 5: Prove Tenant Deletion\n\nDelete one tenant through the explicit demo operation. Inspect remaining vector IDs and query the\nother tenant. The deleted tenant's evidence must be absent and the surviving tenant must remain\nsearchable.\n\n## Intentional Failure\n\nTry to send a different `tenantId` in request data or target a known cross-tenant document ID. A\nsuccessful retrieval or mutation is a security failure. A friendly model refusal is not sufficient\nproof; verify zero forbidden IDs and zero side effects.\n\n## Run Locally\n\n```bash\nmvn -B -V --no-transfer-progress -f examples/real-apps/pom.xml \\\n  -pl tenant-knowledge-portal -am test\n```\n\nLive provider posture requires protected environment values:\n\n```bash\nAI_LLM_PROVIDER=openai \\\nAI_EMBEDDING_PROVIDER=openai \\\nOPENAI_ENABLED=true \\\nOPENAI_API_KEY=\"$OPENAI_API_KEY\" \\\nmvn -f examples/real-apps/tenant-knowledge-portal/pom.xml spring-boot:run\n```\n\n## Done When\n\n- overlapping-title retrieval remains tenant scoped;\n- regular/admin visibility differs only inside the same tenant;\n- forbidden IDs never reach generation;\n- cross-tenant write attempts have zero side effects;\n- reject and confirm produce distinct, verified state;\n- one-tenant deletion preserves the other tenant.\n\n## Next Lesson\n\nCASE-05 moves from evidence authorization to sensitive-input processing and safe persistence.",
+  "assistant": {
+    "mode": "reproduce",
+    "validationStatus": "passed",
+    "implementationPrompt": "# CASE-04 Reproduction Prompt\n\nReproduce Tenant Guard with overlapping document titles. Verify regular/admin visibility, identical\nqueries under both tenants, forbidden-ID absence before generation, an allowed governed write,\nrejection with zero side effects, cross-tenant target denial, and one-tenant deletion that preserves\nthe other tenant. Do not treat model refusal as access-control proof. Report exact returned and\nforbidden IDs.\n",
+    "reviewPrompt": "# CASE-04 Independent Review Prompt\n\nLead with any tenant/role value trusted from the browser, provider filter omission, forbidden hit\nreaching generation, cross-tenant mutation, or over-broad delete. Require source IDs and state proof\nfor both tenants, not screenshots alone. Verify selected live provider failures remain visible.\n"
+  },
+  "sourcePath": "docs/course/case-studies/04-tenant-guard/lesson.md",
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/ai-fabric-course-v0.4.0.4/docs/course/case-studies/04-tenant-guard/lesson.md"
+}

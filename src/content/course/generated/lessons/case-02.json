@@ -1,0 +1,153 @@
+{
+  "id": "case-02",
+  "slug": "account-resolver",
+  "title": "AI Fabric Account Resolver",
+  "description": "Profile reads, policy-grounded blockers, follow-ups, and governed remedies.",
+  "durationMinutes": 55,
+  "availability": "published",
+  "source": "case-studies/02-account-resolver/lesson.md",
+  "knowledgeCheck": {
+    "schemaVersion": 1,
+    "lessonId": "case-02",
+    "passingScorePercent": 80,
+    "questions": [
+      {
+        "id": "case-02-q1",
+        "type": "single-choice",
+        "competency": "context-ownership",
+        "prompt": "Who supplies the current subscription target to a resolver action?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The user types subscriptionId"
+          },
+          {
+            "id": "b",
+            "text": "The browser reads it from HTML"
+          },
+          {
+            "id": "c",
+            "text": "The backend resolves it from current-account context"
+          },
+          {
+            "id": "d",
+            "text": "The LLM invents it"
+          }
+        ],
+        "correctOptionIds": [
+          "c"
+        ],
+        "explanation": "Current-account identity is application-owned context, not a model parameter.",
+        "sourcePaths": [
+          "examples/real-apps/ai-fabric-account-resolver/src/main/java/com/subscription/hub/ai/ResolverAccountOwnedTargetResolutionStep.java"
+        ]
+      },
+      {
+        "id": "case-02-q2",
+        "type": "multiple-choice",
+        "competency": "blocker-reasoning",
+        "prompt": "What should the blocker explanation use?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Current profile facts from a read action"
+          },
+          {
+            "id": "b",
+            "text": "Retrieved human-readable policies"
+          },
+          {
+            "id": "c",
+            "text": "A frontend hardcoded blocker"
+          },
+          {
+            "id": "d",
+            "text": "Model reasoning over approved context"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b",
+          "d"
+        ],
+        "explanation": "The UI displays the result but does not manufacture the diagnosis.",
+        "sourcePaths": [
+          "examples/real-apps/ai-fabric-account-resolver/src/main/java/com/subscription/hub/action/handler/GetAccountProfileActionHandler.java",
+          "examples/real-apps/ai-fabric-account-resolver/src/main/java/com/subscription/hub/config/ResolverPolicyRagIndexer.java"
+        ]
+      },
+      {
+        "id": "case-02-q3",
+        "type": "answer-reveal",
+        "competency": "confirmation",
+        "prompt": "What must rejection of an address update prove?",
+        "modelAnswer": "The pending action is closed or rejected, no address mutation occurs, and a different conversation cannot inherit the pending confirmation.",
+        "sourcePaths": [
+          "examples/real-apps/ai-fabric-account-resolver/src/test/java/com/subscription/hub/action/handler/AccountResolverActionHandlerTest.java"
+        ]
+      }
+    ]
+  },
+  "assistantPrompt": "case-studies/02-account-resolver/assistant-prompt.md",
+  "assistantReviewPrompt": "case-studies/02-account-resolver/assistant-review-prompt.md",
+  "theoryVideoIds": [
+    "case-account-resolver-walkthrough"
+  ],
+  "relatedStories": [],
+  "relatedDemos": [],
+  "track": "case-studies",
+  "route": "/course/case-studies/account-resolver",
+  "frontMatter": {
+    "id": "case-02",
+    "slug": "account-resolver",
+    "title": "AI Fabric Account Resolver",
+    "track": "case-studies",
+    "order": 2,
+    "durationMinutes": 55,
+    "availability": "published",
+    "courseVersion": "0.4.0-course.4-beta",
+    "frameworkVersion": "0.4.0",
+    "frameworkTag": "ai-fabric-framework-v0.4.0",
+    "courseSourceTag": "ai-fabric-course-v0.4.0.4",
+    "starterRef": "course-0.4.0-p08-production-ready",
+    "solutionRef": "course-0.4.0-p08-production-ready",
+    "requiresOpenAi": true,
+    "requiresDocker": false,
+    "optionalProviderExercises": [
+      "openai"
+    ],
+    "sourcePaths": [
+      "examples/real-apps/ai-fabric-account-resolver/README.md",
+      "examples/real-apps/ai-fabric-account-resolver/src/main/java/com/subscription/hub/controller/NaturalLanguageController.java",
+      "examples/real-apps/ai-fabric-account-resolver/src/main/java/com/subscription/hub/action/handler/GetAccountProfileActionHandler.java",
+      "examples/real-apps/ai-fabric-account-resolver/src/main/java/com/subscription/hub/action/handler/UpdateAddressActionHandler.java",
+      "examples/real-apps/ai-fabric-account-resolver/src/main/java/com/subscription/hub/config/ResolverPolicyRagIndexer.java",
+      "examples/real-apps/ai-fabric-account-resolver/src/main/java/com/subscription/hub/ai/ResolverAccountOwnedTargetResolutionStep.java",
+      "examples/real-apps/ai-fabric-account-resolver/src/test/java/com/subscription/hub/controller/NaturalLanguageControllerTest.java",
+      "examples/real-apps/ai-fabric-account-resolver/src/test/java/com/subscription/hub/action/handler/AccountResolverActionHandlerTest.java"
+    ],
+    "theoryVideoIds": [
+      "case-account-resolver-walkthrough"
+    ],
+    "assistant": {
+      "mode": "reproduce",
+      "implementationPrompt": "assistant-prompt.md",
+      "reviewPrompt": "assistant-review-prompt.md",
+      "validationStatus": "passed"
+    },
+    "knowledgeCheck": {
+      "source": "knowledge-check.yml",
+      "required": true,
+      "passingScorePercent": 80
+    }
+  },
+  "markdown": "# Reproduce The Account Resolver\n\n## Start Here\n\nThis app lets AI Fabric read a current account profile, retrieve human-readable policies, explain a\nblocker, and propose a governed remedy. The UI does not compute the blocker and does not ask the user\nfor application-owned identifiers.\n\nOpen:\n\n- live UI: `https://ai-fabric.dev/demos/ai-fabric-account-resolver`\n- backend health: `https://ai-fabric-account-resolver.46.224.145.148.sslip.io/api/account-resolver/health`\n- source: `examples/real-apps/ai-fabric-account-resolver`\n\n## Architecture To Recognize\n\n```text\nnew user turn -> NaturalLanguageController -> resolver mode\n                                             |\n                            backend chat session + planner\n                              /                        \\\n                 get_account_profile read       policy RAG\n                              \\                        /\n                               LLM explains blocker\n                                         |\n                            confirmable remedy action\n                                         |\n                              domain service + result\n```\n\n`get_account_profile` returns facts, not a prewritten diagnosis. Policies are general guidance.\nThe model combines current facts and retrieved policy evidence; the backend still owns current-user\nidentity, authorization, action context, and execution.\n\n## Step 1: Select A Missing-Address Persona\n\nReset your session and choose the missing billing address scenario. Ask:\n\n```text\nWhy can't I place an order?\n```\n\nExpected: AI Fabric reads the current account profile, retrieves the billing-address policy, and\nexplains that the address is the blocker. Inspect the profile action result and policy evidence.\n\nThe request must not contain a trusted subscription ID. The application resolves the current\naccount from authenticated/session-owned context.\n\n## Step 2: Use A Natural Follow-Up\n\nSend:\n\n```text\nUpdate my billing address.\n```\n\nExpected: `update_address` is selected without generic target clarification. The action may request\nonly information the application does not already own, such as address fields. It must not ask the\nuser to type a subscription ID.\n\nThe custom target-resolution step prevents a generic entity resolver from treating current-account\nactions as arbitrary object actions. That is an application boundary, not fake intelligence.\n\n## Step 3: Confirm And Re-read\n\nComplete the required address fields and confirm. Expected:\n\n- no write occurs before confirmation;\n- the action executes once;\n- the result exposes a concise success message and safe fields;\n- a fresh profile read shows the updated address;\n- readiness can change, but readiness is dashboard proof rather than an LLM shortcut.\n\nAsk again:\n\n```text\nCan I place an order now?\n```\n\nThe answer should use the updated account state.\n\n## Step 4: Observe Policy Outcomes\n\nChoose the refund persona and request a small account credit, then a cash refund above the\napplication review threshold. Expected: policy-owned domain logic can return different statuses such\nas approved or pending review. That status comes from backend execution, not UI wording.\n\n## Intentional Failure\n\nStart an address update, then reject it. The stored address must remain unchanged. Next, send a\nfollow-up with a new conversation ID; it should not inherit the previous pending action.\n\nIf the UI asks for subscription ID, provider, or card type already known by the application, inspect\naction parameter ownership before editing prompts.\n\n## Run Locally\n\n```bash\nmvn -B -V --no-transfer-progress -f examples/real-apps/pom.xml \\\n  -pl ai-fabric-account-resolver -am test\n```\n\nFor live orchestration:\n\n```bash\nOPENAI_ENABLED=true \\\nOPENAI_API_KEY=\"$OPENAI_API_KEY\" \\\nOPENAI_MODEL=gpt-4o-mini \\\nmvn -f examples/real-apps/ai-fabric-account-resolver/pom.xml spring-boot:run\n```\n\nKeep the key in the environment only.\n\n## Done When\n\n- profile facts and policy evidence are both visible;\n- the model explains the selected persona's actual blocker;\n- a natural follow-up resolves the current-account action;\n- only genuinely missing user input is requested;\n- reject has no side effect and confirm executes once;\n- post-action profile state reflects the domain write.\n\n## Next Lesson\n\nCASE-03 moves from conversational resolution to time-ordered behavior evidence and structured\ncomponent selection.",
+  "assistant": {
+    "mode": "reproduce",
+    "validationStatus": "passed",
+    "implementationPrompt": "# CASE-02 Reproduction Prompt\n\nReproduce Account Resolver behavior without editing code. Select a missing-address or\nmissing-payment persona. Prove profile-read facts, policy evidence, the model's blocker explanation,\na natural follow-up that selects the current-account remedy, collection of only genuinely missing\nuser fields, rejection with zero mutation, confirmation with one mutation, and a fresh post-action\nprofile read. Do not send or ask for application-owned subscription identity. Record provider and\nbuild posture and keep API keys secret.\n",
+    "reviewPrompt": "# CASE-02 Independent Review Prompt\n\nReview the resolver proof. Lead with any client-owned identity, hardcoded diagnosis, unnecessary\nparameter, missing policy evidence, lost follow-up context, or mutation-before-confirmation. Verify\nthe current account is resolved server-side and the post-action state comes from domain services.\nCite controller, target-resolution, read-action, policy-indexer, handler, and test evidence.\n"
+  },
+  "sourcePath": "docs/course/case-studies/02-account-resolver/lesson.md",
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/ai-fabric-course-v0.4.0.4/docs/course/case-studies/02-account-resolver/lesson.md"
+}

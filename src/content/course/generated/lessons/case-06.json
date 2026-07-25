@@ -1,0 +1,152 @@
+{
+  "id": "case-06",
+  "slug": "live-data-sync",
+  "title": "AI Fabric Live Data Sync",
+  "description": "Annotation-driven create, update, and delete synchronization with stale-evidence proof.",
+  "durationMinutes": 55,
+  "availability": "published",
+  "source": "case-studies/06-live-data-sync/lesson.md",
+  "knowledgeCheck": {
+    "schemaVersion": 1,
+    "lessonId": "case-06",
+    "passingScorePercent": 80,
+    "questions": [
+      {
+        "id": "case-06-q1",
+        "type": "multiple-choice",
+        "competency": "annotation-contract",
+        "prompt": "What do the live-sync annotations define?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Entity vector-space identity"
+          },
+          {
+            "id": "b",
+            "text": "Searchable content projection"
+          },
+          {
+            "id": "c",
+            "text": "Typed context metadata"
+          },
+          {
+            "id": "d",
+            "text": "Database authorization"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b",
+          "c"
+        ],
+        "explanation": "Authorization remains application-owned; annotations describe AI evidence.",
+        "sourcePaths": [
+          "examples/real-apps/ai-fabric-live-data-sync/src/main/java/com/ai/fabric/realapps/livesync/domain/SyncProduct.java"
+        ]
+      },
+      {
+        "id": "case-06-q2",
+        "type": "single-choice",
+        "competency": "stable-update",
+        "prompt": "What should an update do to vector identity?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Create a second unrelated vector"
+          },
+          {
+            "id": "b",
+            "text": "Preserve stable identity and replace stale projected content"
+          },
+          {
+            "id": "c",
+            "text": "Keep the old vector until restart"
+          },
+          {
+            "id": "d",
+            "text": "Change the database primary key"
+          }
+        ],
+        "correctOptionIds": [
+          "b"
+        ],
+        "explanation": "Stable logical identity supports idempotent replacement.",
+        "sourcePaths": [
+          "examples/real-apps/ai-fabric-live-data-sync/src/test/java/com/ai/fabric/realapps/livesync/LiveDataSyncIntegrationTest.java"
+        ]
+      },
+      {
+        "id": "case-06-q3",
+        "type": "answer-reveal",
+        "competency": "delete-proof",
+        "prompt": "What proves delete synchronization?",
+        "modelAnswer": "The source row is absent, vector counts/revisions converge, a distinctive search returns no hit, and chat cannot cite the deleted evidence.",
+        "sourcePaths": [
+          "examples/real-apps/ai-fabric-live-data-sync/src/test/java/com/ai/fabric/realapps/livesync/AnnotationSyncContractTest.java"
+        ]
+      }
+    ]
+  },
+  "assistantPrompt": "case-studies/06-live-data-sync/assistant-prompt.md",
+  "assistantReviewPrompt": "case-studies/06-live-data-sync/assistant-review-prompt.md",
+  "theoryVideoIds": [
+    "case-live-data-sync-walkthrough"
+  ],
+  "relatedStories": [],
+  "relatedDemos": [],
+  "track": "case-studies",
+  "route": "/course/case-studies/live-data-sync",
+  "frontMatter": {
+    "id": "case-06",
+    "slug": "live-data-sync",
+    "title": "AI Fabric Live Data Sync",
+    "track": "case-studies",
+    "order": 6,
+    "durationMinutes": 55,
+    "availability": "published",
+    "courseVersion": "0.4.0-course.4-beta",
+    "frameworkVersion": "0.4.0",
+    "frameworkTag": "ai-fabric-framework-v0.4.0",
+    "courseSourceTag": "ai-fabric-course-v0.4.0.4",
+    "starterRef": "course-0.4.0-p08-production-ready",
+    "solutionRef": "course-0.4.0-p08-production-ready",
+    "requiresOpenAi": true,
+    "requiresDocker": false,
+    "optionalProviderExercises": [
+      "openai"
+    ],
+    "sourcePaths": [
+      "examples/real-apps/ai-fabric-live-data-sync/README.md",
+      "examples/real-apps/ai-fabric-live-data-sync/src/main/java/com/ai/fabric/realapps/livesync/domain/SyncProduct.java",
+      "examples/real-apps/ai-fabric-live-data-sync/src/main/java/com/ai/fabric/realapps/livesync/domain/SyncPolicy.java",
+      "examples/real-apps/ai-fabric-live-data-sync/src/main/java/com/ai/fabric/realapps/livesync/domain/SyncGuide.java",
+      "examples/real-apps/ai-fabric-live-data-sync/src/main/java/com/ai/fabric/realapps/livesync/service/SyncProductService.java",
+      "examples/real-apps/ai-fabric-live-data-sync/src/main/java/com/ai/fabric/realapps/livesync/service/DemoStateService.java",
+      "examples/real-apps/ai-fabric-live-data-sync/src/test/java/com/ai/fabric/realapps/livesync/AnnotationSyncContractTest.java",
+      "examples/real-apps/ai-fabric-live-data-sync/src/test/java/com/ai/fabric/realapps/livesync/LiveDataSyncIntegrationTest.java"
+    ],
+    "theoryVideoIds": [
+      "case-live-data-sync-walkthrough"
+    ],
+    "assistant": {
+      "mode": "reproduce",
+      "implementationPrompt": "assistant-prompt.md",
+      "reviewPrompt": "assistant-review-prompt.md",
+      "validationStatus": "passed"
+    },
+    "knowledgeCheck": {
+      "source": "knowledge-check.yml",
+      "required": true,
+      "passingScorePercent": 80
+    }
+  },
+  "markdown": "# Reproduce Annotation-Driven Live Data Sync\n\n## Start Here\n\nThis app proves that ordinary JPA entities can remain business truth while AI Fabric keeps derived\nvector evidence synchronized. It uses products, policies, and troubleshooting guides so the concept\nis not mistaken for one hardcoded entity adapter.\n\nOpen:\n\n- live UI: `https://ai-fabric.dev/demos/ai-fabric-live-data-sync`\n- backend health: `https://ai-fabric-live-data-sync.46.224.145.148.sslip.io/api/demo/health`\n- source: `examples/real-apps/ai-fabric-live-data-sync`\n\n## Architecture To Recognize\n\n```text\nJPA entity + @AICapable\n  @AISearchable -> canonical text\n  @AIContext    -> typed metadata\n\nservice create/update/delete + @AIProcess\n                 -> indexing lifecycle\n                 -> OpenAI embedding\n                 -> Lucene vector\n                 -> RAG/chat evidence\n```\n\nAI Fabric 0.4 treats annotation metadata as the authoritative sync contract. Vector-space names,\nsearchable fields, context fields, and create/update/delete operations must agree with the manifest\nand tests.\n\n## Step 1: Inspect The Seeded Manifest\n\nCreate an isolated workspace. Inspect its manifest and source/vector counts. Expected:\n\n- three entity types: product, policy, guide;\n- each source row has one stable logical identity;\n- synchronized counts and vector counts agree;\n- annotation metadata is visible as operational proof.\n\n## Step 2: Query Current Product Evidence\n\nAsk for the NovaBook Air battery life. Record the answer, evidence ID, source revision, and vector\nrevision.\n\n## Step 3: Update The Source Entity\n\nEdit NovaBook Air battery life to a new value. Wait for synchronization, then ask the same question.\nExpected:\n\n- the source revision increases;\n- the same logical vector identity is updated rather than duplicated;\n- the new value is retrievable;\n- the old value is no longer returned;\n- AI generation uses the updated evidence.\n\n## Step 4: Delete Evidence At The Source\n\nDelete a policy or guide from the source editor. Search for its distinctive phrase and ask the chat\nabout it. Expected: the source row and vector disappear and RAG cannot cite stale evidence.\n\n## Step 5: Compare Entity Types\n\nRepeat an update for a policy and a guide. Inspect how `@AISearchable` fields become text and how\n`@AIContext` fields remain typed metadata. Confirm that status, revision, workspace, and record key\nare metadata rather than accidental prose.\n\n## Intentional Failure\n\nA database row changing while the vector revision remains old is a failed sync, even if a generic\nLLM answer sounds plausible. Likewise, a delete that removes the source row but leaves a retrievable\nvector is a release blocker.\n\n## Run Locally\n\n```bash\nmvn -B -V --no-transfer-progress -f examples/real-apps/pom.xml \\\n  -pl ai-fabric-live-data-sync -am test\n```\n\nNo-key smoke uses deterministic providers. For parity with the public demo:\n\n```bash\nOPENAI_ENABLED=true \\\nOPENAI_API_KEY=\"$OPENAI_API_KEY\" \\\nOPENAI_MODEL=gpt-4o-mini \\\nOPENAI_EMBEDDING_MODEL=text-embedding-3-small \\\nOPENAI_EMBEDDING_DIMENSIONS=512 \\\nmvn -f examples/real-apps/ai-fabric-live-data-sync/pom.xml spring-boot:run\n```\n\n## Done When\n\n- three annotated entity contracts are visible;\n- create/update/delete counts converge;\n- update preserves stable identity and removes old text;\n- delete removes both source and retrievable vector evidence;\n- the chat answer changes only after current evidence is available;\n- annotation and lifecycle tests pass.\n\n## Track Complete\n\nYou have now reproduced six distinct AI-enabled Spring Boot applications: commerce RAG and actions,\naccount resolution, behavior analysis, tenant isolation, privacy-safe indexing, and live source\nsynchronization. Use the Coding-Assistant track next to plan a bounded capability in your own app.",
+  "assistant": {
+    "mode": "reproduce",
+    "validationStatus": "passed",
+    "implementationPrompt": "# CASE-06 Reproduction Prompt\n\nReproduce Live Data Sync in an isolated workspace. Inspect all three annotation contracts and the\nmanifest. Record source/vector IDs and revisions, update a distinctive product fact, verify stable\nidentity and stale-text removal, delete a policy or guide, and prove source, vector search, and chat\nall stop exposing it. Do not accept plausible model prose as synchronization proof. Run the focused\nreal-app tests and keep OpenAI credentials in the environment only.\n",
+    "reviewPrompt": "# CASE-06 Independent Review Prompt\n\nReview annotation extraction and create/update/delete lifecycle findings-first. Require source and\nvector counts, stable IDs, revisions, distinctive old/new text, and post-delete retrieval proof for\nmultiple entity types. Flag duplicated vectors, stale text, source/vector divergence, or chat output\nunsupported by current evidence. Cite annotation and integration tests.\n"
+  },
+  "sourcePath": "docs/course/case-studies/06-live-data-sync/lesson.md",
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/ai-fabric-course-v0.4.0.4/docs/course/case-studies/06-live-data-sync/lesson.md"
+}

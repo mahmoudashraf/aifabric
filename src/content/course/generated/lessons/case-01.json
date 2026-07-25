@@ -1,0 +1,153 @@
+{
+  "id": "case-01",
+  "slug": "ai-shopping-experience",
+  "title": "AI Shopping Experience",
+  "description": "Staged commerce RAG, attachments, governed cart actions, and result projection.",
+  "durationMinutes": 55,
+  "availability": "published",
+  "source": "case-studies/01-ai-shopping-experience/lesson.md",
+  "knowledgeCheck": {
+    "schemaVersion": 1,
+    "lessonId": "case-01",
+    "passingScorePercent": 80,
+    "questions": [
+      {
+        "id": "case-01-q1",
+        "type": "single-choice",
+        "competency": "evidence-readiness",
+        "prompt": "What proves that a shopping answer is RAG-backed?",
+        "options": [
+          {
+            "id": "a",
+            "text": "The answer sounds specific"
+          },
+          {
+            "id": "b",
+            "text": "Current indexed evidence IDs and readiness state are visible"
+          },
+          {
+            "id": "c",
+            "text": "The browser contains product cards"
+          },
+          {
+            "id": "d",
+            "text": "OpenAI is enabled"
+          }
+        ],
+        "correctOptionIds": [
+          "b"
+        ],
+        "explanation": "Provider availability and UI data do not prove that retrieval supplied current evidence.",
+        "sourcePaths": [
+          "examples/real-apps/chat-capabilities-demo/src/main/java/com/ai/fabric/realapps/chat/demo/service/DemoStageSeedService.java"
+        ]
+      },
+      {
+        "id": "case-01-q2",
+        "type": "multiple-choice",
+        "competency": "governed-write",
+        "prompt": "Which boundaries protect add-to-cart?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Typed action selection and target resolution"
+          },
+          {
+            "id": "b",
+            "text": "Backend authorization and confirmation"
+          },
+          {
+            "id": "c",
+            "text": "Application-owned CartService execution"
+          },
+          {
+            "id": "d",
+            "text": "A green frontend button alone"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b",
+          "c"
+        ],
+        "explanation": "The UI presents state; backend policy and domain execution own the write.",
+        "sourcePaths": [
+          "examples/real-apps/chat-capabilities-demo/src/main/java/com/ai/fabric/realapps/chat/cart/action/AddToCartActionHandler.java"
+        ]
+      },
+      {
+        "id": "case-01-q3",
+        "type": "answer-reveal",
+        "competency": "memory",
+        "prompt": "Why should the UI send only the newest shopping message?",
+        "modelAnswer": "AI Fabric chat-session state authorizes and loads recent turns and pending actions on the backend. Copying history from the browser makes the client an untrusted memory authority and can lose or forge context.",
+        "sourcePaths": [
+          "examples/real-apps/chat-capabilities-demo/src/test/java/com/ai/fabric/realapps/chat/web/ChatControllerConversationsTest.java"
+        ]
+      }
+    ]
+  },
+  "assistantPrompt": "case-studies/01-ai-shopping-experience/assistant-prompt.md",
+  "assistantReviewPrompt": "case-studies/01-ai-shopping-experience/assistant-review-prompt.md",
+  "theoryVideoIds": [
+    "case-shopping-walkthrough"
+  ],
+  "relatedStories": [],
+  "relatedDemos": [],
+  "track": "case-studies",
+  "route": "/course/case-studies/ai-shopping-experience",
+  "frontMatter": {
+    "id": "case-01",
+    "slug": "ai-shopping-experience",
+    "title": "AI Shopping Experience",
+    "track": "case-studies",
+    "order": 1,
+    "durationMinutes": 55,
+    "availability": "published",
+    "courseVersion": "0.4.0-course.4-beta",
+    "frameworkVersion": "0.4.0",
+    "frameworkTag": "ai-fabric-framework-v0.4.0",
+    "courseSourceTag": "ai-fabric-course-v0.4.0.4",
+    "starterRef": "course-0.4.0-p08-production-ready",
+    "solutionRef": "course-0.4.0-p08-production-ready",
+    "requiresOpenAi": true,
+    "requiresDocker": false,
+    "optionalProviderExercises": [
+      "openai"
+    ],
+    "sourcePaths": [
+      "examples/real-apps/chat-capabilities-demo/README.md",
+      "examples/real-apps/chat-capabilities-demo/src/main/java/com/ai/fabric/realapps/chat/web/ChatController.java",
+      "examples/real-apps/chat-capabilities-demo/src/main/java/com/ai/fabric/realapps/chat/web/CommerceModeResolver.java",
+      "examples/real-apps/chat-capabilities-demo/src/main/java/com/ai/fabric/realapps/chat/catalog/domain/Product.java",
+      "examples/real-apps/chat-capabilities-demo/src/main/java/com/ai/fabric/realapps/chat/catalog/service/ProductService.java",
+      "examples/real-apps/chat-capabilities-demo/src/main/java/com/ai/fabric/realapps/chat/cart/action/AddToCartActionHandler.java",
+      "examples/real-apps/chat-capabilities-demo/src/main/java/com/ai/fabric/realapps/chat/demo/service/DemoStageSeedService.java",
+      "examples/real-apps/chat-capabilities-demo/src/test/java/com/ai/fabric/realapps/chat/web/ChatControllerConversationsTest.java",
+      "examples/real-apps/chat-capabilities-demo/src/test/java/com/ai/fabric/realapps/chat/demo/service/DemoStageSeedServiceTest.java"
+    ],
+    "theoryVideoIds": [
+      "case-shopping-walkthrough"
+    ],
+    "assistant": {
+      "mode": "reproduce",
+      "implementationPrompt": "assistant-prompt.md",
+      "reviewPrompt": "assistant-review-prompt.md",
+      "validationStatus": "passed"
+    },
+    "knowledgeCheck": {
+      "source": "knowledge-check.yml",
+      "required": true,
+      "passingScorePercent": 80
+    }
+  },
+  "markdown": "# Reproduce The AI Shopping Experience\n\n## Start Here\n\nThis case study connects a normal commerce domain to staged RAG, backend conversation memory, typed\nattachments, and governed cart writes. You will use the deployed application first, then trace each\nvisible result to the Spring Boot code that owns it.\n\nOpen:\n\n- live UI: `https://ai-fabric.dev/demos/ai-shopping-experience`\n- backend health: `https://ai-fabric-chat-capabilities-demo.46.224.145.148.sslip.io/api/demo/health`\n- source: `examples/real-apps/chat-capabilities-demo`\n\nThe public backend already has a protected OpenAI key. For a local live-provider run, export\n`OPENAI_API_KEY` in your shell; never place it in YAML, HTTP files, screenshots, or commits.\n\n## Architecture To Recognize\n\n```text\nShopping UI -> POST /api/chat/query -> CommerceModeResolver\n                                         |\n                          chat-session + orchestrator\n                          /             |             \\\n               product/review RAG   typed actions   OpenAI\n                        |                |\n                 Lucene evidence    CartService\n                        ^                |\n                        +-- @AIProcess <-+\n```\n\nThe browser may request a position such as search, support, cart, or checkout. The backend maps that\nposition to an allowlisted orchestration mode. It does not let a browser invent framework policy.\nThe browser sends only the new message and typed attachments; `ai-fabric-chat-session` owns recent\nturns and pending confirmation state.\n\n## Step 1: Prove Evidence Readiness\n\nOpen the RAG Journey in the live UI and reset your isolated demo session to no evidence. Ask:\n\n```text\nWhich gaming laptop has the best display?\n```\n\nExpected: the application must not claim an evidence-grounded catalog answer. Seed Products, then\nReviews, and repeat the same question. Inspect the evidence IDs and counts after each stage.\n\nThe important proof is not that the prose becomes longer. It is that retrieval changes only after\nthe corresponding source records are indexed. `DemoStageSeedService` owns the stage transition and\n`DemoReadinessService` reports source and vector state independently.\n\n## Step 2: Compare Explicit Product Targets\n\nAttach Alienware M18 R2 and Razer Blade 16 Studio from the product UI, then send:\n\n```text\nCompare them for gaming.\n```\n\nExpected:\n\n- both attachments are visible before send;\n- the request carries stable product identity and approved metadata;\n- the answer compares the attached products instead of guessing a target;\n- product/review evidence remains inspectable.\n\nAttachments are context, not authorization. The backend still validates their shape and uses\napplication services for current facts.\n\n## Step 3: Follow Up From Backend Memory\n\nSend:\n\n```text\nWhich is below $2800?\n```\n\nThen:\n\n```text\nWhich is better for gaming?\n```\n\nExpected: the same backend conversation ID is reused, the UI does not submit copied history, and the\nsecond follow-up is resolved from stored turns and current evidence.\n\nInspect `ChatController` and `ChatControllerConversationsTest`. Presentation state in the browser is\nnot the conversation authority.\n\n## Step 4: Execute A Governed Cart Write\n\nAsk:\n\n```text\nAdd Alienware M18 R2 to my cart.\n```\n\nExpected:\n\n1. AI Fabric resolves `add_to_cart`.\n2. The handler resolves the friendly title to canonical product identity.\n3. The result is `CONFIRMATION_REQUIRED`; no cart row changes yet.\n4. Confirm in the UI.\n5. Exactly one cart mutation runs.\n6. The UI shows a concise projected result, not a raw nested object.\n\nReject a second proposal. Verify the cart remains unchanged. Confirmation is a backend state\ntransition, not a decorative button.\n\n## Intentional Failure\n\nReset to no evidence and ask for the best-reviewed gaming laptop. A generic model answer presented as\nstore evidence is a failure. The correct behavior exposes missing evidence or limits the answer.\n\nAlso close the chat and reopen it. The conversation should remain available because the backend owns\nthe turns. If reopening clears context, diagnose session ownership before changing prompts.\n\n## Run The App Locally\n\n```bash\nmvn -B -V --no-transfer-progress -f examples/real-apps/pom.xml \\\n  -pl chat-capabilities-demo -am test\n```\n\nLive OpenAI run:\n\n```bash\nOPENAI_ENABLED=true \\\nOPENAI_API_KEY=\"$OPENAI_API_KEY\" \\\nOPENAI_MODEL=gpt-4o-mini \\\nOPENAI_EMBEDDING_MODEL=text-embedding-3-small \\\nmvn -f examples/real-apps/chat-capabilities-demo/pom.xml spring-boot:run\n```\n\nUse `requests/demo.http` for staged evidence and action calls.\n\n## What You Should Be Able To Explain\n\n- why the source database and vector index are separate states;\n- why position-to-mode mapping belongs on the backend;\n- why attachments help target resolution without granting authority;\n- why writes require authorization, confirmation, and application-owned execution;\n- why backend memory is required for short follow-ups;\n- why user-facing action projection is part of the application contract.\n\n## Done When\n\n- you reproduced no-evidence and indexed-evidence behavior;\n- you compared two attached products with visible evidence;\n- a short follow-up used the same backend conversation;\n- confirm executed one cart mutation and reject executed none;\n- you can point from each UI result to the owning backend class and test.\n\n## Reset\n\nUse **Reset to no evidence** in the RAG Journey or call the documented demo reset endpoint for your\nsession. Do not delete shared deployment data directly.\n\n## Next Lesson\n\nCASE-02 applies the same read, retrieval, memory, and confirmation concepts to current-account\nresolution, where application-owned identity becomes even more important.",
+  "assistant": {
+    "mode": "reproduce",
+    "validationStatus": "passed",
+    "implementationPrompt": "# CASE-01 Reproduction Prompt\n\nReproduce the AI Shopping Experience against AI Fabric 0.4.0. Read the lesson and the\n`chat-capabilities-demo` README first. Do not change framework or application code.\n\nUse the public session-isolated demo, or run the focused real-app Maven tests locally. Prove:\n\n- no-evidence versus staged product/review evidence;\n- two explicit product attachments and a short follow-up;\n- backend-owned conversation continuity;\n- add-to-cart proposal, reject with zero mutation, and confirm with exactly one mutation;\n- user-facing action projection without raw nested payloads.\n\nCapture evidence IDs, conversation ID continuity, cart state before/after, backend health/version,\nand any failure. Never claim an answer is grounded because it sounds correct. Never print an API key.\nFinish with PASS, FAIL, or NOT RUN for each proof.\n",
+    "reviewPrompt": "# CASE-01 Independent Review Prompt\n\nReview the Shopping reproduction findings-first. Verify that staged source/vector state, explicit\nattachments, backend conversation memory, confirmation state, and cart mutations were observed\nindependently. Reject any proof based only on prose or screenshots without backend/evidence state.\nConfirm that reject caused zero writes, confirm caused one write, and no raw action object was\npresented as a user result. Cite the exact source classes and tests.\n"
+  },
+  "sourcePath": "docs/course/case-studies/01-ai-shopping-experience/lesson.md",
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/ai-fabric-course-v0.4.0.4/docs/course/case-studies/01-ai-shopping-experience/lesson.md"
+}

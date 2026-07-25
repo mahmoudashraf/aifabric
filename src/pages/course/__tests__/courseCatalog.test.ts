@@ -7,10 +7,10 @@ describe("generated course catalog", () => {
     expect(courseCatalog.title).toBe(
       "Build AI-Enabled Applications with Java and Spring Boot",
     );
-    expect(courseCatalog.courseVersion).toBe("0.4.0-course.3-beta");
+    expect(courseCatalog.courseVersion).toBe("0.4.0-course.4-beta");
     expect(courseCatalog.frameworkVersion).toBe("0.4.0");
     expect(courseCatalog.frameworkTag).toBe("ai-fabric-framework-v0.4.0");
-    expect(courseCatalog.courseSourceTag).toBe("ai-fabric-course-v0.4.0.3");
+    expect(courseCatalog.courseSourceTag).toBe("ai-fabric-course-v0.4.0.4");
     expect(courseCatalog.learnerRepository).toBe(
       "https://github.com/Loom-AI-Labs/ai-fabric-course-support-assistant",
     );
@@ -18,7 +18,7 @@ describe("generated course catalog", () => {
   });
 
   it("has unique IDs and routes across the complete catalog", () => {
-    expect(courseLessons).toHaveLength(23);
+    expect(courseLessons).toHaveLength(24);
     expect(new Set(courseLessons.map((lesson) => lesson.id)).size).toBe(courseLessons.length);
     expect(new Set(courseLessons.map((lesson) => lesson.route)).size).toBe(courseLessons.length);
   });
@@ -43,7 +43,14 @@ describe("generated course catalog", () => {
       "core-05",
       "core-06",
       "core-07",
+      "case-01",
+      "case-02",
+      "case-03",
+      "case-04",
+      "case-05",
+      "case-06",
     ]);
+    const requiredPublished = publishedLessons.filter((lesson) => lesson.trackId !== "case-studies");
     expect([
       ["qs-01", "course-0.4.0-00-starter", "course-0.4.0-01-first-search"],
       ["core-01", "course-0.4.0-00-starter", "course-0.4.0-00-starter"],
@@ -53,7 +60,7 @@ describe("generated course catalog", () => {
       ["core-05", "course-0.4.0-03-actions", "course-0.4.0-04-memory"],
       ["core-06", "course-0.4.0-04-memory", "course-0.4.0-05-security"],
       ["core-07", "course-0.4.0-05-security", "course-0.4.0-06-tested-solution"],
-    ]).toEqual(publishedLessons.map((summary) => {
+    ]).toEqual(requiredPublished.map((summary) => {
       const rendered = getRenderedLesson(summary.id);
       return [summary.id, rendered?.frontMatter.starterRef, rendered?.frontMatter.solutionRef];
     }));
@@ -66,6 +73,39 @@ describe("generated course catalog", () => {
       "request-lifecycle",
       "configuration-and-extension-model",
     ]);
+  });
+
+  it("publishes six code-backed Real-App case studies with walkthroughs and reproduction checks", () => {
+    const cases = courseCatalog.tracks.find((track) => track.id === "case-studies");
+
+    expect(cases?.lessons.map((lesson) => lesson.id)).toEqual([
+      "case-01",
+      "case-02",
+      "case-03",
+      "case-04",
+      "case-05",
+      "case-06",
+    ]);
+
+    for (const summary of cases?.lessons ?? []) {
+      const rendered = getRenderedLesson(summary.id);
+      expect(rendered?.route).toBe(`/course/case-studies/${summary.slug}`);
+      expect(rendered?.assistant.mode).toBe("reproduce");
+      expect(rendered?.assistant.validationStatus).toBe("passed");
+      expect(rendered?.theoryVideoIds).toHaveLength(1);
+      expect(rendered?.knowledgeCheck.questions).toHaveLength(3);
+      expect(rendered?.frontMatter.starterRef).toBe("course-0.4.0-p08-production-ready");
+      expect(rendered?.frontMatter.solutionRef).toBe("course-0.4.0-p08-production-ready");
+      expect(rendered?.markdown).toContain("## Intentional Failure");
+      expect(rendered?.markdown).toContain("## Done When");
+    }
+
+    expect(getRenderedLesson("case-06")?.theoryVideoIds).toEqual([
+      "case-live-data-sync-walkthrough",
+    ]);
+    expect(getRenderedLesson("case-06")?.markdown).toContain(
+      "Reproduce Annotation-Driven Live Data Sync",
+    );
   });
 
   it("previews all Production lessons with immutable checkpoints and complete UI content", () => {

@@ -1,0 +1,147 @@
+{
+  "id": "case-05",
+  "slug": "privacy-shield",
+  "title": "AI Fabric Privacy Shield",
+  "description": "Backend PII processing, sanitized indexing, and privacy proof without false AI claims.",
+  "durationMinutes": 55,
+  "availability": "published",
+  "source": "case-studies/05-privacy-shield/lesson.md",
+  "knowledgeCheck": {
+    "schemaVersion": 1,
+    "lessonId": "case-05",
+    "passingScorePercent": 80,
+    "questions": [
+      {
+        "id": "case-05-q1",
+        "type": "single-choice",
+        "competency": "safe-indexing",
+        "prompt": "Which text should reach the vector index?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Raw customer input"
+          },
+          {
+            "id": "b",
+            "text": "The approved redacted projection"
+          },
+          {
+            "id": "c",
+            "text": "Encrypted bytes"
+          },
+          {
+            "id": "d",
+            "text": "Browser-rendered HTML"
+          }
+        ],
+        "correctOptionIds": [
+          "b"
+        ],
+        "explanation": "Detection and redaction happen before persistence and indexing.",
+        "sourcePaths": [
+          "examples/real-apps/privacy-first-customer-facing-support/src/main/java/com/ai/fabric/realapps/privacyfirst/service/SupportMessageService.java"
+        ]
+      },
+      {
+        "id": "case-05-q2",
+        "type": "multiple-choice",
+        "competency": "public-boundary",
+        "prompt": "What must remain absent from public responses?",
+        "options": [
+          {
+            "id": "a",
+            "text": "Raw PII"
+          },
+          {
+            "id": "b",
+            "text": "Encryption secrets"
+          },
+          {
+            "id": "c",
+            "text": "Detection count"
+          },
+          {
+            "id": "d",
+            "text": "Safe redacted content"
+          }
+        ],
+        "correctOptionIds": [
+          "a",
+          "b"
+        ],
+        "explanation": "Safe evidence may be visible; raw values and keys may not.",
+        "sourcePaths": [
+          "examples/real-apps/privacy-first-customer-facing-support/src/test/java/com/ai/fabric/realapps/privacyfirst/service/SupportMessageProjectionTest.java"
+        ]
+      },
+      {
+        "id": "case-05-q3",
+        "type": "answer-reveal",
+        "competency": "provider-posture",
+        "prompt": "Why is Privacy Shield not a live-LLM proof?",
+        "modelAnswer": "The demo intentionally uses PII detection, a local embedding provider, and Lucene retrieval. A configured OpenAI key does not mean generation ran.",
+        "sourcePaths": [
+          "examples/real-apps/privacy-first-customer-facing-support/README.md"
+        ]
+      }
+    ]
+  },
+  "assistantPrompt": "case-studies/05-privacy-shield/assistant-prompt.md",
+  "assistantReviewPrompt": "case-studies/05-privacy-shield/assistant-review-prompt.md",
+  "theoryVideoIds": [
+    "case-privacy-shield-walkthrough"
+  ],
+  "relatedStories": [],
+  "relatedDemos": [],
+  "track": "case-studies",
+  "route": "/course/case-studies/privacy-shield",
+  "frontMatter": {
+    "id": "case-05",
+    "slug": "privacy-shield",
+    "title": "AI Fabric Privacy Shield",
+    "track": "case-studies",
+    "order": 5,
+    "durationMinutes": 55,
+    "availability": "published",
+    "courseVersion": "0.4.0-course.4-beta",
+    "frameworkVersion": "0.4.0",
+    "frameworkTag": "ai-fabric-framework-v0.4.0",
+    "courseSourceTag": "ai-fabric-course-v0.4.0.4",
+    "starterRef": "course-0.4.0-p08-production-ready",
+    "solutionRef": "course-0.4.0-p08-production-ready",
+    "requiresOpenAi": false,
+    "requiresDocker": false,
+    "optionalProviderExercises": [],
+    "sourcePaths": [
+      "examples/real-apps/privacy-first-customer-facing-support/README.md",
+      "examples/real-apps/privacy-first-customer-facing-support/src/main/java/com/ai/fabric/realapps/privacyfirst/domain/SupportMessage.java",
+      "examples/real-apps/privacy-first-customer-facing-support/src/main/java/com/ai/fabric/realapps/privacyfirst/service/SupportMessageService.java",
+      "examples/real-apps/privacy-first-customer-facing-support/src/main/java/com/ai/fabric/realapps/privacyfirst/service/PrivacyDemoService.java",
+      "examples/real-apps/privacy-first-customer-facing-support/src/test/java/com/ai/fabric/realapps/privacyfirst/service/SupportMessageProjectionTest.java",
+      "examples/real-apps/privacy-first-customer-facing-support/src/test/java/com/ai/fabric/realapps/privacyfirst/service/PrivacyDemoServiceTest.java"
+    ],
+    "theoryVideoIds": [
+      "case-privacy-shield-walkthrough"
+    ],
+    "assistant": {
+      "mode": "reproduce",
+      "implementationPrompt": "assistant-prompt.md",
+      "reviewPrompt": "assistant-review-prompt.md",
+      "validationStatus": "passed"
+    },
+    "knowledgeCheck": {
+      "source": "knowledge-check.yml",
+      "required": true,
+      "passingScorePercent": 80
+    }
+  },
+  "markdown": "# Reproduce Privacy-Safe Indexing And Search\n\n## Start Here\n\nPrivacy Shield processes sensitive customer support text before approved content is stored or\nindexed. It intentionally does not claim live LLM generation. The proof is PII detection, redaction,\nsafe persistence, sanitized retrieval, and isolated deletion.\n\nOpen:\n\n- live UI: `https://ai-fabric.dev/demos/ai-fabric-privacy-shield`\n- backend health: `https://ai-fabric-privacy-shield.46.224.145.148.sslip.io/api/demo/health`\n- source: `examples/real-apps/privacy-first-customer-facing-support`\n\n## Architecture To Recognize\n\n```text\ncustomer text -> AI Fabric PII detection -> redacted projection\n                                      |          |\n                               protected proof  +-> H2 safe row\n                                                  -> Lucene vector\n\nsearch text -> PII detection/redaction -> vector query -> session-owned safe hits\n```\n\nThe public API never returns raw submitted PII. If encrypted-original retention is enabled, that\nstorage is a protected backend concern and still does not belong in public responses or vector\ncontent.\n\n## Step 1: Create An Isolated Session\n\nReset the live demo and create a browser session. Seed the provided safe support examples. Inspect\nthe dashboard count and confirm that another session cannot read them.\n\n## Step 2: Submit Sensitive Content\n\nSubmit a message containing an email address, phone number, and SSN-like value. Expected:\n\n- detection count and categories are visible;\n- public subject/body fields are redacted;\n- raw input is absent from response JSON;\n- the indexed content is the safe projection;\n- original-evidence policy is reported without exposing the original.\n\nInspect `SupportMessageService` and `SupportMessageProjectionTest` for the backend boundary.\n\n## Step 3: Search With Sensitive Query Text\n\nSearch using an email or phone number in the query. The query must be sanitized before vector\nsearch. Returned hits must contain only approved, session-owned redacted data.\n\nThis demo uses the local `privacy-simple` embedding provider and Lucene. A configured OpenAI key does\nnot mean a model generated the result.\n\n## Step 4: Inspect And Delete Privacy Inventory\n\nUse the inventory operation to inspect safe counts for the current customer/session, then run the\ngoverned deletion path. Verify both source rows and derived vectors are removed for that scope.\n\n## Intentional Failure\n\nSearch the browser network log and response body for the exact raw values you submitted. Any\nplain-text occurrence outside the request itself is a failure. Also verify that the UI does not label\ndeterministic search as an LLM answer.\n\n## Run Locally\n\n```bash\nmvn -B -V --no-transfer-progress -f examples/real-apps/pom.xml \\\n  -pl privacy-first-customer-facing-support -am test\n```\n\nNo external provider key is required. Configure secrets only through the environment:\n\n```bash\nAI_PII_MODE=REDACT \\\nAI_PII_STORE_ENCRYPTED_ORIGINAL=true \\\nAI_PII_ENCRYPTION_SECRET=\"$AI_PII_ENCRYPTION_SECRET\" \\\nmvn -f examples/real-apps/privacy-first-customer-facing-support/pom.xml spring-boot:run\n```\n\n## Done When\n\n- raw PII is absent from public persistence/search responses;\n- redacted content is what reaches the vector index;\n- sensitive query text is sanitized before retrieval;\n- sessions cannot see each other's support records;\n- deletion removes both source and vector state in scope;\n- provider posture is described honestly as no-LLM local search.\n\n## Next Lesson\n\nCASE-06 closes the track by proving that annotation-driven source changes converge on current vector\nevidence across multiple entity types.",
+  "assistant": {
+    "mode": "reproduce",
+    "validationStatus": "passed",
+    "implementationPrompt": "# CASE-05 Reproduction Prompt\n\nReproduce Privacy Shield without changing code. Submit known email, phone, and SSN-like markers;\nverify redacted public fields, detection evidence, absence of raw values, sanitized search input,\nsession isolation, and scoped source/vector deletion. Inspect health and label provider posture\nhonestly as no-LLM local search. Never print encryption secrets or raw sensitive fixtures in the\nfinal report.\n",
+    "reviewPrompt": "# CASE-05 Independent Review Prompt\n\nReview the boundary from request through PII detection, safe projection, persistence, vector\nindexing, search sanitization, and deletion. Search evidence for exact raw markers and fail the\nreview if any leave the request boundary. Reject claims that local retrieval is live generation.\nCite projection and service tests.\n"
+  },
+  "sourcePath": "docs/course/case-studies/05-privacy-shield/lesson.md",
+  "sourceUrl": "https://github.com/Loom-AI-Labs/ai-fabric-framework/blob/ai-fabric-course-v0.4.0.4/docs/course/case-studies/05-privacy-shield/lesson.md"
+}
