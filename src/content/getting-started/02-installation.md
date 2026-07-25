@@ -1,6 +1,6 @@
 # Installation
 
-AI Fabric is distributed on Maven Central under `io.github.loom-ai-labs`.
+AI Fabric `0.4.0` is distributed on Maven Central under `io.github.loom-ai-labs`.
 
 ## Requirements
 
@@ -16,7 +16,7 @@ AI Fabric is distributed on Maven Central under `io.github.loom-ai-labs`.
     <dependency>
       <groupId>io.github.loom-ai-labs</groupId>
       <artifactId>ai-fabric-bom</artifactId>
-      <version>0.3.3</version>
+      <version>0.4.0</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
@@ -127,7 +127,9 @@ ai:
     llm-provider: smoke
     embedding-provider: smoke
   vector-db:
-    type: memory
+    type: lucene
+    lucene:
+      index-path: ./target/ai-fabric-smoke-index
   service:
     features:
       enable-generation: true
@@ -141,4 +143,3 @@ ai:
 ```bash
 mvn -f ai-infrastructure-module/pom.xml clean install
 ```
-

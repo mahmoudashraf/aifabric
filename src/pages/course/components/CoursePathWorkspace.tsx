@@ -38,14 +38,18 @@ const PromptBlock = ({ title, prompt }: { title: string; prompt: string }) => {
 export const CoursePathWorkspace = ({
   lesson,
   learnerRepository,
+  checkpointsPublished,
 }: {
   lesson: RenderedCourseLesson;
   learnerRepository: string;
+  checkpointsPublished: boolean;
 }) => {
   const analysisLesson = lesson.assistant.mode === "analyze";
   const verificationLesson = lesson.assistant.mode === "verify";
   const assistantValidated = lesson.assistant.validationStatus === "passed";
-  const starterUrl = `${learnerRepository}/tree/${lesson.frontMatter.starterRef}`;
+  const starterUrl = checkpointsPublished
+    ? `${learnerRepository}/tree/${lesson.frontMatter.starterRef}`
+    : learnerRepository;
   const workspaceTitle = analysisLesson
     ? "Produce the architecture contract"
     : verificationLesson
@@ -91,11 +95,21 @@ export const CoursePathWorkspace = ({
         <div className={`border-l-4 px-5 py-4 ${assistantValidated ? "border-emerald-500 bg-emerald-50" : "border-amber-400 bg-amber-50"}`}>
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="outline" className="bg-white">Mode: {lesson.assistant.mode}</Badge>
-            <Badge variant="outline" className="bg-white">Validation: {lesson.assistant.validationStatus}</Badge>
-            <Badge variant="outline" className="bg-white">Starter: {lesson.frontMatter.starterRef}</Badge>
+            <Badge variant="outline" className="bg-white">
+              {checkpointsPublished
+                ? `Validation: ${lesson.assistant.validationStatus}`
+                : "Validation: 0.4 migration review"}
+            </Badge>
+            <Badge variant="outline" className="bg-white">
+              {checkpointsPublished
+                ? `Starter: ${lesson.frontMatter.starterRef}`
+                : "Reference: complete 0.4 application"}
+            </Badge>
           </div>
           <p className="mt-3 text-sm leading-6 text-slate-700">
-            {assistantValidated
+            {!checkpointsPublished
+              ? "This prompt is aligned with the 0.4 API contract and explicitly stops when its immutable starter is unavailable. Staged checkpoint validation remains pending until the 0.4 tag series is published."
+              : assistantValidated
               ? analysisLesson
                 ? "This prompt has been validated against the published application shape and produces the same architecture artifacts as the manual path. You remain responsible for reviewing and explaining its output."
                 : verificationLesson
@@ -105,7 +119,7 @@ export const CoursePathWorkspace = ({
           </p>
           <Button variant="link" size="sm" className="mt-2 h-auto p-0" asChild>
             <a href={starterUrl} target="_blank" rel="noopener noreferrer">
-              Open declared starter
+              {checkpointsPublished ? "Open declared starter" : "Open current 0.4 reference application"}
               <ExternalLink className="h-3.5 w-3.5" />
             </a>
           </Button>

@@ -351,30 +351,30 @@ const QuickStart = () => {
 
             {/* Step 1 */}
             <StepCard step={1} title="Add Dependencies" time="2 min" icon={<Package className="h-4 w-4 text-primary" />}>
-              <p className="text-muted-foreground text-sm mb-4">Open your <code className="text-primary bg-muted px-1.5 py-0.5 rounded">pom.xml</code> and add these 3 dependencies:</p>
+              <p className="text-muted-foreground text-sm mb-4">Open your <code className="text-primary bg-muted px-1.5 py-0.5 rounded">pom.xml</code> and add these three AI Fabric 0.4 dependencies:</p>
               <CopyableCodeBlock 
                 filename="pom.xml"
                 language="xml"
                 code={`<dependencies>
-    <!-- 1. Core Module (foundation) -->
+    <!-- 1. Spring Boot starter -->
     <dependency>
         <groupId>io.github.loom-ai-labs</groupId>
-        <artifactId>ai-fabric-core</artifactId>
-        <version>0.3.3</version>
+        <artifactId>ai-fabric-starter</artifactId>
+        <version>0.4.0</version>
     </dependency>
     
-    <!-- 2. ONNX Provider (local embeddings) -->
+    <!-- 2. ONNX provider (local embeddings) -->
     <dependency>
         <groupId>io.github.loom-ai-labs</groupId>
         <artifactId>ai-fabric-onnx-starter</artifactId>
-        <version>0.3.3</version>
+        <version>0.4.0</version>
     </dependency>
     
-    <!-- 3. Lucene Vector DB (embedded local vector store) -->
+    <!-- 3. Lucene vector store -->
     <dependency>
         <groupId>io.github.loom-ai-labs</groupId>
         <artifactId>ai-fabric-vector-lucene</artifactId>
-        <version>0.3.3</version>
+        <version>0.4.0</version>
     </dependency>
 </dependencies>`} 
               />
@@ -389,27 +389,34 @@ const QuickStart = () => {
             </StepCard>
 
             {/* Step 2 */}
-            <StepCard step={2} title="Configure (Optional!)" time="1 min" icon={<Settings className="h-4 w-4 text-primary" />}>
-              <p className="text-muted-foreground text-sm mb-4">Create <code className="text-primary bg-muted px-1.5 py-0.5 rounded">application.yml</code>:</p>
+            <StepCard step={2} title="Configure Providers" time="1 min" icon={<Settings className="h-4 w-4 text-primary" />}>
+              <p className="text-muted-foreground text-sm mb-4">Create <code className="text-primary bg-muted px-1.5 py-0.5 rounded">application.yml</code> and choose the local providers explicitly:</p>
               <CopyableCodeBlock 
                 filename="src/main/resources/application.yml"
                 language="yaml"
                 code={`ai:
+  enabled: true
   providers:
-    embedding-provider: onnx  # Free local
-  vector:
-    database-type: lucene     # Free embedded`} 
+    llm-provider: openai
+    embedding-provider: onnx
+  vector-db:
+    type: lucene
+  service:
+    features:
+      enable-generation: false
+      enable-embeddings: true
+      enable-search: true`}
               />
               <div className="mt-4 p-3 rounded-lg bg-primary/10 border border-primary/20">
                 <p className="text-sm text-primary">
-                  💡 <strong>Pro tip:</strong> You can skip this step! The framework auto-configures with these defaults.
+                  <strong>Why explicit?</strong> Provider selection is part of the application's deployable configuration and should be visible in every environment.
                 </p>
               </div>
             </StepCard>
 
             {/* Step 3 */}
             <StepCard step={3} title="Annotate Your Entity" time="2 min" icon={<Code2 className="h-4 w-4 text-primary" />}>
-              <p className="text-muted-foreground text-sm mb-4">Add <strong>ONE annotation</strong> to your existing JPA entity:</p>
+              <p className="text-muted-foreground text-sm mb-4">Declare the entity identity and an allowlisted AI-facing projection:</p>
               
               <div className="grid lg:grid-cols-2 gap-4">
                 <div>
@@ -433,18 +440,20 @@ public class Product {
                   <CopyableCodeBlock 
                     language="java"
                     code={`@Entity
-@AICapable(
-    entityType = "product",
-    autoEmbedding = true,
-    indexable = true
-)
+@AICapable(entityType = "product")
 public class Product {
     @Id
+    @AIIdentity
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    
+
+    @AISearchable(priority = 100, required = true)
     private String name;
+
+    @AISearchable(maxLength = 8000, priority = 80)
     private String description;
+
+    @AIContext(dataType = AIContextDataType.NUMBER)
     private BigDecimal price;
 }`} 
                   />
@@ -452,9 +461,9 @@ public class Product {
               </div>
               
               <div className="mt-4 flex flex-wrap gap-2">
-                <span className="text-xs text-green-400">✅ Auto-generates embeddings</span>
-                <span className="text-xs text-green-400">✅ Auto-indexes for search</span>
-                <span className="text-xs text-green-400">✅ Searchable by meaning</span>
+                <span className="text-xs text-green-400">Approved text becomes searchable</span>
+                <span className="text-xs text-green-400">Context remains structured</span>
+                <span className="text-xs text-green-400">Unannotated fields stay excluded</span>
               </div>
             </StepCard>
 
@@ -466,32 +475,11 @@ public class Product {
                 language="yaml"
                 code={`ai-entities:
   product:
-    auto-embedding: true
-    indexable: true
-    features: ["embedding", "search"]
-    
-    # Which fields to search
-    searchable-fields:
-      - name: name
-        weight: 2.0      # Higher weight = more important
-      - name: description
-        weight: 1.0
-    
-    # Which fields to embed
-    embeddable-fields:
-      - name: description
-        auto-generate: true
-    
-    # CRUD behavior
-    crud-operations:
-      create:
-        generate-embedding: true
-        index-for-search: true
-      update:
-        generate-embedding: true
-        index-for-search: true
-      delete:
-        remove-from-search: true`} 
+    indexing:
+      enabled: true
+      max-characters: 8000
+    analysis:
+      enabled: false`}
               />
             </StepCard>
 
@@ -504,28 +492,14 @@ public class Product {
                 code={`@Service
 public class ProductSearchService {
     
-    @Autowired
-    private AISearchService searchService;
-    
-    @Autowired
-    private AIEmbeddingService embeddingService;
+    private final AICoreService aiCoreService;
     
     public List<Product> search(String query) {
-        // Generate query embedding
-        AIEmbeddingResponse embedding = embeddingService.generateEmbedding(
-            AIEmbeddingRequest.builder()
-                .text(query)
-                .build()
-        );
-        
-        // Search
-        AISearchResponse results = searchService.search(
-            embedding.getEmbedding(),
+        AISearchResponse results = aiCoreService.performSearch(
             AISearchRequest.builder()
                 .query(query)
                 .entityType("product")
                 .limit(10)
-                .threshold(0.7)
                 .build()
         );
         

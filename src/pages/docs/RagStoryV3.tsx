@@ -703,21 +703,23 @@ const WhatYouImplement = () => {
           </div>
           
           <CodeBlock code={`@Entity
-@AICapable(
-    entityType = "help-article",
-    autoEmbedding = true,
-    indexable = true
-)
+@AICapable(entityType = "help-article")
 public class HelpArticle {
-    @Id private UUID id;
+    @Id
+    @AIIdentity
+    private UUID id;
+
+    @AISearchable(priority = 100, required = true)
     private String title;
-    private String content;  // Your knowledge base content
-    private String category; // "policies", "faq", "troubleshooting"
+
+    @AISearchable(maxLength = 8000, priority = 80, required = true)
+    private String content;
+
+    @AIContext(description = "policies, faq, or troubleshooting")
+    private String category;
 }
 
-// Save article
-helpArticleRepo.save(article);
-// ↑ Indexed through the configured embedding provider`} />
+// Save through a public @AIProcess lifecycle method.`} />
         </motion.div>
         
         <motion.div

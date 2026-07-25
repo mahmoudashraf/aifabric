@@ -75,7 +75,7 @@ const ReviewedStoryPage = ({ storyId }: ReviewedStoryPageProps) => {
                 {story.heroKicker}
               </span>
               <span className="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
-                Reviewed for AI Fabric 0.3.3
+                Reviewed for AI Fabric 0.4.0
               </span>
             </div>
 

@@ -623,7 +623,7 @@ export default function AIFabricLiveDataSync() {
               />
               <Metric
                 label="Release"
-                value={health?.aiFabricVersion || "0.3.3"}
+                value={health?.aiFabricVersion || "0.4.0"}
                 note={`commit ${shortId(health?.commit)}`}
                 icon={Code2}
                 tone="border-slate-200 bg-slate-50 text-slate-700"

@@ -8,7 +8,7 @@ It is written for two readers:
 
 Current assumptions:
 
-- AI Fabric version: `0.3.3`
+- AI Fabric version: `0.4.0`
 - Java: `21`
 - Spring Boot: `4.1.x`
 - Maven group: `io.github.loom-ai-labs`
@@ -23,6 +23,11 @@ Current assumptions:
    - [First RAG Chat](04-first-rag-chat.md)
    - [First Governed Action](05-first-governed-action.md)
 5. Add production guardrails from [Production Checklist](13-production-checklist.md).
+
+For the public learner curriculum, use
+[Build Production-Oriented AI Workflows with Java and Spring Boot](../course/AI_FABRIC_EXTERNAL_USER_COURSE.md).
+
+The 0.4 guides describe the published `0.4.0` contract and the corresponding source on `main`.
 
 ## Docs In This Section
 
@@ -47,4 +52,3 @@ Current assumptions:
 
 These files are source of truth. The public `aifabric` website should render or mirror this content
 and link back here rather than maintaining a separate implementation guide.
-

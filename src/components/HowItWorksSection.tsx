@@ -9,9 +9,9 @@ const tabs = [
     label: "1. Add Dependency",
     language: "xml",
     code: `<dependency>
-    <groupId>com.ai.fabric</groupId>
-    <artifactId>ai-fabric-core</artifactId>
-    <version>1.0.0</version>
+    <groupId>io.github.loom-ai-labs</groupId>
+    <artifactId>ai-fabric-starter</artifactId>
+    <version>0.4.0</version>
 </dependency>`,
   },
   {
@@ -21,8 +21,14 @@ const tabs = [
     code: `@Entity
 @AICapable(entityType = "product")
 public class Product {
-    @Id private UUID id;
+    @Id
+    @AIIdentity
+    private UUID id;
+
+    @AISearchable(priority = 100, required = true)
     private String name;
+
+    @AISearchable(maxLength = 8000, priority = 80)
     private String description;
 }`,
   },
@@ -32,24 +38,23 @@ public class Product {
     language: "yaml",
     code: `ai-entities:
   product:
-    features: ["embedding", "search"]
-    enable-search: true
-    auto-process: true
-    auto-embedding: true
-    indexable: true
-    searchable-fields:
-      - name: name
-      - name: description`,
+    indexing:
+      enabled: true
+      max-characters: 8000
+    analysis:
+      enabled: false`,
   },
   {
     id: "search",
     label: "4. Search Semantically",
     language: "java",
-    code: `@Autowired
-private AISearchService searchService;
-
-AISearchResponse results =
-    searchService.search("laptop for developers");
+    code: `AISearchResponse results = aiCoreService.performSearch(
+    AISearchRequest.builder()
+        .query("laptop for developers")
+        .entityType("product")
+        .limit(10)
+        .build()
+);
 
 // Returns: MacBook Pro, ThinkPad, Dell XPS
 // (not laptop bags and stands)`,

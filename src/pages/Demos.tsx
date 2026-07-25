@@ -45,7 +45,7 @@ const demos = [
     stats: [
       { value: "5", label: "RAG stages" },
       { value: "Live", label: "Backend" },
-      { value: "0.3.3", label: "AI Fabric" },
+      { value: "0.4.0", label: "AI Fabric" },
     ],
     aboutLink: `${AI_SHOPPING_EXPERIENCE_ROUTE}/about`,
     livePreview: {
@@ -72,7 +72,7 @@ const demos = [
     stats: [
       { value: "3", label: "Entity types" },
       { value: "Live", label: "Backend" },
-      { value: "0.3.3", label: "AI Fabric" },
+      { value: "0.4.0", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-live-data-sync/about",
     livePreview: {
@@ -99,7 +99,7 @@ const demos = [
     stats: [
       { value: "4", label: "Scenarios" },
       { value: "Live", label: "Backend" },
-      { value: "0.3.3", label: "AI Fabric" },
+      { value: "0.4.0", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-account-resolver/about",
     livePreview: {
@@ -126,7 +126,7 @@ const demos = [
     stats: [
       { value: "3", label: "Scenarios" },
       { value: "Live", label: "Backend" },
-      { value: "0.3.3", label: "AI Fabric" },
+      { value: "0.4.0", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-behavior-signals/about",
     livePreview: {
@@ -153,7 +153,7 @@ const demos = [
     stats: [
       { value: "3", label: "Tenants" },
       { value: "Live", label: "Backend" },
-      { value: "0.3.3", label: "AI Fabric" },
+      { value: "0.4.0", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-tenant-guard/about",
     livePreview: {
@@ -180,7 +180,7 @@ const demos = [
     stats: [
       { value: "3", label: "Samples" },
       { value: "Live", label: "Backend" },
-      { value: "0.3.3", label: "AI Fabric" },
+      { value: "0.4.0", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-privacy-shield/about",
     livePreview: {

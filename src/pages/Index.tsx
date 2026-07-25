@@ -163,7 +163,7 @@ const javaPieces = [
     code: `@Entity
 @AICapable(entityType = "product")
 public class Product {
-  @AISearchable(weight = 1.0)
+  @AISearchable(priority = 100, required = true)
   private String description;
 }`,
   },
@@ -495,7 +495,7 @@ const Index = () => {
               <div className="mx-auto mt-6 grid max-w-3xl grid-cols-3 gap-2 text-left md:mt-8">
                 {[
                   ["6", "AI-enabled demos"],
-                  ["0.3.3", "current release"],
+                  ["0.4.0", "current release"],
                   ["OpenAI", "live provider demos"],
                 ].map(([value, label]) => (
                   <div key={label} className="rounded-md border border-slate-200 bg-white px-3 py-3 shadow-sm md:px-4">

@@ -28,7 +28,7 @@ const primarySections = [
   },
   {
     title: "Getting Started",
-    description: "Install AI Fabric 0.3.3, choose the smallest useful module set, and add your first AI-enabled application capability.",
+    description: "Install AI Fabric 0.4.0, choose the smallest useful module set, and add your first AI-enabled application capability.",
     href: "/docs/getting-started",
     icon: Sparkles,
     tone: "border-blue-200 bg-blue-50 text-blue-700",
@@ -99,7 +99,7 @@ const primarySections = [
 ];
 
 const releaseFacts = [
-  { value: "0.3.3", label: "Current release" },
+  { value: "0.4.0", label: "Current release" },
   { value: "Java 21", label: "Runtime target" },
   { value: "Apache 2.0", label: "License" },
   { value: "5", label: "Live real-app demos" },
@@ -129,7 +129,7 @@ const Documentation = () => {
           >
             <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
               <FileText className="h-3.5 w-3.5" />
-              AI Fabric 0.3.3 documentation
+              AI Fabric 0.4.0 documentation
             </span>
             <h1 className="max-w-4xl text-4xl font-black leading-tight tracking-normal text-foreground md:text-6xl">
               Build AI-enabled Java apps with evidence, actions, and guardrails.

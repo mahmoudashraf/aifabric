@@ -368,21 +368,23 @@ const TheTimelineComparison = () => {
             </h3>
             <div className="max-w-2xl mx-auto">
               <CodeBlock code={`@Entity
-@AICapable(
-    entityType = "product",
-    autoEmbedding = true,
-    indexable = true
-)
+@AICapable(entityType = "product")
 public class Product {
-    @Id private UUID id;
+    @Id
+    @AIIdentity
+    private UUID id;
+
+    @AISearchable(priority = 100, required = true)
     private String name;
+
+    @AISearchable(maxLength = 8000, priority = 80)
     private String description;
 }
 
-// Done. Ship it. 🚀`} />
+// Persist through a public @AIProcess lifecycle boundary.`} />
               <div className="mt-6 text-center">
                 <p className="text-2xl font-bold text-green-400">5 Minutes</p>
-                <p className="text-sm text-muted-foreground mt-2">One annotation. Zero infrastructure code. Everything works.</p>
+                <p className="text-sm text-muted-foreground mt-2">Typed projection and lifecycle policy without provider-specific infrastructure code.</p>
               </div>
             </div>
           </motion.div>
@@ -876,4 +878,3 @@ const CoreStoryV2 = () => {
 };
 
 export default CoreStoryV2;
-

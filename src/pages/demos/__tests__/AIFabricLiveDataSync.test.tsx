@@ -131,7 +131,7 @@ describe("AIFabricLiveDataSync", () => {
         });
       }
       if (url.endsWith("/api/demo/health")) {
-        return response({ status: "UP", aiFabricVersion: "0.3.3", commit: "abc123" });
+        return response({ status: "UP", aiFabricVersion: "0.4.0", commit: "abc123" });
       }
       throw new Error(`Unexpected fetch: ${url}`);
     });
@@ -162,7 +162,7 @@ describe("AIFabricLiveDataSync", () => {
         });
       }
       if (url.endsWith("/api/demo/health")) {
-        return response({ status: "UP", aiFabricVersion: "0.3.3", commit: "abc123" });
+        return response({ status: "UP", aiFabricVersion: "0.4.0", commit: "abc123" });
       }
       if (url.endsWith("/api/live-sync/entities/products/novabook-air") && init?.method === "PUT") {
         return response({

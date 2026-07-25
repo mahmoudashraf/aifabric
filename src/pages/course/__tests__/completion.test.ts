@@ -43,8 +43,8 @@ const renderedLesson = (video: RenderedCourseLesson["video"]): RenderedCourseLes
   frontMatter: {
     order: 1,
     courseVersion: "course-1",
-    frameworkVersion: "0.3.3",
-    frameworkTag: "ai-fabric-framework-v0.3.3",
+    frameworkVersion: "0.4.0",
+    frameworkTag: "ai-fabric-framework-v0.4.0",
     courseSourceTag: "course-1",
     requiresOpenAi: false,
     requiresDocker: false,

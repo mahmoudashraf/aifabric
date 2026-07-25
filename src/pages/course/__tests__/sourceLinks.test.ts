@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { courseEvidenceSourceUrl } from "../lib/sourceLinks";
+import { courseEvidenceSourceUrl, hasPublishedCourseCheckpoints } from "../lib/sourceLinks";
 
 const publishedLesson = {
   availability: "published" as const,
@@ -31,5 +31,29 @@ describe("courseEvidenceSourceUrl", () => {
         "ai-infrastructure-module/ai-fabric-core/src/main/java/ai/fabric/core/AICoreService.java",
       ),
     ).toContain("/blob/ai-fabric-framework-v1/ai-infrastructure-module/");
+  });
+
+  it("does not expose checkpoint links until the course source is released", () => {
+    expect(
+      hasPublishedCourseCheckpoints(
+        "unreleased",
+        "course-0.4.0-00-starter",
+        "course-0.4.0-01-first-search",
+      ),
+    ).toBe(false);
+    expect(
+      hasPublishedCourseCheckpoints(
+        "ai-fabric-course-v0.4.0.2",
+        "course-0.4.0-00-starter",
+        "course-0.4.0-01-first-search",
+      ),
+    ).toBe(true);
+    expect(
+      hasPublishedCourseCheckpoints(
+        "ai-fabric-course-v0.4.0.2",
+        "planned",
+        "course-0.4.0-01-first-search",
+      ),
+    ).toBe(false);
   });
 });

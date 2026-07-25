@@ -25,6 +25,7 @@ import { CourseTheoryVideo } from "./components/CourseTheoryVideo";
 import { useCourseProgress } from "./hooks/useCourseProgress";
 import { hasTheory } from "./lib/completion";
 import { courseCatalog, courseLessons, getLessonByRoute, getRenderedLesson, getTrack } from "./lib/courseCatalog";
+import { hasPublishedCourseCheckpoints } from "./lib/sourceLinks";
 import CourseUnavailablePage from "./CourseUnavailablePage";
 
 const CourseLessonPage = () => {
@@ -53,8 +54,12 @@ const CourseLessonPage = () => {
   const starterUrl = `${courseCatalog.learnerRepository}/tree/${lesson.frontMatter.starterRef}`;
   const solutionUrl = `${courseCatalog.learnerRepository}/tree/${lesson.frontMatter.solutionRef}`;
   const sameCheckpoint = lesson.frontMatter.starterRef === lesson.frontMatter.solutionRef;
-  const hasCheckpointLinks = lesson.frontMatter.starterRef !== "planned"
-    && lesson.frontMatter.solutionRef !== "planned";
+  const checkpointsPublished = courseCatalog.courseSourceTag !== "unreleased";
+  const hasCheckpointLinks = hasPublishedCourseCheckpoints(
+    courseCatalog.courseSourceTag,
+    lesson.frontMatter.starterRef,
+    lesson.frontMatter.solutionRef,
+  );
   const optionalProviderLabels = lesson.frontMatter.optionalProviderExercises.map((provider) =>
     provider === "openai" ? "Optional OpenAI exercise" : "Optional Qdrant Cloud exercise");
   const previewDescription = lesson.id === "qs-01"
@@ -76,7 +81,11 @@ const CourseLessonPage = () => {
           </div>
           <div className="mt-5 flex flex-wrap items-center gap-2">
             <Badge className="border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-50">
-              {lesson.availability === "published" ? "Published lesson" : "Preview lesson"}
+              {published && checkpointsPublished
+                ? "Published lesson"
+                : courseCatalog.courseSourceTag === "unreleased"
+                  ? "AI Fabric 0.4 migration preview"
+                  : "Preview lesson"}
             </Badge>
             <Badge variant="outline">AI Fabric {lesson.frontMatter.frameworkVersion}</Badge>
             <Badge variant="outline"><Clock3 className="mr-1 h-3.5 w-3.5" />{lesson.durationMinutes} minutes</Badge>
@@ -97,37 +106,45 @@ const CourseLessonPage = () => {
           </h1>
           <p className="mt-4 max-w-3xl text-base leading-7 text-slate-600">{lesson.description}</p>
 
-          <div className={`mt-7 border-l-4 px-5 py-4 ${published ? "border-emerald-500 bg-emerald-50" : "border-amber-400 bg-amber-50"}`}>
+          <div className={`mt-7 border-l-4 px-5 py-4 ${published && checkpointsPublished ? "border-emerald-500 bg-emerald-50" : "border-amber-400 bg-amber-50"}`}>
             <div className="flex items-start gap-3">
-              {published
+              {published && checkpointsPublished
                 ? <GitBranch className="mt-0.5 h-5 w-5 shrink-0 text-emerald-700" />
                 : <FlaskConical className="mt-0.5 h-5 w-5 shrink-0 text-amber-700" />}
               <div>
                 <p className="font-bold text-slate-950">
-                  {published ? "Executable learner checkpoint" : "What is ready in this preview"}
+                  {published && checkpointsPublished
+                    ? "Executable learner checkpoint"
+                    : published
+                      ? "AI Fabric 0.4 lesson source"
+                      : "What is ready in this preview"}
                 </p>
                 <p className="mt-1 text-sm leading-6 text-slate-700">
-                  {published
+                  {published && checkpointsPublished
                     ? sameCheckpoint
                       ? `This analysis lesson uses ${lesson.frontMatter.starterRef} as its concrete application reference and does not require a code change.`
                       : `Begin at ${lesson.frontMatter.starterRef}. Use ${lesson.frontMatter.solutionRef} only after completing the lab to review your result.`
+                    : published
+                      ? "This lesson source and the complete reference application are migrated to AI Fabric 0.4. Immutable starter and solution links will appear only after the staged 0.4 checkpoint series is published."
                     : previewDescription}
                 </p>
-                {hasCheckpointLinks && (
+                {(hasCheckpointLinks || courseCatalog.courseSourceTag === "unreleased") && (
                   <div className="mt-4 flex flex-wrap gap-2">
                     <Button variant="outline" size="sm" className="bg-white" asChild>
                       <a href={courseCatalog.learnerRepository} target="_blank" rel="noopener noreferrer">
-                        Learner repository
+                        {hasCheckpointLinks ? "Learner repository" : "Open current 0.4 reference application"}
                         <ExternalLink className="h-3.5 w-3.5" />
                       </a>
                     </Button>
-                    <Button variant="outline" size="sm" className="bg-white" asChild>
-                      <a href={starterUrl} target="_blank" rel="noopener noreferrer">
-                        {sameCheckpoint ? "Reference checkpoint" : "Starter checkpoint"}
-                        <ExternalLink className="h-3.5 w-3.5" />
-                      </a>
-                    </Button>
-                    {!sameCheckpoint && (
+                    {hasCheckpointLinks && (
+                      <Button variant="outline" size="sm" className="bg-white" asChild>
+                        <a href={starterUrl} target="_blank" rel="noopener noreferrer">
+                          {sameCheckpoint ? "Reference checkpoint" : "Starter checkpoint"}
+                          <ExternalLink className="h-3.5 w-3.5" />
+                        </a>
+                      </Button>
+                    )}
+                    {hasCheckpointLinks && !sameCheckpoint && (
                       <Button variant="outline" size="sm" className="bg-white" asChild>
                         <a href={solutionUrl} target="_blank" rel="noopener noreferrer">
                           Solution checkpoint
@@ -181,7 +198,11 @@ const CourseLessonPage = () => {
           />
         )}
 
-        <CoursePathWorkspace lesson={lesson} learnerRepository={courseCatalog.learnerRepository} />
+        <CoursePathWorkspace
+          lesson={lesson}
+          learnerRepository={courseCatalog.learnerRepository}
+          checkpointsPublished={checkpointsPublished}
+        />
         <CourseKnowledgeCheck lesson={lesson} progress={lessonProgress} />
 
         <section className="border-t border-border pt-9" aria-labelledby="completion-heading">

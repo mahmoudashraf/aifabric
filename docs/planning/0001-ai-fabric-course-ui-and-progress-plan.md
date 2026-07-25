@@ -285,11 +285,13 @@ Supported development inputs:
 
 ```bash
 npm run course:sync -- --source-dir ../ai-fabric-framework/docs/course
-npm run course:sync -- --course-ref ai-fabric-course-v0.3.3.1
+npm run course:sync -- --course-ref <published-course-tag>
 ```
 
 The local source-directory mode supports coordinated development. The release mode must download or
-check out the immutable course tag and record the source commit.
+check out an immutable published course tag and record the source commit. Until a reviewed 0.4
+course tag is published, production content identifies the source as `unreleased` and links to the
+current 0.4 reference application instead of inventing checkpoint URLs.
 
 ### 8.3 Validation
 

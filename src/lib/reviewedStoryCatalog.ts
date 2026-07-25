@@ -250,7 +250,7 @@ export const userStories: ReviewedStory[] = [
     heroKicker: "Reviewed Framework Story",
     heroTitle: "When Java AI apps should not duplicate provider clients",
     heroLead:
-      "AI Fabric 0.3.3 uses the Spring AI provider bridge for supported LLM and embedding providers, while keeping AI Fabric-specific routing, actions, RAG, diagnostics, and policy above it.",
+      "AI Fabric 0.4.0 uses the Spring AI provider bridge for supported LLM and embedding providers, while keeping AI Fabric-specific routing, actions, RAG, diagnostics, and policy above it.",
     whyItMatters:
       "The framework should add Java application enablement, not unnecessary provider duplication. Spring AI handles model calls where it fits; AI Fabric handles app-level behavior.",
     currentStatus: [

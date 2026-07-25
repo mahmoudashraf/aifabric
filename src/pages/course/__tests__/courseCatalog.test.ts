@@ -7,10 +7,10 @@ describe("generated course catalog", () => {
     expect(courseCatalog.title).toBe(
       "Build AI-Enabled Applications with Java and Spring Boot",
     );
-    expect(courseCatalog.courseVersion).toBe("0.3.3-course.2-beta");
-    expect(courseCatalog.frameworkVersion).toBe("0.3.3");
-    expect(courseCatalog.frameworkTag).toBe("ai-fabric-framework-v0.3.3");
-    expect(courseCatalog.courseSourceTag).toBe("ai-fabric-course-v0.3.3.2");
+    expect(courseCatalog.courseVersion).toBe("0.4.0-course.2-beta");
+    expect(courseCatalog.frameworkVersion).toBe("0.4.0");
+    expect(courseCatalog.frameworkTag).toBe("ai-fabric-framework-v0.4.0");
+    expect(courseCatalog.courseSourceTag).toBe("unreleased");
     expect(courseCatalog.learnerRepository).toBe(
       "https://github.com/Loom-AI-Labs/ai-fabric-course-support-assistant",
     );
@@ -45,14 +45,14 @@ describe("generated course catalog", () => {
       "core-07",
     ]);
     expect([
-      ["qs-01", "course-0.3.3-00-starter", "course-0.3.3-01-first-search"],
-      ["core-01", "course-0.3.3-00-starter", "course-0.3.3-00-starter"],
-      ["core-02", "course-0.3.3-00-starter", "course-0.3.3-01-first-search"],
-      ["core-03", "course-0.3.3-01-first-search", "course-0.3.3-02-rag"],
-      ["core-04", "course-0.3.3-02-rag", "course-0.3.3-03-actions"],
-      ["core-05", "course-0.3.3-03-actions", "course-0.3.3-04-memory"],
-      ["core-06", "course-0.3.3-04-memory", "course-0.3.3-05-security"],
-      ["core-07", "course-0.3.3-05-security", "course-0.3.3-06-tested-solution"],
+      ["qs-01", "course-0.4.0-00-starter", "course-0.4.0-01-first-search"],
+      ["core-01", "course-0.4.0-00-starter", "course-0.4.0-00-starter"],
+      ["core-02", "course-0.4.0-00-starter", "course-0.4.0-01-first-search"],
+      ["core-03", "course-0.4.0-01-first-search", "course-0.4.0-02-rag"],
+      ["core-04", "course-0.4.0-02-rag", "course-0.4.0-03-actions"],
+      ["core-05", "course-0.4.0-03-actions", "course-0.4.0-04-memory"],
+      ["core-06", "course-0.4.0-04-memory", "course-0.4.0-05-security"],
+      ["core-07", "course-0.4.0-05-security", "course-0.4.0-06-tested-solution"],
     ]).toEqual(publishedLessons.map((summary) => {
       const rendered = getRenderedLesson(summary.id);
       return [summary.id, rendered?.frontMatter.starterRef, rendered?.frontMatter.solutionRef];
@@ -83,8 +83,8 @@ describe("generated course catalog", () => {
       "prod-08",
     ]);
     expect(lesson?.route).toBe("/course/production/provider-routing");
-    expect(lesson?.frontMatter.starterRef).toBe("course-0.3.3-06-tested-solution");
-    expect(lesson?.frontMatter.solutionRef).toBe("course-0.3.3-p01-provider-routing");
+    expect(lesson?.frontMatter.starterRef).toBe("course-0.4.0-06-tested-solution");
+    expect(lesson?.frontMatter.solutionRef).toBe("course-0.4.0-p01-provider-routing");
     expect(lesson?.frontMatter.requiresOpenAi).toBe(false);
     expect(lesson?.frontMatter.optionalProviderExercises).toEqual(["openai"]);
     expect(lesson?.theoryVideoIds).toEqual(["provider-architecture-purpose-routing"]);

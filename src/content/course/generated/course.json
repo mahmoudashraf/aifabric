@@ -4,13 +4,13 @@
   "knowledgeCheckSchemaVersion": 1,
   "notebookLmVideoSchemaVersion": 1,
   "courseId": "ai-fabric-production-oriented-java",
-  "courseVersion": "0.3.3-course.2-beta",
+  "courseVersion": "0.4.0-course.2-beta",
   "status": "beta",
   "title": "Build AI-Enabled Applications with Java and Spring Boot",
   "subtitle": "Semantic search, evidence-grounded RAG, governed actions, chat memory, and tenant security with AI Fabric",
-  "frameworkVersion": "0.3.3",
-  "frameworkTag": "ai-fabric-framework-v0.3.3",
-  "courseSourceTag": "ai-fabric-course-v0.3.3.2",
+  "frameworkVersion": "0.4.0",
+  "frameworkTag": "ai-fabric-framework-v0.4.0",
+  "courseSourceTag": "unreleased",
   "javaVersion": 21,
   "springBootVersion": "4.1.x",
   "learnerRepository": "https://github.com/Loom-AI-Labs/ai-fabric-course-support-assistant",
@@ -442,6 +442,6 @@
       ]
     }
   ],
-  "sourceCommit": "4c84802c88bac866148a0185aa00ef1db873b6d8",
-  "generatedAt": "2026-07-23T11:46:49.549Z"
+  "sourceCommit": "7715c4bd633f82cf108b2829e9054623c024ac42",
+  "generatedAt": "2026-07-25T03:53:52.859Z"
 }

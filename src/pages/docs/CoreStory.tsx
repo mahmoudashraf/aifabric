@@ -123,21 +123,23 @@ const MagicMoment = () => (
     </div>
     
     <CodeBlock code={`@Entity
-@AICapable(
-    entityType = "product",
-    autoEmbedding = true,
-    indexable = true
-)
+@AICapable(entityType = "product")
 public class Product {
-    @Id private UUID id;
+    @Id
+    @AIIdentity
+    private UUID id;
+
+    @AISearchable(priority = 100, required = true)
     private String name;
+
+    @AISearchable(maxLength = 8000, priority = 80)
     private String description;
 }
 
-// Done. Ship it. 🚀`} />
+// Persist through a public @AIProcess lifecycle boundary.`} />
     
     <div className="text-center mt-4">
-      <span className="text-sm text-muted-foreground">One annotation. One dependency. Everything works.</span>
+      <span className="text-sm text-muted-foreground">A typed projection, lifecycle policy, and testable evidence.</span>
     </div>
   </div>
 );
