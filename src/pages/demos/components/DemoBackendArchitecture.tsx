@@ -218,16 +218,19 @@ function DevList({
   icon: typeof Layers3;
 }) {
   return (
-    <div className="rounded-lg border border-border/70 bg-background p-4">
+    <div className="min-w-0 rounded-lg border border-border/70 bg-background p-4">
       <div className="mb-3 flex items-center gap-2">
         <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10 text-primary">
           <Icon className="h-4 w-4" />
         </div>
         <h3 className="text-sm font-semibold">{title}</h3>
       </div>
-      <div className="space-y-2">
+      <div className="min-w-0 space-y-2">
         {items.map((item) => (
-          <div key={item} className="break-words rounded-md bg-muted/40 px-2 py-1.5 font-mono text-xs text-muted-foreground">
+          <div
+            key={item}
+            className="min-w-0 break-all rounded-md bg-muted/40 px-2 py-1.5 font-mono text-xs text-muted-foreground"
+          >
             {item}
           </div>
         ))}
@@ -265,7 +268,7 @@ function DeveloperDetails({ developer }: { developer?: DemoDeveloperDetails }) {
         <DevValue label="Health proof" value={developer.healthEndpoint} icon={ShieldCheck} />
       </div>
 
-      <div className="mt-4 grid gap-4 xl:grid-cols-2">
+      <div className="mt-4 min-w-0 grid gap-4 xl:grid-cols-2">
         <DevList title="Primary Endpoints" items={developer.primaryEndpoints} icon={Route} />
         <DevList title="Local Run Notes" items={developer.localRun} icon={Terminal} />
         <DevList title="Runtime Env Vars" items={developer.envVars} icon={ListChecks} />
