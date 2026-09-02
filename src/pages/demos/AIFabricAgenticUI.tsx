@@ -104,6 +104,12 @@ interface BehaviorEventSummary {
   source: string | null;
 }
 
+interface BehaviorEventPackResult {
+  userId: string;
+  pack: string;
+  events: BehaviorEventSummary[];
+}
+
 interface BehaviorScenarioResult {
   scenario: DemoScenarioSummary;
   insight: InsightSummary | null;
@@ -269,7 +275,7 @@ function getOrCreateSessionId(): string {
   if (typeof window === "undefined") {
     return "behavior-browser-session";
   }
-  const existing = window.localStorage.getItem(SESSION_STORAGE_KEY);
+  const existing = window.sessionStorage.getItem(SESSION_STORAGE_KEY);
   if (existing) {
     return existing;
   }
@@ -278,7 +284,7 @@ function getOrCreateSessionId(): string {
       ? window.crypto.randomUUID().slice(0, 8)
       : Math.random().toString(36).slice(2, 10);
   const sessionId = `browser-${suffix}`;
-  window.localStorage.setItem(SESSION_STORAGE_KEY, sessionId);
+  window.sessionStorage.setItem(SESSION_STORAGE_KEY, sessionId);
   return sessionId;
 }
 
@@ -638,7 +644,7 @@ export default function AIFabricAgenticUI() {
         setApiStatus("connected");
         return response;
       } catch (error) {
-        setApiStatus("offline");
+        setApiStatus("connected");
         setAgenticResponse(null);
         setCompositionError(error instanceof Error ? error.message : "Unable to compose home modules from behavior insight.");
         toast({
@@ -675,15 +681,18 @@ export default function AIFabricAgenticUI() {
         }
         const response = await apiRequest<DemoSessionResponse>("/sessions", {
           method: "POST",
-          body: JSON.stringify({ sessionId, analyze: true }),
+          body: JSON.stringify({ sessionId, analyze: false }),
         });
         const first =
           response.dashboard.scenarios.find((scenario) => scenario.id === "billing-cancellation-risk") ||
           response.dashboard.scenarios[0];
         setDashboard(response.dashboard);
         setSelectedUserId(first?.userId || "");
-        if (first) {
+        if (first?.insight) {
           await composeUi(first.userId);
+        } else {
+          setAgenticResponse(null);
+          setCompositionError("Run user behavior analysis before composing this user home page.");
         }
         setApiStatus("connected");
       } catch (error) {
@@ -719,8 +728,8 @@ export default function AIFabricAgenticUI() {
     setIsRecovering(true);
     const before = activeInsight;
     try {
-      const result = await apiRequest<BehaviorScenarioResult>(
-        `/scenarios/${encodeURIComponent(selectedScenario.userId)}/positive-recovery`,
+      const result = await apiRequest<BehaviorEventPackResult>(
+        `/scenarios/${encodeURIComponent(selectedScenario.userId)}/positive-recovery-events`,
         {
           method: "POST",
           body: JSON.stringify({}),
@@ -729,13 +738,13 @@ export default function AIFabricAgenticUI() {
       setRecoveryComparison({
         kind: "recovery",
         before,
-        after: result.insight,
-        addedEventTypes: result.events.slice(-5).reverse().map((event) => event.eventType),
+        after: null,
+        addedEventTypes: result.events.map((event) => event.eventType),
       });
       await refreshDashboard();
       toast({
         title: "Recovery events recorded",
-        description: "Positive raw app events were added. Click \"Refresh user insight\" to recompose the home preview.",
+        description: "Positive raw app events were added. Run analysis on the Behavior Signals page, then refresh this preview.",
       });
     } catch (error) {
       setCompositionError(error instanceof Error ? error.message : "Unable to record positive recovery events.");
@@ -754,8 +763,8 @@ export default function AIFabricAgenticUI() {
     setIsDeteriorating(true);
     const before = activeInsight;
     try {
-      const result = await apiRequest<BehaviorScenarioResult>(
-        `/scenarios/${encodeURIComponent(selectedScenario.userId)}/negative-churn`,
+      const result = await apiRequest<BehaviorEventPackResult>(
+        `/scenarios/${encodeURIComponent(selectedScenario.userId)}/negative-churn-events`,
         {
           method: "POST",
           body: JSON.stringify({}),
@@ -764,14 +773,13 @@ export default function AIFabricAgenticUI() {
       setRecoveryComparison({
         kind: "churn-risk",
         before,
-        after: result.insight,
-        addedEventTypes: result.events.slice(-5).reverse().map((event) => event.eventType),
+        after: null,
+        addedEventTypes: result.events.map((event) => event.eventType),
       });
       await refreshDashboard();
-      await composeUi(result.scenario.userId);
       toast({
         title: "Churn-risk events recorded",
-        description: "Negative raw app events were added and the AI home preview was recomposed.",
+        description: "Negative raw app events were added. Run analysis on the Behavior Signals page, then refresh this preview.",
       });
     } catch (error) {
       setCompositionError(error instanceof Error ? error.message : "Unable to record churn-risk events.");
@@ -811,13 +819,13 @@ export default function AIFabricAgenticUI() {
           title={pageLoadingMode === "resetting" ? "Resetting Behavior Signals session" : "Preparing Behavior Signals home preview"}
           description={
             pageLoadingMode === "resetting"
-              ? "Clearing the isolated behavior session, recreating demo users, rebuilding AI insights, and recomposing the home preview."
-              : "Creating the behavior session, loading current users, and asking AI Fabric to compose the first home preview before the page becomes interactive."
+              ? "Clearing the isolated behavior session and recreating raw behavior events. Analysis stays explicit."
+              : "Loading the same isolated users and their latest approved behavior insights."
           }
           steps={
             pageLoadingMode === "resetting"
-              ? ["Delete current session data", "Clone seeded behavior users", "Run analysis and compose home modules"]
-              : ["Create browser session", "Load behavior scenarios", "Compose AI-selected home modules"]
+              ? ["Delete current session data", "Clone seeded behavior users", "Wait for explicit analysis"]
+              : ["Reuse browser session", "Load behavior scenarios", "Read latest approved insight"]
           }
         />
       ) : null}
@@ -916,10 +924,18 @@ export default function AIFabricAgenticUI() {
                       {activePlan?.summary || "Run behavior analysis to preview the user's behavior-aware home modules."}
                     </p>
                   </div>
-                  <Button onClick={() => selectedScenario && void composeUi(selectedScenario.userId)} disabled={!selectedScenario || isComposing || isRecovering || isDeteriorating}>
-                    {isComposing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-                    Refresh user insight
-                  </Button>
+                  <div className="flex flex-wrap gap-2">
+                    <Button asChild variant="outline">
+                      <Link to="/demos/ai-fabric-behavior-signals">
+                        <Activity className="mr-2 h-4 w-4" />
+                        Run behavior analysis
+                      </Link>
+                    </Button>
+                    <Button onClick={() => selectedScenario && void composeUi(selectedScenario.userId)} disabled={!selectedScenario?.insight || isComposing || isRecovering || isDeteriorating}>
+                      {isComposing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+                      Refresh home from insight
+                    </Button>
+                  </div>
                 </div>
                 {canRunRecoveryExperiment && (
                   <div className="mt-4 flex flex-col gap-3 rounded-lg border border-emerald-200 bg-emerald-50 p-4 md:flex-row md:items-center md:justify-between">

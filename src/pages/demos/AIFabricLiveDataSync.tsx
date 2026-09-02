@@ -9,6 +9,7 @@ import {
   Check,
   CheckCircle2,
   CircleDashed,
+  Clock3,
   Code2,
   Database,
   FileText,
@@ -16,6 +17,7 @@ import {
   Laptop,
   Loader2,
   PencilLine,
+  Plus,
   RefreshCw,
   RotateCcw,
   Save,
@@ -91,6 +93,8 @@ interface SyncEvent {
   vectorPresent: boolean;
   inSync: boolean;
   elapsedMs: number;
+  indexingWorkId: string | null;
+  indexingDispatchStatus: string | null;
   message: string;
   occurredAt: string;
 }
@@ -110,6 +114,7 @@ interface DemoState {
   synchronizedTotal: number;
   entities: EntityRecord[];
   events: SyncEvent[];
+  indexingWork: IndexingWorkView[];
   annotationCoverage: {
     annotations: AnnotationUse[];
     extractionOwner: string;
@@ -128,6 +133,61 @@ interface WorkspaceResponse {
 interface MutationResponse {
   mutation: SyncEvent;
   state: DemoState;
+  metadata: Record<string, unknown>;
+  indexingWork: IndexingWorkView;
+}
+
+interface IndexingWorkView {
+  workId: string;
+  entityType: string;
+  entityId: string;
+  workType: string;
+  sourceOperation: string;
+  strategy: string;
+  status: IndexingWorkState;
+  retryCount: number;
+  maxRetries: number;
+  errorCode: string | null;
+  deadLetterReason: string | null;
+  correlationId: string | null;
+  terminal: boolean;
+  successfulTerminal: boolean;
+  inProgress: boolean;
+  requiresOperatorReview: boolean;
+  requestedAt: string;
+  scheduledFor: string;
+  startedAt: string | null;
+  completedAt: string | null;
+  lastErrorAt: string | null;
+  updatedAt: string;
+}
+
+type IndexingWorkState =
+  | "COMMIT_PENDING"
+  | "PENDING"
+  | "PROCESSING"
+  | "COMPLETED"
+  | "SUPERSEDED"
+  | "DEAD_LETTER";
+
+interface LifecycleWorkResponse {
+  scenario: string;
+  guidance: string;
+  metadata: Record<string, unknown>;
+  indexingWork: IndexingWorkView;
+  state: DemoState;
+}
+
+interface ChatResponse {
+  conversationId: string;
+  result: {
+    type: string;
+    success: boolean;
+    message: string;
+    errorCode: string | null;
+    data: Record<string, unknown>;
+    metadata: Record<string, unknown>;
+  };
 }
 
 interface DemoHealth {
@@ -191,6 +251,24 @@ const editorFields: Record<
     { key: "productArea", label: "Product area" },
     { key: "severity", label: "Severity" },
   ],
+};
+
+const workStateGuidance: Record<IndexingWorkState, string> = {
+  COMMIT_PENDING: "Reserved in the source transaction; wait for commit dispatch.",
+  PENDING: "Accepted durable work is waiting for a worker or bounded retry.",
+  PROCESSING: "A worker owns the current attempt; keep polling the same work ID.",
+  COMPLETED: "Derived work applied successfully; retrieval can now be verified.",
+  SUPERSEDED: "A newer source revision owns the final index; do not replay stale work.",
+  DEAD_LETTER: "Retries are exhausted; route the safe code to operator review.",
+};
+
+const workStateTone: Record<IndexingWorkState, string> = {
+  COMMIT_PENDING: "border-sky-200 bg-sky-50 text-sky-800",
+  PENDING: "border-amber-200 bg-amber-50 text-amber-800",
+  PROCESSING: "border-blue-200 bg-blue-50 text-blue-800",
+  COMPLETED: "border-emerald-200 bg-emerald-50 text-emerald-800",
+  SUPERSEDED: "border-violet-200 bg-violet-50 text-violet-800",
+  DEAD_LETTER: "border-red-200 bg-red-50 text-red-800",
 };
 
 const asText = (value: unknown): string =>
@@ -314,8 +392,15 @@ export default function AIFabricLiveDataSync() {
   const [selectedKey, setSelectedKey] = useState("");
   const [editor, setEditor] = useState<EditorValues>({});
   const [saving, setSaving] = useState(false);
+  const [lifecycleBusy, setLifecycleBusy] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [deleteCandidate, setDeleteCandidate] = useState<EntityRecord | null>(null);
+  const [comparisonQuestion, setComparisonQuestion] = useState(
+    "How long does the NovaBook Air battery last?",
+  );
+  const [beforeAnswer, setBeforeAnswer] = useState<ChatResponse | null>(null);
+  const [afterAnswer, setAfterAnswer] = useState<ChatResponse | null>(null);
+  const [answerBusy, setAnswerBusy] = useState<"before" | "after" | null>(null);
 
   const selected = useMemo(
     () => state?.entities.find((entity) => entity.recordKey === selectedKey) || null,
@@ -327,13 +412,21 @@ export default function AIFabricLiveDataSync() {
     [activeKind, state],
   );
 
+  const workCounts = useMemo(() => {
+    const counts = Object.fromEntries(
+      (Object.keys(workStateGuidance) as IndexingWorkState[]).map((status) => [status, 0]),
+    ) as Record<IndexingWorkState, number>;
+    state?.indexingWork?.forEach((work) => { counts[work.status] += 1; });
+    return counts;
+  }, [state?.indexingWork]);
+
   const selectEntity = useCallback((entity: EntityRecord) => {
     setActiveKind(entity.kind);
     setSelectedKey(entity.recordKey);
     setEditor(valuesFor(entity));
   }, []);
 
-  const useStateResponse = useCallback(
+  const applyStateResponse = useCallback(
     (nextState: DemoState, preferredKey?: string, fallbackKind: EntityKind = "PRODUCT") => {
       setState(nextState);
       const nextSelected =
@@ -356,9 +449,9 @@ export default function AIFabricLiveDataSync() {
     });
     window.localStorage.setItem(WORKSPACE_STORAGE_KEY, response.workspaceId);
     setWorkspaceId(response.workspaceId);
-    useStateResponse(response.state, "novabook-air");
+    applyStateResponse(response.state, "novabook-air");
     return response.workspaceId;
-  }, [useStateResponse]);
+  }, [applyStateResponse]);
 
   const load = useCallback(async () => {
     setPageLoading(true);
@@ -371,7 +464,7 @@ export default function AIFabricLiveDataSync() {
         try {
           const current = await apiRequest<DemoState>("/state", activeWorkspace);
           setWorkspaceId(activeWorkspace);
-          useStateResponse(current, "novabook-air");
+          applyStateResponse(current, "novabook-air");
         } catch {
           window.localStorage.removeItem(WORKSPACE_STORAGE_KEY);
           activeWorkspace = await createWorkspace();
@@ -394,7 +487,7 @@ export default function AIFabricLiveDataSync() {
     } finally {
       setPageLoading(false);
     }
-  }, [createWorkspace, toast, useStateResponse]);
+  }, [applyStateResponse, createWorkspace, toast]);
 
   useEffect(() => {
     void load();
@@ -407,14 +500,14 @@ export default function AIFabricLiveDataSync() {
       setSelectedKey("");
       setEditor({});
     }
-  }, [selectEntity, selected, visibleEntities]);
+  }, [activeKind, selectEntity, selected, visibleEntities]);
 
   const refresh = useCallback(async () => {
     if (!workspaceId) return;
     setRefreshing(true);
     try {
       const current = await apiRequest<DemoState>("/state", workspaceId);
-      useStateResponse(current, selectedKey, activeKind);
+      applyStateResponse(current, selectedKey, activeKind);
       setStatus("connected");
     } catch (error) {
       setStatus("offline");
@@ -426,7 +519,15 @@ export default function AIFabricLiveDataSync() {
     } finally {
       setRefreshing(false);
     }
-  }, [activeKind, selectedKey, toast, useStateResponse, workspaceId]);
+  }, [activeKind, applyStateResponse, selectedKey, toast, workspaceId]);
+
+  useEffect(() => {
+    if (!state?.indexingWork?.some((work) => work.inProgress) || !workspaceId) return;
+    const timer = window.setInterval(() => {
+      void refresh();
+    }, 750);
+    return () => window.clearInterval(timer);
+  }, [refresh, state?.indexingWork, workspaceId]);
 
   const reset = useCallback(async () => {
     if (!workspaceId) return;
@@ -438,7 +539,9 @@ export default function AIFabricLiveDataSync() {
       });
       await chatRef.current?.newConversation();
       setActiveKind("PRODUCT");
-      useStateResponse(response.state, "novabook-air");
+      applyStateResponse(response.state, "novabook-air");
+      setBeforeAnswer(null);
+      setAfterAnswer(null);
       toast({
         title: "Workspace reset",
         description: "Six fresh database rows and vectors are ready for this browser session.",
@@ -452,7 +555,7 @@ export default function AIFabricLiveDataSync() {
     } finally {
       setPageLoading(false);
     }
-  }, [toast, useStateResponse, workspaceId]);
+  }, [applyStateResponse, toast, workspaceId]);
 
   const save = useCallback(async () => {
     if (!selected || !workspaceId) return;
@@ -467,10 +570,11 @@ export default function AIFabricLiveDataSync() {
         workspaceId,
         { method: "PUT", body: JSON.stringify(payload) },
       );
-      useStateResponse(result.state, selected.recordKey);
+      applyStateResponse(result.state, selected.recordKey);
+      setAfterAnswer(null);
       toast({
-        title: "Database and vector updated",
-        description: `${selected.title} is now at revision ${result.mutation.revision}.`,
+        title: `Indexing work ${result.indexingWork.status.toLowerCase()}`,
+        description: `${selected.title} is at revision ${result.mutation.revision}; work ${result.indexingWork.workId} is the authoritative receipt.`,
       });
     } catch (error) {
       toast({
@@ -481,7 +585,7 @@ export default function AIFabricLiveDataSync() {
     } finally {
       setSaving(false);
     }
-  }, [editor, selected, toast, useStateResponse, workspaceId]);
+  }, [applyStateResponse, editor, selected, toast, workspaceId]);
 
   const remove = useCallback(async () => {
     if (!deleteCandidate || !workspaceId) return;
@@ -492,7 +596,7 @@ export default function AIFabricLiveDataSync() {
         workspaceId,
         { method: "DELETE" },
       );
-      useStateResponse(result.state, undefined, deleteCandidate.kind);
+      applyStateResponse(result.state, undefined, deleteCandidate.kind);
       toast({
         title: "Entity and vector removed",
         description: result.mutation.message,
@@ -507,7 +611,106 @@ export default function AIFabricLiveDataSync() {
       setDeleteCandidate(null);
       setSaving(false);
     }
-  }, [deleteCandidate, toast, useStateResponse, workspaceId]);
+  }, [applyStateResponse, deleteCandidate, toast, workspaceId]);
+
+  const createTrackedSample = useCallback(async () => {
+    if (!workspaceId) return;
+    setSaving(true);
+    try {
+      const suffix = crypto.randomUUID().slice(0, 8);
+      const result = await apiRequest<MutationResponse>(
+        "/entities/products",
+        workspaceId,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            recordKey: `orbitdock-${suffix}`,
+            entity: {
+              title: `OrbitDock ${suffix.toUpperCase()}`,
+              summary: "A compact desk dock created through the tracked indexing boundary.",
+              specification: "Dual display output, 100W charging, and four USB-C ports.",
+              category: "Accessories",
+              price: 189,
+              status: "PUBLISHED",
+            },
+          }),
+        },
+      );
+      applyStateResponse(result.state, result.mutation.recordKey, "PRODUCT");
+      toast({
+        title: "Tracked source row created",
+        description: `Work ${result.indexingWork.workId} reached ${result.indexingWork.status}.`,
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Create failed",
+        description: error instanceof Error ? error.message : "The sample could not be created.",
+      });
+    } finally {
+      setSaving(false);
+    }
+  }, [applyStateResponse, toast, workspaceId]);
+
+  const runLifecycleScenario = useCallback(async (
+    scenario: "superseded" | "retry-recovery" | "dead-letter",
+  ) => {
+    if (!workspaceId || !selected) return;
+    setLifecycleBusy(scenario);
+    try {
+      const result = await apiRequest<LifecycleWorkResponse>(
+        `/lifecycle/${scenario}/${kindConfig[selected.kind].path}/${selected.recordKey}`,
+        workspaceId,
+        { method: "POST" },
+      );
+      applyStateResponse(result.state, selected.recordKey, selected.kind);
+      toast({
+        title: `Lifecycle canary ${result.indexingWork.status.toLowerCase()}`,
+        description: `${result.guidance} Work ID: ${result.indexingWork.workId}.`,
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Lifecycle canary failed to start",
+        description: error instanceof Error ? error.message : "The backend rejected the canary.",
+      });
+    } finally {
+      setLifecycleBusy(null);
+    }
+  }, [applyStateResponse, selected, toast, workspaceId]);
+
+  const captureGroundedAnswer = useCallback(async (slot: "before" | "after") => {
+    if (!workspaceId || !comparisonQuestion.trim()) return;
+    setAnswerBusy(slot);
+    try {
+      const answer = await apiRequest<ChatResponse>(
+        "/chat",
+        workspaceId,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            message: comparisonQuestion.trim(),
+            conversationId: null,
+            mode: "rag",
+            position: "knowledge_sync",
+          }),
+        },
+      );
+      if (!answer.result.success) {
+        throw new Error(answer.result.message || answer.result.errorCode || "Grounded answer failed");
+      }
+      if (slot === "before") setBeforeAnswer(answer);
+      else setAfterAnswer(answer);
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Grounded answer failed",
+        description: error instanceof Error ? error.message : "AI Fabric did not return an answer.",
+      });
+    } finally {
+      setAnswerBusy(null);
+    }
+  }, [comparisonQuestion, toast, workspaceId]);
 
   const askAboutSelected = useCallback(() => {
     if (!selected) return;
@@ -576,8 +779,8 @@ export default function AIFabricLiveDataSync() {
                   </Badge>
                 </div>
                 <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
-                  Edit or delete normal JPA entities and inspect the vector content AI Fabric makes
-                  available to retrieval and the LLM, without calling an indexing endpoint yourself.
+                  Seed ordinary JPA entities through annotations, then create, edit, or delete through
+                  a tracked application boundary and follow each durable indexing receipt into RAG.
                 </p>
               </div>
 
@@ -623,7 +826,7 @@ export default function AIFabricLiveDataSync() {
               />
               <Metric
                 label="Release"
-                value={health?.aiFabricVersion || "0.4.0"}
+                value={health?.aiFabricVersion || "0.5.2"}
                 note={`commit ${shortId(health?.commit)}`}
                 icon={Code2}
                 tone="border-slate-200 bg-slate-50 text-slate-700"
@@ -652,6 +855,12 @@ export default function AIFabricLiveDataSync() {
                   ))}
                 </TabsList>
               </Tabs>
+
+              {activeKind === "PRODUCT" ? (
+                <Button className="mt-3 w-full" variant="outline" size="sm" onClick={() => void createTrackedSample()} disabled={saving}>
+                  <Plus className="mr-2 h-4 w-4" />Create tracked sample
+                </Button>
+              ) : null}
 
               <div className="mt-4 grid gap-2">
                 {visibleEntities.map((entity) => {
@@ -768,8 +977,9 @@ export default function AIFabricLiveDataSync() {
                   <div className="mt-5 flex gap-3 rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">
                     <PencilLine className="mt-0.5 h-4 w-4 shrink-0" />
                     <p>
-                      Saving calls only the normal entity service. <code>@AIProcess</code> observes the
-                      returned row and refreshes the vector before this proof is shown.
+                      Reset seeds use <code>@AIProcess</code>. Editable operations use the public
+                      <code className="mx-1">AIEntityIndexingGateway</code> because this API promises
+                      an opaque work receipt and status reconciliation.
                     </p>
                   </div>
                 </>
@@ -798,7 +1008,7 @@ export default function AIFabricLiveDataSync() {
                         )}
                         <span className="font-semibold">{selected.vector.message}</span>
                       </div>
-                      <Badge variant="outline">r{asText(selected.vector.metadata.revision || "?")}</Badge>
+                      <Badge variant="outline">v{asText(selected.vector.metadata.version || "?")}</Badge>
                     </div>
                     <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
                       <div>
@@ -846,6 +1056,96 @@ export default function AIFabricLiveDataSync() {
           </div>
         </section>
 
+        <section className="border-b border-border bg-background">
+          <div className="container mx-auto space-y-6 px-4 py-8">
+            <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
+              <div>
+                <p className="text-xs font-semibold uppercase text-primary">Durable 0.5 lifecycle</p>
+                <h2 className="mt-1 text-2xl font-bold tracking-normal">Indexing work control room</h2>
+                <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
+                  Vector existence supports the proof, but the public work status is authoritative.
+                  Poll the same opaque ID through retries; never resubmit a source mutation blindly.
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button size="sm" variant="outline" onClick={() => void runLifecycleScenario("superseded")} disabled={!selected || Boolean(lifecycleBusy)}>
+                  {lifecycleBusy === "superseded" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RefreshCw className="mr-2 h-4 w-4" />}Prove superseded
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => void runLifecycleScenario("retry-recovery")} disabled={!selected || Boolean(lifecycleBusy)}>
+                  {lifecycleBusy === "retry-recovery" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Clock3 className="mr-2 h-4 w-4" />}Prove retry recovery
+                </Button>
+                <Button size="sm" variant="outline" className="border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800" onClick={() => void runLifecycleScenario("dead-letter")} disabled={!selected || Boolean(lifecycleBusy)}>
+                  {lifecycleBusy === "dead-letter" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <XCircle className="mr-2 h-4 w-4" />}Prove dead letter
+                </Button>
+              </div>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
+              {(Object.keys(workStateGuidance) as IndexingWorkState[]).map((workStatus) => (
+                <div key={workStatus} className={`rounded-md border p-3 ${workStateTone[workStatus]}`}>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-bold">{workStatus.replaceAll("_", " ")}</span>
+                    <span className="text-lg font-bold">{workCounts[workStatus]}</span>
+                  </div>
+                  <p className="mt-2 text-xs leading-5 opacity-80">{workStateGuidance[workStatus]}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+              <div className="overflow-hidden rounded-md border border-border">
+                <div className="border-b bg-muted/30 px-4 py-3">
+                  <h3 className="font-semibold">Work timeline</h3>
+                  <p className="mt-1 text-xs text-muted-foreground">Safe status fields only. Queue payloads and worker identity remain private.</p>
+                </div>
+                {state?.indexingWork?.length ? state.indexingWork.map((work) => (
+                  <div key={work.workId} className="grid gap-3 border-b p-4 last:border-b-0 md:grid-cols-[110px_minmax(0,1fr)_auto] md:items-center">
+                    <div>
+                      <Badge className={workStateTone[work.status]} variant="outline">{work.status}</Badge>
+                      <p className="mt-2 font-mono text-xs text-muted-foreground">work {work.workId}</p>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold">{work.sourceOperation} {work.entityType}</p>
+                      <p className="mt-1 truncate font-mono text-xs text-muted-foreground">{work.entityId}</p>
+                      {work.errorCode ? <p className="mt-1 text-xs font-semibold text-red-700">Safe code: {work.errorCode}</p> : null}
+                    </div>
+                    <div className="text-xs text-muted-foreground md:text-right">
+                      <p>{work.retryCount}/{work.maxRetries} retries</p>
+                      <p className="mt-1">{formatTime(work.updatedAt)}</p>
+                    </div>
+                  </div>
+                )) : (
+                  <div className="p-8 text-center text-sm text-muted-foreground">Create, edit, delete, or run a canary to receive a work ID.</div>
+                )}
+              </div>
+
+              <div className="rounded-md border border-border bg-muted/20 p-5">
+                <p className="text-xs font-semibold uppercase text-primary">Grounded answer comparison</p>
+                <h3 className="mt-1 text-lg font-semibold">Before and after source truth</h3>
+                <Label htmlFor="sync-comparison-question" className="mt-4 block text-xs">Question</Label>
+                <Input id="sync-comparison-question" className="mt-1 bg-background" value={comparisonQuestion} onChange={(event) => setComparisonQuestion(event.target.value)} />
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  <Button size="sm" variant="outline" onClick={() => void captureGroundedAnswer("before")} disabled={Boolean(answerBusy)}>{answerBusy === "before" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}Capture before</Button>
+                  <Button size="sm" onClick={() => void captureGroundedAnswer("after")} disabled={Boolean(answerBusy)}>{answerBusy === "after" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}Capture current</Button>
+                </div>
+                <div className="mt-4 grid gap-3">
+                  {[["Before mutation", beforeAnswer], ["Current vectors", afterAnswer]].map(([label, answer]) => (
+                    <div key={String(label)} className="rounded-md border bg-background p-3">
+                      <p className="text-xs font-semibold uppercase text-muted-foreground">{String(label)}</p>
+                      <p className="mt-2 text-sm leading-6">{(answer as ChatResponse | null)?.result.message || "Not captured yet."}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
+              <Clock3 className="mt-0.5 h-4 w-4 shrink-0" />
+              <p><strong>INDEXING_RETRYABLE</strong> means the source change was accepted while derived work remains unfinished. Keep the work ID, poll with a bounded delay, and surface dead letters for operator review.</p>
+            </div>
+          </div>
+        </section>
+
         <section className="container mx-auto grid gap-8 px-4 py-8 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
             <div className="mb-4 flex items-center justify-between gap-3">
@@ -867,6 +1167,7 @@ export default function AIFabricLiveDataSync() {
                       <div className="flex flex-wrap items-center gap-2">
                         <span className="text-sm font-semibold">{event.operation} · {event.title}</span>
                         <Badge variant="outline" className="text-[10px]">{event.entityType}</Badge>
+                        {event.indexingWorkId ? <Badge variant="secondary" className="text-[10px]">work {event.indexingWorkId}</Badge> : null}
                       </div>
                       <p className="mt-1 text-xs text-muted-foreground">{event.message}</p>
                     </div>

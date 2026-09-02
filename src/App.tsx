@@ -15,6 +15,11 @@ import Webinars from "./pages/Webinars";
 import CourseRoutes from "./pages/course/CourseRoutes";
 import BootcampRoutes from "./pages/bootcamps/BootcampRoutes";
 import AIFabricAccountResolver from "./pages/demos/AIFabricAccountResolver";
+import AIFabricAgenticActionResolver from "./pages/demos/AIFabricAgenticActionResolver";
+import AIFabricDeploymentKnowledgeGuard from "./pages/demos/AIFabricDeploymentKnowledgeGuard";
+import AIFabricHumanReviewDesk from "./pages/demos/AIFabricHumanReviewDesk";
+import AIFabricIncidentInvestigation from "./pages/demos/AIFabricIncidentInvestigation";
+import AIFabricMcpOperations from "./pages/demos/AIFabricMcpOperations";
 import AIFabricAgenticUI from "./pages/demos/AIFabricAgenticUI";
 import AIFabricBehaviorSignals from "./pages/demos/AIFabricBehaviorSignals";
 import AIFabricLiveDataSync from "./pages/demos/AIFabricLiveDataSync";
@@ -343,6 +348,66 @@ const App = () => (
               {retiredDemoRoutes.map((path) => (
                 <Route key={path} path={path} element={<Navigate to="/demos" replace />} />
               ))}
+              <Route
+                path="/demos/ai-fabric-agentic-action-resolver/about"
+                element={
+                  <DemoAboutPage
+                    architecture={demoBackendArchitectures.agenticActionResolver}
+                    demoLabel="Agentic AI Action Resolver"
+                    demoPath="/demos/ai-fabric-agentic-action-resolver"
+                  />
+                }
+              />
+              <Route
+                path="/demos/ai-fabric-agentic-action-resolver/review"
+                element={<AIFabricHumanReviewDesk />}
+              />
+              <Route
+                path="/demos/ai-fabric-agentic-action-resolver"
+                element={<AIFabricAgenticActionResolver />}
+              />
+              <Route
+                path="/demos/ai-fabric-deployment-knowledge-guard/about"
+                element={
+                  <DemoAboutPage
+                    architecture={demoBackendArchitectures.deploymentKnowledgeGuard}
+                    demoLabel="Deployment Knowledge Guard"
+                    demoPath="/demos/ai-fabric-deployment-knowledge-guard"
+                  />
+                }
+              />
+              <Route
+                path="/demos/ai-fabric-deployment-knowledge-guard"
+                element={<AIFabricDeploymentKnowledgeGuard />}
+              />
+              <Route
+                path="/demos/ai-fabric-incident-investigation/about"
+                element={
+                  <DemoAboutPage
+                    architecture={demoBackendArchitectures.incidentInvestigation}
+                    demoLabel="Incident Investigation Room"
+                    demoPath="/demos/ai-fabric-incident-investigation"
+                  />
+                }
+              />
+              <Route
+                path="/demos/ai-fabric-incident-investigation"
+                element={<AIFabricIncidentInvestigation />}
+              />
+              <Route
+                path="/demos/ai-fabric-mcp-operations/about"
+                element={
+                  <DemoAboutPage
+                    architecture={demoBackendArchitectures.mcpOperations}
+                    demoLabel="AI Fabric MCP Operations"
+                    demoPath="/demos/ai-fabric-mcp-operations"
+                  />
+                }
+              />
+              <Route
+                path="/demos/ai-fabric-mcp-operations"
+                element={<AIFabricMcpOperations />}
+              />
               <Route
                 path="/demos/ai-fabric-account-resolver/about"
                 element={

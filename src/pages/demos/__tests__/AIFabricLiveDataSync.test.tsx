@@ -41,7 +41,32 @@ const vector = (revision: number, content: string) => ({
   message: "Database revision and vector revision match",
 });
 
-const state = (revision = 1, hours = 18) => ({
+const indexingWork = (revision = 1) => ({
+  workId: `work-product-${revision}`,
+  entityType: "sync-product",
+  entityId: "novabook-air",
+  workType: "UPSERT",
+  sourceOperation: "UPDATE",
+  strategy: "SYNCHRONOUS",
+  status: "COMPLETED",
+  retryCount: 0,
+  maxRetries: 3,
+  errorCode: null,
+  deadLetterReason: null,
+  correlationId: `correlation-${revision}`,
+  terminal: true,
+  successfulTerminal: true,
+  inProgress: false,
+  requiresOperatorReview: false,
+  requestedAt: "2026-07-23T12:00:00Z",
+  scheduledFor: "2026-07-23T12:00:00Z",
+  startedAt: "2026-07-23T12:00:01Z",
+  completedAt: "2026-07-23T12:00:02Z",
+  lastErrorAt: null,
+  updatedAt: "2026-07-23T12:00:02Z",
+});
+
+const state = (revision = 1, hours = 18, work = [indexingWork(revision)]) => ({
   workspaceId: "sync-demo-test",
   sourceCounts: { "sync-product": 2, "sync-policy": 2, "sync-guide": 2 },
   vectorCounts: { "sync-product": 2, "sync-policy": 2, "sync-guide": 2 },
@@ -91,6 +116,7 @@ const state = (revision = 1, hours = 18) => ({
     },
   ],
   events: [],
+  indexingWork: work,
   annotationCoverage: {
     annotations: [
       {
@@ -131,7 +157,7 @@ describe("AIFabricLiveDataSync", () => {
         });
       }
       if (url.endsWith("/api/demo/health")) {
-        return response({ status: "UP", aiFabricVersion: "0.4.0", commit: "abc123" });
+        return response({ status: "UP", aiFabricVersion: "0.5.2", commit: "abc123" });
       }
       throw new Error(`Unexpected fetch: ${url}`);
     });
@@ -145,6 +171,8 @@ describe("AIFabricLiveDataSync", () => {
     expect(await screen.findByRole("heading", { name: "AI Fabric Live Data Sync" })).toBeInTheDocument();
     expect(screen.getByText("6/6")).toBeInTheDocument();
     expect(screen.getAllByText(/battery is rated for 18 hours/i)).toHaveLength(2);
+    expect(screen.getByText("Work timeline")).toBeInTheDocument();
+    expect(screen.getByText("work work-product-1")).toBeInTheDocument();
     expect(screen.getByTestId("ai-fabric-chat")).toHaveAttribute(
       "data-endpoint",
       expect.stringContaining("/api/live-sync/chat"),
@@ -162,9 +190,10 @@ describe("AIFabricLiveDataSync", () => {
         });
       }
       if (url.endsWith("/api/demo/health")) {
-        return response({ status: "UP", aiFabricVersion: "0.4.0", commit: "abc123" });
+        return response({ status: "UP", aiFabricVersion: "0.5.2", commit: "abc123" });
       }
       if (url.endsWith("/api/live-sync/entities/products/novabook-air") && init?.method === "PUT") {
+        const completedWork = indexingWork(2);
         return response({
           mutation: {
             id: "event-1",
@@ -178,10 +207,14 @@ describe("AIFabricLiveDataSync", () => {
             vectorPresent: true,
             inSync: true,
             elapsedMs: 4,
+            indexingWorkId: completedWork.workId,
+            indexingDispatchStatus: completedWork.status,
             message: "Updated source row and vector",
             occurredAt: "2026-07-23T12:01:00Z",
           },
-          state: state(2, 26),
+          state: state(2, 26, [completedWork]),
+          metadata: { indexingWorkId: completedWork.workId },
+          indexingWork: completedWork,
         });
       }
       throw new Error(`Unexpected fetch: ${url}`);
@@ -200,6 +233,7 @@ describe("AIFabricLiveDataSync", () => {
     await waitFor(() => {
       expect(screen.getByText(/battery is rated for 26 hours/i)).toBeInTheDocument();
     });
+    expect(screen.getByText("work work-product-2")).toBeInTheDocument();
     expect(screen.queryByText(/battery is rated for 18 hours/i)).not.toBeInTheDocument();
 
     const updateCall = fetchMock.mock.calls.find(([input]) =>

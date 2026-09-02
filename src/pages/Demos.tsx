@@ -10,9 +10,13 @@ import {
   EyeOff,
   Layers,
   Lock,
+  Network,
+  PlugZap,
   MessageSquare,
   RefreshCw,
   Search,
+  ServerCog,
+  Siren,
   Shield,
   ShieldCheck,
   ShoppingBag,
@@ -30,6 +34,118 @@ import { Badge } from "@/components/ui/badge";
 import { AI_SHOPPING_EXPERIENCE_ROUTE } from "./demos/AIFabricFramework/routes";
 
 const demos = [
+  {
+    id: "ai-fabric-agentic-action-resolver",
+    title: "Agentic AI Action Resolver",
+    description:
+      "Exact-version specialists with typed waits, policy evidence, governed receipts, replay protection, and durable human review.",
+    icon: Network,
+    features: [
+      { icon: Bot, label: "Typed Specialists" },
+      { icon: MessageSquare, label: "Backend Memory" },
+      { icon: ShieldCheck, label: "Durable Receipts" },
+      { icon: Users, label: "Human Review" },
+    ],
+    stats: [
+      { value: "2", label: "Experiences" },
+      { value: "Ready", label: "Backend" },
+      { value: "0.5.2", label: "AI Fabric" },
+    ],
+    aboutLink: "/demos/ai-fabric-agentic-action-resolver/about",
+    livePreview: {
+      eyebrow: "Bounded specialist execution",
+      prompt: "Inspect the current account, collect missing billing input, then safely resolve one approved action.",
+      proof: "Typed wait/resume, exact manifest identity, approved evidence, confirmation, receipt replay, and session-bound review.",
+      runtime: "AI Fabric specialists + chat memory + JDBC receipts + human review",
+    },
+    accent: "border-violet-200 bg-violet-50 text-violet-700",
+    link: "/demos/ai-fabric-agentic-action-resolver",
+    deployed: false,
+  },
+  {
+    id: "ai-fabric-deployment-knowledge-guard",
+    title: "Deployment Knowledge Guard",
+    description:
+      "Read-only operations specialist with trusted tenant/deployment filters, structured answers, evidence citations, and leakage canaries.",
+    icon: ServerCog,
+    features: [
+      { icon: ShieldCheck, label: "Trusted Context" },
+      { icon: Search, label: "Scoped RAG" },
+      { icon: Bot, label: "Typed Specialist" },
+      { icon: Lock, label: "Leakage Canaries" },
+    ],
+    stats: [
+      { value: "4", label: "Contexts" },
+      { value: "Ready", label: "Backend" },
+      { value: "0.5.2", label: "AI Fabric" },
+    ],
+    aboutLink: "/demos/ai-fabric-deployment-knowledge-guard/about",
+    livePreview: {
+      eyebrow: "Trusted deployment RAG",
+      prompt: "Summarize this deployment, then attempt cross-tenant and cross-deployment evidence access.",
+      proof: "Lucene sees server-bound tenant/deployment filters; output citations are rechecked against the active catalog.",
+      runtime: "AI Fabric specialist + trusted context + OpenAI + filtered Lucene",
+    },
+    accent: "border-cyan-200 bg-cyan-50 text-cyan-800",
+    link: "/demos/ai-fabric-deployment-knowledge-guard",
+    deployed: false,
+  },
+  {
+    id: "ai-fabric-incident-investigation",
+    title: "Incident Investigation Room",
+    description:
+      "Multi-specialist incident analysis with ordered and parallel plans, strict fan-in, bounded transitions, and backend-owned conversation.",
+    icon: Siren,
+    features: [
+      { icon: Layers, label: "Fixed Plans" },
+      { icon: Network, label: "Parallel Fan-out" },
+      { icon: ShieldCheck, label: "Bounded Handoffs" },
+      { icon: MessageSquare, label: "Conversation Manager" },
+    ],
+    stats: [
+      { value: "2", label: "Plan modes" },
+      { value: "Ready", label: "Backend" },
+      { value: "0.5.2", label: "AI Fabric" },
+    ],
+    aboutLink: "/demos/ai-fabric-incident-investigation/about",
+    livePreview: {
+      eyebrow: "Multi-specialist execution",
+      prompt: "Investigate one incident from immutable service-health and change-risk evidence.",
+      proof: "Compare sequential and parallel results, inspect lineage, and prove second-hop transitions are denied.",
+      runtime: "AI Fabric plans + delegation + handoff + conversation manager",
+    },
+    accent: "border-amber-200 bg-amber-50 text-amber-800",
+    link: "/demos/ai-fabric-incident-investigation",
+    deployed: false,
+  },
+  {
+    id: "ai-fabric-mcp-operations",
+    title: "AI Fabric MCP Operations",
+    description:
+      "Authenticated remote MCP reads and a confirmation-gated sandbox restart with exact server binding, trusted arguments, and replay-safe receipts.",
+    icon: PlugZap,
+    features: [
+      { icon: Network, label: "Remote MCP" },
+      { icon: Lock, label: "Exact Binding" },
+      { icon: ShieldCheck, label: "Confirmed Writes" },
+      { icon: Activity, label: "Tool Timeline" },
+    ],
+    stats: [
+      { value: "3", label: "Remote tools" },
+      { value: "2", label: "Services" },
+      { value: "0.5.2", label: "AI Fabric" },
+    ],
+    aboutLink: "/demos/ai-fabric-mcp-operations/about",
+    livePreview: {
+      eyebrow: "Remote tools under application policy",
+      prompt: "Inspect one isolated service, request a restart, then confirm or reject the durable proposal.",
+      proof: "Authentication, exact server/tool binding, trusted arguments, confirmation, replay safety, and explicit outage behavior.",
+      runtime: "AI Fabric specialist + Spring AI MCP bridge + JDBC receipts",
+    },
+    accent: "border-cyan-200 bg-cyan-50 text-cyan-800",
+    link: "/demos/ai-fabric-mcp-operations",
+    deployed: false,
+  },
   {
     id: "ai-shopping-experience",
     title: "AI Shopping Experience",
@@ -208,7 +324,7 @@ const Demos = () => {
           >
             <Badge variant="secondary" className="mb-4">
               <Sparkles className="mr-1 h-3 w-3" />
-              Six AI-enabled demo apps
+              Eight AI-enabled demo apps
             </Badge>
             <h1 className="mb-4 text-4xl font-bold tracking-normal md:text-5xl">
               Live AI-enabled applications backed by Spring Boot
@@ -225,7 +341,7 @@ const Demos = () => {
             <div>
               <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary">
                 <CheckCircle2 className="h-4 w-4" />
-                Deployed end-to-end demos
+                End-to-end demos and release candidates
               </div>
               <h2 className="text-2xl font-bold tracking-normal">Choose a live AI Fabric journey</h2>
               <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">
@@ -259,7 +375,7 @@ const Demos = () => {
                             <div className="mb-2 flex flex-wrap items-center gap-2">
                               <Badge variant="outline" className={demo.accent}>
                                 <Sparkles className="mr-1 h-3 w-3" />
-                                Live app
+                                {demo.deployed === false ? "Release candidate" : "Live app"}
                               </Badge>
                               <Badge variant="secondary">{demo.livePreview.eyebrow}</Badge>
                             </div>
@@ -321,7 +437,7 @@ const Demos = () => {
                           to={demo.link}
                           className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
                         >
-                          Open live demo
+                          {demo.deployed === false ? "Open demo" : "Open live demo"}
                           <ArrowRight className="h-4 w-4" />
                         </Link>
                         <Link

@@ -58,6 +58,8 @@ interface BehaviorDemoHealth {
   insights?: number;
   scenarios?: number;
   checkedAt?: string;
+  specialists?: Array<{ id: string; contentHash: string; ready: boolean }>;
+  storage?: Record<string, string>;
 }
 
 interface InsightSummary {
@@ -123,10 +125,18 @@ interface ResetResult {
 interface BehaviorEventSummary {
   id: number | null;
   userId: string;
+  eventId?: string | null;
   eventType: string;
   eventTimestamp: string;
   eventData: string;
   source: string | null;
+  replayed?: boolean;
+}
+
+interface BehaviorEventPackResult {
+  userId: string;
+  pack: string;
+  events: BehaviorEventSummary[];
 }
 
 interface RetentionReviewResult {
@@ -145,6 +155,23 @@ interface BehaviorScenarioResult {
   events: BehaviorEventSummary[];
   retentionReview: RetentionReviewResult;
   retentionOfferPreview?: null;
+}
+
+interface DurableAnalysisView {
+  invocationId: string;
+  userId: string | null;
+  durability: string;
+  status: string;
+  replayed: boolean;
+  submittedAt: string;
+  deadline: string | null;
+  expiresAt: string | null;
+  previousInsight: Record<string, unknown>;
+  consideredEvents: Array<Record<string, unknown>>;
+  consideredEventCount: number;
+  projectionStatus: string | null;
+  result: BehaviorScenarioResult | null;
+  failure: { reason: string; message: string } | null;
 }
 
 interface RecoveryComparison {
@@ -312,7 +339,7 @@ function getOrCreateSessionId(): string {
   if (typeof window === "undefined") {
     return "behavior-browser-session";
   }
-  const existing = window.localStorage.getItem(SESSION_STORAGE_KEY);
+  const existing = window.sessionStorage.getItem(SESSION_STORAGE_KEY);
   if (existing) {
     return existing;
   }
@@ -321,8 +348,23 @@ function getOrCreateSessionId(): string {
       ? window.crypto.randomUUID().slice(0, 8)
       : Math.random().toString(36).slice(2, 10);
   const sessionId = `browser-${suffix}`;
-  window.localStorage.setItem(SESSION_STORAGE_KEY, sessionId);
+  window.sessionStorage.setItem(SESSION_STORAGE_KEY, sessionId);
   return sessionId;
+}
+
+function newIdempotencyKey(userId: string): string {
+  const suffix = typeof window.crypto?.randomUUID === "function"
+    ? window.crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  return `behavior-analysis-${userId.slice(-18)}-${suffix}`;
+}
+
+function isTerminalAnalysis(status: string): boolean {
+  return !["QUEUED", "RUNNING", "PROCESSING", "LEASED"].includes(status);
+}
+
+function wait(milliseconds: number): Promise<void> {
+  return new Promise((resolve) => window.setTimeout(resolve, milliseconds));
 }
 
 function percent(value: number | null | undefined): number {
@@ -445,6 +487,8 @@ export default function AIFabricBehaviorSignals() {
   const [isDeteriorating, setIsDeteriorating] = useState(false);
   const [recordedEventsByUser, setRecordedEventsByUser] = useState<Record<string, BehaviorEventSummary[]>>({});
   const [recoveryComparison, setRecoveryComparison] = useState<RecoveryComparison | null>(null);
+  const [analysisRun, setAnalysisRun] = useState<DurableAnalysisView | null>(null);
+  const [analysisKeys, setAnalysisKeys] = useState<Record<string, string>>({});
 
   const selectedScenario = useMemo(
     () => dashboard.scenarios.find((scenario) => scenario.userId === selectedUserId) || dashboard.scenarios[0],
@@ -500,6 +544,8 @@ export default function AIFabricBehaviorSignals() {
       setScenarioResult(null);
       setRecordedEventsByUser({});
       setRecoveryComparison(null);
+      setAnalysisRun(null);
+      setAnalysisKeys({});
       setAnalysisError(null);
       try {
         if (resetFirst) {
@@ -510,7 +556,7 @@ export default function AIFabricBehaviorSignals() {
         }
         const response = await apiRequest<DemoSessionResponse>("/sessions", {
           method: "POST",
-          body: JSON.stringify({ sessionId, analyze: true }),
+          body: JSON.stringify({ sessionId, analyze: false }),
         });
         applyDashboard(response.dashboard);
         const first =
@@ -548,7 +594,7 @@ export default function AIFabricBehaviorSignals() {
         const [session] = await Promise.all([
           apiRequest<DemoSessionResponse>("/sessions", {
             method: "POST",
-            body: JSON.stringify({ sessionId, analyze: true }),
+            body: JSON.stringify({ sessionId, analyze: false }),
           }),
           fetchHealth(),
         ]);
@@ -580,13 +626,47 @@ export default function AIFabricBehaviorSignals() {
     };
   }, [applyDashboard, fetchHealth, sessionId]);
 
-  const analyzeScenario = async (userId = selectedScenario?.userId) => {
+  const pollAnalysis = async (invocationId: string): Promise<DurableAnalysisView> => {
+    for (let attempt = 0; attempt < 100; attempt += 1) {
+      const current = await apiRequest<DurableAnalysisView>(`/analyses/${invocationId}`, {
+        headers: { "X-Demo-Session-Id": sessionId },
+      });
+      setAnalysisRun(current);
+      if (isTerminalAnalysis(current.status)) {
+        return current;
+      }
+      await wait(600);
+    }
+    throw new Error("The durable behavior analysis did not complete before the UI polling deadline.");
+  };
+
+  const analyzeScenario = async (userId = selectedScenario?.userId, replay = false) => {
     if (!userId) return;
     setIsAnalyzing(true);
     setRecoveryComparison(null);
     setAnalysisError(null);
     try {
-      const result = await apiRequest<BehaviorScenarioResult>(`/scenarios/${userId}/analyze`, { method: "POST" });
+      const idempotencyKey = replay && analysisKeys[userId]
+        ? analysisKeys[userId]
+        : newIdempotencyKey(userId);
+      setAnalysisKeys((current) => ({ ...current, [userId]: idempotencyKey }));
+      const submitted = await apiRequest<DurableAnalysisView>(`/scenarios/${userId}/analyses`, {
+        method: "POST",
+        headers: {
+          "X-Demo-Session-Id": sessionId,
+          "Idempotency-Key": idempotencyKey,
+        },
+      });
+      setAnalysisRun(submitted);
+      const completed = isTerminalAnalysis(submitted.status)
+        ? submitted
+        : await pollAnalysis(submitted.invocationId);
+      if (completed.status !== "SUCCEEDED" || !completed.result) {
+        throw new Error(
+          completed.failure?.message || `Behavior analysis ended with status ${completed.status}.`
+        );
+      }
+      const result = completed.result;
       setScenarioResult(result);
       setRecordedEventsByUser((current) => ({
         ...current,
@@ -594,12 +674,14 @@ export default function AIFabricBehaviorSignals() {
       }));
       setSelectedUserId(userId);
       setAppEventDraft(defaultEventDraft(result.scenario));
+      setRecoveryComparison((current) => current
+        ? { ...current, after: result.insight }
+        : current);
       await refreshDashboard();
       await fetchHealth();
       setApiStatus("connected");
     } catch (error) {
-      setApiStatus("offline");
-      setScenarioResult(null);
+      setApiStatus("connected");
       setAnalysisError(error instanceof Error ? error.message : "Unable to analyze the behavior scenario.");
       toast({
         title: "Analysis failed",
@@ -622,6 +704,7 @@ export default function AIFabricBehaviorSignals() {
       const event = await apiRequest<BehaviorEventSummary>(`/scenarios/${selectedScenario.userId}/events`, {
         method: "POST",
         body: JSON.stringify({
+          eventId: `ui-${newIdempotencyKey(selectedScenario.userId)}`,
           eventType: template.eventType,
           eventData: payload,
           source: template.source,
@@ -632,6 +715,12 @@ export default function AIFabricBehaviorSignals() {
         [selectedScenario.userId]: [event, ...(current[selectedScenario.userId] || [])],
       }));
       setScenarioResult(null);
+      setAnalysisRun(null);
+      setAnalysisKeys((current) => {
+        const next = { ...current };
+        delete next[selectedScenario.userId];
+        return next;
+      });
       setSelectedUserId(selectedScenario.userId);
       await refreshDashboard();
       await fetchHealth();
@@ -658,29 +747,34 @@ export default function AIFabricBehaviorSignals() {
     setAnalysisError(null);
     const before = selectedInsight;
     try {
-      const result = await apiRequest<BehaviorScenarioResult>(
-        `/scenarios/${selectedScenario.userId}/positive-recovery`,
+      const result = await apiRequest<BehaviorEventPackResult>(
+        `/scenarios/${selectedScenario.userId}/positive-recovery-events`,
         { method: "POST" }
       );
-      setScenarioResult(result);
-      setSelectedUserId(result.scenario.userId);
-      setAppEventDraft(defaultEventDraft(result.scenario));
+      setScenarioResult(null);
+      setAnalysisRun(null);
+      setSelectedUserId(result.userId);
       setRecoveryComparison({
         kind: "recovery",
         before,
-        after: result.insight,
-        addedEventTypes: result.events.slice(-5).reverse().map((event) => event.eventType),
+        after: null,
+        addedEventTypes: result.events.map((event) => event.eventType),
       });
       setRecordedEventsByUser((current) => ({
         ...current,
-        [result.scenario.userId]: [...result.events].reverse(),
+        [result.userId]: [...result.events, ...(current[result.userId] || [])],
       }));
+      setAnalysisKeys((current) => {
+        const next = { ...current };
+        delete next[result.userId];
+        return next;
+      });
       await refreshDashboard();
       await fetchHealth();
       setApiStatus("connected");
       toast({
         title: "Recovery events recorded",
-        description: "Positive raw app events were added and AI Fabric behavior analysis was refreshed.",
+        description: "Positive raw app events were added. Run user behavior analysis to refresh the AI insight.",
       });
     } catch (error) {
       setApiStatus("offline");
@@ -702,29 +796,34 @@ export default function AIFabricBehaviorSignals() {
     setAnalysisError(null);
     const before = selectedInsight;
     try {
-      const result = await apiRequest<BehaviorScenarioResult>(
-        `/scenarios/${selectedScenario.userId}/negative-churn`,
+      const result = await apiRequest<BehaviorEventPackResult>(
+        `/scenarios/${selectedScenario.userId}/negative-churn-events`,
         { method: "POST" }
       );
-      setScenarioResult(result);
-      setSelectedUserId(result.scenario.userId);
-      setAppEventDraft(defaultEventDraft(result.scenario));
+      setScenarioResult(null);
+      setAnalysisRun(null);
+      setSelectedUserId(result.userId);
       setRecoveryComparison({
         kind: "churn-risk",
         before,
-        after: result.insight,
-        addedEventTypes: result.events.slice(-5).reverse().map((event) => event.eventType),
+        after: null,
+        addedEventTypes: result.events.map((event) => event.eventType),
       });
       setRecordedEventsByUser((current) => ({
         ...current,
-        [result.scenario.userId]: [...result.events].reverse(),
+        [result.userId]: [...result.events, ...(current[result.userId] || [])],
       }));
+      setAnalysisKeys((current) => {
+        const next = { ...current };
+        delete next[result.userId];
+        return next;
+      });
       await refreshDashboard();
       await fetchHealth();
       setApiStatus("connected");
       toast({
         title: "Churn-risk events recorded",
-        description: "Negative raw app events were added and AI Fabric behavior analysis was refreshed.",
+        description: "Negative raw app events were added. Run user behavior analysis to refresh the AI insight.",
       });
     } catch (error) {
       setApiStatus("offline");
@@ -740,11 +839,26 @@ export default function AIFabricBehaviorSignals() {
     }
   };
 
+  const cancelAnalysis = async () => {
+    if (!analysisRun || isTerminalAnalysis(analysisRun.status)) return;
+    try {
+      const cancelled = await apiRequest<DurableAnalysisView>(`/analyses/${analysisRun.invocationId}`, {
+        method: "DELETE",
+        headers: { "X-Demo-Session-Id": sessionId },
+      });
+      setAnalysisRun(cancelled);
+      setAnalysisError(cancelled.failure?.message || "The analysis was cancelled.");
+    } catch (error) {
+      setAnalysisError(error instanceof Error ? error.message : "Unable to cancel the analysis.");
+    }
+  };
+
   const selectScenario = (scenario: DemoScenarioSummary) => {
     setSelectedUserId(scenario.userId);
     setAppEventDraft(defaultEventDraft(scenario));
     setScenarioResult(null);
     setRecoveryComparison(null);
+    setAnalysisRun(null);
     setAnalysisError(null);
   };
 
@@ -1005,6 +1119,13 @@ export default function AIFabricBehaviorSignals() {
                       />
                     </div>
 
+                    {analysisRun ? (
+                      <DurableAnalysisCard
+                        analysis={analysisRun}
+                        onCancel={cancelAnalysis}
+                      />
+                    ) : null}
+
                     <div className="rounded-lg border bg-muted/20 p-4">
                       <div className="mb-2 flex items-center gap-2 text-sm font-semibold">
                         <Sparkles className="h-4 w-4 text-blue-600" />
@@ -1037,8 +1158,8 @@ export default function AIFabricBehaviorSignals() {
                             </div>
                             <p className={`mt-1 text-xs leading-relaxed ${comparisonClasses.detail}`}>
                               {comparisonIsChurnRisk
-                                ? "The backend added negative raw app events, then returned a refreshed AI Fabric behavior insight."
-                                : "The backend added positive raw app events, then returned a refreshed AI Fabric behavior insight."}
+                                ? "The backend added negative raw app events. The insight changes only after you run durable AI analysis."
+                                : "The backend added positive raw app events. The insight changes only after you run durable AI analysis."}
                             </p>
                           </div>
                           <Badge variant="outline" className={comparisonClasses.badge}>
@@ -1058,7 +1179,9 @@ export default function AIFabricBehaviorSignals() {
                           </div>
                           <div className={`rounded-md border p-3 ${comparisonClasses.panel}`}>
                             <div className="mb-2 text-xs font-bold uppercase text-muted-foreground">
-                              {comparisonIsChurnRisk ? "After churn-risk events" : "After recovery"}
+                              {recoveryComparison.after
+                                ? (comparisonIsChurnRisk ? "After AI analysis" : "After AI analysis")
+                                : "Awaiting AI analysis"}
                             </div>
                             <div className="grid gap-2 sm:grid-cols-3">
                               <ProofValue label="Churn" value={`${percent(recoveryComparison.after?.churnRisk)}%`} />
@@ -1261,13 +1384,13 @@ function BehaviorPageLoader({ mode }: { mode: Exclude<PageLoadingMode, null> }) 
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
           {isResetting
-            ? "Clearing your isolated Behavior Signals user data, reseeding scenarios, and running fresh AI Fabric analysis."
-            : "Creating an isolated Behavior Signals session, seeding demo users, and loading AI Fabric insights before the page becomes interactive."}
+            ? "Clearing your isolated Behavior Signals data and reseeding raw application events. Analysis remains an explicit action."
+            : "Creating an isolated Behavior Signals session and seeding raw application events before the page becomes interactive."}
         </p>
         <div className="mt-5 grid gap-2 text-left text-xs text-muted-foreground">
           {(isResetting
-            ? ["Delete current session data", "Clone seeded behavior scenarios", "Run user behavior analysis"]
-            : ["Create browser session", "Load behavior scenarios", "Fetch AI insight dashboard"]
+            ? ["Delete current session data", "Clone seeded behavior scenarios", "Wait for your analysis request"]
+            : ["Create browser session", "Load behavior scenarios", "Wait for your analysis request"]
           ).map((step) => (
             <div key={step} className="flex items-center gap-2 rounded-md bg-muted/40 px-3 py-2">
               <Activity className="h-3.5 w-3.5 text-primary" />
@@ -1276,6 +1399,74 @@ function BehaviorPageLoader({ mode }: { mode: Exclude<PageLoadingMode, null> }) 
           ))}
         </div>
       </div>
+    </div>
+  );
+}
+
+function DurableAnalysisCard({
+  analysis,
+  onCancel,
+}: {
+  analysis: DurableAnalysisView;
+  onCancel: () => void;
+}) {
+  const running = !isTerminalAnalysis(analysis.status);
+  const successful = analysis.status === "SUCCEEDED";
+  const statusClass = successful
+    ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+    : running
+      ? "border-blue-200 bg-blue-50 text-blue-800"
+      : "border-rose-200 bg-rose-50 text-rose-800";
+
+  return (
+    <div className="rounded-lg border border-border bg-card p-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <div className="flex items-center gap-2 text-sm font-semibold">
+            {running ? <Loader2 className="h-4 w-4 animate-spin text-blue-600" /> : <Activity className="h-4 w-4 text-blue-600" />}
+            Durable specialist invocation
+          </div>
+          <p className="mt-1 font-mono text-xs text-muted-foreground">{analysis.invocationId}</p>
+        </div>
+        <div className="flex items-center gap-2">
+          {analysis.replayed ? <Badge variant="outline">Replayed</Badge> : <Badge variant="outline">New execution</Badge>}
+          <Badge variant="outline" className={statusClass}>{formatLabel(analysis.status)}</Badge>
+        </div>
+      </div>
+
+      <div className="mt-3 grid gap-2 sm:grid-cols-4">
+        <ProofValue label="Durability" value={formatLabel(analysis.durability)} />
+        <ProofValue label="New events" value={String(analysis.consideredEventCount)} />
+        <ProofValue label="Projection" value={formatLabel(analysis.projectionStatus || "pending")} />
+        <ProofValue label="Previous insight" value={Object.keys(analysis.previousInsight || {}).length ? "Included" : "None"} />
+      </div>
+
+      {analysis.consideredEvents.length ? (
+        <div className="mt-3">
+          <div className="mb-2 text-[11px] font-bold uppercase text-muted-foreground">Newly considered events</div>
+          <div className="flex flex-wrap gap-2">
+            {analysis.consideredEvents.map((event, index) => (
+              <Badge key={`${String(event.eventId || event.eventType)}-${index}`} variant="outline" className="bg-background">
+                {String(event.eventType || "Application event")}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {analysis.failure ? (
+        <div className="mt-3 rounded-md border border-rose-200 bg-rose-50 p-3 text-sm text-rose-900">
+          <strong>{analysis.failure.reason}</strong>: {analysis.failure.message}
+        </div>
+      ) : null}
+
+      {running ? (
+        <div className="mt-3 flex justify-end">
+          <Button type="button" variant="outline" size="sm" onClick={onCancel}>
+            Cancel analysis
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 }
