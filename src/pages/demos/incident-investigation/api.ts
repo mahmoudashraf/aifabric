@@ -150,9 +150,9 @@ export interface SpecialistTransition {
 }
 
 export interface IncidentTransitionResponse {
-  intake: ExecutionResult<{ decision: string; targetSpecialist: string; reason: string }>;
-  transition: SpecialistTransition;
-  secondTransitionCanary: SpecialistTransition;
+  intake: ExecutionResult<{ decision: string; targetSpecialist: string | null; reason: string }>;
+  transition: SpecialistTransition | null;
+  secondTransitionCanary: SpecialistTransition | null;
 }
 
 export interface ConversationManagerResult {

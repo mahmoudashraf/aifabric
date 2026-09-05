@@ -198,13 +198,24 @@ function PlanResultView({ result, label }: { result: IncidentPlanResult; label: 
   );
 }
 
-function TransitionView({ result, mode }: { result: IncidentTransitionResponse; mode: TransitionMode }) {
+export function TransitionView({ result, mode }: { result: IncidentTransitionResponse; mode: TransitionMode }) {
   const transition = result.transition;
   const canary = result.secondTransitionCanary;
+  if (!transition) {
+    return (
+      <Alert className="border-amber-200 bg-amber-50 text-amber-950">
+        <Info className="h-4 w-4" />
+        <AlertTitle>No specialist transition was selected</AlertTitle>
+        <AlertDescription>
+          The intake specialist returned {result.intake.output?.decision || result.intake.status}: {result.intake.output?.reason || "No transition reason was supplied."}
+        </AlertDescription>
+      </Alert>
+    );
+  }
   const source = transition.sourceSpecialistId || transition.predecessorSpecialistId;
   const target = transition.targetSpecialistId || transition.successorSpecialistId;
   const transitionId = transition.delegationId || transition.handoffId;
-  const canaryDenied = Boolean(canary.failure) || (canary.status ? canary.status !== "SUCCEEDED" : false);
+  const canaryDenied = Boolean(canary?.failure) || (canary?.status ? canary.status !== "SUCCEEDED" : false);
 
   return (
     <section className="space-y-4 rounded-md border bg-card p-5 shadow-sm">
@@ -225,8 +236,10 @@ function TransitionView({ result, mode }: { result: IncidentTransitionResponse; 
         <AlertTitle>{canaryDenied ? "Second transition denied" : "Boundary canary failed"}</AlertTitle>
         <AlertDescription>
           {canaryDenied
-            ? `The runtime rejected a second specialist hop${canary.failure?.reason ? `: ${canary.failure.reason}` : ""}.`
-            : "The second transition was not visibly denied. Treat this result as a failed safety proof."}
+            ? `The runtime rejected a second specialist hop${canary?.failure?.reason ? `: ${canary.failure.reason}` : ""}.`
+            : canary
+              ? "The second transition was not visibly denied. Treat this result as a failed safety proof."
+              : "The backend did not return the required second-transition canary. Treat this result as incomplete safety proof."}
         </AlertDescription>
       </Alert>
     </section>

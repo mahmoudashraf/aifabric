@@ -71,7 +71,16 @@ export interface AccountResolutionOutput {
   blockers: AccountBlocker[];
 }
 
-export interface ExecutionResult<T = AccountResolutionOutput> {
+export interface BillingResolutionOutput {
+  resolutionType: string;
+  amount: number;
+  decision: string;
+  expectedStatus: string;
+  automaticLimit: number;
+  explanation: string;
+}
+
+export interface ExecutionResult<T = AccountResolutionOutput | BillingResolutionOutput> {
   invocationId: string;
   specialistId: SpecialistId;
   status: string;
@@ -85,7 +94,7 @@ export interface ExecutionResult<T = AccountResolutionOutput> {
   needsUserInput: NeedsUserInput | null;
 }
 
-export interface ResumeResult<T = AccountResolutionOutput> {
+export interface ResumeResult<T = AccountResolutionOutput | BillingResolutionOutput> {
   status: string;
   executionResult: ExecutionResult<T> | null;
   failure: ExecutionFailure | null;

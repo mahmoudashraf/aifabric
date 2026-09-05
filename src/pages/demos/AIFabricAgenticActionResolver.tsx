@@ -38,6 +38,7 @@ import {
   AGENTIC_SESSION_STORAGE_KEY,
   AccountResolutionOutput,
   ActionDecisionResult,
+  BillingResolutionOutput,
   DemoHealth,
   ExecutionResult,
   ResolverScenario,
@@ -79,6 +80,87 @@ function displayValue(value: unknown): string {
   return String(value);
 }
 
+function isAccountResolutionOutput(value: unknown): value is AccountResolutionOutput {
+  if (!value || typeof value !== "object") return false;
+  const candidate = value as Partial<AccountResolutionOutput>;
+  return typeof candidate.assessment === "string"
+    && typeof candidate.summary === "string"
+    && Array.isArray(candidate.blockers);
+}
+
+function isBillingResolutionOutput(value: unknown): value is BillingResolutionOutput {
+  if (!value || typeof value !== "object") return false;
+  const candidate = value as Partial<BillingResolutionOutput>;
+  return typeof candidate.resolutionType === "string"
+    && typeof candidate.amount === "number"
+    && typeof candidate.decision === "string"
+    && typeof candidate.expectedStatus === "string"
+    && typeof candidate.automaticLimit === "number"
+    && typeof candidate.explanation === "string";
+}
+
+function money(value: number): string {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(value);
+}
+
+export function SpecialistOutput({ output }: { output: unknown }) {
+  if (isAccountResolutionOutput(output)) {
+    return (
+      <div className="space-y-4">
+        <div>
+          <div className="mb-1 text-xs font-semibold uppercase text-muted-foreground">Assessment</div>
+          <div className="text-lg font-semibold">{output.assessment.replaceAll("_", " ")}</div>
+          <p className="mt-2 leading-7 text-muted-foreground">{output.summary}</p>
+        </div>
+        {output.blockers.length > 0 ? (
+          <div className="grid gap-3 md:grid-cols-2">
+            {output.blockers.map((blocker) => (
+              <div key={`${blocker.requirement}-${blocker.explanation}`} className="rounded-md border border-amber-200 bg-amber-50 p-4">
+                <div className="font-semibold text-amber-950">{blocker.requirement.replaceAll("_", " ")}</div>
+                <p className="mt-2 text-sm leading-6 text-amber-900">{blocker.explanation}</p>
+                <p className="mt-2 text-sm font-medium text-amber-950">Next: {blocker.recommendedNextStep}</p>
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
+  if (isBillingResolutionOutput(output)) {
+    return (
+      <div className="space-y-4">
+        <div>
+          <div className="mb-1 text-xs font-semibold uppercase text-muted-foreground">Billing path</div>
+          <div className="text-lg font-semibold">{output.decision.replaceAll("_", " ")}</div>
+          <p className="mt-2 leading-7 text-muted-foreground">{output.explanation}</p>
+        </div>
+        <dl className="grid gap-3 sm:grid-cols-2">
+          {[
+            ["Resolution", output.resolutionType.replaceAll("_", " ")],
+            ["Amount", money(output.amount)],
+            ["Expected status", output.expectedStatus.replaceAll("_", " ")],
+            ["Automatic limit", money(output.automaticLimit)],
+          ].map(([label, value]) => (
+            <div key={label} className="rounded-md border bg-muted/25 p-3">
+              <dt className="text-xs font-semibold uppercase text-muted-foreground">{label}</dt>
+              <dd className="mt-1 font-semibold">{value}</dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    );
+  }
+
+  return output ? (
+    <Alert variant="destructive">
+      <XCircle className="h-4 w-4" />
+      <AlertTitle>Unsupported specialist output</AlertTitle>
+      <AlertDescription>The backend returned an output contract this demo UI does not recognize.</AlertDescription>
+    </Alert>
+  ) : null;
+}
+
 function ResultCard({
   result,
   busy,
@@ -91,7 +173,6 @@ function ResultCard({
   onResume: (result: ExecutionResult, amount: number) => void;
 }) {
   const [amount, setAmount] = useState("25");
-  const output = result.output as AccountResolutionOutput | null;
   const statusTone = result.status === "SUCCEEDED"
     ? "border-emerald-200 bg-emerald-50 text-emerald-800"
     : result.status === "CONFIRMATION_REQUIRED" || result.status === "WAITING_FOR_INPUT"
@@ -111,26 +192,7 @@ function ResultCard({
         <div className="text-xs text-muted-foreground">Invocation {compactId(result.invocationId)}</div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {output ? (
-          <div className="space-y-4">
-            <div>
-              <div className="mb-1 text-xs font-semibold uppercase text-muted-foreground">Assessment</div>
-              <div className="text-lg font-semibold">{output.assessment.replaceAll("_", " ")}</div>
-              <p className="mt-2 leading-7 text-muted-foreground">{output.summary}</p>
-            </div>
-            {output.blockers.length > 0 ? (
-              <div className="grid gap-3 md:grid-cols-2">
-                {output.blockers.map((blocker) => (
-                  <div key={`${blocker.requirement}-${blocker.explanation}`} className="rounded-md border border-amber-200 bg-amber-50 p-4">
-                    <div className="font-semibold text-amber-950">{blocker.requirement.replaceAll("_", " ")}</div>
-                    <p className="mt-2 text-sm leading-6 text-amber-900">{blocker.explanation}</p>
-                    <p className="mt-2 text-sm font-medium text-amber-950">Next: {blocker.recommendedNextStep}</p>
-                  </div>
-                ))}
-              </div>
-            ) : null}
-          </div>
-        ) : null}
+        <SpecialistOutput output={result.output} />
 
         {result.needsUserInput ? (
           <div className="rounded-md border border-amber-200 bg-amber-50 p-4">
@@ -574,4 +636,3 @@ export default function AIFabricAgenticActionResolver() {
     </div>
   );
 }
-
