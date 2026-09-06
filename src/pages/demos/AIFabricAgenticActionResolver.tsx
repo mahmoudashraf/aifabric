@@ -41,9 +41,11 @@ import {
   BillingResolutionOutput,
   DemoHealth,
   ExecutionResult,
+  ProactiveEventSubmission,
   ResolverScenario,
   ResolverSession,
   ResumeResult,
+  SpecialistExecutionSnapshot,
   agenticApi,
   compactId,
   newIdempotencyKey,
@@ -56,6 +58,27 @@ interface TimelineItem {
   text: string;
   result?: ExecutionResult;
   decision?: ActionDecisionResult;
+}
+
+interface ProactiveEventProof {
+  eventId: string;
+  eventType: string;
+  failureCode: string;
+  attemptNumber: number;
+  execution: ProactiveEventSubmission["execution"];
+  result: ExecutionResult<AccountResolutionOutput> | null;
+}
+
+const EVENT_TERMINAL_STATUSES = new Set([
+  "SUCCEEDED",
+  "FAILED",
+  "REJECTED",
+  "CANCELLED",
+  "EXPIRED",
+]);
+
+function wait(milliseconds: number): Promise<void> {
+  return new Promise((resolve) => window.setTimeout(resolve, milliseconds));
 }
 
 function time(value?: string | null): string {
@@ -159,6 +182,34 @@ export function SpecialistOutput({ output }: { output: unknown }) {
       <AlertDescription>The backend returned an output contract this demo UI does not recognize.</AlertDescription>
     </Alert>
   ) : null;
+}
+
+export function ProactiveEventCard({ proof }: { proof: ProactiveEventProof }) {
+  const successful = proof.execution.status === "SUCCEEDED";
+  const running = !EVENT_TERMINAL_STATUSES.has(proof.execution.status);
+
+  return (
+    <div className="mt-3 rounded-md border border-violet-200 bg-violet-50/70 p-3 text-sm">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="font-semibold text-violet-950">Proactive account event</div>
+        <Badge variant="outline" className={successful ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "bg-white"}>
+          {running ? "Executing" : proof.execution.status.replaceAll("_", " ")}
+        </Badge>
+      </div>
+      <dl className="mt-3 grid gap-2 sm:grid-cols-2">
+        <div><dt className="text-xs uppercase text-muted-foreground">Event</dt><dd className="mt-1 font-medium">{proof.eventType}</dd></div>
+        <div><dt className="text-xs uppercase text-muted-foreground">Trusted source</dt><dd className="mt-1 font-medium">EVENT</dd></div>
+        <div><dt className="text-xs uppercase text-muted-foreground">Failure facts</dt><dd className="mt-1 font-medium">{proof.failureCode}, attempt {proof.attemptNumber}</dd></div>
+        <div><dt className="text-xs uppercase text-muted-foreground">Principal</dt><dd className="mt-1 font-medium">Backend service</dd></div>
+      </dl>
+      <div className="mt-3 text-xs text-muted-foreground">
+        Durable invocation {compactId(proof.execution.invocationId)}. The event contains no account, tenant, scopes, specialist, or provider authority.
+      </div>
+      {proof.execution.failureReason ? (
+        <div className="mt-3 rounded-md border border-rose-200 bg-rose-50 p-2 text-rose-900">{proof.execution.failureReason}</div>
+      ) : null}
+    </div>
+  );
 }
 
 function ResultCard({
@@ -290,6 +341,7 @@ export default function AIFabricAgenticActionResolver() {
   const [pageLoading, setPageLoading] = useState<"initializing" | "resetting" | null>("initializing");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [eventProof, setEventProof] = useState<ProactiveEventProof | null>(null);
 
   const activeScenario = useMemo(
     () => session?.scenarios.find((scenario) => scenario.id === session.activeScenarioId) || null,
@@ -339,6 +391,7 @@ export default function AIFabricAgenticActionResolver() {
   const reset = async () => {
     setPageLoading("resetting");
     setHistory([]);
+    setEventProof(null);
     setError(null);
     try {
       if (session?.sessionId) {
@@ -365,6 +418,7 @@ export default function AIFabricAgenticActionResolver() {
       );
       setSession(updated);
       setHistory([]);
+      setEventProof(null);
       setMessage(scenario.suggestedPrompt);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Unable to select this scenario.");
@@ -465,6 +519,72 @@ export default function AIFabricAgenticActionResolver() {
     }
   };
 
+  const runProactiveEvent = async () => {
+    if (!session || busy) return;
+    const eventId = newIdempotencyKey("payment-verification-failed");
+    const failureCode = "DECLINED";
+    const attemptNumber = 2;
+    setBusy(true);
+    setError(null);
+    setEventProof(null);
+    try {
+      const submission = await agenticApi<ProactiveEventSubmission>(
+        "/api/agentic-resolver/events/payment-verification-failed",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            eventId,
+            failureCode,
+            attemptNumber,
+            occurredAt: new Date().toISOString(),
+          }),
+        },
+        { sessionId: session.sessionId },
+      );
+      let proof: ProactiveEventProof = {
+        eventId,
+        eventType: submission.eventType,
+        failureCode,
+        attemptNumber,
+        execution: submission.execution,
+        result: null,
+      };
+      setEventProof(proof);
+
+      for (let attempt = 0; attempt < 100 && !EVENT_TERMINAL_STATUSES.has(proof.execution.status); attempt += 1) {
+        await wait(600);
+        const snapshot = await agenticApi<SpecialistExecutionSnapshot>(
+          `/api/agentic-resolver/events/executions/${encodeURIComponent(submission.execution.invocationId)}`,
+          {},
+          { sessionId: session.sessionId },
+        );
+        proof = { ...proof, execution: snapshot.handle, result: snapshot.result };
+        setEventProof(proof);
+      }
+
+      if (!EVENT_TERMINAL_STATUSES.has(proof.execution.status)) {
+        throw new Error("The event-driven specialist did not complete before the UI polling deadline.");
+      }
+      if (!proof.result || proof.result.status !== "SUCCEEDED") {
+        throw new Error(proof.result?.failure?.publicMessage || proof.execution.failureReason || `Event execution ended with ${proof.execution.status}.`);
+      }
+      setHistory((current) => [...current, {
+        id: `${proof.result!.invocationId}-event-result`,
+        role: "specialist",
+        text: proof.result!.output?.summary || proof.result!.status,
+        result: proof.result!,
+      }]);
+      toast({
+        title: "Event specialist completed",
+        description: "AI Fabric analyzed server-owned account context without allowing the raw event to supply authority.",
+      });
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "The proactive event execution failed.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   if (pageLoading) {
     return (
       <DemoFullPageLoader
@@ -502,7 +622,7 @@ export default function AIFabricAgenticActionResolver() {
             <Card className="border-violet-200 bg-violet-50/60 shadow-none">
               <CardContent className="grid grid-cols-2 gap-3 p-4 text-sm">
                 <div><div className="text-xs text-muted-foreground">Backend</div><div className="mt-1 font-semibold">{health?.status || "Unavailable"}</div></div>
-                <div><div className="text-xs text-muted-foreground">AI Fabric</div><div className="mt-1 font-semibold">{String(health?.aiFabricVersion || "0.5.2")}</div></div>
+                <div><div className="text-xs text-muted-foreground">AI Fabric</div><div className="mt-1 font-semibold">{String(health?.aiFabricVersion || "0.5.3")}</div></div>
                 <div><div className="text-xs text-muted-foreground">Commit</div><div className="mt-1 font-semibold">{compactId(String(health?.commit || "pending deployment"))}</div></div>
                 <div><div className="text-xs text-muted-foreground">Session</div><div className="mt-1 font-semibold">{compactId(session?.sessionId)}</div></div>
               </CardContent>
@@ -544,6 +664,10 @@ export default function AIFabricAgenticActionResolver() {
                   <Button className="w-full justify-start" variant="outline" onClick={() => void run("Update my billing address to 10 Downing Street, London, London, SW1A 2AA, GB.")} disabled={busy}>
                     <ShieldCheck className="mr-2 h-4 w-4" />Propose governed write
                   </Button>
+                  <Button className="w-full justify-start" variant="outline" onClick={() => void runProactiveEvent()} disabled={busy}>
+                    <Activity className="mr-2 h-4 w-4" />Run proactive event
+                  </Button>
+                  {eventProof ? <ProactiveEventCard proof={eventProof} /> : null}
                 </CardContent>
               </Card>
             </aside>

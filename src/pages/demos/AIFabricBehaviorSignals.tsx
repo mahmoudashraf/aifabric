@@ -5,6 +5,7 @@ import {
   AlertTriangle,
   ArrowLeft,
   BarChart3,
+  CalendarClock,
   CheckCircle2,
   Database,
   Info,
@@ -60,6 +61,7 @@ interface BehaviorDemoHealth {
   checkedAt?: string;
   specialists?: Array<{ id: string; contentHash: string; ready: boolean }>;
   storage?: Record<string, string>;
+  executionSources?: string[];
 }
 
 interface InsightSummary {
@@ -157,11 +159,13 @@ interface BehaviorScenarioResult {
   retentionOfferPreview?: null;
 }
 
-interface DurableAnalysisView {
+export interface DurableAnalysisView {
   invocationId: string;
   userId: string | null;
   durability: string;
   status: string;
+  executionSource: string;
+  principalType: string;
   replayed: boolean;
   submittedAt: string;
   deadline: string | null;
@@ -482,13 +486,13 @@ export default function AIFabricBehaviorSignals() {
   const [isLoading, setIsLoading] = useState(true);
   const [pageLoadingMode, setPageLoadingMode] = useState<PageLoadingMode>("initializing");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isScheduledAnalyzing, setIsScheduledAnalyzing] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [isRecovering, setIsRecovering] = useState(false);
   const [isDeteriorating, setIsDeteriorating] = useState(false);
   const [recordedEventsByUser, setRecordedEventsByUser] = useState<Record<string, BehaviorEventSummary[]>>({});
   const [recoveryComparison, setRecoveryComparison] = useState<RecoveryComparison | null>(null);
   const [analysisRun, setAnalysisRun] = useState<DurableAnalysisView | null>(null);
-  const [analysisKeys, setAnalysisKeys] = useState<Record<string, string>>({});
 
   const selectedScenario = useMemo(
     () => dashboard.scenarios.find((scenario) => scenario.userId === selectedUserId) || dashboard.scenarios[0],
@@ -545,7 +549,6 @@ export default function AIFabricBehaviorSignals() {
       setRecordedEventsByUser({});
       setRecoveryComparison(null);
       setAnalysisRun(null);
-      setAnalysisKeys({});
       setAnalysisError(null);
       try {
         if (resetFirst) {
@@ -640,22 +643,26 @@ export default function AIFabricBehaviorSignals() {
     throw new Error("The durable behavior analysis did not complete before the UI polling deadline.");
   };
 
-  const analyzeScenario = async (userId = selectedScenario?.userId, replay = false) => {
+  const analyzeScenario = async (
+    userId = selectedScenario?.userId,
+    source: "APPLICATION" | "SCHEDULED" = "APPLICATION",
+  ) => {
     if (!userId) return;
-    setIsAnalyzing(true);
+    const scheduled = source === "SCHEDULED";
+    if (scheduled) setIsScheduledAnalyzing(true);
+    else setIsAnalyzing(true);
     setRecoveryComparison(null);
     setAnalysisError(null);
     try {
-      const idempotencyKey = replay && analysisKeys[userId]
-        ? analysisKeys[userId]
-        : newIdempotencyKey(userId);
-      setAnalysisKeys((current) => ({ ...current, [userId]: idempotencyKey }));
-      const submitted = await apiRequest<DurableAnalysisView>(`/scenarios/${userId}/analyses`, {
+      const idempotencyKey = scheduled ? null : newIdempotencyKey(userId);
+      const endpoint = scheduled
+        ? `/scenarios/${userId}/scheduled-analyses`
+        : `/scenarios/${userId}/analyses`;
+      const submitted = await apiRequest<DurableAnalysisView>(endpoint, {
         method: "POST",
-        headers: {
-          "X-Demo-Session-Id": sessionId,
-          "Idempotency-Key": idempotencyKey,
-        },
+        headers: idempotencyKey
+          ? { "X-Demo-Session-Id": sessionId, "Idempotency-Key": idempotencyKey }
+          : { "X-Demo-Session-Id": sessionId },
       });
       setAnalysisRun(submitted);
       const completed = isTerminalAnalysis(submitted.status)
@@ -680,6 +687,12 @@ export default function AIFabricBehaviorSignals() {
       await refreshDashboard();
       await fetchHealth();
       setApiStatus("connected");
+      toast({
+        title: scheduled ? "Scheduled risk sweep completed" : "Behavior analysis completed",
+        description: scheduled
+          ? "The backend supplied SYSTEM identity, SCHEDULED source, and a server-derived replay key."
+          : "The application-triggered durable specialist result was persisted.",
+      });
     } catch (error) {
       setApiStatus("connected");
       setAnalysisError(error instanceof Error ? error.message : "Unable to analyze the behavior scenario.");
@@ -689,7 +702,8 @@ export default function AIFabricBehaviorSignals() {
         variant: "destructive",
       });
     } finally {
-      setIsAnalyzing(false);
+      if (scheduled) setIsScheduledAnalyzing(false);
+      else setIsAnalyzing(false);
     }
   };
 
@@ -716,11 +730,6 @@ export default function AIFabricBehaviorSignals() {
       }));
       setScenarioResult(null);
       setAnalysisRun(null);
-      setAnalysisKeys((current) => {
-        const next = { ...current };
-        delete next[selectedScenario.userId];
-        return next;
-      });
       setSelectedUserId(selectedScenario.userId);
       await refreshDashboard();
       await fetchHealth();
@@ -764,11 +773,6 @@ export default function AIFabricBehaviorSignals() {
         ...current,
         [result.userId]: [...result.events, ...(current[result.userId] || [])],
       }));
-      setAnalysisKeys((current) => {
-        const next = { ...current };
-        delete next[result.userId];
-        return next;
-      });
       await refreshDashboard();
       await fetchHealth();
       setApiStatus("connected");
@@ -813,11 +817,6 @@ export default function AIFabricBehaviorSignals() {
         ...current,
         [result.userId]: [...result.events, ...(current[result.userId] || [])],
       }));
-      setAnalysisKeys((current) => {
-        const next = { ...current };
-        delete next[result.userId];
-        return next;
-      });
       await refreshDashboard();
       await fetchHealth();
       setApiStatus("connected");
@@ -1070,7 +1069,7 @@ export default function AIFabricBehaviorSignals() {
                     </p>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <Button className="gap-2" onClick={() => analyzeScenario()} disabled={!selectedScenario || isAnalyzing || isRecovering || isDeteriorating}>
+                    <Button className="gap-2" onClick={() => analyzeScenario()} disabled={!selectedScenario || isAnalyzing || isScheduledAnalyzing || isRecovering || isDeteriorating}>
                       {isAnalyzing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Activity className="h-4 w-4" />}
                       Run user behavior analysis
                     </Button>
@@ -1078,7 +1077,7 @@ export default function AIFabricBehaviorSignals() {
                       variant="outline"
                       className="gap-2 border-emerald-200 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800"
                       onClick={recordPositiveRecovery}
-                      disabled={!selectedScenario || isRecovering || isAnalyzing || isDeteriorating}
+                      disabled={!selectedScenario || isRecovering || isAnalyzing || isScheduledAnalyzing || isDeteriorating}
                     >
                       {isRecovering ? <Loader2 className="h-4 w-4 animate-spin" /> : <TrendingUp className="h-4 w-4" />}
                       Record recovery events
@@ -1087,7 +1086,7 @@ export default function AIFabricBehaviorSignals() {
                       variant="outline"
                       className="gap-2 border-rose-200 text-rose-700 hover:bg-rose-50 hover:text-rose-800"
                       onClick={recordNegativeChurnSignals}
-                      disabled={!selectedScenario || isRecovering || isAnalyzing || isDeteriorating}
+                      disabled={!selectedScenario || isRecovering || isAnalyzing || isScheduledAnalyzing || isDeteriorating}
                     >
                       {isDeteriorating ? <Loader2 className="h-4 w-4 animate-spin" /> : <TrendingDown className="h-4 w-4" />}
                       Record churn-risk events
@@ -1098,6 +1097,16 @@ export default function AIFabricBehaviorSignals() {
               <CardContent className="space-y-4">
                 {selectedScenario ? (
                   <>
+                    <div className="flex flex-col gap-3 rounded-lg border border-blue-200 bg-blue-50/70 p-4 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <div className="flex items-center gap-2 font-semibold text-blue-950"><CalendarClock className="h-4 w-4" />Host-scheduled risk sweep</div>
+                        <p className="mt-1 text-sm leading-6 text-blue-900">Run one application-owned schedule cycle now. The backend assigns SYSTEM identity, SCHEDULED source, and the replay key from the exact event batch.</p>
+                      </div>
+                      <Button type="button" variant="outline" className="shrink-0 border-blue-300 bg-white" onClick={() => analyzeScenario(selectedScenario.userId, "SCHEDULED")} disabled={isScheduledAnalyzing || isAnalyzing || isRecovering || isDeteriorating}>
+                        {isScheduledAnalyzing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CalendarClock className="mr-2 h-4 w-4" />}
+                        Run scheduled sweep
+                      </Button>
+                    </div>
                     <div className="grid gap-3 md:grid-cols-3">
                       <SignalGauge
                         title="Churn Risk"
@@ -1403,7 +1412,7 @@ function BehaviorPageLoader({ mode }: { mode: Exclude<PageLoadingMode, null> }) 
   );
 }
 
-function DurableAnalysisCard({
+export function DurableAnalysisCard({
   analysis,
   onCancel,
 }: {
@@ -1434,8 +1443,10 @@ function DurableAnalysisCard({
         </div>
       </div>
 
-      <div className="mt-3 grid gap-2 sm:grid-cols-4">
+      <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-6">
         <ProofValue label="Durability" value={formatLabel(analysis.durability)} />
+        <ProofValue label="Source" value={formatLabel(analysis.executionSource)} />
+        <ProofValue label="Principal" value={formatLabel(analysis.principalType)} />
         <ProofValue label="New events" value={String(analysis.consideredEventCount)} />
         <ProofValue label="Projection" value={formatLabel(analysis.projectionStatus || "pending")} />
         <ProofValue label="Previous insight" value={Object.keys(analysis.previousInsight || {}).length ? "Included" : "None"} />

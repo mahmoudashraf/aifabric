@@ -15,6 +15,7 @@ export interface DemoBackendArchitectureConfig {
   aiSurface: string[];
   providers: string[];
   flow: string[];
+  operationalProofs?: string[];
 }
 
 export type DemoArchitectureStageTone = "ui" | "api" | "framework" | "rag" | "provider" | "storage" | "guard";
@@ -39,8 +40,8 @@ export interface DemoDeveloperDetails {
 export const demoBackendArchitectures = {
   mcpOperations: {
     title: "AI Fabric MCP Operations backend",
-    status: "Deployment-ready remote MCP candidate",
-    tone: "candidate",
+    status: "Live remote MCP backend",
+    tone: "live",
     backendApp: "examples/real-apps/mcp-operations-assistant",
     publicBackend: "https://ai-fabric-mcp-operations.46.224.145.148.sslip.io",
     uiRoutes: ["/demos/ai-fabric-mcp-operations"],
@@ -145,11 +146,15 @@ export const demoBackendArchitectures = {
       "An authorized decision executes the exact receipt once, maps a safe outcome, and returns current source state.",
       "The UI shows server, tool, access mode, duration, result state, and the fail-closed duplicate-server canary without exposing credentials or trusted arguments.",
     ],
+    operationalProofs: [
+      "Restart proposals are stored as encrypted JDBC receipts; confirming a terminal receipt returns its stored outcome instead of invoking the remote tool twice.",
+      "The companion MCP service persists isolated source state, and remote outages remain visible because the live profile has no local tool fallback.",
+    ],
   },
   incidentInvestigation: {
     title: "Incident Investigation Room backend",
-    status: "Deployment-ready multi-specialist candidate",
-    tone: "candidate",
+    status: "Live multi-specialist backend",
+    tone: "live",
     backendApp: "examples/real-apps/incident-investigation-room",
     publicBackend: "https://ai-fabric-incident-investigation.46.224.145.148.sslip.io",
     uiRoutes: ["/demos/ai-fabric-incident-investigation"],
@@ -223,7 +228,7 @@ export const demoBackendArchitectures = {
     },
     dependencies: [
       "Spring Boot Web, Data JPA, Validation, Actuator, H2, PostgreSQL, and smoke-support.",
-      "Stable application storage preserves backend conversation state; plan executions remain explicitly ephemeral in this candidate.",
+      "Stable application storage preserves backend conversation state; fixed plan executions remain explicitly ephemeral by design.",
     ],
     modules: [
       "ai-fabric-starter",
@@ -249,11 +254,15 @@ export const demoBackendArchitectures = {
       "The application validates citation ids, source revision, and deployment identity before projecting the final assessment.",
       "Conversation turns send only the newest message while the backend supplies bounded prior context and replay state.",
     ],
+    operationalProofs: [
+      "Backend-owned conversation snapshots survive application restart when the deployed JDBC store is retained.",
+      "Fixed plan runs are intentionally ephemeral; the UI labels their timeline and does not imply restart recovery for plan branches.",
+    ],
   },
   agenticActionResolver: {
     title: "Agentic AI Action Resolver backend",
-    status: "Deployment-ready backend and review experience",
-    tone: "candidate",
+    status: "Live specialist and review backend",
+    tone: "live",
     backendApp: "examples/real-apps/agentic-ai-action-resolver",
     publicBackend: "https://ai-fabric-agentic-action-resolver.46.224.145.148.sslip.io",
     uiRoutes: [
@@ -306,6 +315,7 @@ export const demoBackendArchitectures = {
         "POST /api/agentic-resolver/reviews/support-credit",
         "POST /api/agentic-resolver/demo-reviews/sessions",
         "GET /api/agentic-resolver/demo-reviews",
+        "POST /api/agentic-resolver/events/payment-verification-failed",
       ],
       localRun: [
         "mvn -f examples/real-apps/pom.xml -pl agentic-ai-action-resolver -am package",
@@ -367,11 +377,15 @@ export const demoBackendArchitectures = {
       "Confirmation executes the linked receipt once and reconciles the projected outcome with application state.",
       "Human-review proposals are durably dispatched; short-lived reviewer credentials expose only tasks bound to the same demo session.",
     ],
+    operationalProofs: [
+      "Encrypted action receipts and review tasks survive controlled restarts when the configured JDBC store and secrets remain stable.",
+      "Terminal receipt replay returns the stored outcome without repeating the account mutation; typed input waits remain explicitly ephemeral.",
+    ],
   },
   deploymentKnowledgeGuard: {
     title: "Deployment Knowledge Guard backend",
-    status: "Deployment-ready trusted retrieval candidate",
-    tone: "candidate",
+    status: "Live trusted retrieval backend",
+    tone: "live",
     backendApp: "examples/real-apps/deployment-knowledge-guard",
     publicBackend: "https://ai-fabric-deployment-knowledge-guard.46.224.145.148.sslip.io",
     uiRoutes: ["/demos/ai-fabric-deployment-knowledge-guard"],
@@ -443,7 +457,7 @@ export const demoBackendArchitectures = {
       ],
     },
     dependencies: [
-      "Spring Boot Web, Validation, Actuator, smoke-support, and AI Fabric 0.5.2 source-candidate modules.",
+      "Spring Boot Web, Validation, Actuator, smoke-support, and AI Fabric 0.5.3 modules.",
       "No application database is required; Lucene stores the immutable demo evidence vectors.",
     ],
     modules: [
@@ -831,7 +845,7 @@ export const demoBackendArchitectures = {
         title: "Behavior API",
         subtitle: "Session-owned workflow",
         tone: "api",
-        items: ["Record /events", "Submit /analyses", "Poll /analyses/{invocationId}"],
+        items: ["Record /events", "Submit app or scheduled /analyses", "Poll /analyses/{invocationId}"],
       },
       {
         title: "Facts and state",
@@ -862,6 +876,7 @@ export const demoBackendArchitectures = {
         "GET /api/behavior-demo/dashboard",
         "POST /api/behavior-demo/scenarios/{userId}/events",
         "POST /api/behavior-demo/scenarios/{userId}/analyses",
+        "POST /api/behavior-demo/scenarios/{userId}/scheduled-analyses",
         "GET /api/behavior-demo/analyses/{invocationId}",
         "GET /api/behavior-demo/analyses",
         "DELETE /api/behavior-demo/analyses/{invocationId}",
@@ -903,6 +918,7 @@ export const demoBackendArchitectures = {
       "AppBehaviorEvent stores raw app events and DbExternalEventProvider exposes them to AI Fabric behavior analysis.",
       "behavior-risk-analyst@1 receives the previous approved insight plus only the raw events added since that insight.",
       "DurableAIExecutionGateway owns queued execution, leases, retry/recovery, cancellation, and idempotent replay.",
+      "The app persists each execution source and reconstructs the matching SERVICE/APPLICATION or SYSTEM/SCHEDULED trust boundary while polling and recovery run.",
       "AgenticUiComposerService asks the configured LLM for allowlisted component names and reasons only.",
     ],
     providers: [
@@ -914,9 +930,16 @@ export const demoBackendArchitectures = {
       "The UI creates an isolated browser session and clones seeded behavior scenarios.",
       "Recording an event stores application facts only; it does not silently invoke analysis.",
       "Run analysis submits behavior-risk-analyst@1 with an idempotency key, then polls an opaque invocation id.",
+      "The host-scheduled path submits the same typed specialist under a SYSTEM principal and derives its replay key from the exact event batch; the browser supplies neither identity nor idempotency authority.",
       "AI Fabric validates typed sentiment, churn, trend, recommendation, action family, and evidence before projecting one approved insight.",
       "The analytics page exposes recommendations without automatic writes or fallback output; failures stay visible.",
       "Agentic UI receives a validated component-name plan and renders trusted backend-populated props.",
+    ],
+    operationalProofs: [
+      "AI Fabric durable execution state and the app-owned analysis job are stored in JDBC; queued work can be recovered after process restart when the database and execution secrets remain stable.",
+      "The app job stores the exact previous insight, new-event batch, execution source, and invocation binding used for projection.",
+      "Duplicate delivery of the same outstanding scheduled event batch resolves to the same invocation; after projection, new facts produce a new backend-derived key.",
+      "Insight projection is applied once per app job. Provider side effects are not claimed as exactly once.",
     ],
   },
   tenantGuard: {

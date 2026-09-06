@@ -319,6 +319,12 @@ export function DemoBackendArchitecture({ architecture, className = "" }: DemoBa
 
       <DeveloperDetails developer={architecture.developer} />
 
+      {architecture.operationalProofs?.length ? (
+        <div className="mb-5">
+          <DetailGroup title="Durability and Restart Proof" items={architecture.operationalProofs} icon={HardDrive} />
+        </div>
+      ) : null}
+
       <div className="grid gap-4 xl:grid-cols-2">
         <DetailGroup title="Backend Dependencies" items={architecture.dependencies} icon={Server} />
         <DetailGroup title="AI Fabric Modules" items={architecture.modules} icon={Layers3} />

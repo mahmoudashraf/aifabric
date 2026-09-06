@@ -94,6 +94,26 @@ export interface ExecutionResult<T = AccountResolutionOutput | BillingResolution
   needsUserInput: NeedsUserInput | null;
 }
 
+export interface ExecutionHandle {
+  invocationId: string;
+  durability: string;
+  status: string;
+  deadline: string | null;
+  expiresAt: string;
+  failureReason: string | null;
+}
+
+export interface ProactiveEventSubmission {
+  eventId: string;
+  eventType: string;
+  execution: ExecutionHandle;
+}
+
+export interface SpecialistExecutionSnapshot<T = AccountResolutionOutput> {
+  handle: ExecutionHandle;
+  result: ExecutionResult<T> | null;
+}
+
 export interface ResumeResult<T = AccountResolutionOutput | BillingResolutionOutput> {
   status: string;
   executionResult: ExecutionResult<T> | null;
@@ -178,6 +198,12 @@ export interface ReviewDecisionResult {
   task: ReviewTask | null;
   outcome: ActionOutcome | null;
   successorTaskId: string | null;
+  failure: { reason?: string; publicMessage?: string; retryable?: boolean } | null;
+}
+
+export interface ReviewInformationResult {
+  task: ReviewTask | null;
+  message: string | null;
   failure: { reason?: string; publicMessage?: string; retryable?: boolean } | null;
 }
 

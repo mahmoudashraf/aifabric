@@ -33,9 +33,9 @@ const ReviewedStoryPage = ({ storyId }: ReviewedStoryPageProps) => {
       if (!element) {
         element = document.createElement("meta");
         if (selector.includes("property=")) {
-          element.setAttribute("property", selector.match(/property=\"([^\"]+)\"/)?.[1] || "");
+          element.setAttribute("property", selector.match(/property="([^"]+)"/)?.[1] || "");
         } else if (selector.includes("name=")) {
-          element.setAttribute("name", selector.match(/name=\"([^\"]+)\"/)?.[1] || "");
+          element.setAttribute("name", selector.match(/name="([^"]+)"/)?.[1] || "");
         }
         document.head.appendChild(element);
       }
@@ -75,7 +75,7 @@ const ReviewedStoryPage = ({ storyId }: ReviewedStoryPageProps) => {
                 {story.heroKicker}
               </span>
               <span className="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
-                Reviewed for AI Fabric 0.4.0
+                Review baseline: AI Fabric 0.4.0
               </span>
             </div>
 

@@ -74,10 +74,10 @@ const UserStories = () => {
         <section className="px-6 py-12">
           <div className="mx-auto max-w-7xl">
             <div className="mb-8 max-w-3xl">
-              <h2 className="text-2xl font-bold text-foreground">Current Reviewed Stories</h2>
+              <h2 className="text-2xl font-bold text-foreground">Reviewed Framework Stories</h2>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                These are the current release-aligned entry points. Several link to restored interactive
-                pages while preserving the newer demo-backed framing.
+                These interactive narratives explain the framework concepts they were reviewed against.
+                Use the Getting Started guides for current release APIs and configuration.
               </p>
             </div>
 

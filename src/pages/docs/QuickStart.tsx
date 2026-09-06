@@ -351,7 +351,7 @@ const QuickStart = () => {
 
             {/* Step 1 */}
             <StepCard step={1} title="Add Dependencies" time="2 min" icon={<Package className="h-4 w-4 text-primary" />}>
-              <p className="text-muted-foreground text-sm mb-4">Open your <code className="text-primary bg-muted px-1.5 py-0.5 rounded">pom.xml</code> and add these three AI Fabric 0.4 dependencies:</p>
+              <p className="text-muted-foreground text-sm mb-4">Open your <code className="text-primary bg-muted px-1.5 py-0.5 rounded">pom.xml</code> and add these three AI Fabric 0.5.3 dependencies:</p>
               <CopyableCodeBlock 
                 filename="pom.xml"
                 language="xml"
@@ -360,21 +360,21 @@ const QuickStart = () => {
     <dependency>
         <groupId>io.github.loom-ai-labs</groupId>
         <artifactId>ai-fabric-starter</artifactId>
-        <version>0.4.0</version>
+        <version>0.5.3</version>
     </dependency>
     
     <!-- 2. ONNX provider (local embeddings) -->
     <dependency>
         <groupId>io.github.loom-ai-labs</groupId>
         <artifactId>ai-fabric-onnx-starter</artifactId>
-        <version>0.4.0</version>
+        <version>0.5.3</version>
     </dependency>
     
     <!-- 3. Lucene vector store -->
     <dependency>
         <groupId>io.github.loom-ai-labs</groupId>
         <artifactId>ai-fabric-vector-lucene</artifactId>
-        <version>0.4.0</version>
+        <version>0.5.3</version>
     </dependency>
 </dependencies>`} 
               />

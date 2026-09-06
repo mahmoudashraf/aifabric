@@ -49,7 +49,7 @@ const demos = [
     stats: [
       { value: "2", label: "Experiences" },
       { value: "Ready", label: "Backend" },
-      { value: "0.5.2", label: "AI Fabric" },
+      { value: "0.5.3", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-agentic-action-resolver/about",
     livePreview: {
@@ -60,7 +60,7 @@ const demos = [
     },
     accent: "border-violet-200 bg-violet-50 text-violet-700",
     link: "/demos/ai-fabric-agentic-action-resolver",
-    deployed: false,
+    deployed: true,
   },
   {
     id: "ai-fabric-deployment-knowledge-guard",
@@ -77,7 +77,7 @@ const demos = [
     stats: [
       { value: "4", label: "Contexts" },
       { value: "Ready", label: "Backend" },
-      { value: "0.5.2", label: "AI Fabric" },
+      { value: "0.5.3", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-deployment-knowledge-guard/about",
     livePreview: {
@@ -88,7 +88,7 @@ const demos = [
     },
     accent: "border-cyan-200 bg-cyan-50 text-cyan-800",
     link: "/demos/ai-fabric-deployment-knowledge-guard",
-    deployed: false,
+    deployed: true,
   },
   {
     id: "ai-fabric-incident-investigation",
@@ -105,7 +105,7 @@ const demos = [
     stats: [
       { value: "2", label: "Plan modes" },
       { value: "Ready", label: "Backend" },
-      { value: "0.5.2", label: "AI Fabric" },
+      { value: "0.5.3", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-incident-investigation/about",
     livePreview: {
@@ -116,7 +116,7 @@ const demos = [
     },
     accent: "border-amber-200 bg-amber-50 text-amber-800",
     link: "/demos/ai-fabric-incident-investigation",
-    deployed: false,
+    deployed: true,
   },
   {
     id: "ai-fabric-mcp-operations",
@@ -133,7 +133,7 @@ const demos = [
     stats: [
       { value: "3", label: "Remote tools" },
       { value: "2", label: "Services" },
-      { value: "0.5.2", label: "AI Fabric" },
+      { value: "0.5.3", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-mcp-operations/about",
     livePreview: {
@@ -144,7 +144,7 @@ const demos = [
     },
     accent: "border-cyan-200 bg-cyan-50 text-cyan-800",
     link: "/demos/ai-fabric-mcp-operations",
-    deployed: false,
+    deployed: true,
   },
   {
     id: "ai-shopping-experience",
@@ -161,7 +161,7 @@ const demos = [
     stats: [
       { value: "5", label: "RAG stages" },
       { value: "Live", label: "Backend" },
-      { value: "0.4.0", label: "AI Fabric" },
+      { value: "0.5.3", label: "AI Fabric" },
     ],
     aboutLink: `${AI_SHOPPING_EXPERIENCE_ROUTE}/about`,
     livePreview: {
@@ -188,7 +188,7 @@ const demos = [
     stats: [
       { value: "3", label: "Entity types" },
       { value: "Live", label: "Backend" },
-      { value: "0.4.0", label: "AI Fabric" },
+      { value: "0.5.3", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-live-data-sync/about",
     livePreview: {
@@ -215,7 +215,7 @@ const demos = [
     stats: [
       { value: "4", label: "Scenarios" },
       { value: "Live", label: "Backend" },
-      { value: "0.4.0", label: "AI Fabric" },
+      { value: "0.5.3", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-account-resolver/about",
     livePreview: {
@@ -242,7 +242,7 @@ const demos = [
     stats: [
       { value: "3", label: "Scenarios" },
       { value: "Live", label: "Backend" },
-      { value: "0.4.0", label: "AI Fabric" },
+      { value: "0.5.3", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-behavior-signals/about",
     livePreview: {
@@ -269,7 +269,7 @@ const demos = [
     stats: [
       { value: "3", label: "Tenants" },
       { value: "Live", label: "Backend" },
-      { value: "0.4.0", label: "AI Fabric" },
+      { value: "0.5.3", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-tenant-guard/about",
     livePreview: {
@@ -296,7 +296,7 @@ const demos = [
     stats: [
       { value: "3", label: "Samples" },
       { value: "Live", label: "Backend" },
-      { value: "0.4.0", label: "AI Fabric" },
+      { value: "0.5.3", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-privacy-shield/about",
     livePreview: {
@@ -308,6 +308,19 @@ const demos = [
     accent: "border-cyan-200 bg-cyan-50 text-cyan-700",
     link: "/demos/ai-fabric-privacy-shield",
   },
+];
+
+const executionProofs = [
+  { capability: "Manifest specialist", runtime: "Exact version, typed input/output, approved capabilities", source: "INTERACTIVE", durability: "Ephemeral", demo: "Agentic Resolver", route: "/demos/ai-fabric-agentic-action-resolver" },
+  { capability: "Typed wait and resume", runtime: "Bounded host-delivered input contract", source: "INTERACTIVE", durability: "Ephemeral", demo: "Agentic Resolver", route: "/demos/ai-fabric-agentic-action-resolver" },
+  { capability: "Event-driven specialist", runtime: "Raw event mapped to server-owned identity and scopes", source: "EVENT", durability: "Durable", demo: "Agentic Resolver", route: "/demos/ai-fabric-agentic-action-resolver" },
+  { capability: "Scheduled specialist", runtime: "Host schedule cycle with server-derived replay key", source: "SCHEDULED", durability: "Durable", demo: "Behavior Signals", route: "/demos/ai-fabric-behavior-signals" },
+  { capability: "Application-triggered job", runtime: "New events plus previous approved insight", source: "APPLICATION", durability: "Durable", demo: "Behavior Signals", route: "/demos/ai-fabric-behavior-signals" },
+  { capability: "Governed write receipt", runtime: "Confirm, reject, reconcile, and terminal replay", source: "INTERACTIVE", durability: "Durable receipt", demo: "Agentic Resolver", route: "/demos/ai-fabric-agentic-action-resolver" },
+  { capability: "Human review", runtime: "Approve, reject, correct, request information, escalate", source: "APPLICATION", durability: "Durable task", demo: "Review Desk", route: "/demos/ai-fabric-agentic-action-resolver/review" },
+  { capability: "Fixed specialist plans", runtime: "Sequential or parallel branches with ALL_REQUIRED fan-in", source: "APPLICATION", durability: "Ephemeral", demo: "Incident Room", route: "/demos/ai-fabric-incident-investigation" },
+  { capability: "Delegation and handoff", runtime: "One bounded transition with visible lineage", source: "APPLICATION", durability: "Ephemeral", demo: "Incident Room", route: "/demos/ai-fabric-incident-investigation" },
+  { capability: "Remote MCP execution", runtime: "Exact server/tool binding and trusted arguments", source: "INTERACTIVE", durability: "Durable write", demo: "MCP Operations", route: "/demos/ai-fabric-mcp-operations" },
 ];
 
 const Demos = () => {
@@ -324,7 +337,7 @@ const Demos = () => {
           >
             <Badge variant="secondary" className="mb-4">
               <Sparkles className="mr-1 h-3 w-3" />
-              Eight AI-enabled demo apps
+              Ten live AI-enabled demo apps
             </Badge>
             <h1 className="mb-4 text-4xl font-bold tracking-normal md:text-5xl">
               Live AI-enabled applications backed by Spring Boot
@@ -336,12 +349,34 @@ const Demos = () => {
           </motion.div>
         </section>
 
+        <section className="container mx-auto px-4 pb-12">
+          <div className="flex flex-col gap-3 pb-5 md:flex-row md:items-end md:justify-between">
+            <div>
+              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary"><Network className="h-4 w-4" />AI Fabric 0.5.3 execution coverage</div>
+              <h2 className="text-2xl font-bold tracking-normal">Specialist capabilities you can prove live</h2>
+              <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">Each row links a released execution contract to the demo that exposes its source, durability, policy boundary, and visible outcome.</p>
+            </div>
+            <Badge variant="outline" className="w-fit border-emerald-200 bg-emerald-50 text-emerald-700">Live provider-backed matrix</Badge>
+          </div>
+          <div className="divide-y divide-border border-y border-border">
+            {executionProofs.map((proof) => (
+              <Link key={proof.capability} to={proof.route} className="grid gap-3 py-4 transition-colors hover:bg-muted/30 md:grid-cols-[190px_minmax(0,1fr)_110px_120px_150px] md:items-center md:px-3">
+                <div className="font-semibold">{proof.capability}</div>
+                <div className="text-sm leading-6 text-muted-foreground">{proof.runtime}</div>
+                <Badge variant="outline" className="w-fit bg-background">{proof.source}</Badge>
+                <div className="text-sm text-muted-foreground">{proof.durability}</div>
+                <div className="flex items-center justify-between gap-2 text-sm font-medium text-primary"><span>{proof.demo}</span><ArrowRight className="h-4 w-4 shrink-0" /></div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
         <section className="container mx-auto px-4 pb-10">
           <div className="mb-5 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
               <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary">
                 <CheckCircle2 className="h-4 w-4" />
-                End-to-end demos and release candidates
+                Deployed end-to-end demos
               </div>
               <h2 className="text-2xl font-bold tracking-normal">Choose a live AI Fabric journey</h2>
               <p className="mt-1 max-w-2xl text-sm leading-6 text-muted-foreground">

@@ -217,7 +217,7 @@ export const DocsSidebar = () => {
           <BrandLogo showText={false} />
           <div>
             <h2 className="font-bold text-foreground">AI Fabric Docs</h2>
-            <p className="text-xs text-muted-foreground">Release 0.4.0</p>
+            <p className="text-xs text-muted-foreground">Release 0.5.3</p>
           </div>
         </Link>
       </div>

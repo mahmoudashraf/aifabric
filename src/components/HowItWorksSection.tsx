@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useState } from "react";
-import { Highlight, themes } from "prism-react-renderer";
+import { Highlight, themes, type Language } from "prism-react-renderer";
 
 const tabs = [
   {
@@ -11,7 +11,7 @@ const tabs = [
     code: `<dependency>
     <groupId>io.github.loom-ai-labs</groupId>
     <artifactId>ai-fabric-starter</artifactId>
-    <version>0.4.0</version>
+    <version>0.5.3</version>
 </dependency>`,
   },
   {
@@ -117,7 +117,7 @@ const HowItWorksSection = () => {
               <Highlight
                 theme={themes.nightOwl}
                 code={activeTabData.code}
-                language={activeTabData.language as any}
+                language={activeTabData.language as Language}
               >
                 {({ className, style, tokens, getLineProps, getTokenProps }) => (
                   <pre

@@ -32,6 +32,7 @@ import {
   ResolverSession,
   ReviewDecision,
   ReviewDecisionResult,
+  ReviewInformationResult,
   ReviewSubmissionResult,
   ReviewTask,
   ReviewTaskDetail,
@@ -39,6 +40,11 @@ import {
   compactId,
   newIdempotencyKey,
 } from "./agentic-resolver/api";
+import {
+  REVIEW_JOURNEYS,
+  responseFor,
+  type ReviewJourney,
+} from "./agentic-resolver/reviewJourneys";
 
 interface StoredReviewerSession extends IssuedReviewerSession {
   demoSessionId: string;
@@ -54,20 +60,6 @@ function roleLabel(role: IssuedReviewerSession["role"]): string {
   return role === "SENIOR" ? "Senior reviewer" : "Operations reviewer";
 }
 
-function responseFor(decision: ReviewDecision, amount: string, reason: string): Record<string, unknown> | undefined {
-  if (decision === "CORRECT") {
-    return {
-      resolutionType: "ACCOUNT_CREDIT",
-      amount: Number(amount),
-      reason: reason.trim() || "Apply the approved support-credit limit",
-    };
-  }
-  if (decision === "REQUEST_INFORMATION") {
-    return { question: reason.trim() || "Provide the support incident reference." };
-  }
-  return undefined;
-}
-
 export default function AIFabricHumanReviewDesk() {
   const [session, setSession] = useState<ResolverSession | null>(null);
   const [reviewer, setReviewer] = useState<StoredReviewerSession | null>(null);
@@ -79,6 +71,14 @@ export default function AIFabricHumanReviewDesk() {
   const [amount, setAmount] = useState("20");
   const [reason, setReason] = useState("");
   const [lastDecision, setLastDecision] = useState<ReviewDecisionResult | null>(null);
+  const [selectedJourneyId, setSelectedJourneyId] = useState(REVIEW_JOURNEYS[0].id);
+  const [informationReference, setInformationReference] = useState("INC-DEMO-2026-42");
+  const [informationResult, setInformationResult] = useState<ReviewInformationResult | null>(null);
+
+  const selectedJourney = useMemo(
+    () => REVIEW_JOURNEYS.find((journey) => journey.id === selectedJourneyId) || REVIEW_JOURNEYS[0],
+    [selectedJourneyId],
+  );
 
   const storageKey = useMemo(
     () => `${AGENTIC_REVIEW_SESSION_STORAGE_KEY}:${session?.sessionId || "none"}`,
@@ -203,6 +203,13 @@ export default function AIFabricHumanReviewDesk() {
     setSelected(detail);
   };
 
+  const selectJourney = (journey: ReviewJourney) => {
+    setSelectedJourneyId(journey.id);
+    setAmount(String(journey.amount));
+    setReason(journey.reason);
+    setInformationResult(null);
+  };
+
   const createReview = async () => {
     if (!session || busy) return;
     setBusy(true);
@@ -213,10 +220,10 @@ export default function AIFabricHumanReviewDesk() {
         {
           method: "POST",
           body: JSON.stringify({
-            question: "Create a governed support credit for human review.",
+            question: `Create a governed support credit for the ${selectedJourney.title.toLowerCase()} review journey.`,
             resolutionType: "ACCOUNT_CREDIT",
-            amount: 25,
-            reason: "Verified service interruption for the public review demonstration",
+            amount: selectedJourney.amount,
+            reason: selectedJourney.reason,
           }),
         },
         {
@@ -229,8 +236,37 @@ export default function AIFabricHumanReviewDesk() {
       );
       if (reviewer) await loadTasks(session, reviewer);
       if (reviewer) await openTask(result.reviewTask.taskId);
+      setLastDecision(null);
+      setInformationResult(null);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Unable to create review work.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const provideInformation = async () => {
+    if (!session || !selected || busy || !informationReference.trim()) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const result = await agenticApi<ReviewInformationResult>(
+        `/api/agentic-resolver/reviews/${encodeURIComponent(selected.task.taskId)}/information`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            submissionId: newIdempotencyKey("review-information"),
+            expectedVersion: selected.task.version,
+            response: { incidentReference: informationReference.trim() },
+          }),
+        },
+        { sessionId: session.sessionId },
+      );
+      setInformationResult(result);
+      if (reviewer) await loadTasks(session, reviewer);
+      await openTask(selected.task.taskId);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "The requested information could not be supplied.");
     } finally {
       setBusy(false);
     }
@@ -300,7 +336,19 @@ export default function AIFabricHumanReviewDesk() {
 
           <div className="grid gap-6 lg:grid-cols-[340px_minmax(0,1fr)]">
             <aside className="space-y-4">
-              <Button className="w-full" onClick={() => void createReview()} disabled={busy}>{busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FileCheck2 className="mr-2 h-4 w-4" />}Create support-credit review</Button>
+              <Card><CardHeader><CardTitle className="text-lg">Guided decision journeys</CardTitle></CardHeader><CardContent className="space-y-2">
+                {REVIEW_JOURNEYS.map((journey) => (
+                  <button key={journey.id} type="button" onClick={() => selectJourney(journey)} className={`w-full rounded-md border p-3 text-left transition-colors ${journey.id === selectedJourney.id ? "border-cyan-300 bg-cyan-50" : "hover:bg-muted/40"}`}>
+                    <div className="font-semibold">{journey.title}</div>
+                    <p className="mt-1 text-xs leading-5 text-muted-foreground">{journey.description}</p>
+                  </button>
+                ))}
+              </CardContent></Card>
+              <div className="rounded-lg border border-cyan-200 bg-cyan-50/60 p-3">
+                <div className="text-sm font-semibold text-cyan-950">{selectedJourney.title} journey</div>
+                <div className="mt-2 flex flex-wrap gap-1.5">{selectedJourney.steps.map((step, index) => <Badge key={step} variant="outline" className="border-cyan-200 bg-white text-cyan-900">{index + 1}. {step}</Badge>)}</div>
+              </div>
+              <Button className="w-full" onClick={() => void createReview()} disabled={busy}>{busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FileCheck2 className="mr-2 h-4 w-4" />}Create {selectedJourney.title.toLowerCase()} review</Button>
               <Card><CardHeader><CardTitle className="text-lg">Session inbox</CardTitle></CardHeader><CardContent className="space-y-2">
                 {tasks.length === 0 ? <div className="rounded-md border border-dashed p-5 text-center text-sm text-muted-foreground">No visible work for this reviewer. Create a proposal or switch to the senior role after escalation.</div> : tasks.map((task) => (
                   <button key={task.taskId} type="button" onClick={() => void openTask(task.taskId)} className={`w-full rounded-md border p-3 text-left ${selected?.task.taskId === task.taskId ? "border-cyan-300 bg-cyan-50" : "hover:bg-muted/40"}`}>
@@ -323,9 +371,22 @@ export default function AIFabricHumanReviewDesk() {
 
                     {selected.task.allowedDecisions.includes("CORRECT") ? <div className="grid gap-3 sm:grid-cols-2"><div><Label htmlFor="correction-amount">Corrected account credit</Label><Input id="correction-amount" type="number" min="1" value={amount} onChange={(event) => setAmount(event.target.value)} /></div><div><Label htmlFor="review-reason">Correction or information note</Label><Textarea id="review-reason" value={reason} onChange={(event) => setReason(event.target.value)} className="min-h-[42px]" /></div></div> : null}
 
-                    <div className="flex flex-wrap gap-2">{selected.task.allowedDecisions.map((decision) => <Button key={decision} variant={decision === "REJECT" ? "destructive" : decision === "APPROVE" ? "default" : "outline"} disabled={busy} onClick={() => void decide(decision)}>{decision === "APPROVE" ? <CheckCircle2 className="mr-2 h-4 w-4" /> : decision === "REJECT" ? <XCircle className="mr-2 h-4 w-4" /> : <ShieldCheck className="mr-2 h-4 w-4" />}{decision.replaceAll("_", " ")}</Button>)}</div>
+                    {selected.task.status === "WAITING_FOR_INFORMATION" ? (
+                      <div className="rounded-md border border-cyan-200 bg-cyan-50 p-4">
+                        <div className="font-semibold text-cyan-950">Supply requested information</div>
+                        <p className="mt-1 text-sm text-cyan-900">{String(selected.requestedInformation?.question || "Provide the requested source information.")}</p>
+                        <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                          <Label htmlFor="incident-reference" className="sr-only">Incident reference</Label>
+                          <Input id="incident-reference" value={informationReference} onChange={(event) => setInformationReference(event.target.value)} placeholder="Incident reference" className="bg-white" />
+                          <Button onClick={() => void provideInformation()} disabled={busy || !informationReference.trim()}>Provide information</Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-wrap gap-2">{selected.task.allowedDecisions.map((decision) => <Button key={decision} variant={decision === "REJECT" ? "destructive" : decision === "APPROVE" ? "default" : "outline"} disabled={busy} onClick={() => void decide(decision)}>{decision === "APPROVE" ? <CheckCircle2 className="mr-2 h-4 w-4" /> : decision === "REJECT" ? <XCircle className="mr-2 h-4 w-4" /> : <ShieldCheck className="mr-2 h-4 w-4" />}{decision.replaceAll("_", " ")}</Button>)}</div>
+                    )}
 
                     {selected.message ? <Alert><Info className="h-4 w-4" /><AlertTitle>Continuation</AlertTitle><AlertDescription>{selected.message}</AlertDescription></Alert> : null}
+                    {informationResult?.message ? <Alert><Info className="h-4 w-4" /><AlertTitle>Information accepted</AlertTitle><AlertDescription>{informationResult.message}</AlertDescription></Alert> : null}
                     {selected.outcome ? <Alert className="border-emerald-200 bg-emerald-50"><CheckCircle2 className="h-4 w-4 text-emerald-700" /><AlertTitle>{selected.outcome.message}</AlertTitle><AlertDescription>The governed receipt reached one terminal application outcome.</AlertDescription></Alert> : null}
                     {selected.failureReason ? <Alert variant="destructive"><XCircle className="h-4 w-4" /><AlertTitle>Review failed</AlertTitle><AlertDescription>{selected.failureReason}</AlertDescription></Alert> : null}
                   </CardContent></Card>
