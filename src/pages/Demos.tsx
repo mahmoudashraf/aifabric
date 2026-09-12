@@ -94,12 +94,12 @@ const demos = [
     id: "ai-fabric-incident-investigation",
     title: "Incident Investigation Room",
     description:
-      "Multi-specialist incident analysis with ordered and parallel plans, strict fan-in, bounded transitions, and backend-owned conversation.",
+      "Model-routed incident specialists choose approved live-data tools and scoped runbooks, then AI Fabric validates every citation across plans, transitions, and conversation.",
     icon: Siren,
     features: [
-      { icon: Layers, label: "Fixed Plans" },
-      { icon: Network, label: "Parallel Fan-out" },
-      { icon: ShieldCheck, label: "Bounded Handoffs" },
+      { icon: Bot, label: "AI-Routed Specialists" },
+      { icon: Search, label: "Selected Sources + RAG" },
+      { icon: ShieldCheck, label: "Validated Citations" },
       { icon: MessageSquare, label: "Conversation Manager" },
     ],
     stats: [
@@ -109,10 +109,10 @@ const demos = [
     ],
     aboutLink: "/demos/ai-fabric-incident-investigation/about",
     livePreview: {
-      eyebrow: "Multi-specialist execution",
-      prompt: "Investigate one incident from immutable service-health and change-risk evidence.",
-      proof: "Compare sequential and parallel results, inspect lineage, and prove second-hop transitions are denied.",
-      runtime: "AI Fabric plans + delegation + handoff + conversation manager",
+      eyebrow: "AI-selected operational evidence",
+      prompt: "Ask what is unhealthy or what changed, then inspect which specialist and read sources the model selected.",
+      proof: "Compare fixed plans, inspect action and RAG citations, and prove cross-boundary evidence plus second-hop transitions are rejected.",
+      runtime: "AI Fabric specialists + read actions + scoped RAG + plans + backend memory",
     },
     accent: "border-amber-200 bg-amber-50 text-amber-800",
     link: "/demos/ai-fabric-incident-investigation",
@@ -319,6 +319,7 @@ const executionProofs = [
   { capability: "Governed write receipt", runtime: "Confirm, reject, reconcile, and terminal replay", source: "INTERACTIVE", durability: "Durable receipt", demo: "Agentic Resolver", route: "/demos/ai-fabric-agentic-action-resolver" },
   { capability: "Human review", runtime: "Approve, reject, correct, request information, escalate", source: "APPLICATION", durability: "Durable task", demo: "Review Desk", route: "/demos/ai-fabric-agentic-action-resolver/review" },
   { capability: "Fixed specialist plans", runtime: "Sequential or parallel branches with ALL_REQUIRED fan-in", source: "APPLICATION", durability: "Ephemeral", demo: "Incident Room", route: "/demos/ai-fabric-incident-investigation" },
+  { capability: "Specialist-owned evidence discovery", runtime: "Model selects allowlisted READ actions and cites authorized candidates", source: "APPLICATION", durability: "Ephemeral", demo: "Incident Room", route: "/demos/ai-fabric-incident-investigation" },
   { capability: "Delegation and handoff", runtime: "One bounded transition with visible lineage", source: "APPLICATION", durability: "Ephemeral", demo: "Incident Room", route: "/demos/ai-fabric-incident-investigation" },
   { capability: "Remote MCP execution", runtime: "Exact server/tool binding and trusted arguments", source: "INTERACTIVE", durability: "Durable write", demo: "MCP Operations", route: "/demos/ai-fabric-mcp-operations" },
 ];

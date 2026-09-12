@@ -29,11 +29,79 @@ export interface IncidentScenario {
   failingBranch: string | null;
 }
 
+export interface IncidentEvent {
+  id: string;
+  tenantId: string;
+  incidentId: string;
+  deploymentId: string;
+  sourceRevision: string;
+  type: string;
+  source: string;
+  summary: string;
+  severity: string;
+  observedAt: string;
+  safeAttributes: Record<string, unknown>;
+}
+
+export interface RunbookIndexStatus {
+  state: string;
+  indexedDocuments: number;
+  updatedAt: string | null;
+  failure: string | null;
+}
+
+export interface IncidentWorkspace {
+  candidateEvents: IncidentEvent[];
+  excludedBoundaryEventCount: number;
+  dataSources: Record<string, string>;
+  runbooks: RunbookIndexStatus;
+}
+
 export interface IncidentSession {
   sessionId: string;
   scenario: IncidentScenario;
+  workspace: IncidentWorkspace;
   createdAt: string;
   expiresAt: string;
+}
+
+export interface IncidentDataSourceUsage {
+  action: string;
+  candidateCount: number;
+  groundingUsable: boolean;
+}
+
+export interface SpecialistDecisionTrace {
+  specialist: string;
+  status: string;
+  dataSources: IncidentDataSourceUsage[];
+  selectedEvidenceIds: string[];
+  runbookEvidenceIds: string[];
+  sourceRevision: string;
+  applicationValidation: string;
+}
+
+export interface ServiceHealthFinding {
+  healthStatus: string;
+  severity: string;
+  summary: string;
+  evidenceIds: string[];
+  dataSources: IncidentDataSourceUsage[];
+  candidateEventCount: number;
+  selectionReason: string;
+  sourceRevision: string;
+}
+
+export interface ChangeRiskFinding {
+  riskLevel: string;
+  suspectedChange: string;
+  summary: string;
+  evidenceIds: string[];
+  runbookEvidenceIds: string[];
+  dataSources: IncidentDataSourceUsage[];
+  candidateEventCount: number;
+  selectionReason: string;
+  sourceRevision: string;
 }
 
 export interface IncidentAssessment {
@@ -46,43 +114,25 @@ export interface IncidentAssessment {
   likelyCause: string;
   recommendation: string;
   evidenceIds: string[];
-  serviceHealth: {
-    healthStatus: string;
-    severity: string;
-    summary: string;
-    evidenceIds: string[];
-  };
-  changeRiskFinding: {
-    riskLevel: string;
-    suspectedChange: string;
-    summary: string;
-    evidenceIds: string[];
-  };
-}
-
-export interface EvidenceReference {
-  id?: string;
-  documentId?: string;
-  source?: string;
-  sourceUrl?: string;
-  vectorSpace?: string;
-  relevanceScore?: number;
-  metadata?: Record<string, unknown>;
+  serviceHealth: ServiceHealthFinding;
+  changeRiskFinding: ChangeRiskFinding;
+  dataSources: IncidentDataSourceUsage[];
+  validationStatus: string;
 }
 
 export interface PlanStepTrace {
   stepId: string;
   parallelGroupId: string | null;
   sourceRevision: string | null;
-  specialistId: VersionedId | string;
+  specialistId: string;
   invocationId: string;
   status: string;
-  evidence: EvidenceReference[];
   startedAt: string;
   completedAt: string;
+  decisionTrace: SpecialistDecisionTrace | null;
 }
 
-export interface PlanFailure {
+export interface IncidentFailure {
   reason: string;
   publicMessage: string;
   retryable: boolean;
@@ -91,15 +141,13 @@ export interface PlanFailure {
 
 export interface IncidentPlanResult {
   executionId: string;
-  planId: VersionedId | string;
+  planId: string;
   planContentHash: string;
   status: string;
   activeStepId: string | null;
   output: IncidentAssessment | null;
   steps: PlanStepTrace[];
-  diagnostics: Record<string, unknown>;
-  failure: PlanFailure | null;
-  needsUserInput: unknown | null;
+  failure: IncidentFailure | null;
   startedAt: string;
   completedAt: string;
 }
@@ -111,46 +159,44 @@ export interface IncidentPlanComparison {
   comparisonReason: string;
 }
 
-export interface ExecutionFailure {
-  reason: string;
-  message?: string;
-  publicMessage?: string;
-  retryable?: boolean;
-}
-
-export interface ExecutionResult<T = unknown> {
+export interface SpecialistExecution<T = unknown> {
   invocationId: string;
-  specialistId: VersionedId | string;
+  specialistId: string;
   status: string;
   output: T | null;
-  evidence: EvidenceReference[];
-  diagnostics: Record<string, unknown>;
-  failure: ExecutionFailure | null;
+  failure: IncidentFailure | null;
   startedAt: string;
   completedAt: string;
+  decisionTrace: SpecialistDecisionTrace | null;
 }
 
 export interface SpecialistTransition {
-  delegationId?: string;
-  handoffId?: string;
-  parentInvocationId?: string;
-  predecessorInvocationId?: string;
-  sourceSpecialistId?: VersionedId | string;
-  predecessorSpecialistId?: VersionedId | string;
-  targetSpecialistId?: VersionedId | string;
-  successorSpecialistId?: VersionedId | string;
-  depth?: number;
-  status?: string;
-  targetExecution?: ExecutionResult;
-  successorExecution?: ExecutionResult;
-  failure?: ExecutionFailure | null;
-  replayed?: boolean;
-  startedAt?: string;
-  completedAt?: string;
+  delegationId?: string | null;
+  handoffId?: string | null;
+  parentInvocationId?: string | null;
+  predecessorInvocationId?: string | null;
+  sourceSpecialistId?: string | null;
+  predecessorSpecialistId?: string | null;
+  targetSpecialistId?: string | null;
+  successorSpecialistId?: string | null;
+  depth: number;
+  status: string;
+  targetExecution?: SpecialistExecution | null;
+  successorExecution?: SpecialistExecution | null;
+  failure?: IncidentFailure | null;
+  replayed: boolean;
+  startedAt?: string | null;
+  completedAt?: string | null;
+}
+
+export interface IncidentIntakeOutput {
+  decision: string;
+  targetSpecialist: string | null;
+  reason: string;
 }
 
 export interface IncidentTransitionResponse {
-  intake: ExecutionResult<{ decision: string; targetSpecialist: string | null; reason: string }>;
+  intake: SpecialistExecution<IncidentIntakeOutput>;
   transition: SpecialistTransition | null;
   secondTransitionCanary: SpecialistTransition | null;
 }
@@ -165,10 +211,11 @@ export interface ConversationManagerResult {
   workerInvocationId: string | null;
   snapshotRevision: string | null;
   snapshotSourceTurnCount: number;
-  failure: ExecutionFailure | null;
+  failure: { reason: string; message?: string; publicMessage?: string; retryable?: boolean } | null;
   replayed: boolean;
   startedAt: string;
   completedAt: string;
+  decisionTrace: SpecialistDecisionTrace | null;
 }
 
 export interface IncidentHealth {
@@ -180,12 +227,16 @@ export interface IncidentHealth {
   builtAt: string;
   specialists: Array<{ id: string; contentHash: string; source: string; ready: boolean }>;
   plans: Array<{ id: string; contentHash: string; ready: boolean }>;
+  actions: Array<{ name: string; ready: boolean; accessMode: string }>;
   specialistsReady: boolean;
   plansReady: boolean;
+  actionsReady: boolean;
   provider: { generation: string; ready: boolean };
   storage: { domain: string; chat: string; execution: string };
   fanInPolicy: string;
   conversationHistory: string;
+  eventStore: { type: string; totalEvents: number; trustedFiltering: boolean };
+  runbooks: RunbookIndexStatus;
 }
 
 export function formatVersionedId(value: VersionedId | string | null | undefined): string {
@@ -194,7 +245,7 @@ export function formatVersionedId(value: VersionedId | string | null | undefined
   return `${value.name}@${value.version}`;
 }
 
-export function durationMs(startedAt?: string, completedAt?: string): number | null {
+export function durationMs(startedAt?: string | null, completedAt?: string | null): number | null {
   if (!startedAt || !completedAt) return null;
   const duration = new Date(completedAt).getTime() - new Date(startedAt).getTime();
   return Number.isFinite(duration) && duration >= 0 ? duration : null;
@@ -219,7 +270,7 @@ export async function incidentInvestigationApi<T>(
       const payload = await response.json() as { message?: string; error?: string; detail?: string };
       message = payload.message || payload.detail || payload.error || message;
     } catch {
-      // Preserve the status when the backend did not return a JSON error.
+      // Preserve the HTTP status when the backend did not return JSON.
     }
     throw new Error(message);
   }
