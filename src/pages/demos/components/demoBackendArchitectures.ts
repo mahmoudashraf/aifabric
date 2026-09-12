@@ -195,7 +195,7 @@ export const demoBackendArchitectures = {
         title: "Validation and memory",
         subtitle: "Application-enforced boundaries",
         tone: "guard",
-        items: ["Citation and revision checks", "Bounded chat snapshots", "H2/PostgreSQL session storage"],
+        items: ["Citation and revision checks", "Bounded chat snapshots", "JDBC session and scenario binding"],
       },
     ],
     developer: {
@@ -239,7 +239,7 @@ export const demoBackendArchitectures = {
     },
     dependencies: [
       "Spring Boot Web, Data JPA, Validation, Actuator, H2, PostgreSQL, Lucene, and smoke-support.",
-      "Stable application storage preserves backend conversation state; the deterministic event repository models an external operational source while fixed plan executions remain explicitly ephemeral.",
+      "Stable JDBC storage preserves AI Fabric chat state and the app-owned demo-session binding; the deterministic event repository models an external operational source while fixed plan executions remain explicitly ephemeral.",
     ],
     modules: [
       "ai-fabric-starter",
@@ -272,7 +272,7 @@ export const demoBackendArchitectures = {
       "Conversation turns send only the newest message while the backend supplies bounded prior context and replay state.",
     ],
     operationalProofs: [
-      "Backend-owned conversation snapshots survive application restart when the deployed JDBC store is retained.",
+      "Backend-owned conversation snapshots and their opaque demo-session bindings survive application restart when the deployed JDBC store is retained.",
       "Fixed plan runs are intentionally ephemeral; the UI labels their timeline and does not imply restart recovery for plan branches.",
       "The health contract reports eight exact specialist versions, four plans, four read actions, runbook readiness, provider state, and storage posture.",
       "The real-provider suite proves direct and generated scoped RAG, both specialist routes, parallel fan-out, and follow-up memory with no hidden model fallback.",
