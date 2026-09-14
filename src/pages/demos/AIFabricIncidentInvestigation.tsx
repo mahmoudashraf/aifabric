@@ -10,6 +10,7 @@ import {
   Boxes,
   BrainCircuit,
   CheckCircle2,
+  CircleStop,
   Clock3,
   Database,
   Filter,
@@ -57,6 +58,9 @@ import {
   IncidentSession,
   IncidentTransitionResponse,
   PlanStepTrace,
+  SmartInvestigationExecution,
+  SmartInvestigationResult,
+  SpecialistChainStepTrace,
   SpecialistDecisionTrace,
   durationMs,
   formatVersionedId,
@@ -76,6 +80,20 @@ const DEFAULT_QUESTION = "Investigate this incident using current service and ch
 const DEFAULT_TRANSITION_QUESTION = "Is checkout healthy right now?";
 const DEFAULT_MANAGER_QUESTION = "What do current service metrics show?";
 const MANAGER_FOLLOW_UP = "What about the release and its approval?";
+const DEFAULT_SMART_QUESTION = "Checkout degraded after this morning's deployment. Investigate the likely cause and show the supporting evidence.";
+const SMART_SCENARIOS = [
+  ["Health only", "Is checkout healthy right now?"],
+  ["Adaptive cause", "Why is this service timing out? Investigate the likely cause."],
+  ["Parallel evidence", "Checkout degraded after deployment. Investigate both health and change risk."],
+  ["No material change", "Did a recent deployment cause this incident? Report only what the approved evidence supports."],
+  ["Clarify", "Something is wrong."],
+  ["No worker", "What can you investigate?"],
+  ["Terminal handoff", "Handoff this read-only investigation to the service-health specialist."],
+] as const;
+
+function chainIsActive(status: string | null | undefined): boolean {
+  return status === "QUEUED" || status === "RUNNING";
+}
 
 function shortId(value: string | null | undefined): string {
   if (!value) return "n/a";
@@ -311,6 +329,135 @@ function PlanResultView({ result, label, candidates }: { result: IncidentPlanRes
   );
 }
 
+export function SmartChainTimeline({ steps }: { steps: SpecialistChainStepTrace[] }) {
+  if (steps.length === 0) {
+    return <p className="border-l-2 border-blue-200 pl-4 text-sm text-muted-foreground">The manager is preparing its first validated decision.</p>;
+  }
+  return (
+    <ol aria-label="Smart investigation decision timeline" className="space-y-5">
+      {steps.map((step) => {
+        const parallel = step.directiveType === "INVOKE_PARALLEL";
+        return (
+          <li key={`${step.decisionIndex}-${step.managerInvocationId}`} className="border-l-2 border-blue-200 pl-5">
+            <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
+              <div>
+                <p className="text-xs font-semibold uppercase text-blue-700">Manager decision {step.decisionIndex + 1}</p>
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  <Badge className={statusClass(step.directiveType)} variant="outline">{humanize(step.directiveType)}</Badge>
+                  {parallel && <Badge variant="secondary">Parallel / all required</Badge>}
+                </div>
+                <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">{step.reason}</p>
+              </div>
+              <div className="shrink-0 text-xs text-muted-foreground">
+                <p>{formatDuration(step.startedAt, step.completedAt)}</p>
+                <p className="mt-1 font-mono">{shortId(step.managerInvocationId)}</p>
+              </div>
+            </div>
+            {step.workers.length > 0 && (
+              <div className={`mt-4 grid gap-3 ${parallel ? "md:grid-cols-2" : "grid-cols-1"}`}>
+                {step.workers.map((worker) => (
+                  <div key={`${worker.specialist}-${worker.invocationId || worker.startedAt}`} className="min-w-0 rounded-md border bg-background p-4">
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <div>
+                        <p className="text-sm font-semibold">{worker.specialist}</p>
+                        <p className="mt-1 text-xs text-muted-foreground">{humanize(worker.relationship)} worker</p>
+                      </div>
+                      <Badge className={statusClass(worker.status)} variant="outline">{worker.status}</Badge>
+                    </div>
+                    <p className="mt-3 text-xs text-muted-foreground">Invocation {shortId(worker.invocationId)} / {formatDuration(worker.startedAt, worker.completedAt)}</p>
+                    {worker.evidenceReferenceIds.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-1.5">
+                        {worker.evidenceReferenceIds.map((id) => <Badge key={id} variant="secondary">{id}</Badge>)}
+                      </div>
+                    )}
+                    {worker.failureReason && <p className="mt-3 text-xs font-semibold text-red-700">{worker.failureReason}</p>}
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+              <span>{step.remainingBudget.managerDecisions} manager decisions left</span>
+              <span>{step.remainingBudget.workerInvocations} worker calls left</span>
+              <span>{step.remainingBudget.projectedResultCharacters.toLocaleString()} projected characters left</span>
+            </div>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
+function SmartInvestigationExecutionView({ execution, onCancel, onReplay, busy }: {
+  execution: SmartInvestigationExecution;
+  onCancel: () => void;
+  onReplay: () => void;
+  busy: boolean;
+}) {
+  const result: SmartInvestigationResult | null = execution.result;
+  const timeline = result?.timeline || execution.timeline;
+  const failure = result?.failure || execution.failure;
+  return (
+    <section className="overflow-hidden rounded-md border bg-card shadow-sm">
+      <div className="flex flex-col justify-between gap-4 border-b bg-muted/20 p-5 md:flex-row md:items-start">
+        <div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge className={statusClass(execution.status)} variant="outline">{humanize(execution.status)}</Badge>
+            <Badge variant="secondary">{execution.durable ? "Durable JDBC state" : "Ephemeral state"}</Badge>
+            {(execution.replayed || result?.replayed) && <Badge className="border-blue-200 bg-blue-50 text-blue-800" variant="outline">Exact replay</Badge>}
+          </div>
+          <p className="mt-3 font-mono text-xs text-muted-foreground">{execution.executionId}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{execution.chain} / decision {execution.nextDecisionIndex}</p>
+        </div>
+        <div className="flex gap-2">
+          {chainIsActive(execution.status) && <Button variant="destructive" size="sm" onClick={onCancel} disabled={busy}><CircleStop className="mr-2 h-4 w-4" />Cancel</Button>}
+          {!chainIsActive(execution.status) && <Button variant="outline" size="sm" onClick={onReplay} disabled={busy}><RefreshCw className="mr-2 h-4 w-4" />Replay exact request</Button>}
+        </div>
+      </div>
+      <div className="space-y-6 p-5">
+        {chainIsActive(execution.status) && (
+          <div className="flex items-center gap-3 border-l-4 border-blue-500 bg-blue-50 p-4 text-blue-950">
+            <Loader2 className="h-5 w-5 shrink-0 animate-spin" />
+            <div><p className="font-semibold">Investigation in progress</p><p className="mt-1 text-sm">The backend owns execution, checkpoints accepted decisions, and exposes only validated lineage.</p></div>
+          </div>
+        )}
+        {failure && <FailureNotice failure={failure} title="Smart investigation stopped visibly" />}
+        {result?.message && (
+          <div className="border-l-4 border-emerald-500 bg-emerald-50 p-4 text-emerald-950">
+            <p className="text-xs font-semibold uppercase">Grounded final response</p>
+            <p className="mt-2 leading-7">{result.message}</p>
+            {result.handoffTarget && <p className="mt-2 text-sm">Terminal owner: <span className="font-semibold">{result.handoffTarget}</span></p>}
+          </div>
+        )}
+        {result && result.results.length > 0 && (
+          <div>
+            <h3 className="flex items-center gap-2 text-sm font-semibold"><ShieldCheck className="h-4 w-4 text-emerald-600" />Application-approved worker projections</h3>
+            <div className="mt-3 grid gap-3 lg:grid-cols-2">
+              {result.results.map((projection) => (
+                <div key={projection.resultId} className="rounded-md border p-4">
+                  <p className="font-semibold">{projection.specialist}</p>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{projection.summary}</p>
+                  <dl className="mt-3 grid gap-2 border-t pt-3 text-xs">
+                    {Object.entries(projection.facts).map(([name, value]) => <div key={name} className="grid gap-1 sm:grid-cols-[150px_1fr]"><dt className="font-semibold text-muted-foreground">{humanize(name)}</dt><dd className="break-words">{value || "None"}</dd></div>)}
+                  </dl>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        <div>
+          <h3 className="mb-4 flex items-center gap-2 text-sm font-semibold"><Network className="h-4 w-4 text-blue-600" />Validated manager and specialist timeline</h3>
+          <SmartChainTimeline steps={timeline} />
+        </div>
+        <div className="flex flex-wrap gap-2 border-t pt-4 text-xs text-muted-foreground">
+          <span>Submitted {new Date(execution.submittedAt).toLocaleString()}</span>
+          <span>Deadline {new Date(execution.deadline).toLocaleTimeString()}</span>
+          {result && <span>{result.conversationSourceTurnCount} backend conversation turns</span>}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function TransitionView({ result, mode, candidates = [] }: { result: IncidentTransitionResponse; mode: TransitionMode; candidates?: IncidentEvent[] }) {
   const transition = result.transition;
   const target = transition?.targetExecution || transition?.successorExecution || null;
@@ -338,7 +485,7 @@ export function TransitionView({ result, mode, candidates = [] }: { result: Inci
       {target?.output && <div><p className="mb-2 text-xs font-semibold uppercase text-muted-foreground">Safe projected specialist result</p><p className="text-sm leading-7">{String((target.output as { summary?: string }).summary || "Validated structured result returned")}</p></div>}
       <DecisionTrace trace={target?.decisionTrace} candidates={candidates} />
       {result.secondTransitionCanary && (
-        <Alert className="border-emerald-200 bg-emerald-50 text-emerald-950"><ShieldCheck className="h-4 w-4" /><AlertTitle>Second transition blocked by application policy</AlertTitle><AlertDescription>The one-hop canary returned {result.secondTransitionCanary.status}. This is an application-owned guard, not a model choice.</AlertDescription></Alert>
+        <Alert className="border-emerald-200 bg-emerald-50 text-emerald-950"><ShieldCheck className="h-4 w-4" /><AlertTitle>Application-generated one-level safety canary</AlertTitle><AlertDescription>The deliberate second transition returned {result.secondTransitionCanary.status}. The application generated this policy test; it was not requested by the model.</AlertDescription></Alert>
       )}
     </section>
   );
@@ -350,8 +497,11 @@ export default function AIFabricIncidentInvestigation() {
   const [scenarios, setScenarios] = useState<IncidentScenario[]>([]);
   const [session, setSession] = useState<IncidentSession | null>(null);
   const [pageLoading, setPageLoading] = useState<"initializing" | "resetting" | null>("initializing");
-  const [busy, setBusy] = useState<"plan" | "compare" | "transition" | "manager" | null>(null);
+  const [busy, setBusy] = useState<"smart" | "cancel" | "plan" | "compare" | "transition" | "manager" | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [smartQuestion, setSmartQuestion] = useState(DEFAULT_SMART_QUESTION);
+  const [smartExecution, setSmartExecution] = useState<SmartInvestigationExecution | null>(null);
+  const [smartRequest, setSmartRequest] = useState<{ question: string; idempotencyKey: string } | null>(null);
   const [planMode, setPlanMode] = useState<PlanMode>("parallel");
   const [question, setQuestion] = useState(DEFAULT_QUESTION);
   const [transitionQuestion, setTransitionQuestion] = useState(DEFAULT_TRANSITION_QUESTION);
@@ -400,7 +550,41 @@ export default function AIFabricIncidentInvestigation() {
     return () => { mounted = false; };
   }, [createSession]);
 
-  const clearResults = () => { setPlanResult(null); setComparison(null); setTransitionResult(null); setManagerTurns([]); };
+  const smartSessionId = session?.sessionId;
+  const smartExecutionId = smartExecution?.executionId;
+  const smartExecutionStatus = smartExecution?.status;
+
+  useEffect(() => {
+    if (!smartSessionId || !smartExecutionId || !chainIsActive(smartExecutionStatus)) return;
+    let cancelled = false;
+    let timer: number | undefined;
+    const poll = async () => {
+      try {
+        const value = await incidentInvestigationApi<SmartInvestigationExecution>(
+          `/api/incidents/sessions/${smartSessionId}/smart-investigations/${smartExecutionId}`,
+          {},
+          smartSessionId,
+        );
+        if (cancelled) return;
+        setError(null);
+        setSmartExecution(value);
+        if (chainIsActive(value.status)) {
+          timer = window.setTimeout(() => void poll(), 750);
+        }
+      } catch (caught) {
+        if (cancelled) return;
+        setError(caught instanceof Error ? caught.message : "Unable to read smart investigation status.");
+        timer = window.setTimeout(() => void poll(), 750);
+      }
+    };
+    timer = window.setTimeout(() => void poll(), 500);
+    return () => {
+      cancelled = true;
+      if (timer !== undefined) window.clearTimeout(timer);
+    };
+  }, [smartExecutionId, smartExecutionStatus, smartSessionId]);
+
+  const clearResults = () => { setSmartExecution(null); setSmartRequest(null); setPlanResult(null); setComparison(null); setTransitionResult(null); setManagerTurns([]); };
 
   const replaceSession = async (scenarioId: string) => {
     if (scenarioId === session?.scenario.id) return;
@@ -423,6 +607,44 @@ export default function AIFabricIncidentInvestigation() {
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Unable to reset the incident session.");
     } finally { setPageLoading(null); }
+  };
+
+  const runSmartInvestigation = async (replay = false) => {
+    if (!session) return;
+    const questionToSend = replay ? smartRequest?.question : smartQuestion.trim();
+    if (!questionToSend) return;
+    const idempotencyKey = replay && smartRequest
+      ? smartRequest.idempotencyKey
+      : crypto.randomUUID();
+    setBusy("smart"); setError(null);
+    try {
+      const execution = await incidentInvestigationApi<SmartInvestigationExecution>(
+        `/api/incidents/sessions/${session.sessionId}/smart-investigations/async`,
+        { method: "POST", body: JSON.stringify({ question: questionToSend }) },
+        session.sessionId,
+        idempotencyKey,
+      );
+      setSmartRequest({ question: questionToSend, idempotencyKey });
+      setSmartExecution(execution);
+    } catch (caught) {
+      const message = caught instanceof Error ? caught.message : "Smart investigation could not be submitted.";
+      setError(message); toast({ title: "Smart investigation failed", description: message, variant: "destructive" });
+    } finally { setBusy(null); }
+  };
+
+  const cancelSmartInvestigation = async () => {
+    if (!session || !smartExecution || !chainIsActive(smartExecution.status)) return;
+    setBusy("cancel"); setError(null);
+    try {
+      setSmartExecution(await incidentInvestigationApi<SmartInvestigationExecution>(
+        `/api/incidents/sessions/${session.sessionId}/smart-investigations/${smartExecution.executionId}/cancel`,
+        { method: "POST" },
+        session.sessionId,
+      ));
+    } catch (caught) {
+      const message = caught instanceof Error ? caught.message : "Smart investigation could not be cancelled.";
+      setError(message); toast({ title: "Cancellation failed", description: message, variant: "destructive" });
+    } finally { setBusy(null); }
   };
 
   const runPlan = async () => {
@@ -477,7 +699,7 @@ export default function AIFabricIncidentInvestigation() {
     } finally { setBusy(null); }
   };
 
-  const runtimeReady = useMemo(() => health?.status === "UP" && health.specialistsReady && health.plansReady && health.actionsReady && health.provider.ready && health.runbooks.state === "READY", [health]);
+  const runtimeReady = useMemo(() => health?.status === "UP" && health.specialistsReady && health.plansReady && health.chainsReady && health.actionsReady && health.provider.ready && health.runbooks.state === "READY", [health]);
   const candidates = session?.workspace.candidateEvents || [];
 
   if (pageLoading) return <DemoFullPageLoader title={pageLoading === "resetting" ? "Preparing a clean incident workspace" : "Preparing Incident Investigation Room"} description="Loading bounded event candidates, exact specialist manifests, read-action readiness, runbooks, and backend conversation state." />;
@@ -491,13 +713,13 @@ export default function AIFabricIncidentInvestigation() {
             <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
               <div className="max-w-3xl">
                 <Link to="/demos" className="mb-5 inline-flex items-center gap-2 text-sm text-slate-300 hover:text-white"><ArrowLeft className="h-4 w-4" />Live demos</Link>
-                <Badge className="mb-4 border-cyan-300/40 bg-cyan-300/10 text-cyan-100" variant="outline"><Network className="mr-1 h-3.5 w-3.5" />Model-selected specialists and operational read actions</Badge>
+                <Badge className="mb-4 border-cyan-300/40 bg-cyan-300/10 text-cyan-100" variant="outline"><Network className="mr-1 h-3.5 w-3.5" />Bounded multi-specialist intelligence</Badge>
                 <h1 className="text-4xl font-bold tracking-normal md:text-5xl">Incident Investigation Room</h1>
-                <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-300">Watch AI Fabric route an incident, let each specialist choose approved operational sources, validate every citation, and preserve the same evidence contract across plans, transitions, and conversation.</p>
+                <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-300">Describe an incident once. A bounded manager selects, sequences, or parallelizes exact-version specialists, then returns one evidence-grounded answer with durable lineage.</p>
               </div>
               <div className="flex flex-wrap gap-2">
                 <Button asChild variant="secondary"><Link to="/demos/ai-fabric-incident-investigation/about"><Info className="mr-2 h-4 w-4" />About this demo</Link></Button>
-                <Button variant="outline" className="border-slate-600 bg-transparent text-white hover:bg-slate-800 hover:text-white" onClick={() => void reset()}><RotateCcw className="mr-2 h-4 w-4" />Reset session</Button>
+                <Button variant="outline" className="border-slate-600 bg-transparent text-white hover:bg-slate-800 hover:text-white" onClick={() => void reset()} disabled={Boolean(busy) || chainIsActive(smartExecution?.status)}><RotateCcw className="mr-2 h-4 w-4" />Reset session</Button>
               </div>
             </div>
           </div>
@@ -506,9 +728,10 @@ export default function AIFabricIncidentInvestigation() {
         <div className="container mx-auto space-y-8 px-4 py-8">
           {error && <Alert variant="destructive"><TriangleAlert className="h-4 w-4" /><AlertTitle>Demo request failed</AlertTitle><AlertDescription>{error}. No fallback result was substituted.</AlertDescription></Alert>}
 
-          <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+          <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
             {[
               ["Runtime", runtimeReady ? "Ready" : "Not ready", health?.status || "Unknown", runtimeReady],
+              ["Smart chain", `${health?.chains.length || 0} registered`, health?.chainsReady ? "Exact registry verified" : "Unavailable", health?.chainsReady],
               ["Specialists", `${health?.specialists.length || 0} versions`, health?.specialistsReady ? "Registry verified" : "Unavailable", health?.specialistsReady],
               ["READ actions", `${health?.actions.length || 0} approved`, health?.actionsReady ? "Catalog verified" : "Unavailable", health?.actionsReady],
               ["Runbook RAG", `${health?.runbooks.indexedDocuments || 0} docs`, health?.runbooks.state || "Unknown", health?.runbooks.state === "READY"],
@@ -520,11 +743,45 @@ export default function AIFabricIncidentInvestigation() {
 
           {session && (
             <section className="space-y-4">
-              <div className="max-w-lg"><Label htmlFor="incident-scenario">Choose incident source set</Label><Select value={session.scenario.id} onValueChange={(value) => void replaceSession(value)} disabled={Boolean(busy)}><SelectTrigger id="incident-scenario" className="mt-2"><SelectValue /></SelectTrigger><SelectContent>{scenarios.map((scenario) => <SelectItem key={scenario.id} value={scenario.id}>{scenario.title}</SelectItem>)}</SelectContent></Select></div>
-              <CandidateWorkspace session={session} />
+              <div className="max-w-lg"><Label htmlFor="incident-scenario">Choose incident source set</Label><Select value={session.scenario.id} onValueChange={(value) => void replaceSession(value)} disabled={Boolean(busy) || chainIsActive(smartExecution?.status)}><SelectTrigger id="incident-scenario" className="mt-2"><SelectValue /></SelectTrigger><SelectContent>{scenarios.map((scenario) => <SelectItem key={scenario.id} value={scenario.id}>{scenario.title}</SelectItem>)}</SelectContent></Select></div>
             </section>
           )}
 
+          <section className="space-y-5" aria-labelledby="smart-investigation-title">
+            <div className="grid gap-6 border-y bg-blue-50/60 px-5 py-6 lg:grid-cols-[minmax(0,1fr)_300px]">
+              <div>
+                <Badge className="border-blue-200 bg-white text-blue-800" variant="outline">Primary experience</Badge>
+                <h2 id="smart-investigation-title" className="mt-3 text-2xl font-semibold">Smart Investigation</h2>
+                <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">Ask naturally. The application supplies trusted incident boundaries; the model proposes the next specialist move; AI Fabric validates every transition, checkpoint, and result projection.</p>
+                <Label className="mt-5 block" htmlFor="smart-investigation-question">Incident request</Label>
+                <Textarea id="smart-investigation-question" className="mt-2 min-h-28 resize-y bg-white" value={smartQuestion} onChange={(event) => setSmartQuestion(event.target.value)} />
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {SMART_SCENARIOS.map(([label, prompt]) => <Button key={label} type="button" size="sm" variant="outline" className="bg-white" onClick={() => setSmartQuestion(prompt)}>{label}</Button>)}
+                </div>
+                <Button className="mt-5" size="lg" onClick={() => void runSmartInvestigation()} disabled={!session || Boolean(busy) || !smartQuestion.trim() || chainIsActive(smartExecution?.status)}>
+                  {busy === "smart" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <BrainCircuit className="mr-2 h-4 w-4" />}Investigate with AI Fabric
+                </Button>
+              </div>
+              <div className="border-l-0 text-sm lg:border-l lg:border-blue-200 lg:pl-6">
+                <p className="font-semibold">The user does not choose architecture</p>
+                <ol className="mt-4 space-y-3 text-muted-foreground">
+                  <li className="flex gap-2"><span className="font-semibold text-blue-700">1</span><span>Manager selects no worker, one worker, an adaptive sequence, parallel readers, clarification, or terminal handoff.</span></li>
+                  <li className="flex gap-2"><span className="font-semibold text-blue-700">2</span><span>Every worker remains read-only, independently authorized, and conversation-isolated.</span></li>
+                  <li className="flex gap-2"><span className="font-semibold text-blue-700">3</span><span>Only application-approved projections return to the manager for synthesis.</span></li>
+                </ol>
+              </div>
+            </div>
+            {smartExecution && <SmartInvestigationExecutionView execution={smartExecution} onCancel={() => void cancelSmartInvestigation()} onReplay={() => void runSmartInvestigation(true)} busy={Boolean(busy)} />}
+          </section>
+
+          {session && <CandidateWorkspace session={session} />}
+
+          <section className="space-y-4 border-t pt-7" aria-labelledby="developer-proof-title">
+            <div>
+              <Badge variant="secondary">Developer Proof</Badge>
+              <h2 id="developer-proof-title" className="mt-2 text-2xl font-semibold">Compare the lower-level execution APIs</h2>
+              <p className="mt-2 max-w-4xl text-sm leading-6 text-muted-foreground">Direct execution fits one known specialist. Fixed plans fit known topology. Delegation and handoff prove one bounded transition. The smart chain above is for request-dependent specialist selection and synthesis.</p>
+            </div>
           <Tabs defaultValue="plans" className="space-y-5">
             <TabsList className="grid h-auto w-full grid-cols-1 sm:grid-cols-3">
               <TabsTrigger value="plans" className="py-3"><Split className="mr-2 h-4 w-4" />Plan lab</TabsTrigger>
@@ -559,8 +816,9 @@ export default function AIFabricIncidentInvestigation() {
               </div>
             </TabsContent>
           </Tabs>
+          </section>
 
-          <section className="flex flex-col justify-between gap-4 rounded-md border bg-slate-950 p-5 text-white md:flex-row md:items-center"><div><p className="font-semibold">Deployment proof</p><p className="mt-1 text-sm text-slate-300">AI Fabric {health?.aiFabricVersion || "unknown"} / commit {shortId(health?.commit)} / provider {health?.provider.generation || "unknown"}</p></div><div className="flex flex-wrap gap-2"><Badge className="border-slate-600 bg-slate-900 text-slate-100" variant="outline">Events: {health?.eventStore.totalEvents || 0}</Badge><Badge className="border-slate-600 bg-slate-900 text-slate-100" variant="outline">Plan storage: {health?.storage.execution || "unknown"}</Badge></div></section>
+          <section className="flex flex-col justify-between gap-4 rounded-md border bg-slate-950 p-5 text-white md:flex-row md:items-center"><div><p className="font-semibold">Deployment proof</p><p className="mt-1 text-sm text-slate-300">AI Fabric {health?.aiFabricVersion || "unknown"} / commit {shortId(health?.commit)} / provider {health?.provider.generation || "unknown"}</p></div><div className="flex flex-wrap gap-2"><Badge className="border-slate-600 bg-slate-900 text-slate-100" variant="outline">Events: {health?.eventStore.totalEvents || 0}</Badge><Badge className="border-slate-600 bg-slate-900 text-slate-100" variant="outline">Chain storage: {health?.storage.specialistChains || "unknown"}</Badge><Badge className="border-slate-600 bg-slate-900 text-slate-100" variant="outline">Plan storage: {health?.storage.plans || "unknown"}</Badge></div></section>
         </div>
       </main>
       <ConsultationCtaBand />

@@ -218,6 +218,82 @@ export interface ConversationManagerResult {
   decisionTrace: SpecialistDecisionTrace | null;
 }
 
+export interface SpecialistChainBudget {
+  managerDecisions: number;
+  workerInvocations: number;
+  parallelWorkers: number;
+  projectedResultCharacters: number;
+  durationMillis: number;
+}
+
+export interface SpecialistChainWorkerTrace {
+  specialist: string;
+  relationship: "DELEGATION" | "HANDOFF";
+  invocationId: string | null;
+  resultId: string | null;
+  status: string;
+  evidenceReferenceIds: string[];
+  failureReason: string | null;
+  startedAt: string;
+  completedAt: string;
+}
+
+export interface SpecialistChainStepTrace {
+  decisionIndex: number;
+  managerInvocationId: string;
+  directiveType: string;
+  reason: string;
+  parallelGroupId: string | null;
+  workers: SpecialistChainWorkerTrace[];
+  remainingBudget: SpecialistChainBudget;
+  startedAt: string;
+  completedAt: string;
+}
+
+export interface SpecialistChainResultView {
+  resultId: string;
+  specialist: string;
+  workerInvocationId: string;
+  summary: string;
+  facts: Record<string, string>;
+  evidenceReferenceIds: string[];
+  resultHash: string;
+  completedAt: string;
+}
+
+export interface SmartInvestigationResult {
+  executionId: string;
+  chain: string;
+  chainContentHash: string;
+  status: string;
+  message: string | null;
+  handoffTarget: string | null;
+  results: SpecialistChainResultView[];
+  timeline: SpecialistChainStepTrace[];
+  conversationSnapshotRevision: string | null;
+  conversationSourceTurnCount: number;
+  failure: { reason: string; publicMessage: string; retryable: boolean } | null;
+  replayed: boolean;
+  durable: boolean;
+  startedAt: string;
+  completedAt: string;
+}
+
+export interface SmartInvestigationExecution {
+  executionId: string;
+  chain: string;
+  status: string;
+  nextDecisionIndex: number;
+  timeline: SpecialistChainStepTrace[];
+  failure: { reason: string; publicMessage: string; retryable: boolean } | null;
+  result: SmartInvestigationResult | null;
+  replayed: boolean;
+  durable: boolean;
+  submittedAt: string;
+  updatedAt: string;
+  deadline: string;
+}
+
 export interface IncidentHealth {
   status: string;
   service: string;
@@ -230,9 +306,11 @@ export interface IncidentHealth {
   actions: Array<{ name: string; ready: boolean; accessMode: string }>;
   specialistsReady: boolean;
   plansReady: boolean;
+  chains: Array<{ id: string; contentHash: string; manager: string; targets: string[]; ready: boolean }>;
+  chainsReady: boolean;
   actionsReady: boolean;
   provider: { generation: string; ready: boolean };
-  storage: { domain: string; chat: string; execution: string };
+  storage: { domain: string; chat: string; plans: string; specialistChains: string };
   fanInPolicy: string;
   conversationHistory: string;
   eventStore: { type: string; totalEvents: number; trustedFiltering: boolean };

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { DecisionTrace, TransitionView } from "../AIFabricIncidentInvestigation";
+import { DecisionTrace, SmartChainTimeline, TransitionView } from "../AIFabricIncidentInvestigation";
 
 describe("Incident Investigation decision surfaces", () => {
   it("renders a valid no-transition intake result without dereferencing null lineage", () => {
@@ -117,7 +117,42 @@ describe("Incident Investigation decision surfaces", () => {
       />,
     );
 
-    expect(screen.getByText("Second transition blocked by application policy")).toBeInTheDocument();
-    expect(screen.getByText(/application-owned guard/i)).toBeInTheDocument();
+    expect(screen.getByText("Application-generated one-level safety canary")).toBeInTheDocument();
+    expect(screen.getByText(/not requested by the model/i)).toBeInTheDocument();
+  });
+
+  it("groups independently selected workers under one parallel manager decision", () => {
+    render(<SmartChainTimeline steps={[{
+      decisionIndex: 0,
+      managerInvocationId: "manager-1",
+      directiveType: "INVOKE_PARALLEL",
+      reason: "Both evidence areas are independently material.",
+      parallelGroupId: "parallel-1",
+      workers: ["service-health-reader@2", "change-risk-reader@2"].map((specialist, index) => ({
+        specialist,
+        relationship: "DELEGATION" as const,
+        invocationId: `worker-${index}`,
+        resultId: `result-${index}`,
+        status: "SUCCEEDED",
+        evidenceReferenceIds: [`evidence-${index}`],
+        failureReason: null,
+        startedAt: "2026-09-05T18:00:00Z",
+        completedAt: "2026-09-05T18:00:01Z",
+      })),
+      remainingBudget: {
+        managerDecisions: 3,
+        workerInvocations: 0,
+        parallelWorkers: 2,
+        projectedResultCharacters: 7000,
+        durationMillis: 60000,
+      },
+      startedAt: "2026-09-05T18:00:00Z",
+      completedAt: "2026-09-05T18:00:01Z",
+    }]} />);
+
+    expect(screen.getByText("Parallel / all required")).toBeInTheDocument();
+    expect(screen.getByText("service-health-reader@2")).toBeInTheDocument();
+    expect(screen.getByText("change-risk-reader@2")).toBeInTheDocument();
+    expect(screen.getAllByText("SUCCEEDED")).toHaveLength(2);
   });
 });

@@ -38,25 +38,25 @@ const demos = [
     id: "ai-fabric-agentic-action-resolver",
     title: "Agentic AI Action Resolver",
     description:
-      "Exact-version specialists with typed waits, policy evidence, governed receipts, replay protection, and durable human review.",
+      "A bounded manager adaptively selects account and billing specialists, then returns projected results with durable replay while governed writes remain separately confirmed and reviewed.",
     icon: Network,
     features: [
-      { icon: Bot, label: "Typed Specialists" },
-      { icon: MessageSquare, label: "Backend Memory" },
-      { icon: ShieldCheck, label: "Durable Receipts" },
-      { icon: Users, label: "Human Review" },
+      { icon: Network, label: "Adaptive Chain" },
+      { icon: Layers, label: "Sequential + Parallel" },
+      { icon: RefreshCw, label: "Durable Replay" },
+      { icon: ShieldCheck, label: "Governed Writes" },
     ],
     stats: [
-      { value: "2", label: "Experiences" },
-      { value: "Ready", label: "Backend" },
-      { value: "0.5.3", label: "AI Fabric" },
+      { value: "8", label: "Decision paths" },
+      { value: "Live", label: "Backend" },
+      { value: "0.6.1", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-agentic-action-resolver/about",
     livePreview: {
-      eyebrow: "Bounded specialist execution",
-      prompt: "Inspect the current account, collect missing billing input, then safely resolve one approved action.",
-      proof: "Typed wait/resume, exact manifest identity, approved evidence, confirmation, receipt replay, and session-bound review.",
-      runtime: "AI Fabric specialists + chat memory + JDBC receipts + human review",
+      eyebrow: "Adaptive account-resolution chain",
+      prompt: "Ask one natural question and let the manager choose account, billing, parallel, sequential, clarification, or no-worker execution.",
+      proof: "Inspect exact worker lineage, bounded budgets, projected facts, cancellation, terminal handoff, and restart-safe replay before trying the existing governed-action flows.",
+      runtime: "AI Fabric chain manager + leaf specialists + JDBC checkpoints + governed receipts",
     },
     accent: "border-violet-200 bg-violet-50 text-violet-700",
     link: "/demos/ai-fabric-agentic-action-resolver",
@@ -77,7 +77,7 @@ const demos = [
     stats: [
       { value: "4", label: "Contexts" },
       { value: "Ready", label: "Backend" },
-      { value: "0.5.3", label: "AI Fabric" },
+      { value: "0.6.1", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-deployment-knowledge-guard/about",
     livePreview: {
@@ -94,25 +94,25 @@ const demos = [
     id: "ai-fabric-incident-investigation",
     title: "Incident Investigation Room",
     description:
-      "Model-routed incident specialists choose approved live-data tools and scoped runbooks, then AI Fabric validates every citation across plans, transitions, and conversation.",
+      "A bounded manager adaptively selects one or more incident specialists, while AI Fabric validates every transition, citation, deadline, and durable replay.",
     icon: Siren,
     features: [
-      { icon: Bot, label: "AI-Routed Specialists" },
-      { icon: Search, label: "Selected Sources + RAG" },
-      { icon: ShieldCheck, label: "Validated Citations" },
-      { icon: MessageSquare, label: "Conversation Manager" },
+      { icon: Network, label: "Adaptive Specialist Chain" },
+      { icon: Layers, label: "Sequential + Parallel" },
+      { icon: ShieldCheck, label: "Durable Safe Replay" },
+      { icon: Search, label: "Projected Evidence" },
     ],
     stats: [
-      { value: "2", label: "Plan modes" },
-      { value: "Ready", label: "Backend" },
-      { value: "0.5.3", label: "AI Fabric" },
+      { value: "5", label: "Directive types" },
+      { value: "Live", label: "Backend" },
+      { value: "0.6.1", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-incident-investigation/about",
     livePreview: {
-      eyebrow: "AI-selected operational evidence",
-      prompt: "Ask what is unhealthy or what changed, then inspect which specialist and read sources the model selected.",
-      proof: "Compare fixed plans, inspect action and RAG citations, and prove cross-boundary evidence plus second-hop transitions are rejected.",
-      runtime: "AI Fabric specialists + read actions + scoped RAG + plans + backend memory",
+      eyebrow: "Bounded multi-specialist intelligence",
+      prompt: "Describe one incident and let the manager decide whether health, change risk, both, or no worker is needed.",
+      proof: "Inspect adaptive and parallel decisions, safe result attribution, fail-closed branches, cancellation, and restart-safe replay.",
+      runtime: "AI Fabric chain manager + leaf specialists + JDBC checkpoints + scoped evidence",
     },
     accent: "border-amber-200 bg-amber-50 text-amber-800",
     link: "/demos/ai-fabric-incident-investigation",
@@ -133,7 +133,7 @@ const demos = [
     stats: [
       { value: "3", label: "Remote tools" },
       { value: "2", label: "Services" },
-      { value: "0.5.3", label: "AI Fabric" },
+      { value: "0.6.1", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-mcp-operations/about",
     livePreview: {
@@ -161,7 +161,7 @@ const demos = [
     stats: [
       { value: "5", label: "RAG stages" },
       { value: "Live", label: "Backend" },
-      { value: "0.5.3", label: "AI Fabric" },
+      { value: "0.6.1", label: "AI Fabric" },
     ],
     aboutLink: `${AI_SHOPPING_EXPERIENCE_ROUTE}/about`,
     livePreview: {
@@ -188,7 +188,7 @@ const demos = [
     stats: [
       { value: "3", label: "Entity types" },
       { value: "Live", label: "Backend" },
-      { value: "0.5.3", label: "AI Fabric" },
+      { value: "0.6.1", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-live-data-sync/about",
     livePreview: {
@@ -215,7 +215,7 @@ const demos = [
     stats: [
       { value: "4", label: "Scenarios" },
       { value: "Live", label: "Backend" },
-      { value: "0.5.3", label: "AI Fabric" },
+      { value: "0.6.1", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-account-resolver/about",
     livePreview: {
@@ -242,7 +242,7 @@ const demos = [
     stats: [
       { value: "3", label: "Scenarios" },
       { value: "Live", label: "Backend" },
-      { value: "0.5.3", label: "AI Fabric" },
+      { value: "0.6.1", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-behavior-signals/about",
     livePreview: {
@@ -269,7 +269,7 @@ const demos = [
     stats: [
       { value: "3", label: "Tenants" },
       { value: "Live", label: "Backend" },
-      { value: "0.5.3", label: "AI Fabric" },
+      { value: "0.6.1", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-tenant-guard/about",
     livePreview: {
@@ -296,7 +296,7 @@ const demos = [
     stats: [
       { value: "3", label: "Samples" },
       { value: "Live", label: "Backend" },
-      { value: "0.5.3", label: "AI Fabric" },
+      { value: "0.6.1", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-privacy-shield/about",
     livePreview: {
@@ -311,6 +311,7 @@ const demos = [
 ];
 
 const executionProofs = [
+  { capability: "Adaptive specialist chain", runtime: "Manager-selected single, sequential, independent parallel, clarification, handoff, and no-worker paths", source: "INTERACTIVE", durability: "Durable", demo: "Agentic Resolver", route: "/demos/ai-fabric-agentic-action-resolver" },
   { capability: "Manifest specialist", runtime: "Exact version, typed input/output, approved capabilities", source: "INTERACTIVE", durability: "Ephemeral", demo: "Agentic Resolver", route: "/demos/ai-fabric-agentic-action-resolver" },
   { capability: "Typed wait and resume", runtime: "Bounded host-delivered input contract", source: "INTERACTIVE", durability: "Ephemeral", demo: "Agentic Resolver", route: "/demos/ai-fabric-agentic-action-resolver" },
   { capability: "Event-driven specialist", runtime: "Raw event mapped to server-owned identity and scopes", source: "EVENT", durability: "Durable", demo: "Agentic Resolver", route: "/demos/ai-fabric-agentic-action-resolver" },
@@ -353,7 +354,7 @@ const Demos = () => {
         <section className="container mx-auto px-4 pb-12">
           <div className="flex flex-col gap-3 pb-5 md:flex-row md:items-end md:justify-between">
             <div>
-              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary"><Network className="h-4 w-4" />AI Fabric 0.5.3 execution coverage</div>
+              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary"><Network className="h-4 w-4" />AI Fabric 0.6.1 execution coverage</div>
               <h2 className="text-2xl font-bold tracking-normal">Specialist capabilities you can prove live</h2>
               <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">Each row links a released execution contract to the demo that exposes its source, durability, policy boundary, and visible outcome.</p>
             </div>

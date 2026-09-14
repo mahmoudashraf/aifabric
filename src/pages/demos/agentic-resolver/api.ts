@@ -151,7 +151,104 @@ export interface DemoHealth {
   branch?: string;
   builtAt?: string;
   provider?: string;
+  execution?: {
+    specialistChainsEnabled?: boolean;
+    specialistChainsReady?: boolean;
+    specialistChainDurability?: string;
+    accountSmartResolutionChainRegistered?: boolean;
+    specialistChains?: Array<{
+      id: string;
+      contentHash: string;
+      manager: string;
+      targets: string[];
+      conversationPolicy: string;
+      ready: boolean;
+    }>;
+    [key: string]: unknown;
+  };
   [key: string]: unknown;
+}
+
+export interface SpecialistChainBudget {
+  managerDecisions: number;
+  workerInvocations: number;
+  parallelWorkers: number;
+  projectedResultCharacters: number;
+  durationMillis: number;
+}
+
+export interface SpecialistChainWorkerTrace {
+  specialist: string;
+  relationship: "DELEGATION" | "HANDOFF";
+  invocationId: string | null;
+  resultId: string | null;
+  status: string;
+  evidenceReferenceIds: string[];
+  failureReason: string | null;
+  startedAt: string;
+  completedAt: string;
+}
+
+export interface SpecialistChainStepTrace {
+  decisionIndex: number;
+  managerInvocationId: string;
+  directiveType: string;
+  reason: string;
+  parallelGroupId: string | null;
+  workers: SpecialistChainWorkerTrace[];
+  remainingBudget: SpecialistChainBudget;
+  startedAt: string;
+  completedAt: string;
+}
+
+export interface SpecialistChainResultView {
+  resultId: string;
+  specialist: string;
+  workerInvocationId: string;
+  summary: string;
+  facts: Record<string, string>;
+  evidenceReferenceIds: string[];
+  resultHash: string;
+  completedAt: string;
+}
+
+export interface AccountSmartResolutionResult {
+  executionId: string;
+  chain: string;
+  chainContentHash: string;
+  status: string;
+  message: string | null;
+  handoffTarget: string | null;
+  results: SpecialistChainResultView[];
+  timeline: SpecialistChainStepTrace[];
+  conversationSnapshotRevision: string | null;
+  conversationSourceTurnCount: number;
+  failure: ExecutionFailure | null;
+  replayed: boolean;
+  durable: boolean;
+  startedAt: string;
+  completedAt: string;
+}
+
+export interface AccountSmartResolutionExecution {
+  executionId: string;
+  chain: string;
+  status: string;
+  nextDecisionIndex: number;
+  timeline: SpecialistChainStepTrace[];
+  failure: ExecutionFailure | null;
+  result: AccountSmartResolutionResult | null;
+  replayed: boolean;
+  durable: boolean;
+  submittedAt: string;
+  updatedAt: string;
+  deadline: string;
+}
+
+export interface AccountSmartResolutionRequest {
+  question: string;
+  resolutionType?: "REFUND" | "ACCOUNT_CREDIT";
+  amount?: number;
 }
 
 export type ReviewDecision =
