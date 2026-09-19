@@ -561,7 +561,7 @@ export default function AIFabricIncidentInvestigation() {
     const poll = async () => {
       try {
         const value = await incidentInvestigationApi<SmartInvestigationExecution>(
-          `/api/incidents/sessions/${smartSessionId}/smart-investigations/${smartExecutionId}`,
+          `/api/incidents/sessions/${smartSessionId}/declarative-investigations/${smartExecutionId}`,
           {},
           smartSessionId,
         );
@@ -619,7 +619,7 @@ export default function AIFabricIncidentInvestigation() {
     setBusy("smart"); setError(null);
     try {
       const execution = await incidentInvestigationApi<SmartInvestigationExecution>(
-        `/api/incidents/sessions/${session.sessionId}/smart-investigations/async`,
+        `/api/incidents/sessions/${session.sessionId}/declarative-investigations/async`,
         { method: "POST", body: JSON.stringify({ question: questionToSend }) },
         session.sessionId,
         idempotencyKey,
@@ -637,7 +637,7 @@ export default function AIFabricIncidentInvestigation() {
     setBusy("cancel"); setError(null);
     try {
       setSmartExecution(await incidentInvestigationApi<SmartInvestigationExecution>(
-        `/api/incidents/sessions/${session.sessionId}/smart-investigations/${smartExecution.executionId}/cancel`,
+        `/api/incidents/sessions/${session.sessionId}/declarative-investigations/${smartExecution.executionId}/cancel`,
         { method: "POST" },
         session.sessionId,
       ));
@@ -713,7 +713,7 @@ export default function AIFabricIncidentInvestigation() {
             <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
               <div className="max-w-3xl">
                 <Link to="/demos" className="mb-5 inline-flex items-center gap-2 text-sm text-slate-300 hover:text-white"><ArrowLeft className="h-4 w-4" />Live demos</Link>
-                <Badge className="mb-4 border-cyan-300/40 bg-cyan-300/10 text-cyan-100" variant="outline"><Network className="mr-1 h-3.5 w-3.5" />Bounded multi-specialist intelligence</Badge>
+                <Badge className="mb-4 border-cyan-300/40 bg-cyan-300/10 text-cyan-100" variant="outline"><Network className="mr-1 h-3.5 w-3.5" />Declarative bounded specialist chain</Badge>
                 <h1 className="text-4xl font-bold tracking-normal md:text-5xl">Incident Investigation Room</h1>
                 <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-300">Describe an incident once. A bounded manager selects, sequences, or parallelizes exact-version specialists, then returns one evidence-grounded answer with durable lineage.</p>
               </div>
@@ -752,7 +752,7 @@ export default function AIFabricIncidentInvestigation() {
               <div>
                 <Badge className="border-blue-200 bg-white text-blue-800" variant="outline">Primary experience</Badge>
                 <h2 id="smart-investigation-title" className="mt-3 text-2xl font-semibold">Smart Investigation</h2>
-                <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">Ask naturally. The application supplies trusted incident boundaries; the model proposes the next specialist move; AI Fabric validates every transition, checkpoint, and result projection.</p>
+                <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">Ask naturally. An immutable SpecialistChain manifest supplies the closed topology and bounded projections; the application supplies trusted incident boundaries; the model proposes the next approved specialist move.</p>
                 <Label className="mt-5 block" htmlFor="smart-investigation-question">Incident request</Label>
                 <Textarea id="smart-investigation-question" className="mt-2 min-h-28 resize-y bg-white" value={smartQuestion} onChange={(event) => setSmartQuestion(event.target.value)} />
                 <div className="mt-3 flex flex-wrap gap-2">

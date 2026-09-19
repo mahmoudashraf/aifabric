@@ -691,7 +691,7 @@ export default function AIFabricAgenticActionResolver() {
     const poll = async () => {
       try {
         const next = await agenticApi<AccountSmartResolutionExecution>(
-          `/api/agentic-resolver/smart-resolutions/${encodeURIComponent(smartExecutionId)}`,
+          `/api/agentic-resolver/declarative-resolutions/${encodeURIComponent(smartExecutionId)}`,
           {},
           { sessionId: smartSessionId },
         );
@@ -788,7 +788,7 @@ export default function AIFabricAgenticActionResolver() {
     setError(null);
     try {
       const submitted = await agenticApi<AccountSmartResolutionExecution>(
-        "/api/agentic-resolver/smart-resolutions/async",
+        "/api/agentic-resolver/declarative-resolutions/async",
         { method: "POST", body: JSON.stringify(request) },
         { sessionId: session.sessionId, idempotencyKey },
       );
@@ -809,7 +809,7 @@ export default function AIFabricAgenticActionResolver() {
     setError(null);
     try {
       setSmartExecution(await agenticApi<AccountSmartResolutionExecution>(
-        `/api/agentic-resolver/smart-resolutions/${encodeURIComponent(smartExecution.executionId)}/cancel`,
+        `/api/agentic-resolver/declarative-resolutions/${encodeURIComponent(smartExecution.executionId)}/cancel`,
         { method: "POST" },
         { sessionId: session.sessionId },
       ));
@@ -1033,14 +1033,14 @@ export default function AIFabricAgenticActionResolver() {
             <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_320px]">
               <div className="p-5 md:p-7">
                 <div className="flex flex-wrap items-center gap-2">
-                  <Badge className="border-violet-200 bg-white text-violet-800" variant="outline">Primary experience</Badge>
+                  <Badge className="border-violet-200 bg-white text-violet-800" variant="outline">Manifest-defined chain</Badge>
                   <Badge className={health?.execution?.specialistChainsReady ? "border-emerald-200 bg-emerald-50 text-emerald-800" : "border-amber-200 bg-amber-50 text-amber-900"} variant="outline">
                     {health?.execution?.specialistChainsReady ? "Chain runtime ready" : "Checking chain runtime"}
                   </Badge>
                 </div>
-                <h2 id="smart-account-coordinator-title" className="mt-3 text-2xl font-semibold">Smart Account Coordinator</h2>
+                <h2 id="smart-account-coordinator-title" className="mt-3 text-2xl font-semibold">Declarative Account Coordinator</h2>
                 <p className="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
-                  State the outcome you need. The model proposes the next specialist move; AI Fabric enforces the exact target catalog, trusted account scope, budgets, result projection, durable checkpoints, and replay rules.
+                  State the outcome you need. An immutable SpecialistChain manifest defines the exact team and bounded projections; the model proposes the next approved move while AI Fabric enforces trusted account scope, budgets, durable checkpoints, and replay rules.
                 </p>
 
                 <div className="mt-5 flex flex-wrap gap-2" aria-label="Smart coordinator scenarios">
