@@ -588,7 +588,30 @@ export default function AIFabricMcpOperations() {
               </section>
               <section className="rounded-md border bg-white p-4 shadow-sm">
                 <h2 className="flex items-center gap-2 text-sm font-semibold"><Wrench className="h-4 w-4 text-violet-700" />Allowed tool policy</h2>
-                <div className="mt-3 space-y-2">{tools.map((tool) => <div key={tool.actionId} className="rounded-md border p-3"><div className="flex items-center justify-between gap-2"><span className="break-all font-mono text-[11px] font-semibold">{tool.toolName}</span><Badge variant="outline">{tool.accessMode}</Badge></div><p className="mt-2 text-xs leading-5 text-muted-foreground">{tool.description}</p><p className="mt-1 text-xs font-medium">{tool.requiresConfirmation ? "Confirmation required" : "Read-only execution"}</p></div>)}</div>
+                <div className="mt-3 space-y-2">
+                  {tools.map((tool) => (
+                    <div key={tool.actionId} className="rounded-md border p-3">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="break-all font-mono text-[11px] font-semibold">{tool.toolName}</span>
+                        <div className="flex flex-wrap gap-1">
+                          <Badge variant="outline">{tool.accessMode}</Badge>
+                          <Badge className={tool.dispatchMode === "CONNECTOR" ? "border-violet-200 bg-violet-50 text-violet-800" : "border-cyan-200 bg-cyan-50 text-cyan-800"} variant="outline">
+                            {humanize(tool.dispatchMode)}
+                          </Badge>
+                        </div>
+                      </div>
+                      <p className="mt-2 text-xs leading-5 text-muted-foreground">{tool.description}</p>
+                      <p className="mt-1 text-xs font-medium">{tool.requiresConfirmation ? "Confirmation required" : "Read-only execution"}</p>
+                      {tool.requiredAnyParams.length || tool.requiredAnyArguments.length ? (
+                        <div className="mt-3 rounded border border-amber-200 bg-amber-50 p-2 text-[11px] leading-5 text-amber-950">
+                          <p className="font-semibold">Rendered request gate</p>
+                          {tool.requiredAnyParams.length ? <p>Logical input: {tool.requiredAnyParams.join(" or ")}</p> : null}
+                          {tool.requiredAnyArguments.length ? <p>Rendered connector argument: {tool.requiredAnyArguments.join(" or ")}</p> : null}
+                        </div>
+                      ) : null}
+                    </div>
+                  ))}
+                </div>
               </section>
             </aside>
           </div>

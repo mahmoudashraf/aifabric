@@ -8,6 +8,7 @@ import {
   CreditCard,
   Database,
   EyeOff,
+  FileStack,
   Layers,
   Lock,
   Network,
@@ -23,6 +24,7 @@ import {
   Smile,
   Sparkles,
   TrendingUp,
+  Trash2,
   Users,
   Zap,
 } from "lucide-react";
@@ -49,7 +51,7 @@ const demos = [
     stats: [
       { value: "8", label: "Decision paths" },
       { value: "Live", label: "Backend" },
-      { value: "0.6.1", label: "AI Fabric" },
+      { value: "0.8.4", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-agentic-action-resolver/about",
     livePreview: {
@@ -77,7 +79,7 @@ const demos = [
     stats: [
       { value: "4", label: "Contexts" },
       { value: "Ready", label: "Backend" },
-      { value: "0.6.1", label: "AI Fabric" },
+      { value: "0.8.4", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-deployment-knowledge-guard/about",
     livePreview: {
@@ -105,7 +107,7 @@ const demos = [
     stats: [
       { value: "5", label: "Directive types" },
       { value: "Live", label: "Backend" },
-      { value: "0.6.1", label: "AI Fabric" },
+      { value: "0.8.4", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-incident-investigation/about",
     livePreview: {
@@ -132,8 +134,8 @@ const demos = [
     ],
     stats: [
       { value: "3", label: "Remote tools" },
-      { value: "2", label: "Services" },
-      { value: "0.6.1", label: "AI Fabric" },
+      { value: "3", label: "Services" },
+      { value: "0.8.4", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-mcp-operations/about",
     livePreview: {
@@ -161,7 +163,7 @@ const demos = [
     stats: [
       { value: "5", label: "RAG stages" },
       { value: "Live", label: "Backend" },
-      { value: "0.6.1", label: "AI Fabric" },
+      { value: "0.8.4", label: "AI Fabric" },
     ],
     aboutLink: `${AI_SHOPPING_EXPERIENCE_ROUTE}/about`,
     livePreview: {
@@ -188,7 +190,7 @@ const demos = [
     stats: [
       { value: "3", label: "Entity types" },
       { value: "Live", label: "Backend" },
-      { value: "0.6.1", label: "AI Fabric" },
+      { value: "0.8.4", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-live-data-sync/about",
     livePreview: {
@@ -199,6 +201,33 @@ const demos = [
     },
     accent: "border-violet-200 bg-violet-50 text-violet-700",
     link: "/demos/ai-fabric-live-data-sync",
+  },
+  {
+    id: "ai-fabric-document-knowledge-operations",
+    title: "Document Knowledge Operations",
+    description:
+      "A trusted document lifecycle workbench for previewing, indexing, replacing, retrieving, and exactly deleting text and JSON evidence.",
+    icon: FileStack,
+    features: [
+      { icon: FileStack, label: "Spring AI ETL" },
+      { icon: Search, label: "Scoped Evidence" },
+      { icon: RefreshCw, label: "Versioned Replace" },
+      { icon: Trash2, label: "Exact Delete" },
+    ],
+    stats: [
+      { value: "2", label: "Source types" },
+      { value: "Live", label: "Backend" },
+      { value: "0.8.4", label: "AI Fabric" },
+    ],
+    aboutLink: "/demos/ai-fabric-document-knowledge-operations/about",
+    livePreview: {
+      eyebrow: "Document lifecycle + RAG evidence",
+      prompt: "Preview a trusted source, index it, retrieve its evidence, replace the content, then prove stale chunks are deleted.",
+      proof: "Inspect stable source, version, chunk, plan, manifest, and durable work identities at every lifecycle step.",
+      runtime: "Spring AI document ETL + AI Fabric indexing + Lucene",
+    },
+    accent: "border-indigo-200 bg-indigo-50 text-indigo-700",
+    link: "/demos/ai-fabric-document-knowledge-operations",
   },
   {
     id: "ai-fabric-account-resolver",
@@ -215,7 +244,7 @@ const demos = [
     stats: [
       { value: "4", label: "Scenarios" },
       { value: "Live", label: "Backend" },
-      { value: "0.6.1", label: "AI Fabric" },
+      { value: "0.8.4", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-account-resolver/about",
     livePreview: {
@@ -242,7 +271,7 @@ const demos = [
     stats: [
       { value: "3", label: "Scenarios" },
       { value: "Live", label: "Backend" },
-      { value: "0.6.1", label: "AI Fabric" },
+      { value: "0.8.4", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-behavior-signals/about",
     livePreview: {
@@ -269,7 +298,7 @@ const demos = [
     stats: [
       { value: "3", label: "Tenants" },
       { value: "Live", label: "Backend" },
-      { value: "0.6.1", label: "AI Fabric" },
+      { value: "0.8.4", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-tenant-guard/about",
     livePreview: {
@@ -296,7 +325,7 @@ const demos = [
     stats: [
       { value: "3", label: "Samples" },
       { value: "Live", label: "Backend" },
-      { value: "0.6.1", label: "AI Fabric" },
+      { value: "0.8.4", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-privacy-shield/about",
     livePreview: {
@@ -339,14 +368,15 @@ const Demos = () => {
           >
             <Badge variant="secondary" className="mb-4">
               <Sparkles className="mr-1 h-3 w-3" />
-              Ten live AI-enabled demo apps
+              Eleven live AI-enabled demo apps
             </Badge>
             <h1 className="mb-4 text-4xl font-bold tracking-normal md:text-5xl">
               Live AI-enabled applications backed by Spring Boot
             </h1>
             <p className="mx-auto max-w-3xl text-lg leading-8 text-muted-foreground">
               Each deployed backend uses the AI Fabric enablement framework to add a different capability: RAG,
-              live entity sync, governed actions, memory, behavior analysis, tenant isolation, or PII protection.
+              live entity sync, document knowledge operations, governed actions, memory, behavior analysis,
+              tenant isolation, or PII protection.
             </p>
           </motion.div>
         </section>
@@ -354,7 +384,7 @@ const Demos = () => {
         <section className="container mx-auto px-4 pb-12">
           <div className="flex flex-col gap-3 pb-5 md:flex-row md:items-end md:justify-between">
             <div>
-              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary"><Network className="h-4 w-4" />AI Fabric 0.6.1 execution coverage</div>
+              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary"><Network className="h-4 w-4" />AI Fabric 0.8.4 execution coverage</div>
               <h2 className="text-2xl font-bold tracking-normal">Specialist capabilities you can prove live</h2>
               <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">Each row links a released execution contract to the demo that exposes its source, durability, policy boundary, and visible outcome.</p>
             </div>

@@ -49,6 +49,9 @@ export interface McpToolPolicy {
   toolName: string;
   accessMode: string;
   requiresConfirmation: boolean;
+  dispatchMode: "DIRECT_GATEWAY" | "CONNECTOR" | string;
+  requiredAnyParams: string[];
+  requiredAnyArguments: string[];
   description: string;
 }
 

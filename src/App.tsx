@@ -20,6 +20,7 @@ import AIFabricDeploymentKnowledgeGuard from "./pages/demos/AIFabricDeploymentKn
 import AIFabricHumanReviewDesk from "./pages/demos/AIFabricHumanReviewDesk";
 import AIFabricIncidentInvestigation from "./pages/demos/AIFabricIncidentInvestigation";
 import AIFabricMcpOperations from "./pages/demos/AIFabricMcpOperations";
+import DocumentIntelligenceHub from "./pages/demos/DocumentIntelligenceHub";
 import AIFabricAgenticUI from "./pages/demos/AIFabricAgenticUI";
 import AIFabricBehaviorSignals from "./pages/demos/AIFabricBehaviorSignals";
 import AIFabricLiveDataSync from "./pages/demos/AIFabricLiveDataSync";
@@ -155,7 +156,6 @@ const markdownGuideRoutes: Array<{ path: string; docId: MarkdownGuideId }> = [
 
 const retiredDemoRoutes = [
   "/demos/smart-faq-assistant",
-  "/demos/document-intelligence-hub",
   "/demos/product-discovery-engine",
   "/demos/code-documentation-search",
   "/demos/meeting-notes-analyzer",
@@ -407,6 +407,24 @@ const App = () => (
               <Route
                 path="/demos/ai-fabric-mcp-operations"
                 element={<AIFabricMcpOperations />}
+              />
+              <Route
+                path="/demos/ai-fabric-document-knowledge-operations/about"
+                element={
+                  <DemoAboutPage
+                    architecture={demoBackendArchitectures.documentKnowledgeOperations}
+                    demoLabel="Document Knowledge Operations"
+                    demoPath="/demos/ai-fabric-document-knowledge-operations"
+                  />
+                }
+              />
+              <Route
+                path="/demos/ai-fabric-document-knowledge-operations"
+                element={<DocumentIntelligenceHub />}
+              />
+              <Route
+                path="/demos/document-intelligence-hub"
+                element={<Navigate to="/demos/ai-fabric-document-knowledge-operations" replace />}
               />
               <Route
                 path="/demos/ai-fabric-account-resolver/about"

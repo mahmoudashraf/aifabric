@@ -1020,7 +1020,7 @@ export default function AIFabricAgenticActionResolver() {
             <Card className="border-violet-200 bg-violet-50/60 shadow-none">
               <CardContent className="grid grid-cols-2 gap-3 p-4 text-sm">
                 <div><div className="text-xs text-muted-foreground">Backend</div><div className="mt-1 font-semibold">{health?.status || "Unavailable"}</div></div>
-                <div><div className="text-xs text-muted-foreground">AI Fabric</div><div className="mt-1 font-semibold">{String(health?.aiFabricVersion || "0.6.1")}</div></div>
+                <div><div className="text-xs text-muted-foreground">AI Fabric</div><div className="mt-1 font-semibold">{String(health?.aiFabricVersion || "0.8.4")}</div></div>
                 <div><div className="text-xs text-muted-foreground">Commit</div><div className="mt-1 font-semibold">{compactId(String(health?.commit || "pending deployment"))}</div></div>
                 <div><div className="text-xs text-muted-foreground">Session</div><div className="mt-1 font-semibold">{compactId(session?.sessionId)}</div></div>
               </CardContent>

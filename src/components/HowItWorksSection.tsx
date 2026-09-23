@@ -11,7 +11,7 @@ const tabs = [
     code: `<dependency>
     <groupId>io.github.loom-ai-labs</groupId>
     <artifactId>ai-fabric-starter</artifactId>
-    <version>0.6.1</version>
+    <version>0.8.4</version>
 </dependency>`,
   },
   {

@@ -160,7 +160,7 @@ const guides: Record<MarkdownGuideId, MarkdownGuide> = {
   },
   installation: {
     title: "Installation",
-    description: "Maven coordinates, modules, and baseline configuration for AI Fabric 0.6.1.",
+    description: "Maven coordinates, modules, and baseline configuration for AI Fabric 0.8.4.",
     content: installation,
     sourcePath: "docs/getting-started/02-installation.md",
     sourceUrl: `${frameworkRepoUrl}/docs/getting-started/02-installation.md`,

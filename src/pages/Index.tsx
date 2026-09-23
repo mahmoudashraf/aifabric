@@ -495,7 +495,7 @@ const Index = () => {
               <div className="mx-auto mt-6 grid max-w-3xl grid-cols-3 gap-2 text-left md:mt-8">
                 {[
                   ["10", "AI-enabled demos"],
-                  ["0.6.1", "current release"],
+                  ["0.8.4", "current release"],
                   ["OpenAI", "live provider demos"],
                 ].map(([value, label]) => (
                   <div key={label} className="rounded-md border border-slate-200 bg-white px-3 py-3 shadow-sm md:px-4">
