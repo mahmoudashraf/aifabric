@@ -178,11 +178,15 @@ export interface DurableAnalysisView {
   failure: { reason: string; message: string } | null;
 }
 
-interface RecoveryComparison {
+export interface RecoveryComparison {
   kind: "recovery" | "churn-risk";
   before: InsightSummary | null;
   after: InsightSummary | null;
   addedEventTypes: string[];
+}
+
+export function pendingComparisonForAnalysis(current: RecoveryComparison | null): RecoveryComparison | null {
+  return current && current.after === null ? current : null;
 }
 
 interface AppEventField {
@@ -651,7 +655,7 @@ export default function AIFabricBehaviorSignals() {
     const scheduled = source === "SCHEDULED";
     if (scheduled) setIsScheduledAnalyzing(true);
     else setIsAnalyzing(true);
-    setRecoveryComparison(null);
+    setRecoveryComparison(pendingComparisonForAnalysis);
     setAnalysisError(null);
     try {
       const idempotencyKey = scheduled ? null : newIdempotencyKey(userId);

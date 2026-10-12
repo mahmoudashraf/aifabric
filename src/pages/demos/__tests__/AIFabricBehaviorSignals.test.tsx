@@ -1,9 +1,31 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { DurableAnalysisCard, type DurableAnalysisView } from "../AIFabricBehaviorSignals";
+import {
+  DurableAnalysisCard,
+  pendingComparisonForAnalysis,
+  type DurableAnalysisView,
+  type RecoveryComparison,
+} from "../AIFabricBehaviorSignals";
 
 describe("Behavior Signals durable execution proof", () => {
+  it("preserves a pending event comparison until follow-up analysis supplies the after insight", () => {
+    const pending: RecoveryComparison = {
+      kind: "churn-risk",
+      before: null,
+      after: null,
+      addedEventTypes: ["PAYMENT_FAILED"],
+    };
+    const completed: RecoveryComparison = {
+      ...pending,
+      after: {} as RecoveryComparison["after"],
+    };
+
+    expect(pendingComparisonForAnalysis(pending)).toBe(pending);
+    expect(pendingComparisonForAnalysis(completed)).toBeNull();
+    expect(pendingComparisonForAnalysis(null)).toBeNull();
+  });
+
   it("shows the backend-owned scheduled source and system principal", () => {
     const analysis: DurableAnalysisView = {
       invocationId: "behavior-invocation-123456789",
