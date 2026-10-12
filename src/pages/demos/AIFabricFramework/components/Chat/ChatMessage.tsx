@@ -22,6 +22,7 @@ import {
   RotateCcw,
   Search,
   Send,
+  ShieldCheck,
   ShoppingCart,
   Star,
   UserCheck,
@@ -75,16 +76,98 @@ const hasMeaningfulValue = (value: unknown) => {
   return true;
 };
 
-const isPublicClarificationParam = (metadata: any, key: string) => {
+const clarificationParamSchema = (metadata: any, key: string): any | undefined => {
   const schemas = metadata?.parameterSchemas;
-  if (!schemas || typeof schemas !== "object") return true;
-  const schema =
+  if (!schemas || typeof schemas !== "object") return undefined;
+  return (
     schemas[key] ||
-    Object.entries(schemas).find(([schemaKey]) => schemaKey.toLowerCase() === key.toLowerCase())?.[1];
+    Object.entries(schemas).find(([schemaKey]) => schemaKey.toLowerCase() === key.toLowerCase())?.[1]
+  );
+};
+
+const isPublicClarificationParam = (metadata: any, key: string) => {
+  const schema = clarificationParamSchema(metadata, key);
   if (!schema || typeof schema !== "object") return true;
   if ((schema as any).askUser === false) return false;
   const visibility = String((schema as any).visibility || "").trim().toUpperCase();
   return !["INTERNAL", "SECRET", "SYSTEM"].includes(visibility);
+};
+
+const isNumericSchema = (schema: any) => {
+  const type = String(schema?.type || "").toUpperCase();
+  return type === "NUMBER" || type === "INTEGER";
+};
+
+const isClarificationValueValid = (value: string, schema: any) => {
+  if (!value || !value.trim()) return false;
+  const normalized = value.trim();
+  const allowedValues = Array.isArray(schema?.allowedValues) ? schema.allowedValues.map(String) : [];
+  if (allowedValues.length > 0 && !allowedValues.includes(normalized)) return false;
+  if (schema?.pattern) {
+    try {
+      if (!new RegExp(`^(?:${schema.pattern})$`).test(normalized)) return false;
+    } catch {
+      return false;
+    }
+  }
+  if (isNumericSchema(schema)) {
+    const number = Number(normalized);
+    if (!Number.isFinite(number)) return false;
+    if (String(schema?.type || "").toUpperCase() === "INTEGER" && !Number.isInteger(number)) return false;
+    if (schema?.min != null && number < Number(schema.min)) return false;
+    if (schema?.max != null && number > Number(schema.max)) return false;
+  }
+  return true;
+};
+
+const clarificationConstraintLabel = (schema: any) => {
+  const constraints: string[] = [];
+  if (Array.isArray(schema?.allowedValues) && schema.allowedValues.length > 0) {
+    constraints.push(`Allowed: ${schema.allowedValues.join(" or ")}`);
+  }
+  if (schema?.pattern) constraints.push(`Format: ${schema.pattern}`);
+  if (schema?.min != null) constraints.push(`Minimum: ${schema.min}`);
+  if (schema?.max != null) constraints.push(`Maximum: ${schema.max}`);
+  return constraints.join(" · ");
+};
+
+interface ReadActionProof {
+  planningMode?: string;
+  finalDecision?: string;
+  useRag?: boolean;
+  executedActionsCount: number;
+  deduplicatedActionsCount: number;
+  rejectedActionProposalsCount: number;
+  executedActions: Array<{
+    action?: string;
+    actionExecutionId?: string;
+    groundingSufficiency?: string;
+    success?: boolean;
+  }>;
+}
+
+const toReadActionProof = (value: unknown): ReadActionProof | undefined => {
+  if (!value || typeof value !== "object") return undefined;
+  const raw = value as Record<string, any>;
+  if (raw.attempted !== true && !Array.isArray(raw.executedActions)) return undefined;
+  return {
+    planningMode: raw.planningMode,
+    finalDecision: raw.finalDecision,
+    useRag: raw.useRag,
+    executedActionsCount: Number(raw.executedActionsCount || 0),
+    deduplicatedActionsCount: Number(raw.deduplicatedActionsCount || 0),
+    rejectedActionProposalsCount: Number(raw.rejectedActionProposalsCount || 0),
+    executedActions: Array.isArray(raw.executedActions) ? raw.executedActions : [],
+  };
+};
+
+const readActionProofsFrom = (data: any): ReadActionProof[] => {
+  if (!data || typeof data !== "object") return [];
+  const direct = toReadActionProof(data.readActionResolution);
+  const nested = Array.isArray(data.results)
+    ? data.results.flatMap((item: any) => readActionProofsFrom(item?.data || item?.sanitizedPayload?.data || item))
+    : [];
+  return direct ? [direct, ...nested] : nested;
 };
 
 // Match max-mode getResultStyles pattern
@@ -306,6 +389,7 @@ export function ChatMessage({
     smartSuggestion.query ||
     (smartSuggestion.documents && smartSuggestion.documents.length > 0)
   );
+  const readActionProofs = readActionProofsFrom(message.result?.sanitizedPayload?.data);
 
   return (
     <>
@@ -342,6 +426,37 @@ export function ChatMessage({
                 {content}
               </ReactMarkdown>
             </div>
+
+            {readActionProofs.length > 0 && (
+              <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50/70 p-3 text-emerald-950">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase">
+                    <ShieldCheck className="h-4 w-4" />
+                    READ execution proof
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {readActionProofs.map((proof, index) => (
+                      <span key={`${proof.finalDecision || "read"}-${index}`} className="rounded-full border border-emerald-200 bg-white px-2 py-1 text-[10px] font-semibold">
+                        {proof.planningMode || "READ"} · {proof.executedActionsCount} executed · {proof.deduplicatedActionsCount} deduplicated · {proof.rejectedActionProposalsCount} rejected · {proof.useRag ? "RAG joined" : "action only"}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                {readActionProofs.some((proof) => proof.executedActions.length > 0) && (
+                  <div className="mt-3 space-y-2">
+                    {readActionProofs.flatMap((proof) => proof.executedActions).map((action, index) => (
+                    <div key={`${action.actionExecutionId || action.action || "action"}-${index}`} className="flex flex-wrap items-center justify-between gap-2 rounded-md bg-white px-3 py-2 text-xs">
+                      <span className="font-semibold">{action.action || "Approved read action"}</span>
+                      <span className="font-mono text-[10px] text-emerald-800">
+                        {action.actionExecutionId || "execution id unavailable"}
+                      </span>
+                      <span>{action.groundingSufficiency || (action.success === false ? "FAILED" : "EXECUTED")}</span>
+                    </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Action result data - use correct path like max-mode */}
             {message.result?.sanitizedPayload?.type === "ACTION_EXECUTED" &&
@@ -464,7 +579,7 @@ export function ChatMessage({
               const missingParams: string[] = data?.missingRequiredParameters || [];
               const providedParams: Record<string, any> = data?.providedParameters || {};
               const actionName: string = data?.action || "";
-              const metadata = data?.metadata;
+              const metadata = data?.metadata || message.result?.metadata;
               const askableMissingParams = missingParams.filter((key) => isPublicClarificationParam(metadata, key));
               const hasForm = askableMissingParams.length > 0;
 
@@ -487,7 +602,7 @@ export function ChatMessage({
 
               const canSubmit = allKeys.every((key) => {
                 const val = clarificationValues[key] ?? formValues[key];
-                return val && val.trim() !== "";
+                return isClarificationValueValid(val, clarificationParamSchema(metadata, key));
               });
 
               const handleFieldChange = (key: string, value: string) => {
@@ -496,13 +611,18 @@ export function ChatMessage({
 
               const handleSubmit = () => {
                 if (!canSubmit || clarificationSubmitted || !onClarificationSubmit) return;
+                const hasDeclaredSchemas = metadata?.parameterSchemas && typeof metadata.parameterSchemas === "object";
                 const finalValues: Record<string, any> = Object.fromEntries(
-                  Object.entries(providedParams).filter(([, value]) => hasMeaningfulValue(value)),
+                  Object.entries(providedParams).filter(([key, value]) =>
+                    hasMeaningfulValue(value) &&
+                    isPublicClarificationParam(metadata, key) &&
+                    (!hasDeclaredSchemas || Boolean(clarificationParamSchema(metadata, key))),
+                  ),
                 );
                 for (const key of allKeys) {
                   const val = clarificationValues[key] ?? formValues[key];
-                  // Try to preserve original types (number)
-                  if (typeof providedParams[key] === "number") {
+                  const schema = clarificationParamSchema(metadata, key);
+                  if (isNumericSchema(schema) || typeof providedParams[key] === "number") {
                     const num = Number(val);
                     finalValues[key] = isNaN(num) ? val : num;
                   } else {
@@ -551,6 +671,10 @@ export function ChatMessage({
                           const hasValue = hasProvidedValue(key);
                           const isEditing = clarificationEditingField === key || missing || !hasValue;
                           const currentValue = clarificationValues[key] ?? formValues[key];
+                          const schema = clarificationParamSchema(metadata, key);
+                          const allowedValues = Array.isArray(schema?.allowedValues) ? schema.allowedValues.map(String) : [];
+                          const constraintLabel = clarificationConstraintLabel(schema);
+                          const valueIsValid = !currentValue || isClarificationValueValid(currentValue, schema);
 
                           return (
                             <div key={key} className="space-y-1">
@@ -574,17 +698,29 @@ export function ChatMessage({
                                 )}
                               </div>
 
-                              {isEditing ? (
+                              {isEditing && allowedValues.length > 0 ? (
+                                <select
+                                  value={currentValue}
+                                  onChange={(e) => handleFieldChange(key, e.target.value)}
+                                  className="w-full rounded-lg border-2 border-orange-200 bg-white px-3 py-2 text-sm transition-all focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-orange-700 dark:bg-gray-800"
+                                >
+                                  <option value="">Select an allowed value</option>
+                                  {allowedValues.map((value) => <option key={value} value={value}>{value}</option>)}
+                                </select>
+                              ) : isEditing ? (
                                 <input
-                                  type="text"
+                                  type={isNumericSchema(schema) ? "number" : "text"}
                                   value={currentValue}
                                   onChange={(e) => handleFieldChange(key, e.target.value)}
                                   onKeyDown={(e) => {
                                     if (e.key === "Enter" && canSubmit) handleSubmit();
                                   }}
                                   placeholder={`Enter ${key.replace(/([A-Z])/g, " $1").toLowerCase().trim()}...`}
+                                  min={schema?.min ?? undefined}
+                                  max={schema?.max ?? undefined}
+                                  pattern={schema?.pattern || undefined}
                                   className={`w-full px-3 py-2 text-sm rounded-lg border-2 bg-white dark:bg-gray-800 transition-all focus:outline-none focus:ring-2 ${
-                                    missing && (!currentValue || !currentValue.trim())
+                                    missing && (!currentValue || !currentValue.trim() || !valueIsValid)
                                       ? "border-red-300 dark:border-red-600 focus:ring-red-500/30 focus:border-red-400"
                                       : "border-orange-200 dark:border-orange-700 focus:ring-orange-500/30 focus:border-orange-400"
                                   }`}
@@ -600,6 +736,11 @@ export function ChatMessage({
                                   <span className="text-gray-800 dark:text-gray-200 font-medium">{currentValue}</span>
                                   <Edit3 className="h-3 w-3 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                                 </div>
+                              )}
+                              {constraintLabel && (
+                                <p className={`text-[10px] ${valueIsValid ? "text-muted-foreground" : "font-semibold text-red-600 dark:text-red-400"}`}>
+                                  {constraintLabel}
+                                </p>
                               )}
                             </div>
                           );

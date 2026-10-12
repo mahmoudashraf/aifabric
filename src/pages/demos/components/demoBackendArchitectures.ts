@@ -158,7 +158,7 @@ export const demoBackendArchitectures = {
   },
   incidentInvestigation: {
     title: "Incident Investigation Room backend",
-    status: "AI Fabric 0.8.4 live backend",
+    status: "AI Fabric 0.8.30 live backend",
     tone: "live",
     backendApp: "examples/real-apps/incident-investigation-room",
     publicBackend: "https://ai-fabric-incident-investigation.46.224.145.148.sslip.io",
@@ -531,7 +531,7 @@ export const demoBackendArchitectures = {
       ],
     },
     dependencies: [
-      "Spring Boot Web, Validation, Actuator, smoke-support, and AI Fabric 0.8.4 modules.",
+      "Spring Boot Web, Validation, Actuator, smoke-support, and AI Fabric 0.8.30 modules.",
       "No application database is required; Lucene stores the immutable demo evidence vectors.",
     ],
     modules: [
@@ -1255,7 +1255,7 @@ export const demoBackendArchitectures = {
   },
   documentKnowledgeOperations: {
     title: "Document Knowledge Operations backend",
-    status: "AI Fabric 0.8.4 live backend",
+    status: "AI Fabric 0.8.30 live backend",
     tone: "live",
     backendApp: "examples/real-apps/document-ingestion-workbench",
     publicBackend: "https://ai-fabric-document-knowledge-operations.46.224.145.148.sslip.io",

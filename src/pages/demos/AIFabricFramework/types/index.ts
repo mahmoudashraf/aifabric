@@ -71,6 +71,7 @@ export interface NextStep {
 export interface ChatResult {
   type: ResultType;
   success: boolean;
+  metadata?: any;
   smartSuggestion?: SmartSuggestion;
   nextSteps?: NextStep[];
   sanitizedPayload: SanitizedPayload;
@@ -89,6 +90,11 @@ export interface Document {
 
 export type ChatPosition = "landing" | "catalog" | "search" | "product_detail" | "cart" | "checkout" | "orders" | "support";
 export type ChatMode = "navigator" | "navigator_deep" | "cart_assistant" | "executor";
+
+export interface ActionDraftSubmission {
+  action: string;
+  parameters: Record<string, unknown>;
+}
 
 export interface ChatMessage {
   id: string;

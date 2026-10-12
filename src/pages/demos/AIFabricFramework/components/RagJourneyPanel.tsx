@@ -373,6 +373,19 @@ export function RagJourneyPanel({
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+              {[
+                "Compound live + RAG",
+                "Cross-turn target",
+                "Exact-once READ",
+                "Retention intercept",
+              ].map((capability) => (
+                <div key={capability} className="flex items-center gap-2 rounded-lg border bg-muted/20 px-3 py-2 text-xs font-semibold">
+                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+                  {capability}
+                </div>
+              ))}
+            </div>
             <div className="rounded-lg border bg-background p-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">

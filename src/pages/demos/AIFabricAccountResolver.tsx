@@ -120,6 +120,11 @@ interface ResolverOrchestrationResponse {
   readiness?: AccountReadiness;
 }
 
+interface ActionDraftSubmission {
+  action: string;
+  parameters: Record<string, unknown>;
+}
+
 function asRecord(value: unknown): JsonRecord {
   return typeof value === "object" && value !== null ? (value as JsonRecord) : {};
 }
@@ -681,7 +686,7 @@ const AIFabricAccountResolver = () => {
   };
 
   const sendResolverQuery = useCallback(
-    async (queryOverride?: string) => {
+    async (queryOverride?: string, actionDraftSubmission?: ActionDraftSubmission) => {
       const queryToSend = (queryOverride || chatQuery).trim();
       if (!queryToSend || isChatLoading) return;
 
@@ -707,6 +712,7 @@ const AIFabricAccountResolver = () => {
             conversationId: conversationIdRef.current,
             mode: "resolver",
             position: "resolver",
+            actionDraftSubmission,
           }),
         });
 
@@ -784,7 +790,10 @@ const AIFabricAccountResolver = () => {
   };
 
   const handleClarificationSubmit = (action: string, parameters: Record<string, unknown>) => {
-    sendResolverQuery(`Continue ${action} with these details: ${JSON.stringify(parameters)}`);
+    sendResolverQuery(
+      `Continue with the ${formatActionName(action).toLowerCase()} details I entered.`,
+      { action, parameters },
+    );
   };
 
   const handleInputKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -1044,6 +1053,19 @@ const AIFabricAccountResolver = () => {
                         <Send className="h-3.5 w-3.5 text-muted-foreground" />
                       </button>
                     ))}
+                  </div>
+
+                  <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50/70 p-3">
+                    <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase text-blue-900">
+                      <ShieldCheck className="h-3.5 w-3.5" />
+                      Typed action contract
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      <Badge variant="outline" className="bg-white text-[10px]">Card: exactly 4 digits</Badge>
+                      <Badge variant="outline" className="bg-white text-[10px]">Refund: positive amount</Badge>
+                      <Badge variant="outline" className="bg-white text-[10px]">Resolution: allowed values</Badge>
+                      <Badge variant="outline" className="bg-white text-[10px]">Unknown fields rejected</Badge>
+                    </div>
                   </div>
 
                   <div className="mt-4 rounded-lg border bg-muted/30 p-3">

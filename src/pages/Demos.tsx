@@ -51,7 +51,7 @@ const demos = [
     stats: [
       { value: "8", label: "Decision paths" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.4", label: "AI Fabric" },
+      { value: "0.8.30", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-agentic-action-resolver/about",
     livePreview: {
@@ -79,7 +79,7 @@ const demos = [
     stats: [
       { value: "4", label: "Contexts" },
       { value: "Ready", label: "Backend" },
-      { value: "0.8.4", label: "AI Fabric" },
+      { value: "0.8.30", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-deployment-knowledge-guard/about",
     livePreview: {
@@ -96,24 +96,24 @@ const demos = [
     id: "ai-fabric-incident-investigation",
     title: "Incident Investigation Room",
     description:
-      "A bounded manager adaptively selects one or more incident specialists, while AI Fabric validates every transition, citation, deadline, and durable replay.",
+      "A bounded manager selects incident specialists and approved READ actions while AI Fabric exposes citations, parameter repair, execution IDs, deadlines, and durable replay.",
     icon: Siren,
     features: [
       { icon: Network, label: "Adaptive Specialist Chain" },
       { icon: Layers, label: "Sequential + Parallel" },
       { icon: ShieldCheck, label: "Durable Safe Replay" },
-      { icon: Search, label: "Projected Evidence" },
+      { icon: Search, label: "Repair + Evidence Proof" },
     ],
     stats: [
       { value: "5", label: "Directive types" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.4", label: "AI Fabric" },
+      { value: "0.8.30", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-incident-investigation/about",
     livePreview: {
       eyebrow: "Bounded multi-specialist intelligence",
       prompt: "Describe one incident and let the manager decide whether health, change risk, both, or no worker is needed.",
-      proof: "Inspect adaptive and parallel decisions, safe result attribution, fail-closed branches, cancellation, and restart-safe replay.",
+      proof: "Inspect adaptive and parallel decisions, rejected parameter proposals, bounded repair, READ execution IDs, fail-closed branches, cancellation, and restart-safe replay.",
       runtime: "AI Fabric chain manager + leaf specialists + JDBC checkpoints + scoped evidence",
     },
     accent: "border-amber-200 bg-amber-50 text-amber-800",
@@ -135,7 +135,7 @@ const demos = [
     stats: [
       { value: "3", label: "Remote tools" },
       { value: "3", label: "Services" },
-      { value: "0.8.4", label: "AI Fabric" },
+      { value: "0.8.30", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-mcp-operations/about",
     livePreview: {
@@ -152,24 +152,24 @@ const demos = [
     id: "ai-shopping-experience",
     title: "AI Shopping Experience",
     description:
-      "Commerce demo with staged RAG evidence, product search, chat memory, cart actions, and checkout confirmation.",
+      "Commerce demo with compound live-state and RAG answers, cross-turn memory, exact-once READ proof, cart actions, and confirmation interception.",
     icon: ShoppingBag,
     features: [
       { icon: Search, label: "Semantic Search" },
       { icon: Bot, label: "RAG Chat" },
       { icon: ShoppingBag, label: "Cart Actions" },
-      { icon: Zap, label: "Confirmation Flow" },
+      { icon: Zap, label: "Governed Confirmation" },
     ],
     stats: [
       { value: "5", label: "RAG stages" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.4", label: "AI Fabric" },
+      { value: "0.8.30", label: "AI Fabric" },
     ],
     aboutLink: `${AI_SHOPPING_EXPERIENCE_ROUTE}/about`,
     livePreview: {
       eyebrow: "Commerce RAG + actions",
-      prompt: "Find high performance laptops, compare evidence, add one to cart, then checkout.",
-      proof: "Stage data from no evidence to full product, policy, review, coupon, and support vectors.",
+      prompt: "Combine live inventory with policy evidence, ask which of those, then exercise cart, checkout, and cancellation retention.",
+      proof: "Inspect action execution IDs and deduplication while staging product, policy, review, coupon, and support evidence.",
       runtime: "OpenAI + AI Fabric RAG + action orchestration",
     },
     accent: "border-blue-200 bg-blue-50 text-blue-700",
@@ -190,7 +190,7 @@ const demos = [
     stats: [
       { value: "3", label: "Entity types" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.4", label: "AI Fabric" },
+      { value: "0.8.30", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-live-data-sync/about",
     livePreview: {
@@ -217,7 +217,7 @@ const demos = [
     stats: [
       { value: "2", label: "Source types" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.4", label: "AI Fabric" },
+      { value: "0.8.30", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-document-knowledge-operations/about",
     livePreview: {
@@ -233,24 +233,24 @@ const demos = [
     id: "ai-fabric-account-resolver",
     title: "AI Fabric Account Resolver",
     description:
-      "Policy-guided account resolution with profile reads, payment/address updates, cancellation, refunds, and confirmations.",
+      "Policy-guided account resolution with structured payment/address drafts, strict schemas, cancellation, refunds, and confirmations.",
     icon: CreditCard,
     features: [
       { icon: Shield, label: "Policy Retrieval" },
       { icon: MessageSquare, label: "Resolver Chat" },
-      { icon: CreditCard, label: "Confirmed Actions" },
+      { icon: CreditCard, label: "Typed Action Drafts" },
       { icon: Zap, label: "Chat Memory" },
     ],
     stats: [
       { value: "4", label: "Scenarios" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.4", label: "AI Fabric" },
+      { value: "0.8.30", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-account-resolver/about",
     livePreview: {
       eyebrow: "Resolver mode",
       prompt: "Why can't I place an order? If payment is missing, help me resolve it safely.",
-      proof: "AI reads profile data and policies, proposes confirmed actions, and executes only after approval.",
+      proof: "AI reads profile data and policies; typed forms enforce exact card, refund, address, and unknown-field contracts before confirmation.",
       runtime: "OpenAI + chat-session memory + policy RAG",
     },
     accent: "border-emerald-200 bg-emerald-50 text-emerald-700",
@@ -271,7 +271,7 @@ const demos = [
     stats: [
       { value: "3", label: "Scenarios" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.4", label: "AI Fabric" },
+      { value: "0.8.30", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-behavior-signals/about",
     livePreview: {
@@ -298,7 +298,7 @@ const demos = [
     stats: [
       { value: "3", label: "Tenants" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.4", label: "AI Fabric" },
+      { value: "0.8.30", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-tenant-guard/about",
     livePreview: {
@@ -325,7 +325,7 @@ const demos = [
     stats: [
       { value: "3", label: "Samples" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.4", label: "AI Fabric" },
+      { value: "0.8.30", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-privacy-shield/about",
     livePreview: {
@@ -350,6 +350,10 @@ const executionProofs = [
   { capability: "Human review", runtime: "Approve, reject, correct, request information, escalate", source: "APPLICATION", durability: "Durable task", demo: "Review Desk", route: "/demos/ai-fabric-agentic-action-resolver/review" },
   { capability: "Fixed specialist plans", runtime: "Sequential or parallel branches with ALL_REQUIRED fan-in", source: "APPLICATION", durability: "Ephemeral", demo: "Incident Room", route: "/demos/ai-fabric-incident-investigation" },
   { capability: "Specialist-owned evidence discovery", runtime: "Model selects allowlisted READ actions and cites authorized candidates", source: "APPLICATION", durability: "Ephemeral", demo: "Incident Room", route: "/demos/ai-fabric-incident-investigation" },
+  { capability: "Bounded READ-action repair", runtime: "Invalid planner parameters are rejected, repaired within schema, and linked to exact execution IDs", source: "APPLICATION", durability: "Visible diagnostics", demo: "Incident Room", route: "/demos/ai-fabric-incident-investigation" },
+  { capability: "Compound live state + RAG", runtime: "Authoritative catalog reads cooperate with indexed policy evidence and backend-owned follow-up targets", source: "INTERACTIVE", durability: "Chat session", demo: "Shopping", route: "/demos/ai-shopping-experience" },
+  { capability: "Structured action draft", runtime: "Typed browser fields continue the pending action without natural-language parameter reconstruction", source: "INTERACTIVE", durability: "Pending action", demo: "Account Resolver", route: "/demos/ai-fabric-account-resolver" },
+  { capability: "Confirmation interception", runtime: "A confirmed cancellation is intercepted once by application-owned retention policy", source: "INTERACTIVE", durability: "Pending stack", demo: "Shopping", route: "/demos/ai-shopping-experience" },
   { capability: "Delegation and handoff", runtime: "One bounded transition with visible lineage", source: "APPLICATION", durability: "Ephemeral", demo: "Incident Room", route: "/demos/ai-fabric-incident-investigation" },
   { capability: "Remote MCP execution", runtime: "Exact server/tool binding and trusted arguments", source: "INTERACTIVE", durability: "Durable write", demo: "MCP Operations", route: "/demos/ai-fabric-mcp-operations" },
 ];
@@ -384,7 +388,7 @@ const Demos = () => {
         <section className="container mx-auto px-4 pb-12">
           <div className="flex flex-col gap-3 pb-5 md:flex-row md:items-end md:justify-between">
             <div>
-              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary"><Network className="h-4 w-4" />AI Fabric 0.8.4 execution coverage</div>
+              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary"><Network className="h-4 w-4" />AI Fabric 0.8.30 execution coverage</div>
               <h2 className="text-2xl font-bold tracking-normal">Specialist capabilities you can prove live</h2>
               <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">Each row links a released execution contract to the demo that exposes its source, durability, policy boundary, and visible outcome.</p>
             </div>

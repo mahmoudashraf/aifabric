@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { DecisionTrace, SmartChainTimeline, TransitionView } from "../AIFabricIncidentInvestigation";
+import { DecisionTrace, SmartChainTimeline, SmartProjectionCard, TransitionView } from "../AIFabricIncidentInvestigation";
 
 describe("Incident Investigation decision surfaces", () => {
   it("renders a valid no-transition intake result without dereferencing null lineage", () => {
@@ -154,5 +154,30 @@ describe("Incident Investigation decision surfaces", () => {
     expect(screen.getByText("service-health-reader@2")).toBeInTheDocument();
     expect(screen.getByText("change-risk-reader@2")).toBeInTheDocument();
     expect(screen.getAllByText("SUCCEEDED")).toHaveLength(2);
+  });
+
+  it("shows bounded planner repair, exact read executions, and cited evidence", () => {
+    render(<SmartProjectionCard projection={{
+      resultId: "result-service-health",
+      specialist: "service-health-reader@2",
+      summary: "Service health was derived from approved live sources and runbook evidence.",
+      facts: {
+        service: "commerce-api",
+        status: "DEGRADED",
+        plannerIterations: "2",
+        rejectedActionProposalCount: "1",
+        repairApplied: "true",
+        readActionExecutionIds: "read-exec-metrics,read-exec-alerts",
+      },
+      evidenceReferenceIds: ["runbook-payment-rollback"],
+    }} />);
+
+    expect(screen.getByText("2 planner iterations")).toBeInTheDocument();
+    expect(screen.getByText("1 rejected proposal")).toBeInTheDocument();
+    expect(screen.getByText("Bounded repair applied")).toBeInTheDocument();
+    expect(screen.getByText("READ read-exec-metrics")).toBeInTheDocument();
+    expect(screen.getByText("READ read-exec-alerts")).toBeInTheDocument();
+    expect(screen.getByText("Evidence runbook-payment-rollback")).toBeInTheDocument();
+    expect(screen.getByText("DEGRADED")).toBeInTheDocument();
   });
 });

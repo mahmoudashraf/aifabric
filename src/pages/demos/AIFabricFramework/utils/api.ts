@@ -12,6 +12,7 @@ import type {
   ChatMode,
   DemoHealth,
   DemoReadiness,
+  ActionDraftSubmission,
 } from "../types";
 
 function readCount(data: any, ...keys: string[]): number {
@@ -143,6 +144,7 @@ export async function sendChatQuery(
   attachments?: any[],
   position?: ChatPosition,
   mode?: ChatMode,
+  actionDraftSubmission?: ActionDraftSubmission,
 ): Promise<any> {
   // Let backend map position to mode unless the UI explicitly selected a specialized mode.
   const explicitMode = (mode === "navigator_deep" || mode === "cart_assistant" || mode === "executor") ? mode : undefined;
@@ -158,6 +160,7 @@ export async function sendChatQuery(
       position: position || "landing",
       ...(explicitMode ? { mode: explicitMode } : {}),
       attachments: attachments && attachments.length > 0 ? attachments : undefined,
+      actionDraftSubmission,
     }),
   });
   if (!response.ok) {

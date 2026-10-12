@@ -60,6 +60,7 @@ import {
   PlanStepTrace,
   SmartInvestigationExecution,
   SmartInvestigationResult,
+  SpecialistChainResultView,
   SpecialistChainStepTrace,
   SpecialistDecisionTrace,
   durationMs,
@@ -85,6 +86,7 @@ const SMART_SCENARIOS = [
   ["Health only", "Is checkout healthy right now?"],
   ["Adaptive cause", "Why is this service timing out? Investigate the likely cause."],
   ["Parallel evidence", "Checkout degraded after deployment. Investigate both health and change risk."],
+  ["Bounded repair", "Inspect service metrics from the last 600 minutes and return no more than 20 events. Use only the approved read actions and repair rejected parameters within their declared contract."],
   ["No material change", "Did a recent deployment cause this incident? Report only what the approved evidence supports."],
   ["Clarify", "Something is wrong."],
   ["No worker", "What can you investigate?"],
@@ -432,15 +434,7 @@ function SmartInvestigationExecutionView({ execution, onCancel, onReplay, busy }
           <div>
             <h3 className="flex items-center gap-2 text-sm font-semibold"><ShieldCheck className="h-4 w-4 text-emerald-600" />Application-approved worker projections</h3>
             <div className="mt-3 grid gap-3 lg:grid-cols-2">
-              {result.results.map((projection) => (
-                <div key={projection.resultId} className="rounded-md border p-4">
-                  <p className="font-semibold">{projection.specialist}</p>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{projection.summary}</p>
-                  <dl className="mt-3 grid gap-2 border-t pt-3 text-xs">
-                    {Object.entries(projection.facts).map(([name, value]) => <div key={name} className="grid gap-1 sm:grid-cols-[150px_1fr]"><dt className="font-semibold text-muted-foreground">{humanize(name)}</dt><dd className="break-words">{value || "None"}</dd></div>)}
-                  </dl>
-                </div>
-              ))}
+              {result.results.map((projection) => <SmartProjectionCard key={projection.resultId} projection={projection} />)}
             </div>
           </div>
         )}
@@ -455,6 +449,55 @@ function SmartInvestigationExecutionView({ execution, onCancel, onReplay, busy }
         </div>
       </div>
     </section>
+  );
+}
+
+const DIAGNOSTIC_FACTS = new Set([
+  "plannerIterations",
+  "rejectedActionProposalCount",
+  "repairApplied",
+  "readActionExecutionIds",
+]);
+
+export function SmartProjectionCard({ projection }: { projection: SpecialistChainResultView }) {
+  const iterations = Number(projection.facts.plannerIterations || 0);
+  const rejected = Number(projection.facts.rejectedActionProposalCount || 0);
+  const repaired = projection.facts.repairApplied === "true";
+  const executionIds = String(projection.facts.readActionExecutionIds || "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+  const domainFacts = Object.entries(projection.facts).filter(([name]) => !DIAGNOSTIC_FACTS.has(name));
+
+  return (
+    <div className="rounded-md border p-4">
+      <p className="font-semibold">{projection.specialist}</p>
+      <p className="mt-2 text-sm leading-6 text-muted-foreground">{projection.summary}</p>
+      <div className="mt-3 rounded-md border border-blue-200 bg-blue-50 p-3">
+        <div className="flex items-center gap-2 text-xs font-semibold uppercase text-blue-900">
+          <ShieldCheck className="h-3.5 w-3.5" />
+          Planner and execution proof
+        </div>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          <Badge variant="outline" className="bg-white">{iterations} planner iteration{iterations === 1 ? "" : "s"}</Badge>
+          <Badge variant="outline" className={rejected > 0 ? "border-amber-300 bg-amber-50 text-amber-900" : "bg-white"}>{rejected} rejected proposal{rejected === 1 ? "" : "s"}</Badge>
+          <Badge variant="outline" className={repaired ? "border-emerald-300 bg-emerald-50 text-emerald-900" : "bg-white"}>{repaired ? "Bounded repair applied" : "No repair required"}</Badge>
+        </div>
+        {executionIds.length > 0 && (
+          <div className="mt-2 space-y-1 font-mono text-[10px] text-blue-900">
+            {executionIds.map((id) => <div key={id} className="break-all">READ {id}</div>)}
+          </div>
+        )}
+      </div>
+      <dl className="mt-3 grid gap-2 border-t pt-3 text-xs">
+        {domainFacts.map(([name, value]) => <div key={name} className="grid gap-1 sm:grid-cols-[150px_1fr]"><dt className="font-semibold text-muted-foreground">{humanize(name)}</dt><dd className="break-words">{value || "None"}</dd></div>)}
+      </dl>
+      {projection.evidenceReferenceIds.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-1.5 border-t pt-3">
+          {projection.evidenceReferenceIds.map((id) => <Badge key={id} variant="secondary">Evidence {id}</Badge>)}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -757,6 +800,11 @@ export default function AIFabricIncidentInvestigation() {
                 <Textarea id="smart-investigation-question" className="mt-2 min-h-28 resize-y bg-white" value={smartQuestion} onChange={(event) => setSmartQuestion(event.target.value)} />
                 <div className="mt-3 flex flex-wrap gap-2">
                   {SMART_SCENARIOS.map(([label, prompt]) => <Button key={label} type="button" size="sm" variant="outline" className="bg-white" onClick={() => setSmartQuestion(prompt)}>{label}</Button>)}
+                </div>
+                <div className="mt-4 flex flex-wrap gap-2 text-xs">
+                  <Badge variant="outline" className="bg-white">Window 5-180 minutes</Badge>
+                  <Badge variant="outline" className="bg-white">Limit 1-6 events</Badge>
+                  <Badge variant="outline" className="border-amber-300 bg-amber-50 text-amber-900">Bounded repair remains visible</Badge>
                 </div>
                 <Button className="mt-5" size="lg" onClick={() => void runSmartInvestigation()} disabled={!session || Boolean(busy) || !smartQuestion.trim() || chainIsActive(smartExecution?.status)}>
                   {busy === "smart" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <BrainCircuit className="mr-2 h-4 w-4" />}Investigate with AI Fabric

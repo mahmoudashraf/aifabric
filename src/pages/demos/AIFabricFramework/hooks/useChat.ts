@@ -630,11 +630,7 @@ export function useChat() {
   // Handle clarification form submission
   const handleClarificationSubmit = useCallback(
     async (action: string, parameters: Record<string, any>) => {
-      // Build a natural language query with the parameters
-      const paramStr = Object.entries(parameters)
-        .map(([key, value]) => `${key}: ${value}`)
-        .join(", ");
-      const query = `Proceed with ${action.replace(/_/g, " ")} using: ${paramStr}`;
+      const query = `Continue with the ${action.replace(/_/g, " ")} details I entered.`;
 
       const userMessage: ChatMessage = {
         id: Date.now().toString(),
@@ -660,6 +656,7 @@ export function useChat() {
             : undefined,
           currentPosition,
           currentMode,
+          { action, parameters },
         );
 
         if (data.conversationId && !currentConversationId) {

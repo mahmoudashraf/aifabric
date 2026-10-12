@@ -51,7 +51,7 @@ describe("DocumentIntelligenceHub", () => {
     const fetchMock = vi.spyOn(globalThis, "fetch").mockImplementation((input, init) => {
       const url = String(input);
       if (url.endsWith("/api/demo/health")) {
-        return response({ status: "UP", aiFabricVersion: "0.8.4", commit: "abc123" });
+        return response({ status: "UP", aiFabricVersion: "0.8.30", commit: "abc123" });
       }
       if (url.endsWith("/api/document-demo/sessions") && init?.method === "POST") {
         return response(session);

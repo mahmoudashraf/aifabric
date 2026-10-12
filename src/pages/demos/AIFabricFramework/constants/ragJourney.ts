@@ -5,10 +5,14 @@ export type RagJourneySeedStage = "products" | "reviews" | "policies" | "coupons
 export type RagJourneyPromptKey =
   | "gaming_laptop_analysis"
   | "review_guided_comparison"
+  | "compound_catalog_policy"
+  | "contextual_follow_up"
   | "return_policy"
   | "discount_search"
   | "cart_action"
   | "checkout_action"
+  | "active_orders"
+  | "cancel_recent_order"
   | "support_ticket";
 
 export interface RagJourneyPrompt {
@@ -42,6 +46,18 @@ export const RAG_JOURNEY_PROMPTS: Record<RagJourneyPromptKey, RagJourneyPrompt> 
     text: "Compare high-performance gaming laptops using customer reviews. Highlight strengths, complaints, and best fit.",
     position: "product_detail",
   },
+  compound_catalog_policy: {
+    key: "compound_catalog_policy",
+    label: "Live inventory + policy",
+    text: "Which gaming laptops are currently under $2,000, and what does the indexed return policy say about returning one after opening it?",
+    position: "search",
+  },
+  contextual_follow_up: {
+    key: "contextual_follow_up",
+    label: "Which of those?",
+    text: "Which of those is better for travel?",
+    position: "search",
+  },
   return_policy: {
     key: "return_policy",
     label: "Return policy",
@@ -65,6 +81,18 @@ export const RAG_JOURNEY_PROMPTS: Record<RagJourneyPromptKey, RagJourneyPrompt> 
     label: "Checkout",
     text: "Checkout my cart and place the order.",
     position: "checkout",
+  },
+  active_orders: {
+    key: "active_orders",
+    label: "1. Find active order",
+    text: "Show my active orders.",
+    position: "orders",
+  },
+  cancel_recent_order: {
+    key: "cancel_recent_order",
+    label: "2. Cancel that order",
+    text: "Cancel the most recent one.",
+    position: "orders",
   },
   support_ticket: {
     key: "support_ticket",
@@ -112,7 +140,7 @@ export const RAG_JOURNEY_STAGES: RagJourneyStage[] = [
     dataLabel: "Products, reviews, and policies",
     seedStage: "policies",
     expectedVectorSpaces: ["product", "review", "policy"],
-    promptKeys: ["return_policy"],
+    promptKeys: ["return_policy", "compound_catalog_policy"],
   },
   {
     key: "coupons",
@@ -132,7 +160,7 @@ export const RAG_JOURNEY_STAGES: RagJourneyStage[] = [
     dataLabel: "Full commerce fixture set",
     seedStage: "full",
     expectedVectorSpaces: ["product", "review", "policy"],
-    promptKeys: ["cart_action", "checkout_action", "support_ticket"],
+    promptKeys: ["cart_action", "checkout_action", "active_orders", "cancel_recent_order", "contextual_follow_up", "support_ticket"],
   },
 ];
 
