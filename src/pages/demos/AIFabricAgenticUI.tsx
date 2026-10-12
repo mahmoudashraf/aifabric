@@ -874,8 +874,8 @@ export default function AIFabricAgenticUI() {
             </div>
           </div>
 
-          <div className="grid gap-6 xl:grid-cols-[300px_minmax(0,1fr)_330px]">
-            <aside className="rounded-lg border bg-card p-4 shadow-sm">
+          <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6 xl:grid-cols-[300px_minmax(0,1fr)_330px]">
+            <aside className="min-w-0 rounded-lg border bg-card p-4 shadow-sm">
               <div className="mb-4">
                 <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Same behavior session</p>
                 <h2 className="mt-1 text-xl font-semibold">Current users</h2>
@@ -1048,7 +1048,7 @@ export default function AIFabricAgenticUI() {
               </div>
             </section>
 
-            <aside className="rounded-lg border bg-card p-4 shadow-sm">
+            <aside className="min-w-0 rounded-lg border bg-card p-4 shadow-sm">
               <div className="mb-4 flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   <LayoutDashboard className="h-5 w-5" />

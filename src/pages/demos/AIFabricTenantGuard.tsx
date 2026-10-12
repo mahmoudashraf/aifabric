@@ -1033,8 +1033,8 @@ export default function AIFabricTenantGuard() {
               </div>
             </div>
           </CardHeader>
-          <CardContent className="grid gap-4 xl:grid-cols-[1.1fr_1.35fr_0.9fr]">
-            <div className="space-y-3">
+          <CardContent className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-[1.1fr_1.35fr_0.9fr]">
+            <div className="min-w-0 space-y-3">
               <div className="rounded-md border border-blue-100 bg-blue-50 p-4">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <div>
@@ -1105,7 +1105,7 @@ export default function AIFabricTenantGuard() {
                       setRagQuery(prompt);
                       setRagResponse(null);
                     }}
-                    className="justify-start"
+                    className="h-auto justify-start whitespace-normal py-2 text-left leading-5"
                   >
                     {prompt}
                   </Button>
