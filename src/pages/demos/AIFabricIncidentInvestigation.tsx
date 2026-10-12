@@ -86,7 +86,7 @@ const SMART_SCENARIOS = [
   ["Health only", "Is checkout healthy right now?"],
   ["Adaptive cause", "Why is this service timing out? Investigate the likely cause."],
   ["Parallel evidence", "Checkout degraded after deployment. Investigate both health and change risk."],
-  ["Bounded repair", "Inspect service metrics from the last 600 minutes and return no more than 20 events. Use only the approved read actions and repair rejected parameters within their declared contract."],
+  ["Bounded repair", "Inspect only current service health using service metrics from the last 600 minutes and return no more than 20 events. Do not investigate deployments, recent changes, or causes. Use only approved read actions and repair rejected parameters within their declared contract."],
   ["No material change", "Did a recent deployment cause this incident? Report only what the approved evidence supports."],
   ["Clarify", "Something is wrong."],
   ["No worker", "What can you investigate?"],
