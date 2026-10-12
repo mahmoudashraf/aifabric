@@ -83,7 +83,7 @@ const DEFAULT_MANAGER_QUESTION = "What do current service metrics show?";
 const MANAGER_FOLLOW_UP = "What about the release and its approval?";
 const DEFAULT_SMART_QUESTION = "Checkout degraded after this morning's deployment. Investigate the likely cause and show the supporting evidence.";
 const SMART_SCENARIOS = [
-  ["Health only", "Is checkout healthy right now?"],
+  ["Health only", "Inspect only current checkout service health. Do not investigate deployments, recent changes, or causes."],
   ["Adaptive cause", "Why is this service timing out? Investigate the likely cause."],
   ["Parallel evidence", "Checkout degraded after deployment. Investigate both health and change risk."],
   ["Bounded repair", "Inspect only current service health using service metrics from the last 600 minutes and return no more than 20 events. Do not investigate deployments, recent changes, or causes. Use only approved read actions and repair rejected parameters within their declared contract."],
