@@ -1,6 +1,6 @@
 # Installation
 
-AI Fabric `0.8.30` is distributed on Maven Central under `io.github.loom-ai-labs`.
+AI Fabric `0.8.31` is distributed on Maven Central under `io.github.loom-ai-labs`.
 
 ## Requirements
 
@@ -16,7 +16,7 @@ AI Fabric `0.8.30` is distributed on Maven Central under `io.github.loom-ai-labs
     <dependency>
       <groupId>io.github.loom-ai-labs</groupId>
       <artifactId>ai-fabric-bom</artifactId>
-      <version>0.8.30</version>
+      <version>0.8.31</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>

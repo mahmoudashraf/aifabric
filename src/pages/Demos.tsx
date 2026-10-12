@@ -51,7 +51,7 @@ const demos = [
     stats: [
       { value: "8", label: "Decision paths" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.30", label: "AI Fabric" },
+      { value: "0.8.31", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-agentic-action-resolver/about",
     livePreview: {
@@ -79,7 +79,7 @@ const demos = [
     stats: [
       { value: "4", label: "Contexts" },
       { value: "Ready", label: "Backend" },
-      { value: "0.8.30", label: "AI Fabric" },
+      { value: "0.8.31", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-deployment-knowledge-guard/about",
     livePreview: {
@@ -107,7 +107,7 @@ const demos = [
     stats: [
       { value: "5", label: "Directive types" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.30", label: "AI Fabric" },
+      { value: "0.8.31", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-incident-investigation/about",
     livePreview: {
@@ -135,7 +135,7 @@ const demos = [
     stats: [
       { value: "3", label: "Remote tools" },
       { value: "3", label: "Services" },
-      { value: "0.8.30", label: "AI Fabric" },
+      { value: "0.8.31", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-mcp-operations/about",
     livePreview: {
@@ -163,7 +163,7 @@ const demos = [
     stats: [
       { value: "5", label: "RAG stages" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.30", label: "AI Fabric" },
+      { value: "0.8.31", label: "AI Fabric" },
     ],
     aboutLink: `${AI_SHOPPING_EXPERIENCE_ROUTE}/about`,
     livePreview: {
@@ -190,7 +190,7 @@ const demos = [
     stats: [
       { value: "3", label: "Entity types" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.30", label: "AI Fabric" },
+      { value: "0.8.31", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-live-data-sync/about",
     livePreview: {
@@ -217,7 +217,7 @@ const demos = [
     stats: [
       { value: "2", label: "Source types" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.30", label: "AI Fabric" },
+      { value: "0.8.31", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-document-knowledge-operations/about",
     livePreview: {
@@ -244,7 +244,7 @@ const demos = [
     stats: [
       { value: "4", label: "Scenarios" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.30", label: "AI Fabric" },
+      { value: "0.8.31", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-account-resolver/about",
     livePreview: {
@@ -271,7 +271,7 @@ const demos = [
     stats: [
       { value: "3", label: "Scenarios" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.30", label: "AI Fabric" },
+      { value: "0.8.31", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-behavior-signals/about",
     livePreview: {
@@ -298,7 +298,7 @@ const demos = [
     stats: [
       { value: "3", label: "Tenants" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.30", label: "AI Fabric" },
+      { value: "0.8.31", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-tenant-guard/about",
     livePreview: {
@@ -325,7 +325,7 @@ const demos = [
     stats: [
       { value: "3", label: "Samples" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.30", label: "AI Fabric" },
+      { value: "0.8.31", label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-privacy-shield/about",
     livePreview: {
@@ -388,7 +388,7 @@ const Demos = () => {
         <section className="container mx-auto px-4 pb-12">
           <div className="flex flex-col gap-3 pb-5 md:flex-row md:items-end md:justify-between">
             <div>
-              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary"><Network className="h-4 w-4" />AI Fabric 0.8.30 execution coverage</div>
+              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary"><Network className="h-4 w-4" />AI Fabric 0.8.31 execution coverage</div>
               <h2 className="text-2xl font-bold tracking-normal">Specialist capabilities you can prove live</h2>
               <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">Each row links a released execution contract to the demo that exposes its source, durability, policy boundary, and visible outcome.</p>
             </div>
