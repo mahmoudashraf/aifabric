@@ -446,7 +446,7 @@ const Index = () => {
               <div className="flex flex-wrap items-center justify-center gap-2">
                 <Badge className="border-emerald-200 bg-emerald-50 px-3 py-1 text-emerald-700" variant="outline">
                   <Sparkles className="mr-1 h-3.5 w-3.5" />
-                  Six AI Fabric demos
+                  11 live AI Fabric demos
                 </Badge>
                 <Badge className="border-slate-200 bg-white px-3 py-1 text-slate-700" variant="outline">
                   Java-first
@@ -494,7 +494,7 @@ const Index = () => {
 
               <div className="mx-auto mt-6 grid max-w-3xl grid-cols-3 gap-2 text-left md:mt-8">
                 {[
-                  ["10", "AI-enabled demos"],
+                  ["11", "live AI-enabled demos"],
                   ["0.8.31", "current release"],
                   ["OpenAI", "live provider demos"],
                 ].map(([value, label]) => (
