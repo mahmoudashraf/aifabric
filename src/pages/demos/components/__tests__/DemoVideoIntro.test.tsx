@@ -73,4 +73,14 @@ describe("DemoVideoIntro", () => {
       expect.stringContaining("GHiET3aZQsI")
     );
   });
+
+  it("offers the human handover walkthrough before its live workflow", () => {
+    renderIntro(demoVideoCatalog.conversationHandover);
+
+    expect(screen.getByRole("heading", { name: /see ai fabric conversation handover in action/i })).toBeInTheDocument();
+    expect(screen.getByTitle("AI Fabric Human-in-the-Loop Conversation Handover")).toHaveAttribute(
+      "src",
+      expect.stringContaining("O8IUAa6tVog")
+    );
+  });
 });

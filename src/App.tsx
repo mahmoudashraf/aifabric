@@ -23,6 +23,7 @@ import AIFabricMcpOperations from "./pages/demos/AIFabricMcpOperations";
 import DocumentIntelligenceHub from "./pages/demos/DocumentIntelligenceHub";
 import AIFabricAgenticUI from "./pages/demos/AIFabricAgenticUI";
 import AIFabricBehaviorSignals from "./pages/demos/AIFabricBehaviorSignals";
+import AIFabricConversationHandover from "./pages/demos/AIFabricConversationHandover";
 import AIFabricLiveDataSync from "./pages/demos/AIFabricLiveDataSync";
 import AIFabricPrivacyShield from "./pages/demos/AIFabricPrivacyShield";
 import AIFabricTenantGuard from "./pages/demos/AIFabricTenantGuard";
@@ -348,6 +349,24 @@ const App = () => (
               {retiredDemoRoutes.map((path) => (
                 <Route key={path} path={path} element={<Navigate to="/demos" replace />} />
               ))}
+              <Route
+                path="/demos/ai-fabric-conversation-handover/about"
+                element={
+                  <DemoAboutPage
+                    architecture={demoBackendArchitectures.conversationHandover}
+                    demoLabel="AI Fabric Conversation Handover"
+                    demoPath="/demos/ai-fabric-conversation-handover"
+                  />
+                }
+              />
+              <Route
+                path="/demos/ai-fabric-conversation-handover"
+                element={
+                  <DemoVideoIntro config={demoVideoCatalog.conversationHandover}>
+                    <AIFabricConversationHandover />
+                  </DemoVideoIntro>
+                }
+              />
               <Route
                 path="/demos/ai-fabric-agentic-action-resolver/about"
                 element={

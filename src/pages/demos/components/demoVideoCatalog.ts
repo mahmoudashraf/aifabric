@@ -18,6 +18,21 @@ export const DEMO_VIDEO_PLAYLIST_URL = "https://www.youtube.com/playlist?list=PL
 export const demoVideoDismissalKey = (demoId: string) => `ai-fabric-demo-video-dismissed:${demoId}`;
 
 export const demoVideoCatalog = {
+  conversationHandover: {
+    id: "conversation-handover",
+    demoName: "AI Fabric Conversation Handover",
+    description:
+      "See the model select a governed handover action, collect consented contact intake, pause AI authority, move the ordered thread to a human operator, and return it safely to AI.",
+    videos: [
+      {
+        language: "en",
+        languageLabel: "English",
+        videoId: "O8IUAa6tVog",
+        title: "AI Fabric Human-in-the-Loop Conversation Handover",
+        durationLabel: "1 minute 7 seconds",
+      },
+    ],
+  },
   accountResolver: {
     id: "account-resolver",
     demoName: "AI Fabric Account Resolver",

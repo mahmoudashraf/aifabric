@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import {
   Activity,
   ArrowRight,
+  ArrowRightLeft,
   Bot,
   CheckCircle2,
   CreditCard,
   Database,
   EyeOff,
   FileStack,
+  Headphones,
   Layers,
   Lock,
   Network,
@@ -36,6 +38,34 @@ import { Badge } from "@/components/ui/badge";
 import { AI_SHOPPING_EXPERIENCE_ROUTE } from "./demos/AIFabricFramework/routes";
 
 const demos = [
+  {
+    id: "ai-fabric-conversation-handover",
+    title: "Conversation Handover",
+    description:
+      "Model-selected human handover with typed contact consent, durable response authority, an application-owned operator queue, and safe return to AI.",
+    icon: Headphones,
+    features: [
+      { icon: Bot, label: "Model-Selected Action" },
+      { icon: ShieldCheck, label: "Typed Consent Gate" },
+      { icon: ArrowRightLeft, label: "Authority Transfer" },
+      { icon: Users, label: "Human Operator" },
+    ],
+    stats: [
+      { value: "5", label: "Authority states" },
+      { value: "Live", label: "Backend" },
+      { value: "0.8.32", label: "AI Fabric" },
+    ],
+    aboutLink: "/demos/ai-fabric-conversation-handover/about",
+    livePreview: {
+      eyebrow: "Human-in-the-loop authority",
+      prompt: "Ask for a human, consent to the required contact intake, claim the conversation, reply, then return it to AI.",
+      proof: "Inspect model-selected action metadata, versioned authority states, ordered AI/human messages, and fail-closed role gates.",
+      runtime: "OpenAI + AI Fabric conversation control + JDBC state",
+    },
+    accent: "border-blue-200 bg-blue-50 text-blue-800",
+    link: "/demos/ai-fabric-conversation-handover",
+    deployed: true,
+  },
   {
     id: "ai-fabric-agentic-action-resolver",
     title: "Agentic AI Action Resolver",
@@ -348,6 +378,7 @@ const executionProofs = [
   { capability: "Application-triggered job", runtime: "New events plus previous approved insight", source: "APPLICATION", durability: "Durable", demo: "Behavior Signals", route: "/demos/ai-fabric-behavior-signals" },
   { capability: "Governed write receipt", runtime: "Confirm, reject, reconcile, and terminal replay", source: "INTERACTIVE", durability: "Durable receipt", demo: "Agentic Resolver", route: "/demos/ai-fabric-agentic-action-resolver" },
   { capability: "Human review", runtime: "Approve, reject, correct, request information, escalate", source: "APPLICATION", durability: "Durable task", demo: "Review Desk", route: "/demos/ai-fabric-agentic-action-resolver/review" },
+  { capability: "Conversation authority handover", runtime: "Model-selected action, typed intake, human claim, ordered reply, and explicit return to AI", source: "INTERACTIVE", durability: "JDBC control state", demo: "Human Handover", route: "/demos/ai-fabric-conversation-handover" },
   { capability: "Fixed specialist plans", runtime: "Sequential or parallel branches with ALL_REQUIRED fan-in", source: "APPLICATION", durability: "Ephemeral", demo: "Incident Room", route: "/demos/ai-fabric-incident-investigation" },
   { capability: "Specialist-owned evidence discovery", runtime: "Model selects allowlisted READ actions and cites authorized candidates", source: "APPLICATION", durability: "Ephemeral", demo: "Incident Room", route: "/demos/ai-fabric-incident-investigation" },
   { capability: "Bounded READ-action repair", runtime: "Invalid planner parameters are rejected, repaired within schema, and linked to exact execution IDs", source: "APPLICATION", durability: "Visible diagnostics", demo: "Incident Room", route: "/demos/ai-fabric-incident-investigation" },
@@ -372,7 +403,7 @@ const Demos = () => {
           >
             <Badge variant="secondary" className="mb-4">
               <Sparkles className="mr-1 h-3 w-3" />
-              Eleven live AI-enabled demo apps
+              Twelve live AI-enabled demo apps
             </Badge>
             <h1 className="mb-4 text-4xl font-bold tracking-normal md:text-5xl">
               Live AI-enabled applications backed by Spring Boot
@@ -388,7 +419,7 @@ const Demos = () => {
         <section className="container mx-auto px-4 pb-12">
           <div className="flex flex-col gap-3 pb-5 md:flex-row md:items-end md:justify-between">
             <div>
-              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary"><Network className="h-4 w-4" />AI Fabric 0.8.31 execution coverage</div>
+              <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-primary"><Network className="h-4 w-4" />AI Fabric execution coverage</div>
               <h2 className="text-2xl font-bold tracking-normal">Specialist capabilities you can prove live</h2>
               <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">Each row links a released execution contract to the demo that exposes its source, durability, policy boundary, and visible outcome.</p>
             </div>

@@ -13,4 +13,12 @@ describe("DemoBackendArchitecture", () => {
     expect(longEnvironmentVariable.parentElement).toHaveClass("min-w-0");
     expect(longEnvironmentVariable.parentElement?.parentElement).toHaveClass("min-w-0");
   });
+
+  it("documents the conversation handover authority boundary", () => {
+    render(<DemoBackendArchitecture architecture={demoBackendArchitectures.conversationHandover} />);
+
+    expect(screen.getByText("AI Fabric Conversation Handover backend")).toBeInTheDocument();
+    expect(screen.getByText("Durable authority state machine")).toBeInTheDocument();
+    expect(screen.getByText("SERVER_SERVLET_SESSION_COOKIE_PARTITIONED")).toBeInTheDocument();
+  });
 });
