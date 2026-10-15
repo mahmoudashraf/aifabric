@@ -100,6 +100,8 @@ export interface HandoverDemoHealth {
   handoverAction: string;
   handoverIntakeSchema: string;
   requiredHandoverField: string;
+  publicOperatorEnabled?: boolean;
+  demoOperatorAccessCode?: string;
 }
 
 interface HandoverRequest {

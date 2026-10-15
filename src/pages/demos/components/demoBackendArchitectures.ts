@@ -40,7 +40,7 @@ export interface DemoDeveloperDetails {
 export const demoBackendArchitectures = {
   conversationHandover: {
     title: "AI Fabric Conversation Handover backend",
-    status: "AI Fabric 0.8.32 live backend",
+    status: "AI Fabric 0.8.33 live backend",
     tone: "live",
     backendApp: "examples/real-apps/conversation-handover-demo",
     publicBackend: "https://ai-fabric-conversation-handover.46.224.145.148.sslip.io",
@@ -58,7 +58,7 @@ export const demoBackendArchitectures = {
         title: "Demo API",
         subtitle: "Application-owned trust boundary",
         tone: "api",
-        items: ["Opaque owner session", "Operator authentication", "Contact validation and persistence"],
+        items: ["Opaque owner session", "Session-scoped public demo operator", "Contact validation and persistence"],
       },
       {
         title: "AI orchestration",
@@ -104,7 +104,8 @@ export const demoBackendArchitectures = {
       localRun: [
         "Build conversation-handover-demo from the examples/real-apps reactor.",
         "Set OPENAI_API_KEY and OPENAI_ENABLED=true to prove model selection of the handover action.",
-        "Set APP_DEMO_OPERATOR_ACCESS_CODE for the deliberately small application-owned operator login.",
+        "Set APP_DEMO_PUBLIC_OPERATOR_ENABLED=true to prefill the visible demo code; the demo operator can access only your own visitor session.",
+        "Keep APP_DEMO_OPERATOR_ACCESS_CODE private for shared-queue access; it is never exposed to the public UI.",
         "Ask for a human, submit the required email consent, claim the queue item, reply, and return authority to AI.",
       ],
       envVars: [
@@ -116,6 +117,8 @@ export const demoBackendArchitectures = {
         "DATABASE_USERNAME",
         "DATABASE_PASSWORD",
         "APP_DEMO_OPERATOR_ACCESS_CODE",
+        "APP_DEMO_PUBLIC_OPERATOR_ENABLED",
+        "APP_DEMO_PUBLIC_OPERATOR_ACCESS_CODE",
         "CORS_ALLOWED_ORIGINS",
         "CORS_ALLOW_CREDENTIALS",
         "SERVER_SERVLET_SESSION_COOKIE_SAME_SITE",

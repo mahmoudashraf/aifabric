@@ -232,6 +232,9 @@ export default function AIFabricConversationHandover() {
         setConversationId(session.conversationId);
         setVisitor(session.conversation);
         setHealth(nextHealth);
+        if (nextHealth.publicOperatorEnabled && nextHealth.demoOperatorAccessCode) {
+          setOperatorCode(nextHealth.demoOperatorAccessCode);
+        }
       } catch (reason) {
         if (active) setError(reason instanceof Error ? reason.message : "The handover backend is unavailable.");
       } finally {
@@ -260,6 +263,7 @@ export default function AIFabricConversationHandover() {
   }, [conversationId, operatorAuthenticated, refreshOperator]);
 
   const control = visitor?.control;
+  const publicOperatorEnabled = Boolean(health?.publicOperatorEnabled && health.demoOperatorAccessCode);
   const visitorClosed = control?.state === "CLOSED" || control?.state === "AI_RESUME_PENDING";
 
   const perform = async (label: string, work: () => Promise<void>) => {
@@ -523,22 +527,25 @@ export default function AIFabricConversationHandover() {
                   <div className="rounded-md border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-emerald-950">
                     <div className="flex gap-3">
                       <LockKeyhole className="mt-0.5 h-5 w-5 shrink-0" />
-                      <p>The operator identity belongs to the application, not the model. Enter the configured demo access code to inspect and claim pending conversations.</p>
+                      <p>{publicOperatorEnabled
+                        ? "Try the human operator side with the public demo code below. Your queue is limited to your own session. Use sample contact details."
+                        : "The operator identity belongs to the application, not the model. Enter the configured demo access code to inspect and claim pending conversations."}</p>
                     </div>
                   </div>
-                  <Label htmlFor="handover-operator-code" className="mt-5 block">Operator access code</Label>
-                  <div className="mt-2 flex gap-2">
+                  <Label htmlFor="handover-operator-code" className="mt-5 block">{publicOperatorEnabled ? "Demo operator code" : "Operator access code"}</Label>
+                  <div className="mt-2 flex flex-col gap-2 sm:flex-row">
                     <Input
                       id="handover-operator-code"
-                      type="password"
-                      autoComplete="current-password"
+                      type={publicOperatorEnabled ? "text" : "password"}
+                      autoComplete={publicOperatorEnabled ? "off" : "current-password"}
+                      spellCheck={false}
                       value={operatorCode}
                       onChange={(event) => setOperatorCode(event.target.value)}
-                      placeholder="Configured hosted-demo code"
+                      placeholder={publicOperatorEnabled ? "Public demo code" : "Configured hosted-demo code"}
                     />
                     <Button type="submit" disabled={Boolean(busy) || !operatorCode.trim()}>
                       {busy === "operator-login" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <KeyRound className="mr-2 h-4 w-4" />}
-                      Open queue
+                      {publicOperatorEnabled ? "Open my demo queue" : "Open queue"}
                     </Button>
                   </div>
                   <p className="mt-3 text-xs leading-5 text-slate-500">The code is checked by the backend and is never included in an AI prompt.</p>
