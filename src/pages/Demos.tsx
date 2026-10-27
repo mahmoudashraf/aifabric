@@ -37,6 +37,8 @@ import Navbar from "@/components/Navbar";
 import { Badge } from "@/components/ui/badge";
 import { AI_SHOPPING_EXPERIENCE_ROUTE } from "./demos/AIFabricFramework/routes";
 
+const DEPLOYED_FRAMEWORK_VERSION = "0.8.42";
+
 const demos = [
   {
     id: "ai-fabric-conversation-handover",
@@ -53,7 +55,7 @@ const demos = [
     stats: [
       { value: "5", label: "Authority states" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.32", label: "AI Fabric" },
+      { value: DEPLOYED_FRAMEWORK_VERSION, label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-conversation-handover/about",
     livePreview: {
@@ -81,7 +83,7 @@ const demos = [
     stats: [
       { value: "8", label: "Decision paths" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.31", label: "AI Fabric" },
+      { value: DEPLOYED_FRAMEWORK_VERSION, label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-agentic-action-resolver/about",
     livePreview: {
@@ -109,7 +111,7 @@ const demos = [
     stats: [
       { value: "4", label: "Contexts" },
       { value: "Ready", label: "Backend" },
-      { value: "0.8.31", label: "AI Fabric" },
+      { value: DEPLOYED_FRAMEWORK_VERSION, label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-deployment-knowledge-guard/about",
     livePreview: {
@@ -137,7 +139,7 @@ const demos = [
     stats: [
       { value: "5", label: "Directive types" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.31", label: "AI Fabric" },
+      { value: DEPLOYED_FRAMEWORK_VERSION, label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-incident-investigation/about",
     livePreview: {
@@ -165,7 +167,7 @@ const demos = [
     stats: [
       { value: "3", label: "Remote tools" },
       { value: "3", label: "Services" },
-      { value: "0.8.31", label: "AI Fabric" },
+      { value: DEPLOYED_FRAMEWORK_VERSION, label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-mcp-operations/about",
     livePreview: {
@@ -193,7 +195,7 @@ const demos = [
     stats: [
       { value: "5", label: "RAG stages" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.31", label: "AI Fabric" },
+      { value: DEPLOYED_FRAMEWORK_VERSION, label: "AI Fabric" },
     ],
     aboutLink: `${AI_SHOPPING_EXPERIENCE_ROUTE}/about`,
     livePreview: {
@@ -220,7 +222,7 @@ const demos = [
     stats: [
       { value: "3", label: "Entity types" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.31", label: "AI Fabric" },
+      { value: DEPLOYED_FRAMEWORK_VERSION, label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-live-data-sync/about",
     livePreview: {
@@ -247,7 +249,7 @@ const demos = [
     stats: [
       { value: "2", label: "Source types" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.31", label: "AI Fabric" },
+      { value: DEPLOYED_FRAMEWORK_VERSION, label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-document-knowledge-operations/about",
     livePreview: {
@@ -274,7 +276,7 @@ const demos = [
     stats: [
       { value: "4", label: "Scenarios" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.31", label: "AI Fabric" },
+      { value: DEPLOYED_FRAMEWORK_VERSION, label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-account-resolver/about",
     livePreview: {
@@ -301,7 +303,7 @@ const demos = [
     stats: [
       { value: "3", label: "Scenarios" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.31", label: "AI Fabric" },
+      { value: DEPLOYED_FRAMEWORK_VERSION, label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-behavior-signals/about",
     livePreview: {
@@ -328,7 +330,7 @@ const demos = [
     stats: [
       { value: "3", label: "Tenants" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.31", label: "AI Fabric" },
+      { value: DEPLOYED_FRAMEWORK_VERSION, label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-tenant-guard/about",
     livePreview: {
@@ -355,7 +357,7 @@ const demos = [
     stats: [
       { value: "3", label: "Samples" },
       { value: "Live", label: "Backend" },
-      { value: "0.8.31", label: "AI Fabric" },
+      { value: DEPLOYED_FRAMEWORK_VERSION, label: "AI Fabric" },
     ],
     aboutLink: "/demos/ai-fabric-privacy-shield/about",
     livePreview: {
