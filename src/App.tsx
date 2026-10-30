@@ -116,7 +116,6 @@ import StorageStory from "./pages/docs/StorageStory";
 import StorageStoryV2 from "./pages/docs/StorageStoryV2";
 import UserStories from "./pages/docs/UserStories";
 import VectorLifecycleStory from "./pages/docs/VectorLifecycleStory";
-import { usePageTracking } from "./hooks/usePageTracking";
 import { reviewedStories } from "./lib/reviewedStoryCatalog";
 
 const queryClient = new QueryClient();
@@ -324,7 +323,6 @@ const legacyStoryRedirectRoutes = [
 ];
 
 const PageTracker = ({ children }: { children: React.ReactNode }) => {
-  usePageTracking();
   return <>{children}</>;
 };
 
